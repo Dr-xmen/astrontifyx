@@ -6,6 +6,7 @@
 <title>Login - AstrontifyX</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 * {
@@ -25,7 +26,6 @@ body {
   min-height: 100vh;
 }
 
-/* LEFT SIDE */
 .auth-left {
   flex: 1;
   padding: 60px;
@@ -55,7 +55,6 @@ body {
   max-width: 420px;
 }
 
-/* SIDE CARD */
 .platform-card {
   background: rgba(255,255,255,0.04);
   border: 1px solid rgba(255,255,255,0.08);
@@ -86,7 +85,6 @@ body {
   color: #9CA3AF;
 }
 
-/* RIGHT SIDE */
 .auth-right {
   flex: 1;
   background: #ffffff;
@@ -124,7 +122,6 @@ input {
   outline: none;
 }
 
-/* GOOGLE BUTTON */
 .google-btn {
   width: 100%;
   padding: 14px;
@@ -144,7 +141,6 @@ input {
   background: #f9fafb;
 }
 
-/* DIVIDER */
 .divider {
   text-align: center;
   margin: 18px 0;
@@ -205,7 +201,20 @@ input {
   text-decoration: none;
 }
 
-/* TRUST BADGES */
+.message {
+  margin-bottom: 15px;
+  font-size: 14px;
+  text-align: center;
+}
+
+.success {
+  color: #16a34a;
+}
+
+.error {
+  color: #dc2626;
+}
+
 .trust-row {
   margin-top: 30px;
   padding-top: 20px;
@@ -230,7 +239,6 @@ input {
   color: #16a34a;
 }
 
-/* MOBILE */
 @media(max-width: 900px){
   .auth-left {
     display: none;
@@ -251,7 +259,6 @@ input {
 
 <div class="auth-wrapper">
 
-  <!-- LEFT SIDE -->
   <div class="auth-left">
     <div class="brand">AstrontifyX</div>
 
@@ -295,14 +302,14 @@ input {
     </div>
   </div>
 
-  <!-- RIGHT SIDE -->
   <div class="auth-right">
     <div class="form-box">
 
       <h2>Sign in</h2>
       <div class="subtitle">Access your trading dashboard</div>
 
-      <!-- GOOGLE SIGN IN -->
+      <div id="message" class="message"></div>
+
       <button class="google-btn" onclick="signInWithGoogle()">
         <img src="https://www.svgrepo.com/show/475656/google-color.svg" width="18">
         Sign in with Google
@@ -310,27 +317,26 @@ input {
 
       <div class="divider">or continue with email</div>
 
-      <form>
+      <form id="loginForm">
         <div class="input-group">
-          <input type="email" placeholder="Email address" required>
+          <input type="email" id="email" placeholder="Email address" required>
         </div>
 
         <div class="input-group">
-          <input type="password" placeholder="Password" required>
+          <input type="password" id="password" placeholder="Password" required>
         </div>
 
         <div class="row">
           <a href="#">Forgot Password?</a>
         </div>
 
-        <button class="btn">Sign in</button>
+        <button type="submit" class="btn">Sign in</button>
       </form>
 
       <div class="footer-text">
         Don't have an account? <a href="signup.html">Open one</a>
       </div>
 
-      <!-- TRUST BADGES -->
       <div class="trust-row">
 
         <div class="trust-item">
@@ -363,9 +369,52 @@ input {
 </div>
 
 <script>
-function signInWithGoogle() {
-  alert("Google authentication will be connected to Supabase OAuth.");
+const supabaseClient = supabase.createClient(
+  'https://guguugokdhiwobmuopro.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd1Z3V1Z29rZGhpd29ibXVvcHJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNTgwNzIsImV4cCI6MjA5MzczNDA3Mn0.uaKxvC9PfevyNcgtRg8Hhzaljn9ae3pp3aqgFUMfSo8'
+);
+
+function showMessage(message, type = 'error') {
+  const messageBox = document.getElementById('message');
+  messageBox.textContent = message;
+  messageBox.className = 'message ' + type;
 }
+
+async function signInWithGoogle() {
+  const { error } = await supabaseClient.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      redirectTo: window.location.origin + '/dashboard.html'
+    }
+  });
+
+  if (error) {
+    showMessage(error.message);
+  }
+}
+
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
+
+  const { error } = await supabaseClient.auth.signInWithPassword({
+    email,
+    password
+  });
+
+  if (error) {
+    showMessage(error.message);
+    return;
+  }
+
+  showMessage('Login successful', 'success');
+
+  setTimeout(() => {
+    window.location.href = 'dashboard.html';
+  }, 1000);
+});
 </script>
 
 </body>
