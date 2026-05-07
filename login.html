@@ -108,7 +108,7 @@ h2 {
 
 .subtitle {
   color: #6b7280;
-  margin-bottom: 25px;
+  margin-bottom: 20px;
   font-size: 14px;
 }
 
@@ -124,11 +124,63 @@ input {
   outline: none;
 }
 
+/* GOOGLE BUTTON */
+.google-btn {
+  width: 100%;
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.google-btn:hover {
+  background: #f9fafb;
+}
+
+/* DIVIDER */
+.divider {
+  text-align: center;
+  margin: 18px 0;
+  position: relative;
+  color: #6b7280;
+  font-size: 13px;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 38%;
+  height: 1px;
+  background: #e5e7eb;
+}
+
+.divider::before {
+  left: 0;
+}
+
+.divider::after {
+  right: 0;
+}
+
 .row {
   display: flex;
   justify-content: space-between;
   font-size: 13px;
   margin-bottom: 15px;
+}
+
+.row a {
+  text-decoration: none;
+  color: #4f46e5;
 }
 
 .btn {
@@ -146,6 +198,11 @@ input {
   margin-top: 20px;
   text-align: center;
   font-size: 14px;
+}
+
+.footer-text a {
+  color: #4f46e5;
+  text-decoration: none;
 }
 
 /* MOBILE */
@@ -212,6 +269,14 @@ input {
       <h2>Sign in</h2>
       <div class="subtitle">Access your trading dashboard</div>
 
+      <!-- GOOGLE SIGN IN -->
+      <button class="google-btn" onclick="signInWithGoogle()">
+        <img src="https://www.svgrepo.com/show/475656/google-color.svg" width="18">
+        Sign in with Google
+      </button>
+
+      <div class="divider">or continue with email</div>
+
       <form>
         <div class="input-group">
           <input type="email" placeholder="Email address" required>
@@ -237,6 +302,12 @@ input {
   </div>
 
 </div>
+
+<script>
+function signInWithGoogle() {
+  alert("Google authentication will be connected to Supabase OAuth.");
+}
+</script>
 
 </body>
 </html>
