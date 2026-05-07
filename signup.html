@@ -6,6 +6,7 @@
 <title>Create Account - AstrontifyX</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 * {
@@ -25,7 +26,6 @@ body {
   min-height: 100vh;
 }
 
-/* LEFT SIDE */
 .auth-left {
   flex: 1;
   padding: 60px;
@@ -55,7 +55,6 @@ body {
   max-width: 420px;
 }
 
-/* SIDE CARD */
 .platform-card {
   background: rgba(255,255,255,0.04);
   border: 1px solid rgba(255,255,255,0.08);
@@ -86,7 +85,6 @@ body {
   color: #9CA3AF;
 }
 
-/* RIGHT SIDE */
 .auth-right {
   flex: 1;
   background: #ffffff;
@@ -116,7 +114,6 @@ h2 {
   margin-bottom: 15px;
 }
 
-/* PASSWORD GROUP */
 .password-group {
   position: relative;
 }
@@ -143,7 +140,6 @@ input, select {
   outline: none;
 }
 
-/* BUTTON */
 .btn {
   width: 100%;
   padding: 15px;
@@ -155,7 +151,6 @@ input, select {
   cursor: pointer;
 }
 
-/* GOOGLE BUTTON */
 .google-btn {
   width: 100%;
   padding: 13px;
@@ -175,7 +170,6 @@ input, select {
   background: #f9fafb;
 }
 
-/* DIVIDER */
 .divider {
   text-align: center;
   margin: 15px 0;
@@ -203,7 +197,25 @@ input, select {
   font-size: 14px;
 }
 
-/* MOBILE */
+.footer-text a {
+  color: #4f46e5;
+  text-decoration: none;
+}
+
+.message {
+  margin-bottom: 15px;
+  font-size: 14px;
+  text-align: center;
+}
+
+.success {
+  color: #16a34a;
+}
+
+.error {
+  color: #dc2626;
+}
+
 @media(max-width: 900px){
   .auth-left {
     display: none;
@@ -216,7 +228,6 @@ input, select {
 
 <div class="auth-wrapper">
 
-  <!-- LEFT SIDE -->
   <div class="auth-left">
     <div class="brand">AstrontifyX</div>
 
@@ -237,14 +248,14 @@ input, select {
     </div>
   </div>
 
-  <!-- RIGHT SIDE -->
   <div class="auth-right">
     <div class="form-box">
 
       <h2>Create Account</h2>
       <div class="subtitle">Open your AstrontifyX trading account</div>
 
-      <!-- GOOGLE SIGNUP -->
+      <div id="message" class="message"></div>
+
       <button class="google-btn" onclick="signupWithGoogle()">
         <img src="https://www.svgrepo.com/show/475656/google-color.svg" width="18">
         Sign up with Google
@@ -252,25 +263,25 @@ input, select {
 
       <div class="divider">or sign up with email</div>
 
-      <form>
+      <form id="signupForm">
         <div class="input-group">
-          <input type="text" placeholder="First Name" required>
+          <input type="text" id="firstName" placeholder="First Name" required>
         </div>
 
         <div class="input-group">
-          <input type="text" placeholder="Last Name" required>
+          <input type="text" id="lastName" placeholder="Last Name" required>
         </div>
 
         <div class="input-group">
-          <input type="email" placeholder="Email address" required>
+          <input type="email" id="email" placeholder="Email address" required>
         </div>
 
         <div class="input-group">
-          <input type="tel" placeholder="Phone number" required>
+          <input type="tel" id="phone" placeholder="Phone number" required>
         </div>
 
         <div class="input-group">
-          <select required>
+          <select id="country" required>
             <option value="">Country</option>
             <option>Nigeria</option>
             <option>United Kingdom</option>
@@ -280,7 +291,7 @@ input, select {
         </div>
 
         <div class="input-group">
-          <select required>
+          <select id="currency" required>
             <option value="">Account Currency</option>
             <option>USD</option>
             <option>EUR</option>
@@ -298,7 +309,7 @@ input, select {
           <span class="toggle-password" onclick="togglePassword('confirmPassword', this)">👁</span>
         </div>
 
-        <button class="btn">Create Account</button>
+        <button type="submit" class="btn">Create Account</button>
       </form>
 
       <div class="footer-text">
@@ -311,15 +322,78 @@ input, select {
 </div>
 
 <script>
+const supabaseClient = supabase.createClient(
+  'https://guguugokdhiwobmuopro.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd1Z3V1Z29rZGhpd29ibXVvcHJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNTgwNzIsImV4cCI6MjA5MzczNDA3Mn0.uaKxvC9PfevyNcgtRg8Hhzaljn9ae3pp3aqgFUMfSo8'
+);
+
 function togglePassword(id, el) {
   const input = document.getElementById(id);
   input.type = input.type === "password" ? "text" : "password";
   el.textContent = input.type === "password" ? "👁" : "🙈";
 }
 
-function signupWithGoogle() {
-  alert("Google signup will be connected to backend (Supabase OAuth)");
+function showMessage(message, type = 'error') {
+  const messageBox = document.getElementById('message');
+  messageBox.textContent = message;
+  messageBox.className = 'message ' + type;
 }
+
+async function signupWithGoogle() {
+  const { error } = await supabaseClient.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      redirectTo: window.location.origin + '/dashboard.html'
+    }
+  });
+
+  if (error) {
+    showMessage(error.message);
+  }
+}
+
+document.getElementById('signupForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const firstName = document.getElementById('firstName').value;
+  const lastName = document.getElementById('lastName').value;
+  const email = document.getElementById('email').value;
+  const phone = document.getElementById('phone').value;
+  const country = document.getElementById('country').value;
+  const currency = document.getElementById('currency').value;
+  const password = document.getElementById('password').value;
+  const confirmPassword = document.getElementById('confirmPassword').value;
+
+  if (password !== confirmPassword) {
+    showMessage('Passwords do not match');
+    return;
+  }
+
+  const { data, error } = await supabaseClient.auth.signUp({
+    email,
+    password,
+    options: {
+      data: {
+        first_name: firstName,
+        last_name: lastName,
+        phone,
+        country,
+        currency
+      }
+    }
+  });
+
+  if (error) {
+    showMessage(error.message);
+    return;
+  }
+
+  showMessage('Account created successfully. Check your email.', 'success');
+
+  setTimeout(() => {
+    window.location.href = 'login.html';
+  }, 2500);
+});
 </script>
 
 </body>
