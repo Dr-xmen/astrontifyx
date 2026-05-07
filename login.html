@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Create Account - Veloci Global Markets</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    :root{
+      --bg:#020617;
+      --bg-soft:#07111f;
+      --card:rgba(15,23,42,.84);
+      --card-strong:rgba(15,23,42,.96);
+      --stroke:rgba(148,163,184,.22);
+      --stroke-strong:rgba(191,219,254,.34);
+      --text:#f8fafc;
+      --muted:#a7b3c7;
+      --muted-strong:#dbeafe;
+      --brand:#2563eb;
+      --brand-light:#60a5fa;
+      --brand-purple:#7c3aed;
+      --ok:#22c55e;
+      --warn:#f59e0b;
+      --err:#f87171;
+      --shadow:0 30px 90px rgba(0,0,0,.46);
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      min-height:100vh;
+      margin:0;
+      font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color:var(--text);
+      background:
+        linear-gradient(140deg, rgba(2,6,23,.96), rgba(2,6,23,.88)),
+        radial-gradient(900px 520px at 12% 10%, rgba(37,99,235,.28), transparent 60%),
+        radial-gradient(760px 520px at 90% 12%, rgba(124,58,237,.20), transparent 62%),
+        var(--bg);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:40px 18px;
+      overflow-x:hidden;
+    }
+
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      background-image:
+        linear-gradient(rgba(148,163,184,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(148,163,184,.04) 1px, transparent 1px);
+      background-size:44px 44px;
+      mask-image:linear-gradient(to bottom, rgba(0,0,0,.72), transparent 82%);
+      pointer-events:none;
+    }
+
+    a{color:var(--brand-light);text-decoration:none}
+    a:hover{text-decoration:underline}
+
+    .auth-shell{
+      position:relative;
+      z-index:1;
+      width:min(1120px, 100%);
+      display:grid;
+      grid-template-columns:minmax(320px, .9fr) minmax(360px, 1.1fr);
+      border:1px solid var(--stroke);
+      border-radius:30px;
+      background:linear-gradient(135deg, rgba(15,23,42,.78), rgba(15,23,42,.56));
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      backdrop-filter:blur(20px);
+      -webkit-backdrop-filter:blur(20px);
+    }
+
+    .brand-panel{
+      position:relative;
+      min-height:100%;
+      padding:34px;
+      background:
+        linear-gradient(160deg, rgba(37,99,235,.30), rgba(124,58,237,.18) 46%, rgba(2,6,23,.14)),
+        rgba(15,23,42,.46);
+      border-right:1px solid var(--stroke);
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+      gap:34px;
+      overflow:hidden;
+    }
+
+    .brand-panel::after{
+      content:"";
+      position:absolute;
+      width:380px;
+      height:380px;
+      right:-180px;
+      bottom:-160px;
+      border-radius:50%;
+      background:radial-gradient(circle, rgba(96,165,250,.34), transparent 64%);
+      filter:blur(4px);
+      pointer-events:none;
+    }
+
+    .logo-mark{
+      width:220px;
+      max-width:100%;
+      height:86px;
+      overflow:hidden;
+      display:flex;
+      align-items:center;
+      margin-left:-18px;
+    }
+
+    .logo-mark img{
+      width:250px;
+      height:112px;
+      object-fit:cover;
+      object-position:center 38%;
+      filter:drop-shadow(0 18px 40px rgba(0,0,0,.50));
+      user-select:none;
+      -webkit-user-drag:none;
+    }
+
+    .hero-copy{position:relative;z-index:1}
+    .eyebrow{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      margin-bottom:16px;
+      padding:8px 12px;
+      border:1px solid rgba(191,219,254,.24);
+      border-radius:999px;
+      color:#dbeafe;
+      background:rgba(15,23,42,.38);
+      font-size:13px;
+      font-weight:800;
+      letter-spacing:.02em;
+    }
+
+    .eyebrow::before{
+      content:"";
+      width:8px;
+      height:8px;
+      border-radius:50%;
+      background:var(--ok);
+      box-shadow:0 0 0 6px rgba(34,197,94,.14);
+    }
+
+    .hero-copy h1{
+      margin:0;
+      font-size:clamp(36px, 5vw, 58px);
+      line-height:.98;
+      letter-spacing:-2px;
+      font-weight:900;
+    }
+
+    .hero-copy p{
+      max-width:410px;
+      margin:20px 0 0;
+      color:rgba(241,245,249,.74);
+      font-size:17px;
+      line-height:1.65;
+    }
+
+    .trust-grid{
+      position:relative;
+      z-index:1;
+      display:grid;
+      gap:12px;
+      margin:4px 0 0;
+    }
+
+    .trust-item{
+      display:flex;
+      align-items:flex-start;
+      gap:12px;
+      padding:14px;
+      border:1px solid rgba(226,232,240,.14);
+      border-radius:16px;
+      background:rgba(2,6,23,.28);
+    }
+
+    .trust-icon{
+      width:34px;
+      height:34px;
+      flex:0 0 34px;
+      display:grid;
+      place-items:center;
+      border-radius:12px;
+      background:rgba(96,165,250,.16);
+      color:#bfdbfe;
+      font-weight:900;
+    }
+
+    .trust-item strong{display:block;font-size:14px;color:#fff;margin-bottom:3px}
+    .trust-item span{display:block;font-size:13px;line-height:1.45;color:rgba(226,232,240,.68)}
+
+    .form-panel{
+      padding:34px;
+      background:linear-gradient(180deg, var(--card), rgba(2,6,23,.72));
+    }
+
+    .form-card{
+      width:100%;
+      max-width:620px;
+      margin:0 auto;
+    }
+
+    .mobile-logo{display:none}
+    .form-header{margin-bottom:24px}
+    .form-header h2{
+      margin:0;
+      font-size:clamp(28px, 4vw, 40px);
+      line-height:1.08;
+      letter-spacing:-1.2px;
+      font-weight:900;
+    }
+
+    .form-header p{
+      margin:10px 0 0;
+      color:var(--muted);
+      line-height:1.55;
+      font-size:15px;
+    }
+
+    .oauthBtn{
+      width:100%;
+      border-radius:16px;
+      border:1px solid var(--stroke);
+      background:rgba(248,250,252,.06);
+      color:#f8fafc;
+      font-size:15px;
+      font-weight:800;
+      padding:14px 16px;
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:11px;
+      transition:transform .18s ease, border-color .18s ease, background .18s ease, box-shadow .18s ease;
+    }
+
+    .oauthBtn:hover{
+      transform:translateY(-1px);
+      border-color:var(--stroke-strong);
+      background:rgba(248,250,252,.09);
+      box-shadow:0 18px 42px rgba(0,0,0,.18);
+    }
+
+    .oauthBtn:focus-visible,
+    .input:focus-visible,
+    .checkbox-row input:focus-visible,
+    .btn:focus-visible,
+    .togglePw:focus-visible{
+      outline:3px solid rgba(96,165,250,.34);
+      outline-offset:2px;
+    }
+
+    .gIcon{
+      width:24px;
+      height:24px;
+      border-radius:8px;
+      background:#fff;
+      display:grid;
+      place-items:center;
+      overflow:hidden;
+      flex:0 0 auto;
+    }
+    .gIcon svg{width:18px;height:18px;display:block}
+
+    .divider{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      margin:22px 0;
+      color:rgba(203,213,225,.70);
+      font-size:12px;
+      font-weight:900;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+    }
+    .divider::before,
+    .divider::after{
+      content:"";
+      height:1px;
+      flex:1;
+      background:rgba(148,163,184,.20);
+    }
+
+    .signup-form{display:grid;gap:16px}
+    .form-grid{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0,1fr));
+      gap:16px;
+    }
+
+    .field{display:flex;flex-direction:column;gap:8px}
+    .full{grid-column:1 / -1}
+    .label{
+      color:#dbeafe;
+      font-size:13px;
+      font-weight:800;
+      letter-spacing:.01em;
+    }
+
+    .input{
+      width:100%;
+      min-height:50px;
+      padding:13px 14px;
+      border-radius:14px;
+      border:1px solid rgba(148,163,184,.24);
+      background:rgba(2,6,23,.48);
+      color:var(--text);
+      font:inherit;
+      font-size:15px;
+      outline:none;
+      transition:border-color .18s ease, box-shadow .18s ease, background .18s ease;
+    }
+
+    .input::placeholder{color:rgba(148,163,184,.82)}
+    .input:hover{border-color:rgba(191,219,254,.30)}
+    .input:focus{
+      border-color:rgba(96,165,250,.72);
+      background:rgba(2,6,23,.66);
+      box-shadow:0 0 0 4px rgba(37,99,235,.18);
+    }
+
+    select.input{
+      cursor:pointer;
+      appearance:none;
+      -webkit-appearance:none;
+      background-image:
+        linear-gradient(45deg, transparent 50%, #cbd5e1 50%),
+        linear-gradient(135deg, #cbd5e1 50%, transparent 50%);
+      background-position:
+        calc(100% - 22px) calc(50% - 4px),
+        calc(100% - 16px) calc(50% - 4px);
+      background-size:6px 6px, 6px 6px;
+      background-repeat:no-repeat;
+      padding-right:42px;
+    }
+
+    .pwWrap{position:relative}
+    .pwWrap .input{padding-right:56px}
+    .togglePw{
+      position:absolute;
+      right:7px;
+      top:50%;
+      transform:translateY(-50%);
+      width:40px;
+      height:40px;
+      border-radius:12px;
+      border:1px solid rgba(148,163,184,.22);
+      background:rgba(248,250,252,.06);
+      color:#e2e8f0;
+      cursor:pointer;
+      display:grid;
+      place-items:center;
+      transition:background .18s ease, border-color .18s ease;
+    }
+    .togglePw:hover{background:rgba(248,250,252,.10);border-color:rgba(191,219,254,.34)}
+    .togglePw svg{width:20px;height:20px;opacity:.92}
+
+    .note{font-size:12px;line-height:1.45;color:var(--muted);margin-top:1px}
+    .strengthRow{display:flex;align-items:center;gap:10px;margin-top:2px}
+    .strengthBar{
+      height:8px;
+      flex:1;
+      border:1px solid rgba(148,163,184,.18);
+      border-radius:999px;
+      background:rgba(15,23,42,.76);
+      overflow:hidden;
+    }
+    .strengthFill{
+      width:0%;
+      height:100%;
+      border-radius:inherit;
+      background:linear-gradient(90deg, var(--err), var(--warn));
+      transition:width .2s ease, background .2s ease;
+    }
+    .strengthText{min-width:72px;text-align:right;color:var(--muted);font-size:12px;font-weight:900}
+
+    .checkbox-row{
+      display:grid;
+      grid-template-columns:auto 1fr;
+      gap:11px;
+      align-items:start;
+      padding:14px;
+      border:1px solid rgba(148,163,184,.18);
+      border-radius:16px;
+      background:rgba(2,6,23,.32);
+    }
+
+    .checkbox-row input{
+      width:18px;
+      height:18px;
+      margin:2px 0 0;
+      accent-color:var(--brand);
+    }
+
+    .checkbox-row span{font-size:13px;line-height:1.5;color:rgba(226,232,240,.78)}
+
+    .btn{
+      width:100%;
+      min-height:54px;
+      border:none;
+      border-radius:16px;
+      color:#fff;
+      background:linear-gradient(135deg, var(--brand), var(--brand-purple));
+      box-shadow:0 20px 55px rgba(37,99,235,.32);
+      font-size:16px;
+      font-weight:900;
+      letter-spacing:.01em;
+      cursor:pointer;
+      transition:transform .18s ease, filter .18s ease, box-shadow .18s ease;
+    }
+    .btn:hover{transform:translateY(-1px);filter:brightness(1.05);box-shadow:0 24px 65px rgba(37,99,235,.40)}
+    .btn:active{transform:translateY(0)}
+
+    .msg{min-height:20px;margin:0;text-align:center;color:var(--muted);font-size:14px;line-height:1.45}
+    .msg .ok{color:var(--ok);font-weight:900}
+    .msg .err{color:var(--err);font-weight:900}
+
+    .bottom{
+      margin:20px 0 0;
+      text-align:center;
+      color:var(--muted);
+      font-size:15px;
+    }
+    .bottom a{font-weight:900}
+
+    .security-note{
+      margin-top:18px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      color:rgba(203,213,225,.72);
+      font-size:12px;
+    }
+
+    .modalOverlay{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.62);
+      backdrop-filter:blur(12px);
+      -webkit-backdrop-filter:blur(12px);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index:9999;
+      padding:18px;
+    }
+    .modal{
+      width:min(430px, 100%);
+      border-radius:24px;
+      border:1px solid rgba(191,219,254,.24);
+      background:linear-gradient(180deg, rgba(15,23,42,.96), rgba(2,6,23,.92));
+      box-shadow:0 35px 120px rgba(0,0,0,.70);
+      padding:28px 24px 24px;
+      text-align:center;
+      position:relative;
+      overflow:hidden;
+    }
+    .modal::before{
+      content:"";
+      position:absolute;
+      inset:-50px;
+      background:radial-gradient(circle at 50% 14%, rgba(96,165,250,.26), transparent 62%);
+      filter:blur(14px);
+      pointer-events:none;
+    }
+    .modalTitle,.modalSub,.bigDots{position:relative;z-index:1}
+    .modalTitle{font-size:24px;font-weight:900;margin:0;color:#fff}
+    .modalSub{margin-top:10px;color:rgba(226,232,240,.75);font-size:14px;line-height:1.6}
+    .bigDots{margin-top:18px;display:flex;justify-content:center;gap:12px}
+    .bigDot{width:13px;height:13px;border-radius:50%;background:var(--brand-light);opacity:.28;animation:bigBlink 1.1s infinite}
+    .bigDot:nth-child(2){animation-delay:.18s}
+    .bigDot:nth-child(3){animation-delay:.36s}
+    @keyframes bigBlink{0%,100%{opacity:.25;transform:translateY(0)}45%{opacity:1;transform:translateY(-3px)}}
+
+    @media(max-width:900px){
+      body{padding:22px 14px;align-items:flex-start}
+      .auth-shell{grid-template-columns:1fr;border-radius:24px}
+      .brand-panel{display:none}
+      .form-panel{padding:28px 18px}
+      .mobile-logo{
+        display:flex;
+        justify-content:center;
+        height:84px;
+        overflow:hidden;
+        margin:-8px auto 16px;
+      }
+      .mobile-logo img{
+        width:260px;
+        height:110px;
+        object-fit:cover;
+        object-position:center 38%;
+      }
+    }
+
+    @media(max-width:560px){
+      .form-grid{grid-template-columns:1fr;gap:14px}
+      .full{grid-column:auto}
+      .form-header{text-align:center}
+      .form-panel{padding:24px 14px}
+      .auth-shell{border-radius:20px}
+      .checkbox-row{padding:13px}
+    }
+  </style>
+</head>
+
+<body>
+  <main class="auth-shell" aria-label="Create Veloci Global Markets account">
+    <aside class="brand-panel" aria-label="Veloci Global Markets benefits">
+      <div class="logo-mark" aria-hidden="true">
+        <img src="assets/vgm-logo.png" alt="" onerror="this.style.display='none';"/>
+      </div>
+
+      <div class="hero-copy">
+        <span class="eyebrow">Secure onboarding</span>
+        <h1>Trade global markets with confidence.</h1>
+        <p>Create your Veloci Global Markets profile in minutes and access a streamlined dashboard built for deposits, withdrawals, portfolio tracking, and account support.</p>
+      </div>
+
+      <div class="trust-grid" aria-label="Platform highlights">
+        <div class="trust-item">
+          <span class="trust-icon">✓</span>
+          <div><strong>Protected account access</strong><span>Email verification and password checks help keep new accounts secure.</span></div>
+        </div>
+        <div class="trust-item">
+          <span class="trust-icon">↗</span>
+          <div><strong>Fast setup</strong><span>Complete the essential details now and continue to verification immediately.</span></div>
+        </div>
+        <div class="trust-item">
+          <span class="trust-icon">24</span>
+          <div><strong>Client support</strong><span>Integrated support keeps help close while you manage your account.</span></div>
+        </div>
+      </div>
+    </aside>
+
+    <section class="form-panel">
+      <div class="form-card">
+        <div class="mobile-logo" aria-hidden="true">
+          <img src="assets/vgm-logo.png" alt="" onerror="this.style.display='none';"/>
+        </div>
+
+        <header class="form-header">
+          <h2>Create your account</h2>
+          <p>Use accurate personal details so your Veloci Global Markets profile can be verified without delays.</p>
+        </header>
+
+        <button class="oauthBtn" type="button" onclick="signUpWithGoogle()">
+          <span class="gIcon" aria-hidden="true">
+            <svg viewBox="0 0 48 48" role="img" aria-label="Google logo">
+              <path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303C33.648 32.659 29.196 36 24 36c-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.957 3.043l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"/>
+              <path fill="#FF3D00" d="M6.306 14.691l6.571 4.819C14.655 16.108 19.021 12 24 12c3.059 0 5.842 1.154 7.957 3.043l5.657-5.657C34.046 6.053 29.268 4 24 4c-7.682 0-14.342 4.337-17.694 10.691z"/>
+              <path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.197l-6.19-5.238C29.141 35.091 26.715 36 24 36c-5.173 0-9.573-3.305-11.2-7.915l-6.519 5.02C9.566 39.556 16.227 44 24 44z"/>
+              <path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303c-.792 2.367-2.398 4.343-4.494 5.565l.003-.002 6.19 5.238C36.564 39.214 44 34 44 24c0-1.341-.138-2.65-.389-3.917z"/>
+            </svg>
+          </span>
+          Continue with Google
+        </button>
+
+        <div class="divider">or sign up with email</div>
+
+        <form class="signup-form" onsubmit="signup(event)">
+          <div class="form-grid">
+            <div class="field">
+              <label class="label" for="fullname">Full name *</label>
+              <input id="fullname" class="input" type="text" placeholder="Jane Smith" autocomplete="name" required/>
+            </div>
+
+            <div class="field">
+              <label class="label" for="phone">Phone number *</label>
+              <input id="phone" class="input" type="tel" placeholder="+1 555 012 3456" autocomplete="tel" required/>
+            </div>
+
+            <div class="field full">
+              <label class="label" for="email">Email address *</label>
+              <input id="email" class="input" type="email" placeholder="you@example.com" autocomplete="email" required/>
+            </div>
+
+            <div class="field">
+              <label class="label" for="country">Country *</label>
+              <select id="country" class="input" autocomplete="country-name" required>
+                <option value="">Select country</option>
+                <option>Nigeria</option>
+                <option>United States</option>
+                <option>United Kingdom</option>
+                <option>Canada</option>
+                <option>Germany</option>
+                <option>France</option>
+                <option>South Africa</option>
+                <option>Kenya</option>
+                <option>Ghana</option>
+                <option>United Arab Emirates</option>
+                <option>Saudi Arabia</option>
+                <option>India</option>
+                <option>Australia</option>
+                <option>Brazil</option>
+                <option>Mexico</option>
+                <option>Japan</option>
+                <option>Singapore</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label class="label" for="accountCurrency">Account currency *</label>
+              <select id="accountCurrency" class="input" required>
+                <option value="">Select currency</option>
+                <option value="USD">USD - US Dollar</option>
+                <option value="EUR">EUR - Euro</option>
+                <option value="GBP">GBP - British Pound</option>
+              </select>
+            </div>
+
+            <div class="field full">
+              <label class="label" for="password">Password *</label>
+              <div class="pwWrap">
+                <input id="password" class="input" type="password" placeholder="Create a strong password" autocomplete="new-password" minlength="8" oninput="updateStrength()" required/>
+                <button class="togglePw" type="button" onclick="togglePassword('password')" aria-label="Show or hide password">
+                  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z" stroke="currentColor" stroke-width="1.8"/>
+                    <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" stroke="currentColor" stroke-width="1.8"/>
+                  </svg>
+                </button>
+              </div>
+              <div class="note" id="pwNote">Use at least 8 characters with a number, uppercase letter, and symbol for best protection.</div>
+              <div class="strengthRow" aria-hidden="true">
+                <div class="strengthBar"><div id="pwFill" class="strengthFill"></div></div>
+                <div id="pwText" class="strengthText">Weak</div>
+              </div>
+            </div>
+
+            <div class="field full">
+              <label class="label" for="confirmPassword">Confirm password *</label>
+              <div class="pwWrap">
+                <input id="confirmPassword" class="input" type="password" placeholder="Re-enter your password" autocomplete="new-password" minlength="8" oninput="checkMatch()" required/>
+                <button class="togglePw" type="button" onclick="togglePassword('confirmPassword')" aria-label="Show or hide confirm password">
+                  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z" stroke="currentColor" stroke-width="1.8"/>
+                    <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" stroke="currentColor" stroke-width="1.8"/>
+                  </svg>
+                </button>
+              </div>
+              <div class="note" id="matchNote">Make sure both passwords match.</div>
+            </div>
+          </div>
+
+          <label class="checkbox-row" for="termsAccepted">
+            <input id="termsAccepted" type="checkbox" required/>
+            <span>I confirm that I have read and agree to the <a href="terms.html" target="_blank" rel="noopener">Terms &amp; Conditions</a> and <a href="privacy.html" target="_blank" rel="noopener">Privacy Policy</a>.</span>
+          </label>
+
+          <button class="btn" type="submit">Create Account</button>
+          <p id="msg" class="msg" role="status" aria-live="polite"></p>
+        </form>
+
+        <div class="bottom">
+          Already have an account? <a href="login.html">Sign in</a>
+        </div>
+
+        <div class="security-note" aria-label="Security notice">🔒 Your account details are submitted through a secure authentication provider.</div>
+      </div>
+    </section>
+  </main>
+
+  <div id="verifyModal" class="modalOverlay" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-label="Verification email sent">
+      <h2 class="modalTitle">Verification email sent</h2>
+      <div class="modalSub">Please check your inbox and follow the verification link to activate your account.</div>
+      <div class="bigDots" aria-hidden="true">
+        <span class="bigDot"></span>
+        <span class="bigDot"></span>
+        <span class="bigDot"></span>
+      </div>
+    </div>
+  </div>
+
+<script>
+  const SUPABASE_URL="https://xdcscknfomlzwysczegc.supabase.co";
+  const SUPABASE_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhkY3Nja25mb21send5c2N6ZWdjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc3MTYzMDMsImV4cCI6MjA4MzI5MjMwM30.E6o2wFFMOpK1DghLUqnxG6Ig09djy4bmDQexprhAiB4";
+  const supabaseClient=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+
+  checkSessionSafely();
+  async function checkSessionSafely(){
+    await new Promise(r => setTimeout(r, 150));
+    const { data } = await supabaseClient.auth.getSession();
+    const session = data?.session;
+
+    if(session?.user){
+      if(!session.user.email_confirmed_at){
+        await supabaseClient.auth.signOut();
+        setMsg("err", "Please verify your email before continuing.");
+        return;
+      }
+      window.location.href="/session/";
+    }
+  }
+
+  function setMsg(type, text){
+    const msg=document.getElementById("msg");
+    if(type==="ok") msg.innerHTML=`<span class="ok">${text}</span>`;
+    else if(type==="err") msg.innerHTML=`<span class="err">${text}</span>`;
+    else msg.textContent=text;
+  }
+
+  function showVerifyModal(){
+    const modal = document.getElementById("verifyModal");
+    modal.style.display="flex";
+    modal.setAttribute("aria-hidden","false");
+  }
+
+  function togglePassword(id){
+    const el=document.getElementById(id);
+    el.type = (el.type==="password") ? "text" : "password";
+  }
+
+  function updateStrength(){
+    const pw=document.getElementById("password").value;
+    const fill=document.getElementById("pwFill");
+    const txt=document.getElementById("pwText");
+
+    let score=0;
+    if(pw.length >= 8) score++;
+    if(/[A-Z]/.test(pw)) score++;
+    if(/[0-9]/.test(pw)) score++;
+    if(/[^A-Za-z0-9]/.test(pw)) score++;
+
+    fill.style.width=((score/4)*100)+"%";
+    fill.style.background = score >= 3
+      ? "linear-gradient(90deg, #22c55e, #60a5fa)"
+      : score === 2
+        ? "linear-gradient(90deg, #f59e0b, #60a5fa)"
+        : "linear-gradient(90deg, #f87171, #f59e0b)";
+
+    let label="Weak";
+    if(score===2) label="Medium";
+    if(score>=3) label="Strong";
+    txt.textContent=label;
+
+    checkMatch();
+  }
+
+  function checkMatch(){
+    const p1=document.getElementById("password").value;
+    const p2=document.getElementById("confirmPassword").value;
+    const match=document.getElementById("matchNote");
+
+    if(!p2){
+      match.textContent="Make sure both passwords match.";
+      match.style.color="#a7b3c7";
+      return;
+    }
+
+    if(p1===p2){
+      match.textContent="Passwords match.";
+      match.style.color="#22c55e";
+    }else{
+      match.textContent="Passwords do not match.";
+      match.style.color="#f87171";
+    }
+  }
+
+  async function signUpWithGoogle(){
+    setMsg("", "Opening Google sign-in…");
+
+    const redirectTo = window.location.origin + "/session/";
+
+    const { error } = await supabaseClient.auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo }
+    });
+
+    if(error){
+      setMsg("err", error.message);
+      return;
+    }
+  }
+
+  async function signup(event){
+    if(event) event.preventDefault();
+    setMsg("", "Creating account…");
+
+    try{
+      const full_name=document.getElementById("fullname").value.trim();
+      const email=document.getElementById("email").value.trim();
+      const country=document.getElementById("country").value.trim();
+      const accountCurrency=document.getElementById("accountCurrency").value.trim();
+      const phone=document.getElementById("phone").value.trim();
+      const password=document.getElementById("password").value;
+      const confirmPassword=document.getElementById("confirmPassword").value;
+      const termsAccepted=document.getElementById("termsAccepted").checked;
+
+      if(!full_name || !email || !country || !accountCurrency || !phone || !password || !confirmPassword){
+        setMsg("err","Please complete all required fields.");
+        return;
+      }
+
+      if(!termsAccepted){
+        setMsg("err","Please accept the Terms & Conditions and Privacy Policy.");
+        return;
+      }
+
+      if(password.length < 8){
+        setMsg("err","Password must be at least 8 characters.");
+        return;
+      }
+
+      if(password !== confirmPassword){
+        setMsg("err","Passwords do not match.");
+        return;
+      }
+
+      const redirectTo = window.location.origin + "/verified.html";
+
+      const { data, error } = await supabaseClient.auth.signUp({
+        email,
+        password,
+        options:{
+          emailRedirectTo: redirectTo,
+          data:{ full_name, phone, country, account_currency: accountCurrency, terms_accepted: termsAccepted }
+        }
+      });
+
+      if(error){
+        setMsg("err", error.message);
+        return;
+      }
+
+      const userId = data?.user?.id || null;
+      const { error: dbError } = await supabaseClient.from("users").upsert([{
+        id: userId,
+        email,
+        full_name,
+        phone,
+        country,
+        balance: 0,
+        notes: "new user"
+      }], { onConflict: "email" });
+
+      if(dbError){
+        console.warn("Users table upsert failed:", dbError);
+      }
+
+      setMsg("", "");
+      showVerifyModal();
+
+      setTimeout(()=>{
+        window.location.href="verify.html?email="+encodeURIComponent(email);
+      }, 1800);
+
+    }catch(e){
+      console.error("Signup crashed:", e);
+      const msg = (e && e.message) ? e.message : String(e);
+      setMsg("err", msg.includes("Failed to fetch")
+        ? "Network blocked: Supabase request failed. Check Supabase Auth URL Configuration (Site URL + Redirect URLs) and ensure your domain is allowed."
+        : msg
+      );
+    }
+  }
+
+  updateStrength();
+</script>
+
+<!-- Smartsupp Live Chat script -->
+<script type="text/javascript">
+var _smartsupp = _smartsupp || {};
+_smartsupp.key = 'bf17dc4b07110cdfdfc72a377e70c50879c14cea';
+window.smartsupp||(function(d) {
+ var s,c,o=smartsupp=function(){ o._.push(arguments)};o._=[];
+ s=d.getElementsByTagName('script')[0];c=d.createElement('script');
+ c.type='text/javascript';c.charset='utf-8';c.async=true;
+ c.src='https://www.smartsuppchat.com/loader.js?';s.parentNode.insertBefore(c,s);
+})(document);
+</script>
+</body>
+</html>
