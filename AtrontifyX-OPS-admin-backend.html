@@ -357,8 +357,8 @@
     <div style="font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:28px;">Restricted access — authorised personnel only</div>
     <div style="display:flex;flex-direction:column;gap:12px;text-align:left;">
       <div style="display:flex;flex-direction:column;gap:4px;">
-        <label style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.07em;">Admin Username</label>
-        <input id="admin-user" type="text" placeholder="Enter username" style="height:42px;background:#0f1117;border:1.5px solid #2a2d3a;border-radius:8px;padding:0 14px;font-size:14px;color:#fff;outline:none;" onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='#2a2d3a'">
+        <label style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.07em;">Admin Email</label>
+        <input id="admin-user" type="text" placeholder="admin@astrontifyx.com" style="height:42px;background:#0f1117;border:1.5px solid #2a2d3a;border-radius:8px;padding:0 14px;font-size:14px;color:#fff;outline:none;" onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='#2a2d3a'">
       </div>
       <div style="display:flex;flex-direction:column;gap:4px;">
         <label style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.07em;">Password</label>
@@ -481,7 +481,7 @@
         <div class="sidebar__user-name"></div>
         <div class="sidebar__user-role">Full access · OPS</div>
       </div>
-      <button class="sidebar__logout" onclick="document.getElementById('login-gate').style.display='flex';document.getElementById('main-app').style.display='none';" title="Sign out">
+      <button class="sidebar__logout" onclick="logoutAdmin()" title="Sign out">
         <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
       </button>
     </div>
@@ -1382,59 +1382,7 @@
      AUTH
   ============================================================ */
   
-async function adminLogin(){
 
-  const username =
-    document.getElementById('admin-user').value.trim();
-
-  const password =
-    document.getElementById('admin-pass').value.trim();
-
-  const loginErr =
-    document.getElementById('login-err');
-
-  loginErr.style.display = 'none';
-
-  try{
-
-    const { data, error } = await supabase
-      .from('admins')
-      .select('*')
-      .eq('username', username)
-      .eq('password', password)
-      .single();
-
-    if(error || !data){
-
-      loginErr.innerText =
-        'Invalid admin credentials';
-
-      loginErr.style.display = 'block';
-
-      return;
-
-    }
-
-    document.getElementById('login-gate')
-      .style.display = 'none';
-
-    document.getElementById('main-app')
-      .style.display = 'block';
-
-    console.log('ADMIN AUTH SUCCESS');
-
-  }catch(err){
-
-    console.error(err);
-
-    loginErr.innerText =
-      'Connection error';
-
-    loginErr.style.display = 'block';
-
-  }
-
-}
 
 
 // ── Upgrade adminLogin to use Supabase Auth ──────────────────
@@ -2950,6 +2898,116 @@ document.addEventListener('DOMContentLoaded',()=>{
   },1000);
 
 });
+
+</script>
+
+
+<script>
+
+async function adminLogin(){
+
+  const email =
+    document.getElementById('admin-user')
+    .value
+    .trim();
+
+  const password =
+    document.getElementById('admin-pass')
+    .value
+    .trim();
+
+  const loginErr =
+    document.getElementById('login-err');
+
+  loginErr.style.display = 'none';
+
+  try{
+
+    const { data, error } =
+      await supabase.auth.signInWithPassword({
+
+        email,
+        password
+
+      });
+
+    if(error){
+
+      loginErr.innerText =
+        error.message;
+
+      loginErr.style.display =
+        'block';
+
+      return;
+
+    }
+
+    const { data: adminCheck } =
+      await supabase
+      .from('admins')
+      .select('*')
+      .eq('id', data.user.id)
+      .single();
+
+    if(!adminCheck){
+
+      loginErr.innerText =
+        'Not authorized';
+
+      loginErr.style.display =
+        'block';
+
+      await supabase.auth.signOut();
+
+      return;
+
+    }
+
+    document.getElementById('login-gate')
+      .style.display = 'none';
+
+    document.getElementById('main-app')
+      .style.display = 'block';
+
+    console.log('SECURE ADMIN LOGIN SUCCESS');
+
+  }catch(err){
+
+    console.error(err);
+
+    loginErr.innerText =
+      'Connection error';
+
+    loginErr.style.display =
+      'block';
+
+  }
+
+}
+
+supabase.auth.getSession()
+.then(({ data }) => {
+
+  if(data.session){
+
+    document.getElementById('login-gate')
+      .style.display = 'none';
+
+    document.getElementById('main-app')
+      .style.display = 'block';
+
+  }
+
+});
+
+async function logoutAdmin(){
+
+  await supabase.auth.signOut();
+
+  location.reload();
+
+}
 
 </script>
 
