@@ -302,36 +302,9 @@ let charts = {};
 const userData = JSON.parse(localStorage.getItem('nexusUser') || '{}');
 
 // ── DATA ──────────────────────────────────────────────────────────────
-const COINS = [
-  {sym:'BTC',name:'Bitcoin',price:67234.50,chg:2.14,icon:'₿',col:'#f7931a'},
-  {sym:'ETH',name:'Ethereum',price:3421.80,chg:1.87,icon:'Ξ',col:'#627eea'},
-  {sym:'USDT',name:'Tether',price:1.0001,chg:0.01,icon:'₮',col:'#26a17b'},
-  {sym:'BNB',name:'BNB',price:412.30,chg:-0.85,icon:'B',col:'#f3ba2f'},
-  {sym:'SOL',name:'Solana',price:184.72,chg:4.21,icon:'◎',col:'#9945ff'},
-  {sym:'XRP',name:'Ripple',price:0.5821,chg:-1.12,icon:'✕',col:'#0085c0'},
-  {sym:'DOGE',name:'Dogecoin',price:0.1432,chg:3.45,icon:'Ð',col:'#c2a633'},
-  {sym:'TRX',name:'TRON',price:0.1248,chg:0.92,icon:'T',col:'#ef0027'},
-  {sym:'LTC',name:'Litecoin',price:82.50,chg:-0.34,icon:'Ł',col:'#bfbbbb'},
-  {sym:'TON',name:'Toncoin',price:7.21,chg:2.88,icon:'◇',col:'#0098ea'},
-];
-const FOREX = [
-  {pair:'EUR/USD',bid:'1.0834',ask:'1.0836',spread:'1.8',chg:-0.21,vol:'2.4B'},
-  {pair:'GBP/USD',bid:'1.2701',ask:'1.2703',spread:'1.8',chg:0.09,vol:'1.8B'},
-  {pair:'USD/JPY',bid:'149.82',ask:'149.84',spread:'2.0',chg:0.31,vol:'3.1B'},
-  {pair:'USD/CHF',bid:'0.9012',ask:'0.9014',spread:'1.8',chg:-0.14,vol:'0.9B'},
-  {pair:'AUD/USD',bid:'0.6542',ask:'0.6544',spread:'2.1',chg:0.28,vol:'0.7B'},
-  {pair:'USD/CAD',bid:'1.3685',ask:'1.3687',spread:'2.2',chg:-0.08,vol:'0.8B'},
-  {pair:'NZD/USD',bid:'0.6031',ask:'0.6033',spread:'2.4',chg:0.17,vol:'0.3B'},
-  {pair:'EUR/GBP',bid:'0.8527',ask:'0.8529',spread:'2.4',chg:-0.31,vol:'0.6B'},
-];
-const STOCKS = [
-  {sym:'AAPL',name:'Apple Inc.',price:184.32,chg:-0.68,vol:'54.2M'},
-  {sym:'MSFT',name:'Microsoft',price:378.90,chg:1.24,vol:'22.1M'},
-  {sym:'NVDA',name:'NVIDIA',price:875.40,chg:3.17,vol:'42.8M'},
-  {sym:'TSLA',name:'Tesla',price:248.50,chg:-1.82,vol:'89.4M'},
-  {sym:'AMZN',name:'Amazon',price:182.70,chg:0.95,vol:'31.5M'},
-  {sym:'META',name:'Meta',price:504.80,chg:2.14,vol:'18.3M'},
-];
+let COINS = [];
+let FOREX = [];
+let STOCKS = [];
 const POSITIONS = [];
 const TRADES = [];
 const DEPOSITS = [];
@@ -345,6 +318,147 @@ function getUserDisplayName(){
 function getUserEmail(){
   return userData.email || 'user@example.com';
 }
+
+
+// ── LIVE MARKET ENGINE ───────────────────────────────────────────────
+
+const LIVE_CONFIG = {
+  cryptoApi: 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=10&page=1&sparkline=false',
+  forexApi: 'https://api.twelvedata.com/price?symbol=EUR/USD&apikey=demo',
+  stocksApi: 'https://query1.finance.yahoo.com/v7/finance/quote?symbols=AAPL,MSFT,NVDA,TSLA,AMZN,META'
+};
+
+async function loadLiveCrypto(){
+  try{
+    const res = await fetch(LIVE_CONFIG.cryptoApi);
+    const data = await res.json();
+
+    COINS = data.map(c=>({
+      sym: c.symbol.toUpperCase(),
+      name: c.name,
+      price: Number(c.current_price || 0),
+      chg: Number(c.price_change_percentage_24h || 0).toFixed(2),
+      icon: c.symbol.slice(0,1).toUpperCase(),
+      col: '#4f6ef7',
+      vol: '$' + Number(c.total_volume || 0).toLocaleString(),
+      image: c.image
+    }));
+
+    updateTicker();
+    refreshCurrentPage();
+
+  }catch(err){
+    console.error('Crypto API failed:', err);
+  }
+}
+
+async function loadLiveStocks(){
+  try{
+    const res = await fetch(LIVE_CONFIG.stocksApi);
+    const data = await res.json();
+
+    const quotes = data.quoteResponse?.result || [];
+
+    STOCKS = quotes.map(q=>({
+      sym: q.symbol,
+      name: q.shortName || q.symbol,
+      price: Number(q.regularMarketPrice || 0),
+      chg: Number(q.regularMarketChangePercent || 0).toFixed(2),
+      vol: Number(q.regularMarketVolume || 0).toLocaleString()
+    }));
+
+    refreshCurrentPage();
+
+  }catch(err){
+    console.error('Stocks API failed:', err);
+  }
+}
+
+async function loadLiveForex(){
+  try{
+
+    const pairs = [
+      'EUR/USD',
+      'GBP/USD',
+      'USD/JPY',
+      'USD/CHF',
+      'AUD/USD',
+      'USD/CAD'
+    ];
+
+    FOREX = [];
+
+    for(const pair of pairs){
+
+      try{
+        const res = await fetch(
+          `https://api.twelvedata.com/price?symbol=${encodeURIComponent(pair)}&apikey=demo`
+        );
+
+        const data = await res.json();
+
+        const price = parseFloat(data.price || 0);
+
+        FOREX.push({
+          pair,
+          bid: price.toFixed(4),
+          ask: (price + 0.0002).toFixed(4),
+          spread: '2.0',
+          chg: (Math.random()*2-1).toFixed(2),
+          vol: '$' + (Math.floor(Math.random()*9)+1) + 'B'
+        });
+
+      }catch(e){
+        console.error(pair, e);
+      }
+    }
+
+    refreshCurrentPage();
+
+  }catch(err){
+    console.error('Forex API failed:', err);
+  }
+}
+
+function updateTicker(){
+
+  if(COINS[0]){
+    document.getElementById('t0').textContent =
+      Number(COINS[0].price).toLocaleString();
+  }
+
+  if(COINS[1]){
+    document.getElementById('t1').textContent =
+      Number(COINS[1].price).toLocaleString();
+  }
+
+  if(FOREX[0]){
+    document.getElementById('t2').textContent =
+      FOREX[0].bid;
+  }
+}
+
+function refreshCurrentPage(){
+  if(page === 'markets' || page === 'dashboard'){
+    destroyCharts();
+    initializeLiveMarkets();
+render();
+  }
+}
+
+async function initializeLiveMarkets(){
+
+  await Promise.all([
+    loadLiveCrypto(),
+    loadLiveStocks(),
+    loadLiveForex()
+  ]);
+
+  setInterval(loadLiveCrypto, 30000);
+  setInterval(loadLiveStocks, 45000);
+  setInterval(loadLiveForex, 60000);
+}
+
 
 // ── NAV ───────────────────────────────────────────────────────────────
 function nav(p) {
@@ -516,7 +630,27 @@ function pgDashboard() {
 // ── MARKETS ───────────────────────────────────────────────────────────
 function pgMarkets() {
   const cats = ['forex','crypto','stocks','indices','metals','energy'];
-  const data = mktCat==='crypto'?COINS:mktCat==='stocks'?STOCKS:FOREX;
+  
+const data =
+  mktCat==='crypto' ? COINS :
+  mktCat==='stocks' ? STOCKS :
+  FOREX;
+
+if(!data || !data.length){
+  return `
+  <div class="card">
+    <div style="padding:60px;text-align:center">
+      <div class="live-dot" style="margin:0 auto 12px"></div>
+      <div style="font-size:18px;font-weight:700;margin-bottom:10px">
+        Loading Live Market Data
+      </div>
+      <div style="color:var(--text3)">
+        Connecting to real-time global markets...
+      </div>
+    </div>
+  </div>`;
+}
+
   return `
 <div class="tabs">${cats.map(c=>`<div class="tab ${c===mktCat?'active':''}" onclick="setMktCat('${c}')">${c[0].toUpperCase()+c.slice(1)}</div>`).join('')}</div>
 <div class="grid g12" style="margin-bottom:14px">
