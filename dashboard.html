@@ -518,6 +518,58 @@ function closeWithdrawalDetails(){
   document.getElementById('withdrawDetailsModal').style.display = 'none';
 }
 
+
+
+function viewWithdrawalDetails(index){
+
+  const w = WITHDRAWALS[index];
+
+  if(!w) return;
+
+  document.getElementById('withdrawDetailsContent').innerHTML = `
+
+    <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)">
+      <span>Transaction ID</span>
+      <strong>${w.id || 'N/A'}</strong>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)">
+      <span>Date</span>
+      <strong>${w.date || new Date().toLocaleString()}</strong>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)">
+      <span>Amount</span>
+      <strong>$${Number(w.amount || 0).toLocaleString()}</strong>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)">
+      <span>Method</span>
+      <strong>${w.method || 'Withdrawal'}</strong>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)">
+      <span>Status</span>
+      <strong>${w.status || 'pending'}</strong>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;padding:12px 0">
+      <span>Wallet / Account</span>
+      <strong>${w.wallet_address || w.account_number || 'N/A'}</strong>
+    </div>
+
+  `;
+
+  document.getElementById('withdrawDetailsModal').style.display = 'flex';
+}
+
+function closeWithdrawalDetails(){
+
+  document.getElementById('withdrawDetailsModal').style.display = 'none';
+
+}
+
+
 </script>
     </div>
 
@@ -1572,6 +1624,58 @@ function closeWithdrawalDetails(){
   document.getElementById('withdrawDetailsModal').style.display = 'none';
 }
 
+
+
+function viewWithdrawalDetails(index){
+
+  const w = WITHDRAWALS[index];
+
+  if(!w) return;
+
+  document.getElementById('withdrawDetailsContent').innerHTML = `
+
+    <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)">
+      <span>Transaction ID</span>
+      <strong>${w.id || 'N/A'}</strong>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)">
+      <span>Date</span>
+      <strong>${w.date || new Date().toLocaleString()}</strong>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)">
+      <span>Amount</span>
+      <strong>$${Number(w.amount || 0).toLocaleString()}</strong>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)">
+      <span>Method</span>
+      <strong>${w.method || 'Withdrawal'}</strong>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)">
+      <span>Status</span>
+      <strong>${w.status || 'pending'}</strong>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;padding:12px 0">
+      <span>Wallet / Account</span>
+      <strong>${w.wallet_address || w.account_number || 'N/A'}</strong>
+    </div>
+
+  `;
+
+  document.getElementById('withdrawDetailsModal').style.display = 'flex';
+}
+
+function closeWithdrawalDetails(){
+
+  document.getElementById('withdrawDetailsModal').style.display = 'none';
+
+}
+
+
 </script>
 
 <script src="https://s3.tradingview.com/tv.js">
@@ -1670,6 +1774,58 @@ function viewWithdrawalDetails(index){
 function closeWithdrawalDetails(){
   document.getElementById('withdrawDetailsModal').style.display = 'none';
 }
+
+
+
+function viewWithdrawalDetails(index){
+
+  const w = WITHDRAWALS[index];
+
+  if(!w) return;
+
+  document.getElementById('withdrawDetailsContent').innerHTML = `
+
+    <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)">
+      <span>Transaction ID</span>
+      <strong>${w.id || 'N/A'}</strong>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)">
+      <span>Date</span>
+      <strong>${w.date || new Date().toLocaleString()}</strong>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)">
+      <span>Amount</span>
+      <strong>$${Number(w.amount || 0).toLocaleString()}</strong>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)">
+      <span>Method</span>
+      <strong>${w.method || 'Withdrawal'}</strong>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)">
+      <span>Status</span>
+      <strong>${w.status || 'pending'}</strong>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;padding:12px 0">
+      <span>Wallet / Account</span>
+      <strong>${w.wallet_address || w.account_number || 'N/A'}</strong>
+    </div>
+
+  `;
+
+  document.getElementById('withdrawDetailsModal').style.display = 'flex';
+}
+
+function closeWithdrawalDetails(){
+
+  document.getElementById('withdrawDetailsModal').style.display = 'none';
+
+}
+
 
 </script>
 
@@ -1816,6 +1972,58 @@ function closeWithdrawalDetails(){
   document.getElementById('withdrawDetailsModal').style.display = 'none';
 }
 
+
+
+function viewWithdrawalDetails(index){
+
+  const w = WITHDRAWALS[index];
+
+  if(!w) return;
+
+  document.getElementById('withdrawDetailsContent').innerHTML = `
+
+    <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)">
+      <span>Transaction ID</span>
+      <strong>${w.id || 'N/A'}</strong>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)">
+      <span>Date</span>
+      <strong>${w.date || new Date().toLocaleString()}</strong>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)">
+      <span>Amount</span>
+      <strong>$${Number(w.amount || 0).toLocaleString()}</strong>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)">
+      <span>Method</span>
+      <strong>${w.method || 'Withdrawal'}</strong>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)">
+      <span>Status</span>
+      <strong>${w.status || 'pending'}</strong>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;padding:12px 0">
+      <span>Wallet / Account</span>
+      <strong>${w.wallet_address || w.account_number || 'N/A'}</strong>
+    </div>
+
+  `;
+
+  document.getElementById('withdrawDetailsModal').style.display = 'flex';
+}
+
+function closeWithdrawalDetails(){
+
+  document.getElementById('withdrawDetailsModal').style.display = 'none';
+
+}
+
+
 </script>
 
 
@@ -1916,6 +2124,58 @@ function viewWithdrawalDetails(index){
 function closeWithdrawalDetails(){
   document.getElementById('withdrawDetailsModal').style.display = 'none';
 }
+
+
+
+function viewWithdrawalDetails(index){
+
+  const w = WITHDRAWALS[index];
+
+  if(!w) return;
+
+  document.getElementById('withdrawDetailsContent').innerHTML = `
+
+    <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)">
+      <span>Transaction ID</span>
+      <strong>${w.id || 'N/A'}</strong>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)">
+      <span>Date</span>
+      <strong>${w.date || new Date().toLocaleString()}</strong>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)">
+      <span>Amount</span>
+      <strong>$${Number(w.amount || 0).toLocaleString()}</strong>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)">
+      <span>Method</span>
+      <strong>${w.method || 'Withdrawal'}</strong>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)">
+      <span>Status</span>
+      <strong>${w.status || 'pending'}</strong>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;padding:12px 0">
+      <span>Wallet / Account</span>
+      <strong>${w.wallet_address || w.account_number || 'N/A'}</strong>
+    </div>
+
+  `;
+
+  document.getElementById('withdrawDetailsModal').style.display = 'flex';
+}
+
+function closeWithdrawalDetails(){
+
+  document.getElementById('withdrawDetailsModal').style.display = 'none';
+
+}
+
 
 </script>
 
@@ -2057,6 +2317,58 @@ function closeWithdrawalDetails(){
   document.getElementById('withdrawDetailsModal').style.display = 'none';
 }
 
+
+
+function viewWithdrawalDetails(index){
+
+  const w = WITHDRAWALS[index];
+
+  if(!w) return;
+
+  document.getElementById('withdrawDetailsContent').innerHTML = `
+
+    <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)">
+      <span>Transaction ID</span>
+      <strong>${w.id || 'N/A'}</strong>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)">
+      <span>Date</span>
+      <strong>${w.date || new Date().toLocaleString()}</strong>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)">
+      <span>Amount</span>
+      <strong>$${Number(w.amount || 0).toLocaleString()}</strong>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)">
+      <span>Method</span>
+      <strong>${w.method || 'Withdrawal'}</strong>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)">
+      <span>Status</span>
+      <strong>${w.status || 'pending'}</strong>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;padding:12px 0">
+      <span>Wallet / Account</span>
+      <strong>${w.wallet_address || w.account_number || 'N/A'}</strong>
+    </div>
+
+  `;
+
+  document.getElementById('withdrawDetailsModal').style.display = 'flex';
+}
+
+function closeWithdrawalDetails(){
+
+  document.getElementById('withdrawDetailsModal').style.display = 'none';
+
+}
+
+
 </script>
 
 
@@ -2156,6 +2468,58 @@ function viewWithdrawalDetails(index){
 function closeWithdrawalDetails(){
   document.getElementById('withdrawDetailsModal').style.display = 'none';
 }
+
+
+
+function viewWithdrawalDetails(index){
+
+  const w = WITHDRAWALS[index];
+
+  if(!w) return;
+
+  document.getElementById('withdrawDetailsContent').innerHTML = `
+
+    <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)">
+      <span>Transaction ID</span>
+      <strong>${w.id || 'N/A'}</strong>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)">
+      <span>Date</span>
+      <strong>${w.date || new Date().toLocaleString()}</strong>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)">
+      <span>Amount</span>
+      <strong>$${Number(w.amount || 0).toLocaleString()}</strong>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)">
+      <span>Method</span>
+      <strong>${w.method || 'Withdrawal'}</strong>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)">
+      <span>Status</span>
+      <strong>${w.status || 'pending'}</strong>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;padding:12px 0">
+      <span>Wallet / Account</span>
+      <strong>${w.wallet_address || w.account_number || 'N/A'}</strong>
+    </div>
+
+  `;
+
+  document.getElementById('withdrawDetailsModal').style.display = 'flex';
+}
+
+function closeWithdrawalDetails(){
+
+  document.getElementById('withdrawDetailsModal').style.display = 'none';
+
+}
+
 
 </script>
 
@@ -2661,6 +3025,58 @@ function viewWithdrawalDetails(index){
 function closeWithdrawalDetails(){
   document.getElementById('withdrawDetailsModal').style.display = 'none';
 }
+
+
+
+function viewWithdrawalDetails(index){
+
+  const w = WITHDRAWALS[index];
+
+  if(!w) return;
+
+  document.getElementById('withdrawDetailsContent').innerHTML = `
+
+    <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)">
+      <span>Transaction ID</span>
+      <strong>${w.id || 'N/A'}</strong>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)">
+      <span>Date</span>
+      <strong>${w.date || new Date().toLocaleString()}</strong>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)">
+      <span>Amount</span>
+      <strong>$${Number(w.amount || 0).toLocaleString()}</strong>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)">
+      <span>Method</span>
+      <strong>${w.method || 'Withdrawal'}</strong>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)">
+      <span>Status</span>
+      <strong>${w.status || 'pending'}</strong>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;padding:12px 0">
+      <span>Wallet / Account</span>
+      <strong>${w.wallet_address || w.account_number || 'N/A'}</strong>
+    </div>
+
+  `;
+
+  document.getElementById('withdrawDetailsModal').style.display = 'flex';
+}
+
+function closeWithdrawalDetails(){
+
+  document.getElementById('withdrawDetailsModal').style.display = 'none';
+
+}
+
 
 </script>
 
