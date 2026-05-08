@@ -281,7 +281,7 @@ label{font-size:11.5px;color:var(--text3);margin-bottom:6px;display:block;font-w
         <div class="tb-btn" onclick="toggleTheme()">
           <svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18V3z" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2" fill="none"/></svg>
         </div>
-        <div class="avatar">AK</div>
+        <div class="avatar">${(userData.fullName || "NU").split(" ").map(n=>n[0]).join("").slice(0,2)}</div>
       </div>
     </div>
 
@@ -297,6 +297,9 @@ let page = 'dashboard', isDark = true, selCoin = 'BTC',
     tradeDir = 'buy', orderType = 'market',
     settTab = 'profile', histTab = 'trades', mktCat = 'forex';
 let charts = {};
+
+
+const userData = JSON.parse(localStorage.getItem('nexusUser') || '{}');
 
 // ── DATA ──────────────────────────────────────────────────────────────
 const COINS = [
@@ -329,30 +332,19 @@ const STOCKS = [
   {sym:'AMZN',name:'Amazon',price:182.70,chg:0.95,vol:'31.5M'},
   {sym:'META',name:'Meta',price:504.80,chg:2.14,vol:'18.3M'},
 ];
-const POSITIONS = [
-  {id:'#3421',pair:'BTC/USD',type:'BUY',size:0.5,entry:65480,current:67234.50,pnl:877.25},
-  {id:'#3419',pair:'EUR/USD',type:'SELL',size:10000,entry:1.0861,current:1.0834,pnl:27.00},
-  {id:'#3418',pair:'GOLD',type:'BUY',size:1,entry:2295.40,current:2318.40,pnl:23.00},
-  {id:'#3415',pair:'AAPL',type:'BUY',size:10,entry:182.10,current:184.32,pnl:22.20},
-];
-const TRADES = [
-  {id:'#3412',pair:'ETH/USD',type:'BUY',size:2,open:3210.40,close:3421.80,pnl:422.80,date:'2024-03-08 14:22'},
-  {id:'#3410',pair:'GBP/USD',type:'SELL',size:5000,open:1.2840,close:1.2701,pnl:69.50,date:'2024-03-07 09:15'},
-  {id:'#3408',pair:'SOL/USD',type:'BUY',size:20,open:168.40,close:184.72,pnl:326.40,date:'2024-03-06 16:40'},
-  {id:'#3405',pair:'NVDA',type:'BUY',size:5,open:842.10,close:875.40,pnl:166.50,date:'2024-03-05 11:30'},
-  {id:'#3401',pair:'USD/JPY',type:'BUY',size:10000,open:148.82,close:149.82,pnl:66.80,date:'2024-03-04 08:45'},
-  {id:'#3398',pair:'DOGE/USD',type:'BUY',size:5000,open:0.1180,close:0.1432,pnl:126.00,date:'2024-03-03 17:10'},
-];
-const DEPOSITS = [
-  {id:'#D0091',method:'BTC',amount:'$2,500.00',date:'2024-03-08 10:14',txid:'bc1q7k2…4x9m',status:'completed'},
-  {id:'#D0090',method:'ETH',amount:'$1,000.00',date:'2024-03-05 14:30',txid:'0x8f2a…7b3c',status:'completed'},
-  {id:'#D0089',method:'USDT',amount:'$500.00',date:'2024-03-01 09:00',txid:'TXb2f4…8k1z',status:'pending'},
-];
-const WITHDRAWALS = [
-  {id:'#W0042',method:'BTC',amount:'$1,200.00',date:'2024-03-07 16:22',dest:'bc1q3m…9k4p',status:'completed'},
-  {id:'#W0041',method:'Bank Wire',amount:'$3,000.00',date:'2024-03-02 11:00',dest:'****4821',status:'pending'},
-  {id:'#W0040',method:'ETH',amount:'$800.00',date:'2024-02-28 13:45',dest:'0x4d7b…2c9a',status:'rejected'},
-];
+const POSITIONS = [];
+const TRADES = [];
+const DEPOSITS = [];
+const WITHDRAWALS = [];
+
+
+function getUserDisplayName(){
+  return userData.fullName || 'New User';
+}
+
+function getUserEmail(){
+  return userData.email || 'user@example.com';
+}
 
 // ── NAV ───────────────────────────────────────────────────────────────
 function nav(p) {
@@ -363,7 +355,17 @@ function nav(p) {
   const titles = {dashboard:'Dashboard',markets:'Markets',terminal:'Trade Terminal',deposit:'Deposit',withdraw:'Withdraw',history:'History',settings:'Settings'};
   document.getElementById('pageTitle').textContent = titles[p] || p;
   destroyCharts();
-  render();
+  
+window.addEventListener('DOMContentLoaded', () => {
+  if(!localStorage.getItem('nexusUser')){
+    localStorage.setItem('nexusUser', JSON.stringify({
+      fullName: '',
+      email: ''
+    }));
+  }
+});
+
+render();
 }
 
 function toggleSidebar() {
@@ -418,19 +420,19 @@ function pgDashboard() {
   return `
 <div class="grid g4" style="margin-bottom:14px">
   <div class="stat-card">${statIcon(walletSVG,'rgba(79,110,247,0.15)','var(--accent2)')}
-    <div class="stat-label">Portfolio Balance</div><div class="stat-val">$48,342.80</div>
+    <div class="stat-label">Portfolio Balance</div><div class="stat-val">$0.00</div>
     <div class="stat-chg up">${svgTrend} +$1,240.50 today</div>
   </div>
   <div class="stat-card">${statIcon(areaSVG,'rgba(34,197,94,0.15)','var(--green)')}
-    <div class="stat-label">Equity</div><div class="stat-val">$49,271.45</div>
-    <div class="stat-chg up">${svgTrend} Unrealized +$928.65</div>
+    <div class="stat-label">Equity</div><div class="stat-val">$0.00</div>
+    <div class="stat-chg up">${svgTrend} Unrealized $0.00</div>
   </div>
   <div class="stat-card">${statIcon(scaleSVG,'rgba(245,158,11,0.15)','var(--amber)')}
-    <div class="stat-label">Free Margin</div><div class="stat-val">$35,128.20</div>
+    <div class="stat-label">Free Margin</div><div class="stat-val">$0.00</div>
     <div class="stat-chg" style="color:var(--text3)">Margin Used: $13,214.60</div>
   </div>
   <div class="stat-card">${statIcon(svgTrend,'rgba(20,184,166,0.15)','var(--teal)')}
-    <div class="stat-label">Total P&amp;L (Today)</div><div class="stat-val up">+$928.65</div>
+    <div class="stat-label">Total P&amp;L (Today)</div><div class="stat-val up">$0.00</div>
     <div class="stat-chg up">${svgFire} 4 winning trades</div>
   </div>
 </div>
@@ -1115,12 +1117,12 @@ function renderSettingsContent(){
 
       <div class="fg">
         <label>Full Name</label>
-        <input value="Alex Kane">
+        <input value="${userData.fullName || "New User"}">
       </div>
 
       <div class="fg">
         <label>Email Address</label>
-        <input value="alex@nexusmarkets.com">
+        <input value="${userData.email || "user@example.com"}">
       </div>
 
       <div class="fg">
