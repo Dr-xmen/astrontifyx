@@ -267,6 +267,206 @@ background:transparent !important;
   margin-top:-2px !important;
 }
 
+
+/* MOBILE RESPONSIVE FIXES */
+@media(max-width:1024px){
+  .topbar{
+    padding:0 10px;
+  }
+
+  .tb-right{
+    gap:6px;
+  }
+
+  .app{
+    overflow:hidden;
+  }
+
+  .content{
+    padding:12px;
+  }
+
+  .card,
+  .trade-panel{
+    padding:14px;
+  }
+
+  table{
+    min-width:700px;
+  }
+}
+
+@media(max-width:860px){
+
+  .sidebar{
+    position:fixed;
+    left:-100%;
+    top:0;
+    height:100vh;
+    z-index:9999;
+    width:240px !important;
+    transition:left .3s ease;
+    box-shadow:0 0 30px rgba(0,0,0,.45);
+  }
+
+  .sidebar.collapsed{
+    left:-100%;
+    width:240px !important;
+  }
+
+  .sidebar.mobile-open{
+    left:0;
+  }
+
+  .main{
+    width:100%;
+  }
+
+  .topbar{
+    gap:8px;
+    height:auto;
+    min-height:58px;
+    padding:10px;
+    flex-wrap:wrap;
+  }
+
+  .tb-left{
+    width:100%;
+  }
+
+  .tb-right{
+    width:100%;
+    justify-content:flex-end;
+  }
+
+  .page-title{
+    font-size:14px;
+  }
+
+  .ticker-shell{
+    display:none;
+  }
+
+  .g4,
+  .g3,
+  .g2,
+  .g12,
+  .g23{
+    grid-template-columns:1fr !important;
+  }
+
+  .settings-layout{
+    grid-template-columns:1fr;
+  }
+
+  .section-hdr{
+    align-items:flex-start;
+  }
+
+  .btn{
+    width:100%;
+    justify-content:center;
+  }
+
+  .filter-bar{
+    flex-direction:column;
+    align-items:stretch;
+  }
+
+  .search-wrap{
+    width:100%;
+    max-width:100% !important;
+  }
+
+  .trade-panel{
+    overflow:hidden;
+  }
+
+  [style*="grid-template-columns:290px 1fr"]{
+    grid-template-columns:1fr !important;
+    height:auto !important;
+  }
+
+  [style*="height:calc(100vh - 118px)"]{
+    height:auto !important;
+  }
+
+  [style*="min-height:500px"]{
+    min-height:340px !important;
+  }
+
+  .copy-row{
+    flex-direction:column;
+    align-items:stretch;
+  }
+
+  .copy-row .btn{
+    width:100%;
+  }
+
+  input,
+  select,
+  textarea{
+    font-size:16px;
+  }
+}
+
+@media(max-width:580px){
+
+  .content{
+    padding:10px;
+  }
+
+  .card,
+  .card-sm,
+  .trade-panel,
+  .stat-card{
+    padding:12px;
+    border-radius:12px;
+  }
+
+  .topbar{
+    padding:8px;
+  }
+
+  .tb-btn,
+  .avatar{
+    width:32px;
+    height:32px;
+  }
+
+  .section-title{
+    font-size:13px;
+  }
+
+  .stat-val{
+    font-size:18px;
+  }
+
+  .tabs{
+    overflow:auto;
+    flex-wrap:nowrap;
+    scrollbar-width:none;
+  }
+
+  .tabs::-webkit-scrollbar{
+    display:none;
+  }
+
+  .tab{
+    flex-shrink:0;
+  }
+
+  .table-wrap{
+    overflow-x:auto;
+  }
+
+  .logo img{
+    width:140px !important;
+    height:auto !important;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -503,8 +703,25 @@ render();
 }
 
 function toggleSidebar() {
-  document.getElementById('sidebar').classList.toggle('collapsed');
+  const sidebar = document.getElementById('sidebar');
+
+  if(window.innerWidth <= 860){
+    sidebar.classList.toggle('mobile-open');
+  }else{
+    sidebar.classList.toggle('collapsed');
+  }
 }
+
+document.addEventListener('click', function(e){
+  const sidebar = document.getElementById('sidebar');
+
+  if(window.innerWidth <= 860 &&
+     sidebar.classList.contains('mobile-open') &&
+     !sidebar.contains(e.target) &&
+     !e.target.closest('.tb-btn')){
+      sidebar.classList.remove('mobile-open');
+  }
+});
 
 function toggleTheme() {
   isDark = !isDark;
