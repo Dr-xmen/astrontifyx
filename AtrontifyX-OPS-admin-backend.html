@@ -2931,6 +2931,172 @@ async function testConnection(){
 
 testConnection();
 
+
+async function loadUsers(){
+
+  try{
+
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .order('created_at', { ascending:false });
+
+    if(error){
+      console.error(error);
+      return;
+    }
+
+    const tbody =
+      document.getElementById('users-tbody');
+
+    const recentBody =
+      document.getElementById('recent-users-tbody');
+
+    if(!tbody || !recentBody){
+      console.error('Users table containers not found');
+      return;
+    }
+
+    tbody.innerHTML = '';
+    recentBody.innerHTML = '';
+
+    const badgeUsers =
+      document.getElementById('badge-users');
+
+    if(badgeUsers){
+      badgeUsers.innerText = data.length;
+    }
+
+    const usersSub =
+      document.querySelector('#page-users .page-header__sub');
+
+    if(usersSub){
+      usersSub.innerText = `${data.length} registered users`;
+    }
+
+    const dashboardStat =
+      document.querySelector('.stat-card--blue .stat-card__value');
+
+    if(dashboardStat){
+      dashboardStat.innerText = data.length;
+    }
+
+    data.forEach((user,index)=>{
+
+      const initials =
+        (user.full_name || 'U')
+        .split(' ')
+        .map(v=>v[0] || '')
+        .join('')
+        .substring(0,2)
+        .toUpperCase();
+
+      const row = `
+      <tr>
+        <td>
+          <input type="checkbox">
+        </td>
+
+        <td>
+          <div class="user-cell">
+
+            <div class="user-avatar"
+              style="background:#7c3aed;">
+              ${initials}
+            </div>
+
+            <div>
+
+              <div class="user-name">
+                ${user.full_name || 'Unnamed User'}
+              </div>
+
+              <div class="user-email">
+                ${user.email || 'No email'}
+              </div>
+
+            </div>
+
+          </div>
+        </td>
+
+        <td>${user.country || '—'}</td>
+
+        <td>${user.account_type || 'live'}</td>
+
+        <td>
+          $${Number(user.balance || 0)
+            .toLocaleString()}
+        </td>
+
+        <td>
+          ${user.created_at
+            ? new Date(user.created_at).toLocaleDateString()
+            : '—'}
+        </td>
+
+        <td>
+          <span class="badge-pill pill-green">
+            ${user.status || 'active'}
+          </span>
+        </td>
+
+        <td>
+          <span class="badge-pill pill-blue">
+            ${user.kyc_status || 'pending'}
+          </span>
+        </td>
+
+        <td>
+
+          <div class="row-actions">
+
+            <button class="btn btn--sm btn--outline">
+              View
+            </button>
+
+          </div>
+
+        </td>
+
+      </tr>`;
+
+      tbody.insertAdjacentHTML(
+        'beforeend',
+        row
+      );
+
+      if(index < 5){
+
+        recentBody.insertAdjacentHTML(
+          'beforeend',
+          row
+        );
+
+      }
+
+    });
+
+    console.log('Users loaded successfully');
+
+  }catch(err){
+
+    console.error(err);
+
+  }
+
+}
+
+document.addEventListener('DOMContentLoaded', ()=>{
+
+  setTimeout(()=>{
+    loadUsers();
+  },1000);
+
+});
+
+
+
 </script>
 
 </body>
