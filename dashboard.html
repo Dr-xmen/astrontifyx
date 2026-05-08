@@ -78,6 +78,26 @@ body{font-family:'Space Grotesk',sans-serif;background:var(--bg1);color:var(--te
 .g23{grid-template-columns:2fr 3fr}
 .g12{grid-template-columns:1fr 1fr}
 .stat-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px}
+
+.portfolio-gradient{
+background:linear-gradient(135deg,#4f6ef7 0%, #7c3aed 55%, #0ea5e9 100%) !important;
+border:none !important;
+color:#fff !important;
+box-shadow:0 12px 35px rgba(79,110,247,.35);
+}
+
+.portfolio-gradient .stat-label,
+.portfolio-gradient .stat-chg,
+.portfolio-gradient .stat-val,
+.portfolio-gradient span{
+color:#fff !important;
+}
+
+.portfolio-gradient .stat-icon{
+background:rgba(255,255,255,.16) !important;
+color:#fff !important;
+backdrop-filter:blur(8px);
+}
 .stat-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:12px}
 .stat-icon svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .stat-label{font-size:10.5px;color:var(--text3);font-weight:600;letter-spacing:.5px;text-transform:uppercase;margin-bottom:5px}
@@ -801,7 +821,7 @@ function pgDashboard() {
   const scaleSVG = `<svg viewBox="0 0 24 24"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg>`;
   return `
 <div class="grid g4" style="margin-bottom:14px">
-  <div class="stat-card">${statIcon(walletSVG,'rgba(79,110,247,0.15)','var(--accent2)')}
+  <div class="stat-card portfolio-gradient">${statIcon(walletSVG,'rgba(255,255,255,0.16)','#fff')}
     <div class="stat-label">Portfolio Balance</div><div class="stat-val"><span id="portfolioBalance">$0.00</span></div>
     <div class="stat-chg up">${svgTrend} <span id="portfolioToday">+$0.00 today</span></div>
   </div>
