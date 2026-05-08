@@ -285,13 +285,53 @@ label{font-size:11.5px;color:var(--text3);margin-bottom:6px;display:block;font-w
           <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
         </div>
         <span class="page-title" id="pageTitle">Dashboard</span>
-        <div class="ticker-bar">
-          <div class="tick"><span class="tick-sym">BTC/USD</span><span class="tick-p" id="t0">67,234.50</span><span class="tick-c up">+2.14%</span></div>
-          <div class="tick"><span class="tick-sym">ETH/USD</span><span class="tick-p" id="t1">3,421.80</span><span class="tick-c up">+1.87%</span></div>
-          <div class="tick"><span class="tick-sym">EUR/USD</span><span class="tick-p" id="t2">1.0834</span><span class="tick-c dn">-0.21%</span></div>
-          <div class="tick"><span class="tick-sym">GBP/USD</span><span class="tick-p">1.2701</span><span class="tick-c up">+0.09%</span></div>
-          <div class="tick"><span class="tick-sym">XAU/USD</span><span class="tick-p">2,318.40</span><span class="tick-c up">+0.54%</span></div>
-          <div class="tick"><span class="tick-sym">SPX500</span><span class="tick-p">5,204.30</span><span class="tick-c dn">-0.32%</span></div>
+        <div class="ticker-bar" style="padding:0;height:34px;background:transparent;border:none">
+
+          <div class="tradingview-widget-container" style="width:100%;height:34px">
+            
+            <div class="tradingview-widget-container__widget"></div>
+
+            <script
+              type="text/javascript"
+              src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js"
+              async>
+            {
+              "symbols": [
+                {
+                  "proName": "BINANCE:BTCUSDT",
+                  "title": "BTC/USD"
+                },
+                {
+                  "proName": "BINANCE:ETHUSDT",
+                  "title": "ETH/USD"
+                },
+                {
+                  "proName": "FX:EURUSD",
+                  "title": "EUR/USD"
+                },
+                {
+                  "proName": "FX:GBPUSD",
+                  "title": "GBP/USD"
+                },
+                {
+                  "proName": "OANDA:XAUUSD",
+                  "title": "GOLD"
+                },
+                {
+                  "proName": "FOREXCOM:SPXUSD",
+                  "title": "SPX500"
+                }
+              ],
+              "showSymbolLogo": false,
+              "isTransparent": true,
+              "displayMode": "adaptive",
+              "colorTheme": "dark",
+              "locale": "en"
+            }
+            </script>
+
+          </div>
+
         </div>
       </div>
       <div class="tb-right">
