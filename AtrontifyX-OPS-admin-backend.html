@@ -358,7 +358,7 @@
     <div style="display:flex;flex-direction:column;gap:12px;text-align:left;">
       <div style="display:flex;flex-direction:column;gap:4px;">
         <label style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.07em;">Admin Username</label>
-        <input id="admin-user" type="text" placeholder="admin" style="height:42px;background:#0f1117;border:1.5px solid #2a2d3a;border-radius:8px;padding:0 14px;font-size:14px;color:#fff;outline:none;" onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='#2a2d3a'">
+        <input id="admin-user" type="text" placeholder="Enter username" style="height:42px;background:#0f1117;border:1.5px solid #2a2d3a;border-radius:8px;padding:0 14px;font-size:14px;color:#fff;outline:none;" onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='#2a2d3a'">
       </div>
       <div style="display:flex;flex-direction:column;gap:4px;">
         <label style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.07em;">Password</label>
@@ -367,7 +367,7 @@
       <div id="login-err" style="font-size:12px;color:var(--red);display:none;">Incorrect credentials. Try again.</div>
       <button onclick="adminLogin()" style="height:44px;background:var(--blue);color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;margin-top:4px;">Sign In to OPS</button>
     </div>
-    <div style="margin-top:20px;font-size:11px;color:rgba(255,255,255,0.25);">Demo: admin / admin123</div>
+    <div style="margin-top:20px;font-size:11px;color:rgba(255,255,255,0.25);">Secure admin authentication required</div>
   </div>
 </div>
 
@@ -478,7 +478,7 @@
     <div class="sidebar__footer">
       <div class="sidebar__avatar">SA</div>
       <div>
-        <div class="sidebar__user-name">Super Admin</div>
+        <div class="sidebar__user-name"></div>
         <div class="sidebar__user-role">Full access · OPS</div>
       </div>
       <button class="sidebar__logout" onclick="document.getElementById('login-gate').style.display='flex';document.getElementById('main-app').style.display='none';" title="Sign out">
@@ -523,7 +523,7 @@
         <div class="page-header">
           <div>
             <div class="page-header__title">Admin Overview</div>
-            <div class="page-header__sub">Saturday, 2 May 2026 · All systems operational</div>
+            <div class="page-header__sub">Live system status</div>
           </div>
           <button class="btn btn--primary" onclick="showPage('users',document.querySelector('[onclick*=users]'))">
             <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -534,42 +534,42 @@
         <div class="stat-cards">
           <div class="stat-card stat-card--blue">
             <div class="stat-card__label"><svg style="stroke:#fff" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Total Users</div>
-            <div class="stat-card__value">2,841</div>
+            <div class="stat-card__value">0</div>
             <div class="stat-card__change">▲ +124 this week</div>
           </div>
           <div class="stat-card stat-card--purple">
             <div class="stat-card__label"><svg style="stroke:#fff" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/></svg>Live Accounts</div>
-            <div class="stat-card__value">1,492</div>
+            <div class="stat-card__value">0</div>
             <div class="stat-card__change">▲ +38 today</div>
           </div>
           <div class="stat-card">
             <div class="stat-card__label"><svg style="stroke:var(--green)" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Total AUM</div>
-            <div class="stat-card__value">$84.2M</div>
+            <div class="stat-card__value">$0</div>
             <div class="stat-card__change up">▲ +$2.1M today</div>
           </div>
           <div class="stat-card">
             <div class="stat-card__label"><svg style="stroke:var(--blue)" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Open Positions</div>
-            <div class="stat-card__value">8,421</div>
+            <div class="stat-card__value">0</div>
             <div class="stat-card__change up">▲ Live</div>
           </div>
           <div class="stat-card">
             <div class="stat-card__label"><svg style="stroke:var(--orange)" viewBox="0 0 24 24"><path d="M12 2v20M17 7H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Pending Deposits</div>
-            <div class="stat-card__value">8</div>
+            <div class="stat-card__value">0</div>
             <div class="stat-card__change down">Needs review</div>
           </div>
           <div class="stat-card">
             <div class="stat-card__label"><svg style="stroke:var(--red)" viewBox="0 0 24 24"><polyline points="17 11 12 6 7 11"/><line x1="12" y1="18" x2="12" y2="6"/></svg>Pending Withdrawals</div>
-            <div class="stat-card__value">5</div>
+            <div class="stat-card__value">0</div>
             <div class="stat-card__change down">Needs approval</div>
           </div>
           <div class="stat-card">
             <div class="stat-card__label"><svg style="stroke:var(--orange)" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>KYC Pending</div>
-            <div class="stat-card__value">47</div>
+            <div class="stat-card__value">0</div>
             <div class="stat-card__change down">Action required</div>
           </div>
           <div class="stat-card">
             <div class="stat-card__label"><svg style="stroke:var(--green)" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Today's Volume</div>
-            <div class="stat-card__value">$4.8B</div>
+            <div class="stat-card__value">$0</div>
             <div class="stat-card__change up">▲ +12% vs yesterday</div>
           </div>
         </div>
@@ -602,7 +602,7 @@
         <div class="page-header">
           <div>
             <div class="page-header__title">User Management</div>
-            <div class="page-header__sub">2,841 registered users</div>
+            <div class="page-header__sub">0 registered users</div>
           </div>
           <div style="display:flex;gap:10px;flex-wrap:wrap;">
             <button class="btn btn--outline" onclick="exportCSV('users')">
@@ -654,7 +654,7 @@
         <div class="page-header">
           <div>
             <div class="page-header__title">KYC / Verification Queue</div>
-            <div class="page-header__sub">47 pending reviews</div>
+            <div class="page-header__sub">0 pending reviews</div>
           </div>
         </div>
         <div class="card">
@@ -1003,7 +1003,7 @@
             <div class="card__head"><div class="card__title">Platform Info</div></div>
             <div class="card__body">
               <div style="display:flex;flex-direction:column;gap:14px;">
-                <div class="field"><label>Platform Name</label><input type="text" value="AtrontifyX Global Markets"></div>
+                <div class="field"><label>Platform Name</label><input type="text" value=""></div>
                 <div class="field"><label>Support Email</label><input type="email" value="support@xantex.com"></div>
                 <div class="field"><label>Support Phone</label><input type="text" value="+44 (0) 20 7776 9720"></div>
                 <div class="field"><label>Default Currency</label><select><option>USD</option><option>EUR</option><option>GBP</option></select></div>
