@@ -551,20 +551,20 @@ function pgDashboard() {
   return `
 <div class="grid g4" style="margin-bottom:14px">
   <div class="stat-card">${statIcon(walletSVG,'rgba(79,110,247,0.15)','var(--accent2)')}
-    <div class="stat-label">Portfolio Balance</div><div class="stat-val">$0.00</div>
-    <div class="stat-chg up">${svgTrend} +$1,240.50 today</div>
+    <div class="stat-label">Portfolio Balance</div><div class="stat-val"><span id="portfolioBalance">$0.00</span></div>
+    <div class="stat-chg up">${svgTrend} <span id="portfolioToday">+$0.00 today</span></div>
   </div>
   <div class="stat-card">${statIcon(areaSVG,'rgba(34,197,94,0.15)','var(--green)')}
-    <div class="stat-label">Equity</div><div class="stat-val">$0.00</div>
-    <div class="stat-chg up">${svgTrend} Unrealized $0.00</div>
+    <div class="stat-label">Equity</div><div class="stat-val"><span id="equityValue">$0.00</span></div>
+    <div class="stat-chg up">${svgTrend} Unrealized <span id="unrealizedValue">$0.00</span></div>
   </div>
   <div class="stat-card">${statIcon(scaleSVG,'rgba(245,158,11,0.15)','var(--amber)')}
-    <div class="stat-label">Free Margin</div><div class="stat-val">$0.00</div>
-    <div class="stat-chg" style="color:var(--text3)">Margin Used: $13,214.60</div>
+    <div class="stat-label">Free Margin</div><div class="stat-val"><span id="freeMargin">$0.00</span></div>
+    <div class="stat-chg" style="color:var(--text3)">Margin Used: <span id="marginUsed">$0.00</span></div>
   </div>
   <div class="stat-card">${statIcon(svgTrend,'rgba(20,184,166,0.15)','var(--teal)')}
-    <div class="stat-label">Total P&amp;L (Today)</div><div class="stat-val up">$0.00</div>
-    <div class="stat-chg up">${svgFire} 4 winning trades</div>
+    <div class="stat-label">Total P&amp;L (Today)</div><div class="stat-val up"><span id="totalPnl">$0.00</span></div>
+    <div class="stat-chg up">${svgFire} <span id="winningTrades">0 winning trades</span></div>
   </div>
 </div>
 
@@ -1432,6 +1432,104 @@ testDatabaseConnection();
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 
+
+
+<script>
+async function loadRealDashboardData(){
+
+  try{
+
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if(!user){
+      console.log('No authenticated user');
+      return;
+    }
+
+    const { data: profile, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', user.id)
+      .single();
+
+    if(error){
+      console.error(error);
+      return;
+    }
+
+    if(profile){
+
+      const balanceEl = document.getElementById('portfolioBalance');
+      const todayEl = document.getElementById('portfolioToday');
+      const equityEl = document.getElementById('equityValue');
+      const unrealizedEl = document.getElementById('unrealizedValue');
+      const marginEl = document.getElementById('freeMargin');
+      const usedMarginEl = document.getElementById('marginUsed');
+      const pnlEl = document.getElementById('totalPnl');
+      const winsEl = document.getElementById('winningTrades');
+
+      if(balanceEl){
+        balanceEl.textContent = '$' + Number(profile.balance || 0).toLocaleString();
+      }
+
+      if(todayEl){
+        todayEl.textContent = '+$' + Number(profile.total_pnl || 0).toLocaleString() + ' today';
+      }
+
+      if(equityEl){
+        equityEl.textContent = '$' + Number(profile.equity || 0).toLocaleString();
+      }
+
+      if(unrealizedEl){
+        unrealizedEl.textContent = '$' + Number(profile.total_pnl || 0).toLocaleString();
+      }
+
+      if(marginEl){
+        marginEl.textContent = '$' + Number(profile.free_margin || 0).toLocaleString();
+      }
+
+      if(usedMarginEl){
+        usedMarginEl.textContent = '$' + Number((profile.equity || 0) - (profile.free_margin || 0)).toLocaleString();
+      }
+
+      if(pnlEl){
+        pnlEl.textContent = '$' + Number(profile.total_pnl || 0).toLocaleString();
+      }
+
+      if(winsEl){
+        winsEl.textContent = Number(profile.winning_trades || 0) + ' winning trades';
+      }
+
+      if(profile.first_name || profile.last_name){
+
+        const initials =
+          ((profile.first_name || '').charAt(0) +
+          (profile.last_name || '').charAt(0)).toUpperCase();
+
+        const avatar = document.getElementById('userAvatar');
+
+        if(avatar){
+          avatar.textContent = initials || 'NU';
+        }
+
+      }
+
+    }
+
+  }catch(err){
+    console.error('Dashboard loading error:', err);
+  }
+
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+
+  setTimeout(() => {
+    loadRealDashboardData();
+  }, 1500);
+
+});
+</script>
 
 </body>
 </html>
