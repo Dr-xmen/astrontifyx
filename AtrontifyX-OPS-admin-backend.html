@@ -1,0 +1,2895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AtrontifyX OPS — Admin Backend</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ============================================================
+       TOKENS
+    ============================================================ */
+    :root {
+      --red:       #e60023;
+      --blue:      #1a5cff;
+      --blue-dk:   #1244cc;
+      --blue-lt:   #e8eeff;
+      --green:     #22a06b;
+      --green-lt:  #e6f7ef;
+      --orange:    #f5a623;
+      --purple:    #7c3aed;
+      --purple-lt: #ede9fe;
+      --bg:        #f4f6f9;
+      --white:     #ffffff;
+      --text:      #111111;
+      --muted:     #666666;
+      --border:    #e0e3e8;
+      --sidebar-w: 260px;
+      --topbar-h:  64px;
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; overflow-x: hidden; }
+    body { font-family: 'Inter', sans-serif; color: var(--text); background: var(--bg); font-size: 14px; line-height: 1.6; overflow-x: hidden; }
+    img { display: block; max-width: 100%; }
+    a { text-decoration: none; color: inherit; }
+    button { font-family: inherit; cursor: pointer; }
+    ul { list-style: none; }
+    input, select, textarea { font-family: inherit; }
+
+    /* ============================================================
+       DARK MODE
+    ============================================================ */
+    body.dark {
+      --bg:       #0f1117;
+      --white:    #1a1d27;
+      --text:     #e8eaf0;
+      --muted:    #8b90a0;
+      --border:   #2a2d3a;
+      --blue-lt:  #1a2444;
+      --green-lt: #0d2b1e;
+      --purple-lt:#2d1f5e;
+    }
+    body.dark .sidebar       { background: #080b13; }
+    body.dark .topbar,
+    body.dark .card,
+    body.dark .modal,
+    body.dark .data-table thead th { background: #1a1d27; }
+    body.dark .field input,
+    body.dark .field select,
+    body.dark .field textarea { background: #0f1117; color: var(--text); }
+    body.dark .stat-card      { background: #1a1d27; }
+    body.dark tbody tr:hover  { background: #0f1117; }
+    body.dark .tab-btn:hover  { background: #0f1117; }
+    body.dark .topbar__icon-btn { background: #0f1117; }
+    body.dark .badge-pill     { filter: brightness(0.85); }
+
+    /* ============================================================
+       LAYOUT
+    ============================================================ */
+    .layout { min-height: 100vh; }
+
+    /* ============================================================
+       SIDEBAR
+    ============================================================ */
+    .sidebar {
+      width: var(--sidebar-w); background: #0d1120; color: #fff;
+      display: flex; flex-direction: column;
+      position: fixed; top: 0; left: 0; bottom: 0; z-index: 200;
+      transition: transform 0.25s ease;
+    }
+    .sidebar__logo {
+      height: var(--topbar-h); display: flex; align-items: center; gap: 10px;
+      padding: 0 20px; border-bottom: 1px solid rgba(255,255,255,0.07); flex-shrink: 0;
+    }
+    .sidebar__logo-badge {
+      background: var(--red); color: #fff; font-size: 10px; font-weight: 800;
+      padding: 2px 7px; border-radius: 4px; letter-spacing: 0.08em;
+    }
+    .sidebar__logo-text { font-size: 16px; font-weight: 700; color: #fff; }
+    .sidebar__logo-sub  { font-size: 10px; color: rgba(255,255,255,0.4); }
+    .sidebar__nav  { flex: 1; overflow-y: auto; padding: 8px 0; }
+    .sidebar__section-label { font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.3); padding: 14px 20px 5px; }
+    .nav-item {
+      display: flex; align-items: center; gap: 11px;
+      padding: 10px 20px; font-size: 13px; font-weight: 500;
+      color: rgba(255,255,255,0.6); cursor: pointer;
+      border: none; background: none; width: 100%; text-align: left;
+      transition: background 0.15s, color 0.15s;
+    }
+    .nav-item:hover  { background: rgba(255,255,255,0.06); color: #fff; }
+    .nav-item.active { background: rgba(26,92,255,0.2); color: #fff; border-left: 3px solid var(--blue); }
+    .nav-item svg    { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.8; flex-shrink: 0; }
+    .nav-item__badge { margin-left: auto; font-size: 10px; font-weight: 700; padding: 1px 7px; border-radius: 10px; }
+    .badge-red    { background: var(--red);    color: #fff; }
+    .badge-orange { background: var(--orange); color: #fff; }
+    .badge-green  { background: var(--green);  color: #fff; }
+    .sidebar__footer {
+      padding: 14px 20px; border-top: 1px solid rgba(255,255,255,0.07);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .sidebar__avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--purple); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff; flex-shrink: 0; }
+    .sidebar__user-name { font-size: 13px; font-weight: 600; color: #fff; }
+    .sidebar__user-role { font-size: 10px; color: rgba(255,255,255,0.4); }
+    .sidebar__logout { margin-left: auto; background: none; border: none; color: rgba(255,255,255,0.35); padding: 4px; }
+    .sidebar__logout:hover { color: var(--red); }
+    .sidebar__logout svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 2; }
+
+    /* ============================================================
+       MAIN
+    ============================================================ */
+    .main { margin-left: var(--sidebar-w); display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; }
+
+    /* ============================================================
+       TOPBAR
+    ============================================================ */
+    .topbar {
+      height: var(--topbar-h); background: var(--white);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; padding: 0 24px; gap: 12px;
+      position: sticky; top: 0; z-index: 100; flex-shrink: 0;
+    }
+    .topbar__hamburger { display: none; background: none; border: none; flex-direction: column; gap: 4px; padding: 4px; }
+    .topbar__hamburger span { display: block; width: 20px; height: 2px; background: var(--text); border-radius: 2px; }
+    .topbar__title { font-size: 15px; font-weight: 700; }
+    .topbar__env {
+      font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 4px;
+      background: rgba(230,0,35,0.1); color: var(--red); letter-spacing: 0.08em;
+    }
+    .topbar__search { flex: 1; max-width: 280px; position: relative; }
+    .topbar__search input { width: 100%; height: 34px; border: 1.5px solid var(--border); border-radius: 20px; padding: 0 12px 0 34px; font-size: 13px; outline: none; background: var(--bg); color: var(--text); transition: border-color 0.15s; }
+    .topbar__search input:focus { border-color: var(--blue); background: var(--white); }
+    .topbar__search svg { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); width: 14px; height: 14px; fill: none; stroke: var(--muted); stroke-width: 2; }
+    .topbar__right { display: flex; align-items: center; gap: 10px; margin-left: auto; }
+    .topbar__icon-btn { width: 34px; height: 34px; border-radius: 50%; background: var(--bg); border: none; display: flex; align-items: center; justify-content: center; position: relative; transition: background 0.15s; }
+    .topbar__icon-btn:hover { background: var(--border); }
+    .topbar__icon-btn svg { width: 16px; height: 16px; fill: none; stroke: var(--text); stroke-width: 2; }
+    .topbar__notif-dot { position: absolute; top: 5px; right: 5px; width: 7px; height: 7px; border-radius: 50%; background: var(--red); border: 2px solid var(--white); }
+    .topbar__avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--purple); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff; cursor: pointer; }
+    .dark-toggle { width: 34px; height: 34px; border-radius: 50%; background: var(--bg); border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; cursor: pointer; }
+    .dark-toggle:hover { border-color: var(--blue); }
+    .dark-toggle svg { width: 15px; height: 15px; fill: none; stroke: var(--text); stroke-width: 2; }
+
+    /* ============================================================
+       CONTENT
+    ============================================================ */
+    .content { padding: 24px; flex: 1; }
+
+    /* Page header */
+    .page-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 22px; flex-wrap: wrap; gap: 12px; }
+    .page-header__title { font-size: 20px; font-weight: 700; letter-spacing: -0.3px; }
+    .page-header__sub   { font-size: 13px; color: var(--muted); margin-top: 2px; }
+
+    /* Buttons */
+    .btn { display: inline-flex; align-items: center; gap: 6px; border-radius: 7px; font-size: 13px; font-weight: 600; padding: 8px 16px; border: none; cursor: pointer; transition: background 0.15s, opacity 0.15s; white-space: nowrap; }
+    .btn svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; }
+    .btn--primary  { background: var(--blue);   color: #fff; }
+    .btn--primary:hover  { background: var(--blue-dk); }
+    .btn--green    { background: var(--green);  color: #fff; }
+    .btn--green:hover  { opacity: 0.88; }
+    .btn--red      { background: var(--red);    color: #fff; }
+    .btn--red:hover    { opacity: 0.88; }
+    .btn--orange   { background: var(--orange); color: #fff; }
+    .btn--outline  { background: var(--white);  color: var(--text); border: 1.5px solid var(--border); }
+    .btn--outline:hover { border-color: var(--blue); color: var(--blue); }
+    .btn--sm { padding: 5px 12px; font-size: 12px; border-radius: 6px; }
+
+    /* ============================================================
+       STAT CARDS
+    ============================================================ */
+    .stat-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px,1fr)); gap: 14px; margin-bottom: 22px; }
+    .stat-card { background: var(--white); border: 1px solid var(--border); border-radius: 10px; padding: 18px; }
+    .stat-card__label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+    .stat-card__label svg { width: 13px; height: 13px; fill: none; stroke-width: 2; }
+    .stat-card__value  { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; line-height: 1; }
+    .stat-card__change { font-size: 12px; font-weight: 500; margin-top: 5px; }
+    .stat-card__change.up   { color: var(--green); }
+    .stat-card__change.down { color: var(--red); }
+    .stat-card--blue   { background: var(--blue);   border-color: var(--blue);   color: #fff; }
+    .stat-card--blue .stat-card__label { color: rgba(255,255,255,0.7); }
+    .stat-card--blue .stat-card__change { color: rgba(255,255,255,0.8); }
+    .stat-card--purple { background: var(--purple); border-color: var(--purple); color: #fff; }
+    .stat-card--purple .stat-card__label { color: rgba(255,255,255,0.7); }
+
+    /* ============================================================
+       CARD
+    ============================================================ */
+    .card { background: var(--white); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 20px; }
+    .card__head { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; border-bottom: 1px solid var(--border); flex-wrap: wrap; gap: 10px; }
+    .card__title { font-size: 14px; font-weight: 700; }
+    .card__body  { padding: 20px; }
+    .card__body--p0 { padding: 0; }
+
+    /* ============================================================
+       TABS
+    ============================================================ */
+    .tabs { display: flex; gap: 4px; }
+    .tab-btn {
+      padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 600;
+      color: var(--muted); background: none; border: none; cursor: pointer;
+      transition: background 0.12s, color 0.12s;
+    }
+    .tab-btn:hover  { background: var(--bg); color: var(--text); }
+    .tab-btn.active { background: var(--blue-lt); color: var(--blue); }
+
+    /* ============================================================
+       DATA TABLE
+    ============================================================ */
+    .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .data-table { width: 100%; border-collapse: collapse; min-width: 700px; }
+    .data-table thead th {
+      text-align: left; font-size: 11px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.06em; color: var(--muted); padding: 10px 16px;
+      border-bottom: 1px solid var(--border); background: var(--bg); white-space: nowrap;
+    }
+    .data-table tbody td { padding: 12px 16px; border-bottom: 1px solid var(--border); font-size: 13px; vertical-align: middle; }
+    .data-table tbody tr:last-child td { border-bottom: none; }
+    .data-table tbody tr:hover { background: var(--bg); cursor: pointer; }
+
+    /* Badge pills */
+    .badge-pill { display: inline-block; font-size: 10px; font-weight: 700; padding: 2px 9px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .pill-green  { background: var(--green-lt);  color: var(--green); }
+    .pill-red    { background: #fff0f0;           color: var(--red); }
+    .pill-blue   { background: var(--blue-lt);   color: var(--blue); }
+    .pill-orange { background: rgba(245,166,35,0.15); color: var(--orange); }
+    .pill-purple { background: var(--purple-lt); color: var(--purple); }
+    .pill-grey   { background: var(--bg);        color: var(--muted); }
+
+    /* User avatar in table */
+    .user-cell { display: flex; align-items: center; gap: 10px; }
+    .user-avatar { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #fff; flex-shrink: 0; }
+    .user-name  { font-size: 13px; font-weight: 600; }
+    .user-email { font-size: 11px; color: var(--muted); }
+
+    /* Row action buttons */
+    .row-actions { display: flex; gap: 6px; }
+
+    /* ============================================================
+       FORM FIELDS
+    ============================================================ */
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-grid--3 { grid-template-columns: 1fr 1fr 1fr; }
+    .field { display: flex; flex-direction: column; gap: 5px; }
+    .field--full { grid-column: 1 / -1; }
+    .field label { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+    .field input,
+    .field select,
+    .field textarea {
+      height: 40px; border: 1.5px solid var(--border); border-radius: 7px;
+      padding: 0 12px; font-size: 13px; color: var(--text);
+      background: var(--white); outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .field textarea { height: auto; padding: 10px 12px; resize: vertical; min-height: 80px; }
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(26,92,255,0.1); }
+    .field select { appearance: none; background: var(--white) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") no-repeat right 12px center; padding-right: 32px; }
+    .field-row { display: flex; gap: 10px; align-items: flex-end; }
+    .field-row .field { flex: 1; }
+
+    /* Toggle switch */
+    .toggle-wrap { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border); }
+    .toggle-wrap:last-child { border-bottom: none; }
+    .toggle-wrap__label { font-size: 13px; font-weight: 500; }
+    .toggle-wrap__sub   { font-size: 11px; color: var(--muted); margin-top: 2px; }
+    .toggle-switch { position: relative; width: 40px; height: 22px; flex-shrink: 0; }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider { position: absolute; inset: 0; background: var(--border); border-radius: 22px; cursor: pointer; transition: background 0.2s; }
+    .toggle-slider::before { content: ''; position: absolute; width: 16px; height: 16px; background: #fff; border-radius: 50%; top: 3px; left: 3px; transition: transform 0.2s; }
+    .toggle-switch input:checked + .toggle-slider { background: var(--blue); }
+    .toggle-switch input:checked + .toggle-slider::before { transform: translateX(18px); }
+
+    /* ============================================================
+       MODAL
+    ============================================================ */
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 500; align-items: center; justify-content: center; padding: 20px; }
+    .modal-overlay.open { display: flex; }
+    .modal { background: var(--white); border-radius: 14px; width: 100%; max-width: 560px; max-height: 90vh; overflow-y: auto; animation: modalIn 0.2s ease; }
+    @keyframes modalIn { from { opacity:0; transform:scale(0.95) translateY(12px); } to { opacity:1; transform:scale(1) translateY(0); } }
+    .modal__head { display: flex; align-items: center; justify-content: space-between; padding: 18px 22px; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--white); z-index: 1; }
+    .modal__title { font-size: 16px; font-weight: 700; }
+    .modal__close { background: none; border: none; color: var(--muted); padding: 4px; }
+    .modal__close:hover { color: var(--text); }
+    .modal__close svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; }
+    .modal__body { padding: 22px; }
+    .modal__foot { padding: 16px 22px; border-top: 1px solid var(--border); display: flex; gap: 10px; justify-content: flex-end; }
+
+    /* ============================================================
+       ALERT / TOAST
+    ============================================================ */
+    .toast {
+      position: fixed; bottom: 24px; right: 24px; z-index: 600;
+      background: var(--text); color: var(--white);
+      padding: 12px 20px; border-radius: 8px; font-size: 13px; font-weight: 500;
+      display: flex; align-items: center; gap: 10px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+      transform: translateY(80px); opacity: 0;
+      transition: transform 0.3s, opacity 0.3s;
+      max-width: 320px;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast.success { background: var(--green); }
+    .toast.error   { background: var(--red); }
+    .toast svg { width: 16px; height: 16px; fill: none; stroke: #fff; stroke-width: 2.5; flex-shrink: 0; }
+
+    /* ============================================================
+       PAGES (shown/hidden)
+    ============================================================ */
+    .page { display: none; }
+    .page.active { display: block; }
+
+    /* ============================================================
+       ACTIVITY FEED
+    ============================================================ */
+    .activity-item { display: flex; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+    .activity-item:last-child { border-bottom: none; }
+    .activity-dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 5px; flex-shrink: 0; }
+    .activity-text { font-size: 13px; flex: 1; line-height: 1.5; }
+    .activity-time { font-size: 11px; color: var(--muted); white-space: nowrap; }
+
+    /* ============================================================
+       MOBILE
+    ============================================================ */
+    @media (max-width: 768px) {
+      html, body { overflow-x: hidden; }
+      .sidebar { transform: translateX(-100%); }
+      .sidebar.open { transform: translateX(0); }
+      .main { margin-left: 0; width: 100%; }
+      .topbar { padding: 0 14px; }
+      .topbar__hamburger { display: flex; }
+      .topbar__search { display: none; }
+      .content { padding: 14px; }
+      .stat-cards { grid-template-columns: 1fr 1fr; }
+      .form-grid { grid-template-columns: 1fr; }
+      .form-grid--3 { grid-template-columns: 1fr; }
+      [style*="grid-template-columns:1fr minmax"] { grid-template-columns: 1fr !important; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- LOGIN GATE -->
+<div id="login-gate" style="position:fixed;inset:0;background:#0d1120;display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px;">
+  <div style="background:#1a1d27;border:1px solid #2a2d3a;border-radius:14px;padding:40px;width:100%;max-width:380px;text-align:center;">
+    <div style="font-size:11px;font-weight:800;letter-spacing:0.12em;background:var(--red);color:#fff;padding:3px 10px;border-radius:4px;display:inline-block;margin-bottom:16px;">OPS ADMIN</div>
+    <div style="font-size:22px;font-weight:700;color:#fff;margin-bottom:6px;">AtrontifyX Admin Backend</div>
+    <div style="font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:28px;">Restricted access — authorised personnel only</div>
+    <div style="display:flex;flex-direction:column;gap:12px;text-align:left;">
+      <div style="display:flex;flex-direction:column;gap:4px;">
+        <label style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.07em;">Admin Username</label>
+        <input id="admin-user" type="text" placeholder="admin" style="height:42px;background:#0f1117;border:1.5px solid #2a2d3a;border-radius:8px;padding:0 14px;font-size:14px;color:#fff;outline:none;" onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='#2a2d3a'">
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px;">
+        <label style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.07em;">Password</label>
+        <input id="admin-pass" type="password" placeholder="••••••••" style="height:42px;background:#0f1117;border:1.5px solid #2a2d3a;border-radius:8px;padding:0 14px;font-size:14px;color:#fff;outline:none;" onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='#2a2d3a'" onkeydown="if(event.key==='Enter')adminLogin()">
+      </div>
+      <div id="login-err" style="font-size:12px;color:var(--red);display:none;">Incorrect credentials. Try again.</div>
+      <button onclick="adminLogin()" style="height:44px;background:var(--blue);color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;margin-top:4px;">Sign In to OPS</button>
+    </div>
+    <div style="margin-top:20px;font-size:11px;color:rgba(255,255,255,0.25);">Demo: admin / admin123</div>
+  </div>
+</div>
+
+<div class="layout" id="main-app" style="display:none;">
+
+  <!-- ============================================================
+       SIDEBAR
+  ============================================================ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar__logo">
+      <span class="sidebar__logo-badge">OPS</span>
+      <div>
+        <div class="sidebar__logo-text">AtrontifyX Admin</div>
+        <div class="sidebar__logo-sub">Control Panel v2.1</div>
+      </div>
+    </div>
+
+    <nav class="sidebar__nav">
+      <div class="sidebar__section-label">Overview</div>
+      <button class="nav-item active" onclick="showPage('dashboard',this)">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </button>
+      <button class="nav-item" onclick="showPage('activity',this)">
+        <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Live Activity
+        <span class="nav-item__badge badge-red" id="activity-badge">12</span>
+      </button>
+
+      <div class="sidebar__section-label">Users</div>
+      <button class="nav-item" onclick="showPage('users',this)">
+        <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        All Users
+        <span class="nav-item__badge badge-green" id="badge-users">—</span>
+      </button>
+      <button class="nav-item" onclick="showPage('verification',this)">
+        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        KYC / Verification
+        <span class="nav-item__badge badge-orange" id="badge-kyc">—</span>
+      </button>
+
+      <div class="sidebar__section-label">Accounts</div>
+      <button class="nav-item" onclick="showPage('accounts',this)">
+        <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+        Trading Accounts
+      </button>
+      <button class="nav-item" onclick="showPage('balances',this)">
+        <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        Balances & P&L
+      </button>
+      <button class="nav-item" onclick="showPage('positions',this)">
+        <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Open Positions
+      </button>
+
+      <div class="sidebar__section-label">Finance</div>
+      <button class="nav-item" onclick="showPage('deposits',this)">
+        <svg viewBox="0 0 24 24"><path d="M12 2v20M17 7H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        Deposits
+        <span class="nav-item__badge badge-orange" id="badge-deposits">—</span>
+      </button>
+      <button class="nav-item" onclick="showPage('withdrawals',this)">
+        <svg viewBox="0 0 24 24"><polyline points="17 11 12 6 7 11"/><line x1="12" y1="18" x2="12" y2="6"/></svg>
+        Withdrawals
+        <span class="nav-item__badge badge-red" id="badge-withdrawals">—</span>
+      </button>
+      <button class="nav-item" onclick="showPage('transactions',this)">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        All Transactions
+      </button>
+
+      <div class="sidebar__section-label">Content</div>
+      <button class="nav-item" onclick="showPage('announcements',this)">
+        <svg viewBox="0 0 24 24"><path d="M22 17H2a3 3 0 0 0 3-3V9a7 7 0 0 1 14 0v5a3 3 0 0 0 3 3zm-8.27 4a2 2 0 0 1-3.46 0"/></svg>
+        Announcements
+      </button>
+      <button class="nav-item" onclick="showPage('markets-control',this)">
+        <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        Markets Control
+      </button>
+
+      <div class="sidebar__section-label">Operations</div>
+      <button class="nav-item" onclick="showPage('support',this)">
+        <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Support Tickets
+        <span class="nav-item__badge badge-orange" id="badge-support">—</span>
+      </button>
+      <button class="nav-item" onclick="showPage('notifications',this)">
+        <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        User Notifications
+      </button>
+      <button class="nav-item" onclick="showPage('trades',this)">
+        <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Trades History
+      </button>
+
+      <div class="sidebar__section-label">System</div>
+      <button class="nav-item" onclick="showPage('settings',this)">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        System Settings
+      </button>
+      <button class="nav-item" onclick="showPage('audit',this)">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        Audit Log
+      </button>
+    </nav>
+
+    <div class="sidebar__footer">
+      <div class="sidebar__avatar">SA</div>
+      <div>
+        <div class="sidebar__user-name">Super Admin</div>
+        <div class="sidebar__user-role">Full access · OPS</div>
+      </div>
+      <button class="sidebar__logout" onclick="document.getElementById('login-gate').style.display='flex';document.getElementById('main-app').style.display='none';" title="Sign out">
+        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      </button>
+    </div>
+  </aside>
+
+  <!-- ============================================================
+       MAIN
+  ============================================================ -->
+  <div class="main">
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <button class="topbar__hamburger" id="hamburger" onclick="toggleSidebar()">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="topbar__title" id="page-title">Dashboard</div>
+      <span class="topbar__env">ADMIN · OPS</span>
+      <div class="topbar__search">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" placeholder="Search users, accounts…">
+      </div>
+      <div class="topbar__right">
+        <button class="dark-toggle" id="dark-toggle" onclick="toggleDark()" title="Dark mode">
+          <svg id="dark-icon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <button class="topbar__icon-btn">
+          <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <div class="topbar__notif-dot"></div>
+        </button>
+        <div class="topbar__avatar">SA</div>
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content">
+
+      <!-- ════════════════════ DASHBOARD ════════════════════ -->
+      <div class="page active" id="page-dashboard">
+        <div class="page-header">
+          <div>
+            <div class="page-header__title">Admin Overview</div>
+            <div class="page-header__sub">Saturday, 2 May 2026 · All systems operational</div>
+          </div>
+          <button class="btn btn--primary" onclick="showPage('users',document.querySelector('[onclick*=users]'))">
+            <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add User
+          </button>
+        </div>
+
+        <div class="stat-cards">
+          <div class="stat-card stat-card--blue">
+            <div class="stat-card__label"><svg style="stroke:#fff" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Total Users</div>
+            <div class="stat-card__value">2,841</div>
+            <div class="stat-card__change">▲ +124 this week</div>
+          </div>
+          <div class="stat-card stat-card--purple">
+            <div class="stat-card__label"><svg style="stroke:#fff" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/></svg>Live Accounts</div>
+            <div class="stat-card__value">1,492</div>
+            <div class="stat-card__change">▲ +38 today</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card__label"><svg style="stroke:var(--green)" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Total AUM</div>
+            <div class="stat-card__value">$84.2M</div>
+            <div class="stat-card__change up">▲ +$2.1M today</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card__label"><svg style="stroke:var(--blue)" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Open Positions</div>
+            <div class="stat-card__value">8,421</div>
+            <div class="stat-card__change up">▲ Live</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card__label"><svg style="stroke:var(--orange)" viewBox="0 0 24 24"><path d="M12 2v20M17 7H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Pending Deposits</div>
+            <div class="stat-card__value">8</div>
+            <div class="stat-card__change down">Needs review</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card__label"><svg style="stroke:var(--red)" viewBox="0 0 24 24"><polyline points="17 11 12 6 7 11"/><line x1="12" y1="18" x2="12" y2="6"/></svg>Pending Withdrawals</div>
+            <div class="stat-card__value">5</div>
+            <div class="stat-card__change down">Needs approval</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card__label"><svg style="stroke:var(--orange)" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>KYC Pending</div>
+            <div class="stat-card__value">47</div>
+            <div class="stat-card__change down">Action required</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card__label"><svg style="stroke:var(--green)" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Today's Volume</div>
+            <div class="stat-card__value">$4.8B</div>
+            <div class="stat-card__change up">▲ +12% vs yesterday</div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr minmax(280px,340px);gap:18px;flex-wrap:wrap;">
+          <!-- Recent users -->
+          <div class="card">
+            <div class="card__head">
+              <div class="card__title">Recent Registrations</div>
+              <button class="btn btn--sm btn--outline" onclick="showPage('users',document.querySelector('[onclick*=users]'))">View all</button>
+            </div>
+            <div class="card__body--p0 table-wrap">
+              <table class="data-table">
+                <thead><tr><th>User</th><th>Country</th><th>Joined</th><th>Status</th><th>KYC</th><th></th></tr></thead>
+                <tbody id="recent-users-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Activity feed -->
+          <div class="card">
+            <div class="card__head"><div class="card__title">Live Activity</div></div>
+            <div class="card__body" id="dash-activity" style="padding:12px 20px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════════════════ ALL USERS ════════════════════ -->
+      <div class="page" id="page-users">
+        <div class="page-header">
+          <div>
+            <div class="page-header__title">User Management</div>
+            <div class="page-header__sub">2,841 registered users</div>
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <button class="btn btn--outline" onclick="exportCSV('users')">
+              <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Export CSV
+            </button>
+            <button class="btn btn--primary" onclick="openModal('modal-add-user')">
+              <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Add User
+            </button>
+          </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="card" style="margin-bottom:16px;">
+          <div class="card__body" style="padding:14px 20px;">
+            <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+              <div class="tabs">
+                <button class="tab-btn active" onclick="filterUsers('all',this)">All</button>
+                <button class="tab-btn" onclick="filterUsers('live',this)">Live</button>
+                <button class="tab-btn" onclick="filterUsers('demo',this)">Demo</button>
+                <button class="tab-btn" onclick="filterUsers('suspended',this)">Suspended</button>
+              </div>
+              <input type="text" placeholder="Search name or email…" style="height:34px;border:1.5px solid var(--border);border-radius:7px;padding:0 12px;font-size:13px;outline:none;width:220px;" oninput="searchUsers(this.value)">
+              <select style="height:34px;border:1.5px solid var(--border);border-radius:7px;padding:0 12px;font-size:13px;outline:none;appearance:none;min-width:140px;">
+                <option>All Countries</option>
+                <option>Nigeria</option><option>United Kingdom</option><option>UAE</option><option>USA</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card__body--p0 table-wrap">
+            <table class="data-table" id="users-table">
+              <thead><tr>
+                <th><input type="checkbox" onchange="toggleSelectAll(this)"></th>
+                <th>User</th><th>Country</th><th>Account Type</th>
+                <th>Balance</th><th>Joined</th><th>Status</th><th>KYC</th><th>Actions</th>
+              </tr></thead>
+              <tbody id="users-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════════════════ KYC ════════════════════ -->
+      <div class="page" id="page-verification">
+        <div class="page-header">
+          <div>
+            <div class="page-header__title">KYC / Verification Queue</div>
+            <div class="page-header__sub">47 pending reviews</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card__body--p0 table-wrap">
+            <table class="data-table">
+              <thead><tr>
+                <th>User</th><th>Email</th><th>Country</th><th>Doc Type</th><th>Submitted</th><th>Status</th><th>Actions</th>
+              </tr></thead>
+              <tbody id="kyc-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════════════════ ACCOUNTS ════════════════════ -->
+      <div class="page" id="page-accounts">
+        <div class="page-header">
+          <div>
+            <div class="page-header__title">Trading Accounts</div>
+            <div class="page-header__sub">Manage all live and demo accounts</div>
+          </div>
+          <button class="btn btn--primary" onclick="openModal('modal-add-account')">
+            <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Create Account
+          </button>
+        </div>
+        <div class="card">
+          <div class="card__body--p0 table-wrap">
+            <table class="data-table">
+              <thead><tr>
+                <th>Account ID</th><th>User</th><th>Platform</th><th>Type</th>
+                <th>Balance</th><th>Equity</th><th>Leverage</th><th>Status</th><th>Actions</th>
+              </tr></thead>
+              <tbody id="accounts-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════════════════ BALANCES ════════════════════ -->
+      <div class="page" id="page-balances">
+        <div class="page-header">
+          <div>
+            <div class="page-header__title">Balances & P&L</div>
+            <div class="page-header__sub">Adjust account balances and P&L directly</div>
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:18px;">
+          <div class="card__head"><div class="card__title">Manual Balance Adjustment</div></div>
+          <div class="card__body">
+            <div class="form-grid">
+              <div class="field">
+                <label>Select User</label>
+                <select id="adj-user-select" onchange="loadUserAccounts()">
+                  <option value="">— choose a user —</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Select Account</label>
+                <select id="adj-account">
+                  <option value="">— select user first —</option>
+                </select>
+              </div>
+            </div>
+            <div id="adj-no-account-box" style="display:none;background:rgba(255,165,0,.08);border:1px solid rgba(255,165,0,.3);border-radius:8px;padding:14px 16px;margin-bottom:16px;">
+              <div style="font-size:13px;color:#f5a623;margin-bottom:10px;">⚠ This user has no trading accounts. Create one to proceed.</div>
+              <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;">
+                <div class="field" style="margin:0;flex:1;min-width:120px;">
+                  <label style="font-size:11px;">Account Type</label>
+                  <select id="adj-new-acc-type" style="padding:6px 10px;font-size:13px;">
+                    <option value="live">Live</option>
+                    <option value="demo">Demo</option>
+                  </select>
+                </div>
+                <div class="field" style="margin:0;flex:1;min-width:120px;">
+                  <label style="font-size:11px;">Starting Balance ($)</label>
+                  <input type="number" id="adj-new-acc-bal" placeholder="0.00" style="padding:6px 10px;font-size:13px;">
+                </div>
+                <button class="btn btn--primary" style="padding:7px 16px;font-size:13px;" onclick="createAccountForUser()">Create Account</button>
+              </div>
+            </div>
+            <div class="form-grid" style="margin-top:0;">
+              <div class="field">
+                <label>Adjustment Type</label>
+                <select id="adj-type">
+                  <option>Credit (add funds)</option>
+                  <option>Debit (remove funds)</option>
+                  <option>Set balance to amount</option>
+                  <option>Bonus credit</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Amount (USD)</label>
+                <input type="number" placeholder="0.00" id="adj-amount">
+              </div>
+              <div class="field--full field">
+                <label>Reason / Notes</label>
+                <textarea placeholder="Internal reason for this adjustment (required)…" id="adj-reason"></textarea>
+              </div>
+            </div>
+            <div style="margin-top:16px;display:flex;gap:10px;">
+              <button class="btn btn--green" onclick="applyAdjustment()">
+                <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                Apply Adjustment
+              </button>
+              <button class="btn btn--outline">Cancel</button>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card__head"><div class="card__title">Recent Adjustments Log</div></div>
+          <div class="card__body--p0 table-wrap">
+            <table class="data-table">
+              <thead><tr><th>Time</th><th>Account</th><th>User</th><th>Type</th><th>Amount</th><th>Before</th><th>After</th><th>Admin</th><th>Reason</th></tr></thead>
+              <tbody id="adj-log-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════════════════ POSITIONS ════════════════════ -->
+      <div class="page" id="page-positions">
+        <div class="page-header">
+          <div>
+            <div class="page-header__title">Open Positions</div>
+            <div class="page-header__sub">All live trades across all accounts</div>
+          </div>
+          <button class="btn btn--red" onclick="showToast('All positions force-closed','error')">Force Close All</button>
+        </div>
+        <div class="card">
+          <div class="card__body--p0 table-wrap">
+            <table class="data-table">
+              <thead><tr>
+                <th>Ticket</th><th>User</th><th>Account</th><th>Symbol</th>
+                <th>Type</th><th>Lots</th><th>Open Price</th><th>Current</th>
+                <th>SL</th><th>TP</th><th>P&L</th><th>Actions</th>
+              </tr></thead>
+              <tbody id="positions-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════════════════ DEPOSITS ════════════════════ -->
+      <div class="page" id="page-deposits">
+        <div class="page-header">
+          <div>
+            <div class="page-header__title">Deposit Management</div>
+            <div class="page-header__sub">Review, approve or reject incoming deposits</div>
+          </div>
+          <button class="btn btn--primary" onclick="openModal('modal-manual-deposit')">
+            <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Manual Deposit
+          </button>
+        </div>
+        <div class="card">
+          <div class="card__body--p0 table-wrap">
+            <table class="data-table">
+              <thead><tr>
+                <th>ID</th><th>User</th><th>Amount</th><th>Method</th>
+                <th>Submitted</th><th>Status</th><th>Actions</th>
+              </tr></thead>
+              <tbody id="deposits-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════════════════ WITHDRAWALS ════════════════════ -->
+      <div class="page" id="page-withdrawals">
+        <div class="page-header">
+          <div>
+            <div class="page-header__title">Withdrawal Requests</div>
+            <div class="page-header__sub">Approve or reject pending withdrawals</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card__body--p0 table-wrap">
+            <table class="data-table">
+              <thead><tr>
+                <th>ID</th><th>User</th><th>Amount</th><th>Destination</th>
+                <th>Requested</th><th>Status</th><th>Actions</th>
+              </tr></thead>
+              <tbody id="withdrawals-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════════════════ TRANSACTIONS ════════════════════ -->
+      <div class="page" id="page-transactions">
+        <div class="page-header">
+          <div>
+            <div class="page-header__title">All Transactions</div>
+            <div class="page-header__sub">Complete financial history</div>
+          </div>
+          <button class="btn btn--outline" onclick="exportCSV('transactions')">Export CSV</button>
+        </div>
+        <div class="card">
+          <div class="card__body--p0 table-wrap">
+            <table class="data-table">
+              <thead><tr>
+                <th>TXN ID</th><th>User</th><th>Type</th><th>Amount</th>
+                <th>Account</th><th>Date</th><th>Status</th>
+              </tr></thead>
+              <tbody id="txn-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════════════════ ANNOUNCEMENTS ════════════════════ -->
+      <div class="page" id="page-announcements">
+        <div class="page-header">
+          <div>
+            <div class="page-header__title">Announcements</div>
+            <div class="page-header__sub">Push messages to user dashboards</div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;flex-wrap:wrap;">
+          <div class="card">
+            <div class="card__head"><div class="card__title">New Announcement</div></div>
+            <div class="card__body">
+              <div style="display:flex;flex-direction:column;gap:14px;">
+                <div class="field">
+                  <label>Title</label>
+                  <input type="text" placeholder="Announcement title…" id="ann-title">
+                </div>
+                <div class="field">
+                  <label>Message</label>
+                  <textarea placeholder="Write your announcement…" id="ann-body" style="min-height:120px;"></textarea>
+                </div>
+                <div class="field">
+                  <label>Type</label>
+                  <select id="ann-type">
+                    <option>Info</option>
+                    <option>Warning</option>
+                    <option>Success</option>
+                    <option>Urgent</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label>Target Audience</label>
+                  <select id="ann-audience">
+                    <option>All Users</option>
+                    <option>Live Account Users</option>
+                    <option>Demo Account Users</option>
+                    <option>Unverified Users</option>
+                    <option>Specific User (enter ID below)</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label>Scheduled At (leave blank for immediate)</label>
+                  <input type="datetime-local" id="ann-schedule">
+                </div>
+                <button class="btn btn--primary" onclick="publishAnnouncement()">
+                  <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                  Publish Announcement
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card__head"><div class="card__title">Published Announcements</div></div>
+            <div class="card__body" id="ann-list" style="padding:12px 20px;display:flex;flex-direction:column;gap:12px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════════════════ MARKETS CONTROL ════════════════════ -->
+      <div class="page" id="page-markets-control">
+        <div class="page-header">
+          <div>
+            <div class="page-header__title">Markets Control</div>
+            <div class="page-header__sub">Enable/disable tradeable instruments and set spreads</div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;">
+          <div class="card">
+            <div class="card__head"><div class="card__title">Market Availability</div></div>
+            <div class="card__body" id="mkt-toggles"></div>
+          </div>
+          <div class="card">
+            <div class="card__head"><div class="card__title">Spread Override</div></div>
+            <div class="card__body">
+              <div style="display:flex;flex-direction:column;gap:14px;">
+                <div class="field">
+                  <label>Instrument</label>
+                  <select>
+                    <option>EUR/USD</option><option>GBP/USD</option><option>BTC/USD</option>
+                    <option>XAU/USD</option><option>US30</option><option>SPX500</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label>Spread (pips)</label>
+                  <input type="number" value="1.4" step="0.1" min="0">
+                </div>
+                <div class="field">
+                  <label>Max Leverage</label>
+                  <select>
+                    <option>1:30</option><option>1:50</option><option>1:100</option><option selected>1:200</option><option>1:500</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label>Trading Hours</label>
+                  <select>
+                    <option>24/5 (Mon–Fri)</option>
+                    <option>24/7</option>
+                    <option>Market hours only</option>
+                    <option>Suspended</option>
+                  </select>
+                </div>
+                <button class="btn btn--primary" onclick="showToast('Spread settings saved','success')">Save Settings</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════════════════ SETTINGS ════════════════════ -->
+      <div class="page" id="page-settings">
+        <div class="page-header">
+          <div>
+            <div class="page-header__title">System Settings</div>
+            <div class="page-header__sub">Platform-wide configuration</div>
+          </div>
+          <button class="btn btn--green" onclick="showToast('Settings saved successfully','success')">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            Save All
+          </button>
+        </div>
+        <div style="margin-bottom:18px;" class="card">
+          <div class="card__head">
+            <div class="card__title">Crypto Deposit Addresses (ERC20 / Ethereum Network)</div>
+            <button class="btn btn--green btn--sm" onclick="saveCryptoAddresses()">Save Addresses</button>
+          </div>
+          <div class="card__body">
+            <div class="form-grid form-grid--3" id="crypto-addr-grid" style="gap:12px 16px;"></div>
+            <p style="font-size:12px;color:var(--muted);margin-top:12px;">These addresses are shown to users when they select Cryptocurrency as deposit/withdrawal method. ERC20 network only.</p>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;">
+          <div class="card">
+            <div class="card__head"><div class="card__title">Platform Info</div></div>
+            <div class="card__body">
+              <div style="display:flex;flex-direction:column;gap:14px;">
+                <div class="field"><label>Platform Name</label><input type="text" value="AtrontifyX Global Markets"></div>
+                <div class="field"><label>Support Email</label><input type="email" value="support@xantex.com"></div>
+                <div class="field"><label>Support Phone</label><input type="text" value="+44 (0) 20 7776 9720"></div>
+                <div class="field"><label>Default Currency</label><select><option>USD</option><option>EUR</option><option>GBP</option></select></div>
+                <div class="field"><label>Default Leverage</label><select><option>1:30</option><option>1:100</option><option selected>1:200</option></select></div>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card__head"><div class="card__title">Feature Toggles</div></div>
+            <div class="card__body" style="padding:12px 20px;">
+              <div class="toggle-wrap"><div><div class="toggle-wrap__label">New Registrations</div><div class="toggle-wrap__sub">Allow new users to register</div></div><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+              <div class="toggle-wrap"><div><div class="toggle-wrap__label">Demo Accounts</div><div class="toggle-wrap__sub">Allow demo account creation</div></div><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+              <div class="toggle-wrap"><div><div class="toggle-wrap__label">Crypto Trading</div><div class="toggle-wrap__sub">Enable crypto instruments</div></div><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+              <div class="toggle-wrap"><div><div class="toggle-wrap__label">Auto KYC Approval</div><div class="toggle-wrap__sub">Auto-approve low-risk users</div></div><label class="toggle-switch"><input type="checkbox"><span class="toggle-slider"></span></label></div>
+              <div class="toggle-wrap"><div><div class="toggle-wrap__label">Maintenance Mode</div><div class="toggle-wrap__sub">Show maintenance page to users</div></div><label class="toggle-switch"><input type="checkbox"><span class="toggle-slider"></span></label></div>
+              <div class="toggle-wrap"><div><div class="toggle-wrap__label">2FA Required</div><div class="toggle-wrap__sub">Force 2FA for all users</div></div><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card__head"><div class="card__title">Deposit Limits</div></div>
+            <div class="card__body">
+              <div class="form-grid">
+                <div class="field"><label>Min Deposit (USD)</label><input type="number" value="100"></div>
+                <div class="field"><label>Max Deposit (USD)</label><input type="number" value="1000000"></div>
+                <div class="field"><label>Min Withdrawal (USD)</label><input type="number" value="10"></div>
+                <div class="field"><label>Max Withdrawal/Day (USD)</label><input type="number" value="50000"></div>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card__head"><div class="card__title">Notification Settings</div></div>
+            <div class="card__body" style="padding:12px 20px;">
+              <div class="toggle-wrap"><div><div class="toggle-wrap__label">Email on New Registration</div></div><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+              <div class="toggle-wrap"><div><div class="toggle-wrap__label">Email on Deposit</div></div><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+              <div class="toggle-wrap"><div><div class="toggle-wrap__label">Email on Withdrawal Request</div></div><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+              <div class="toggle-wrap"><div><div class="toggle-wrap__label">Alert on Large Trade (>$100K)</div></div><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+              <div class="toggle-wrap"><div><div class="toggle-wrap__label">Slack Webhook Alerts</div></div><label class="toggle-switch"><input type="checkbox"><span class="toggle-slider"></span></label></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════════════════ AUDIT LOG ════════════════════ -->
+      <div class="page" id="page-audit">
+        <div class="page-header">
+          <div>
+            <div class="page-header__title">Audit Log</div>
+            <div class="page-header__sub">All admin actions are recorded here</div>
+          </div>
+          <button class="btn btn--outline" onclick="exportCSV('audit')">Export</button>
+        </div>
+        <div class="card">
+          <div class="card__body--p0 table-wrap">
+            <table class="data-table">
+              <thead><tr><th>Time</th><th>Admin</th><th>Action</th><th>Target</th><th>Details</th><th>IP</th></tr></thead>
+              <tbody id="audit-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════════════════ SUPPORT TICKETS ════════════════════ -->
+      <div class="page" id="page-support">
+        <div class="page-header">
+          <div>
+            <div class="page-header__title">Support Tickets</div>
+            <div class="page-header__sub">Manage user support requests and replies</div>
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <div class="tabs" id="support-filter-tabs">
+              <button class="tab-btn active" onclick="filterSupport('all',this)">All</button>
+              <button class="tab-btn" onclick="filterSupport('open',this)">Open</button>
+              <button class="tab-btn" onclick="filterSupport('closed',this)">Closed</button>
+            </div>
+            <button class="btn btn--outline" onclick="renderSupportLive()">
+              <svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+              Refresh
+            </button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card__body--p0 table-wrap">
+            <table class="data-table">
+              <thead><tr>
+                <th>User</th><th>Subject</th><th>Message</th>
+                <th>Submitted</th><th>Status</th><th>Admin Reply</th><th>Actions</th>
+              </tr></thead>
+              <tbody id="support-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════════════════ USER NOTIFICATIONS ════════════════════ -->
+      <div class="page" id="page-notifications">
+        <div class="page-header">
+          <div>
+            <div class="page-header__title">User Notifications</div>
+            <div class="page-header__sub">Set per-user popup notifications shown on their dashboard</div>
+          </div>
+          <button class="btn btn--outline" onclick="renderNotificationsLive()">
+            <svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+            Refresh
+          </button>
+        </div>
+        <div class="card" style="margin-bottom:16px;">
+          <div class="card__body" style="padding:12px 20px;">
+            <div style="font-size:13px;color:var(--muted);">When enabled, each user sees the configured popup on their next dashboard load. Toggle off to hide it.</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card__body--p0 table-wrap">
+            <table class="data-table">
+              <thead><tr>
+                <th>User</th><th>Title</th><th>Message</th><th>Enabled</th><th>Actions</th>
+              </tr></thead>
+              <tbody id="notif-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════════════════ TRADES HISTORY ════════════════════ -->
+      <div class="page" id="page-trades">
+        <div class="page-header">
+          <div>
+            <div class="page-header__title">Trades History</div>
+            <div class="page-header__sub">Assign trade history to users and configure trade settings</div>
+          </div>
+          <button class="btn btn--outline" onclick="renderTradesLive()">
+            <svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+            Refresh
+          </button>
+        </div>
+
+        <!-- User trade settings -->
+        <div class="card" style="margin-bottom:18px;">
+          <div class="card__head">
+            <div class="card__title">User Trade Settings</div>
+            <div style="font-size:12px;color:var(--muted);">Controls trade enabled toggle and trade % on user dashboard</div>
+          </div>
+          <div class="card__body--p0 table-wrap">
+            <table class="data-table">
+              <thead><tr>
+                <th>User</th><th>Trade %</th><th>Enable Trades</th><th>Action</th>
+              </tr></thead>
+              <tbody id="trade-settings-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Add trade record -->
+        <div class="card" style="margin-bottom:18px;">
+          <div class="card__head"><div class="card__title">Add Trade Record</div></div>
+          <div class="card__body">
+            <div class="form-grid form-grid--3" style="gap:12px;">
+              <div class="field">
+                <label>User</label>
+                <select id="trade-user-sel"><option value="">— choose user —</option></select>
+              </div>
+              <div class="field">
+                <label>Market</label>
+                <select id="trade-market">
+                  <option value="crypto">Crypto</option>
+                  <option value="forex">Forex</option>
+                  <option value="indices">Indices</option>
+                  <option value="stocks">Stocks</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Pair</label>
+                <input type="text" id="trade-pair" placeholder="BTC/USDT">
+              </div>
+              <div class="field">
+                <label>Direction</label>
+                <select id="trade-direction">
+                  <option value="buy">BUY</option>
+                  <option value="sell">SELL</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Size / Lots</label>
+                <input type="number" id="trade-size" step="0.0001" placeholder="0.10">
+              </div>
+              <div class="field">
+                <label>Profit / Loss (USD)</label>
+                <input type="number" id="trade-pnl" step="0.01" placeholder="250.00">
+              </div>
+            </div>
+            <div style="margin-top:14px;">
+              <button class="btn btn--green" onclick="addTradeRecord()">
+                <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Add Trade
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Trade records table -->
+        <div class="card">
+          <div class="card__head"><div class="card__title">Trade Records</div></div>
+          <div class="card__body--p0 table-wrap">
+            <table class="data-table">
+              <thead><tr>
+                <th>User</th><th>Market</th><th>Pair</th><th>Direction</th>
+                <th>Size</th><th>P&amp;L</th><th>Date</th><th>Actions</th>
+              </tr></thead>
+              <tbody id="trades-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════════════════ ACTIVITY ════════════════════ -->
+      <div class="page" id="page-activity">
+        <div class="page-header">
+          <div><div class="page-header__title">Live Activity Feed</div><div class="page-header__sub">Real-time platform events</div></div>
+        </div>
+        <div class="card">
+          <div class="card__body" id="activity-feed" style="padding:12px 20px;max-height:600px;overflow-y:auto;"></div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /layout -->
+
+<!-- ════════ MODALS ════════ -->
+
+<!-- Add User -->
+<div class="modal-overlay" id="modal-add-user">
+  <div class="modal">
+    <div class="modal__head">
+      <div class="modal__title">Add New User</div>
+      <button class="modal__close" onclick="closeModal('modal-add-user')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal__body">
+      <div class="form-grid">
+        <div class="field"><label>First Name</label><input type="text" placeholder="John"></div>
+        <div class="field"><label>Last Name</label><input type="text" placeholder="Doe"></div>
+        <div class="field--full field"><label>Email</label><input type="email" placeholder="john@example.com"></div>
+        <div class="field"><label>Phone</label><input type="tel" placeholder="+44..."></div>
+        <div class="field"><label>Country</label><select><option>Nigeria</option><option>United Kingdom</option><option>UAE</option><option>USA</option><option>Other</option></select></div>
+        <div class="field"><label>Account Type</label><select><option>Live</option><option>Demo</option></select></div>
+        <div class="field"><label>Platform</label><select><option>MT4</option><option>MT5</option><option>cTrader</option><option>TradingView</option></select></div>
+        <div class="field"><label>Initial Balance (USD)</label><input type="number" placeholder="0.00"></div>
+        <div class="field--full field"><label>Temp Password</label><input type="text" placeholder="Auto-generate or enter…"></div>
+      </div>
+    </div>
+    <div class="modal__foot">
+      <button class="btn btn--outline" onclick="closeModal('modal-add-user')">Cancel</button>
+      <button class="btn btn--primary" onclick="saveUser()">Create User</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Account -->
+<div class="modal-overlay" id="modal-add-account">
+  <div class="modal">
+    <div class="modal__head">
+      <div class="modal__title">Create Trading Account</div>
+      <button class="modal__close" onclick="closeModal('modal-add-account')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal__body">
+      <div class="form-grid">
+        <div class="field--full field"><label>User ID or Email</label><input type="text" placeholder="Search user…"></div>
+        <div class="field"><label>Platform</label><select><option>MT4</option><option>MT5</option><option>cTrader</option><option>TradingView</option></select></div>
+        <div class="field"><label>Account Type</label><select><option>Live — Raw+</option><option>Live — Instant</option><option>Live — Elite</option><option>Demo</option></select></div>
+        <div class="field"><label>Currency</label><select><option>USD</option><option>EUR</option><option>GBP</option></select></div>
+        <div class="field"><label>Leverage</label><select><option>1:30</option><option>1:100</option><option>1:200</option></select></div>
+        <div class="field"><label>Initial Balance (USD)</label><input type="number" placeholder="0.00"></div>
+      </div>
+    </div>
+    <div class="modal__foot">
+      <button class="btn btn--outline" onclick="closeModal('modal-add-account')">Cancel</button>
+      <button class="btn btn--primary" onclick="showToast('Account created successfully','success');closeModal('modal-add-account')">Create Account</button>
+    </div>
+  </div>
+</div>
+
+<!-- Manual Deposit -->
+<div class="modal-overlay" id="modal-manual-deposit">
+  <div class="modal">
+    <div class="modal__head">
+      <div class="modal__title">Manual Deposit</div>
+      <button class="modal__close" onclick="closeModal('modal-manual-deposit')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal__body">
+      <div class="form-grid">
+        <div class="field--full field"><label>User Account</label><input type="text" placeholder="Account ID or user email…"></div>
+        <div class="field"><label>Amount (USD)</label><input type="number" placeholder="0.00"></div>
+        <div class="field"><label>Payment Method</label><select><option>Bank Transfer</option><option>Card</option><option>Crypto</option><option>Internal</option></select></div>
+        <div class="field--full field"><label>Reference / Notes</label><input type="text" placeholder="Transaction reference…"></div>
+      </div>
+    </div>
+    <div class="modal__foot">
+      <button class="btn btn--outline" onclick="closeModal('modal-manual-deposit')">Cancel</button>
+      <button class="btn btn--green" onclick="showToast('Deposit applied successfully','success');closeModal('modal-manual-deposit')">Apply Deposit</button>
+    </div>
+  </div>
+</div>
+
+<!-- KYC Docs Viewer -->
+<div class="modal-overlay" id="modal-kyc-docs">
+  <div class="modal" style="max-width:700px;width:100%;">
+    <div class="modal__head">
+      <div>
+        <div class="modal__title" id="kyc-modal-name">KYC Documents</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:2px;" id="kyc-modal-meta"></div>
+      </div>
+      <button class="modal__close" onclick="closeModal('modal-kyc-docs')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal__body" id="kyc-docs-body" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;"></div>
+    <div class="modal__foot" id="kyc-docs-foot" style="justify-content:space-between;">
+      <div style="display:flex;gap:8px;" id="kyc-action-btns"></div>
+      <button class="btn btn--outline" onclick="closeModal('modal-kyc-docs')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Delete User Confirmation -->
+<div class="modal-overlay" id="modal-delete-user">
+  <div class="modal" style="max-width:420px;">
+    <div class="modal__head">
+      <div class="modal__title" style="color:var(--red);">
+        <svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:none;stroke:var(--red);stroke-width:2;vertical-align:-3px;margin-right:6px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+        Delete User
+      </div>
+      <button class="modal__close" onclick="closeModal('modal-delete-user')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal__body">
+      <!-- User info -->
+      <div style="display:flex;align-items:center;gap:14px;padding:14px;background:var(--bg);border-radius:10px;border:1px solid var(--border);margin-bottom:16px;">
+        <div id="del-user-avatar" style="width:46px;height:46px;border-radius:50%;background:var(--red);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#fff;flex-shrink:0;"></div>
+        <div>
+          <div id="del-user-name" style="font-size:14px;font-weight:700;"></div>
+          <div id="del-user-email" style="font-size:12px;color:var(--muted);margin-top:2px;"></div>
+        </div>
+      </div>
+      <!-- Warning -->
+      <div style="background:#fff0f0;border:1px solid rgba(230,0,35,0.2);border-radius:10px;padding:14px;font-size:13px;line-height:1.6;">
+        <div style="font-weight:700;color:var(--red);margin-bottom:6px;">
+          <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:none;stroke:var(--red);stroke-width:2.5;vertical-align:-2px;margin-right:4px;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          This action cannot be undone
+        </div>
+        <ul style="padding-left:16px;color:#7a0010;margin:0;">
+          <li>The user's profile will be permanently deleted</li>
+          <li>All trading accounts and balances will be removed</li>
+          <li>Transaction and deposit history will be erased</li>
+        </ul>
+      </div>
+      <!-- Confirm input -->
+      <div style="margin-top:16px;">
+        <label style="font-size:12px;font-weight:600;color:var(--muted);display:block;margin-bottom:6px;">Type <strong id="del-confirm-hint" style="color:var(--text);font-family:monospace;"></strong> to confirm</label>
+        <input type="text" id="del-confirm-input" placeholder="Type email to confirm" style="width:100%;height:42px;border:1.5px solid var(--border);border-radius:8px;padding:0 14px;font-size:13px;font-family:monospace;outline:none;transition:border-color .15s;" oninput="delCheckConfirm(this.value)">
+      </div>
+    </div>
+    <div class="modal__foot">
+      <button class="btn btn--outline" onclick="closeModal('modal-delete-user')">Cancel</button>
+      <button class="btn btn--red" id="del-confirm-btn" disabled onclick="execDeleteUser()">
+        <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+        Delete Permanently
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">
+  <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+  <span id="toast-msg">Action completed</span>
+</div>
+
+<script>
+  /* ============================================================
+     AUTH
+  ============================================================ */
+  function adminLogin() {
+    const u = document.getElementById('admin-user').value;
+    const p = document.getElementById('admin-pass').value;
+    if (u === 'admin' && p === 'admin123') {
+      document.getElementById('login-gate').style.display = 'none';
+      document.getElementById('main-app').style.display   = 'flex';
+      renderAll();
+    } else {
+      document.getElementById('login-err').style.display = 'block';
+    }
+  }
+
+  /* ============================================================
+     SAMPLE DATA
+  ============================================================ */
+  const USERS       = [];
+  const POSITIONS   = [];
+  const DEPOSITS    = [];
+  const WITHDRAWALS = [];
+
+  const KYC = [];
+
+  const ADJ_LOG    = [];
+  const AUDIT_LOG  = [];
+  const ACTIVITY_FEED = [];
+
+  /* ============================================================
+     RENDER FUNCTIONS
+  ============================================================ */
+  function renderRecentUsers() {
+    document.getElementById('recent-users-tbody').innerHTML = USERS.slice(0,5).map(u => `
+      <tr class="mkt-row">
+        <td><div class="user-cell"><div class="user-avatar" style="background:${u.color};">${u.name.split(' ').map(n=>n[0]).join('')}</div><div><div class="user-name">${u.name}</div><div class="user-email">${u.email}</div></div></div></td>
+        <td>${u.country}</td>
+        <td>${u.joined}</td>
+        <td><span class="badge-pill ${u.status==='active'?'pill-green':'pill-red'}">${u.status}</span></td>
+        <td><span class="badge-pill ${u.kyc==='verified'?'pill-blue':u.kyc==='pending'?'pill-orange':'pill-red'}">${u.kyc}</span></td>
+        <td><button class="btn btn--sm btn--outline" onclick="openModal('modal-add-user')">Edit</button></td>
+      </tr>`).join('');
+  }
+
+  function renderUsers() {
+    document.getElementById('users-tbody').innerHTML = USERS.map(u => `
+      <tr>
+        <td><input type="checkbox"></td>
+        <td><div class="user-cell"><div class="user-avatar" style="background:${u.color};">${u.name.split(' ').map(n=>n[0]).join('')}</div><div><div class="user-name">${u.name}</div><div class="user-email">${u.email}</div></div></div></td>
+        <td>${u.country}</td>
+        <td><span class="badge-pill ${u.type==='Live'?'pill-green':'pill-blue'}">${u.type}</span></td>
+        <td style="font-weight:600;">${u.balance}</td>
+        <td>${u.joined}</td>
+        <td><span class="badge-pill ${u.status==='active'?'pill-green':'pill-red'}">${u.status}</span></td>
+        <td><span class="badge-pill ${u.kyc==='verified'?'pill-blue':u.kyc==='pending'?'pill-orange':'pill-red'}">${u.kyc}</span></td>
+        <td><div class="row-actions">
+          <button class="btn btn--sm btn--outline" onclick="editUser('${u.id}')">Edit</button>
+          <button class="btn btn--sm btn--${u.status==='active'?'orange':'green'}" onclick="toggleUserStatus('${u.id}')">${u.status==='active'?'Suspend':'Activate'}</button>
+          <button class="btn btn--sm btn--outline" onclick="resetUserPassword('${u.email}')">Reset PWD</button>
+          <button class="btn btn--sm btn--red" onclick="confirmDeleteUser('${u.id}','${u.name.replace(/'/g,"\\'")}','${u.email}')">Delete</button>
+        </div></td>
+      </tr>`).join('');
+  }
+
+  function renderKYC() {
+    document.getElementById('kyc-tbody').innerHTML = KYC.map(k => `
+      <tr>
+        <td><div class="user-name">${k.user}</div></td>
+        <td>${k.doc}</td>
+        <td>${k.submitted}</td>
+        <td><span class="badge-pill ${k.status==='pending'?'pill-orange':k.status==='verified'?'pill-green':'pill-red'}">${k.status}</span></td>
+        <td><div class="row-actions">
+          <button class="btn btn--sm btn--green" onclick="showToast('KYC approved','success')">Approve</button>
+          <button class="btn btn--sm btn--red" onclick="showToast('KYC rejected','error')">Reject</button>
+          <button class="btn btn--sm btn--outline">View Docs</button>
+        </div></td>
+      </tr>`).join('');
+  }
+
+  function renderAccounts() {
+    document.getElementById('accounts-tbody').innerHTML = USERS.map((u,i) => `
+      <tr>
+        <td style="font-weight:600;">#1048${2931+i}</td>
+        <td>${u.name}</td>
+        <td><span class="badge-pill pill-blue">${['MT4','MT5','cTrader','MT4','MT5','MT4','MT5','cTrader'][i]}</span></td>
+        <td><span class="badge-pill ${u.type==='Live'?'pill-green':'pill-blue'}">${u.type}</span></td>
+        <td style="font-weight:600;">${u.balance}</td>
+        <td>${u.balance}</td>
+        <td>1:200</td>
+        <td><span class="badge-pill ${u.status==='active'?'pill-green':'pill-red'}">${u.status}</span></td>
+        <td><div class="row-actions">
+          <button class="btn btn--sm btn--outline" onclick="showPage('balances',document.querySelector('[onclick*=balances]'))">Adjust</button>
+          <button class="btn btn--sm btn--red" onclick="showToast('Account suspended','error')">Suspend</button>
+        </div></td>
+      </tr>`).join('');
+  }
+
+  function renderPositions() {
+    document.getElementById('positions-tbody').innerHTML = POSITIONS.map(p => {
+      const up = !p.pnl.startsWith('-');
+      return `<tr>
+        <td style="font-weight:600;">${p.ticket}</td>
+        <td>${p.user}</td>
+        <td>${p.acc}</td>
+        <td style="font-weight:700;">${p.sym}</td>
+        <td><span class="badge-pill ${p.type==='Buy'?'pill-green':'pill-red'}">${p.type}</span></td>
+        <td>${p.lots}</td>
+        <td>${p.open}</td>
+        <td>${p.curr}</td>
+        <td style="color:var(--red);">${p.sl}</td>
+        <td style="color:var(--green);">${p.tp}</td>
+        <td style="font-weight:700;color:${up?'var(--green)':'var(--red)'};">${p.pnl}</td>
+        <td><button class="btn btn--sm btn--red" onclick="showToast('Position closed','error')">Force Close</button></td>
+      </tr>`;
+    }).join('');
+  }
+
+  function renderDeposits() {
+    document.getElementById('deposits-tbody').innerHTML = DEPOSITS.map(d => `
+      <tr>
+        <td style="font-weight:600;">${d.id}</td>
+        <td>${d.user}</td>
+        <td style="font-weight:700;">${d.amount}</td>
+        <td>${d.method}</td>
+        <td>${d.submitted}</td>
+        <td><span class="badge-pill ${d.status==='approved'?'pill-green':d.status==='pending'?'pill-orange':'pill-red'}">${d.status}</span></td>
+        <td><div class="row-actions">
+          ${d.status==='pending'?`
+          <button class="btn btn--sm btn--green" onclick="showToast('Deposit approved','success')">Approve</button>
+          <button class="btn btn--sm btn--red" onclick="showToast('Deposit rejected','error')">Reject</button>`
+          : `<button class="btn btn--sm btn--outline">View</button>`}
+        </div></td>
+      </tr>`).join('');
+  }
+
+  function renderWithdrawals() {
+    document.getElementById('withdrawals-tbody').innerHTML = WITHDRAWALS.map(w => `
+      <tr>
+        <td style="font-weight:600;">${w.id}</td>
+        <td>${w.user}</td>
+        <td style="font-weight:700;">${w.amount}</td>
+        <td style="font-size:12px;">${w.dest}</td>
+        <td>${w.requested}</td>
+        <td><span class="badge-pill ${w.status==='approved'?'pill-green':w.status==='pending'?'pill-orange':'pill-red'}">${w.status}</span></td>
+        <td><div class="row-actions">
+          ${w.status==='pending'?`
+          <button class="btn btn--sm btn--green" onclick="showToast('Withdrawal approved','success')">Approve</button>
+          <button class="btn btn--sm btn--red" onclick="showToast('Withdrawal rejected','error')">Reject</button>`
+          : `<button class="btn btn--sm btn--outline">View</button>`}
+        </div></td>
+      </tr>`).join('');
+  }
+
+  function renderTransactions() {
+    const all = [
+      ...DEPOSITS.map(d=>({id:d.id, user:d.user, type:'Deposit',    amt:d.amount,  acc:'MT4-001', date:d.submitted,   status:d.status})),
+      ...WITHDRAWALS.map(w=>({id:w.id, user:w.user, type:'Withdrawal', amt:w.amount, acc:'MT4-001', date:w.requested, status:w.status})),
+    ];
+    document.getElementById('txn-tbody').innerHTML = all.map(t => `
+      <tr>
+        <td style="font-weight:600;">${t.id}</td>
+        <td>${t.user}</td>
+        <td><span class="badge-pill ${t.type==='Deposit'?'pill-green':'pill-orange'}">${t.type}</span></td>
+        <td style="font-weight:700;">${t.amt}</td>
+        <td>${t.acc}</td>
+        <td>${t.date}</td>
+        <td><span class="badge-pill ${t.status==='approved'?'pill-green':t.status==='pending'?'pill-orange':'pill-red'}">${t.status}</span></td>
+      </tr>`).join('');
+  }
+
+  function renderAdjLog() {
+    document.getElementById('adj-log-tbody').innerHTML = ADJ_LOG.map(a => `
+      <tr>
+        <td style="font-size:12px;">${a.time}</td>
+        <td style="font-weight:600;">${a.acc}</td>
+        <td>${a.user}</td>
+        <td><span class="badge-pill pill-green">${a.type}</span></td>
+        <td style="font-weight:700;color:var(--green);">${a.amt}</td>
+        <td>${a.before}</td>
+        <td style="font-weight:600;">${a.after}</td>
+        <td style="font-size:11px;">${a.admin}</td>
+        <td style="font-size:12px;color:var(--muted);">${a.reason}</td>
+      </tr>`).join('');
+  }
+
+  function renderAudit() {
+    document.getElementById('audit-tbody').innerHTML = AUDIT_LOG.map(a => `
+      <tr>
+        <td style="font-size:12px;">${a.time}</td>
+        <td><span class="badge-pill pill-purple">${a.admin}</span></td>
+        <td style="font-weight:600;">${a.action}</td>
+        <td style="font-size:12px;">${a.target}</td>
+        <td style="font-size:12px;color:var(--muted);">${a.details}</td>
+        <td style="font-size:11px;color:var(--muted);">${a.ip}</td>
+      </tr>`).join('');
+  }
+
+  function renderActivity() {
+    const html = ACTIVITY_FEED.map(a => `
+      <div class="activity-item">
+        <div class="activity-dot" style="background:var(--${a.dot});"></div>
+        <div class="activity-text">${a.text}</div>
+        <div class="activity-time">${a.time}</div>
+      </div>`).join('');
+    const el1 = document.getElementById('dash-activity');
+    const el2 = document.getElementById('activity-feed');
+    if (el1) el1.innerHTML = html;
+    if (el2) el2.innerHTML = html;
+  }
+
+  function renderAnnouncements() {
+    document.getElementById('ann-list').innerHTML = [
+      { title:'Scheduled Maintenance', body:'Platform maintenance on 5 May 02:00–04:00 UTC.', type:'warning', time:'1 May' },
+      { title:'New Trading Hours — Crypto', body:'Crypto markets now trade 24/7.', type:'info', time:'28 Apr' },
+      { title:'Bonus Campaign Live', body:'50% deposit bonus for all clients this week.', type:'success', time:'25 Apr' },
+    ].map(a => `
+      <div style="border:1px solid var(--border);border-radius:8px;padding:12px 14px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+          <div style="font-size:13px;font-weight:700;">${a.title}</div>
+          <span class="badge-pill ${a.type==='warning'?'pill-orange':a.type==='success'?'pill-green':'pill-blue'}">${a.type}</span>
+        </div>
+        <div style="font-size:12px;color:var(--muted);">${a.body}</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:6px;">${a.time} · <span style="color:var(--red);cursor:pointer;" onclick="showToast('Announcement deleted','error')">Delete</span></div>
+      </div>`).join('');
+  }
+
+  function renderMarketsControl() {
+    const mkts = ['EUR/USD','GBP/USD','BTC/USD','ETH/USD','XAU/USD','US30','SPX500','NAS100','WTI Oil','AAPL','NVDA','TSLA'];
+    document.getElementById('mkt-toggles').innerHTML = mkts.map(m => `
+      <div class="toggle-wrap">
+        <div><div class="toggle-wrap__label">${m}</div></div>
+        <label class="toggle-switch">
+          <input type="checkbox" checked onchange="showToast('${m} updated','success')">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>`).join('');
+  }
+
+  /* ============================================================
+     ACTIONS
+  ============================================================ */
+  function editUser(id) { openModal('modal-add-user'); }
+  function toggleUserStatus(id) { showToast('User status updated','success'); }
+  function filterUsers(type, btn) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+  function searchUsers(q) { /* filter users-tbody rows */ }
+  function toggleSelectAll(cb) {
+    document.querySelectorAll('#users-tbody input[type=checkbox]').forEach(c => c.checked = cb.checked);
+  }
+  function applyAdjustment() {
+    const acc = document.getElementById('adj-account').value;
+    const amt = document.getElementById('adj-amount').value;
+    const reason = document.getElementById('adj-reason').value;
+    if (!acc || !amt || !reason) { showToast('Please fill all required fields','error'); return; }
+    showToast('Balance adjusted successfully','success');
+  }
+  function publishAnnouncement() {
+    const title = document.getElementById('ann-title').value;
+    if (!title) { showToast('Please enter a title','error'); return; }
+    showToast('Announcement published','success');
+    renderAnnouncements();
+  }
+  function saveUser() {
+    showToast('User created successfully','success');
+    closeModal('modal-add-user');
+  }
+  function exportCSV(type) { showToast(`${type}.csv exported`,'success'); }
+
+  /* ============================================================
+     NAV / PAGE
+  ============================================================ */
+  const PAGE_TITLES = {
+    dashboard:'Dashboard', activity:'Live Activity', users:'User Management',
+    verification:'KYC / Verification', accounts:'Trading Accounts',
+    balances:'Balances & P&L', positions:'Open Positions',
+    deposits:'Deposits', withdrawals:'Withdrawals', transactions:'All Transactions',
+    announcements:'Announcements', 'markets-control':'Markets Control',
+    settings:'System Settings', audit:'Audit Log',
+    support:'Support Tickets', notifications:'User Notifications', trades:'Trades History',
+  };
+
+  function showPage(id, btn) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    const page = document.getElementById('page-' + id);
+    if (page) page.classList.add('active');
+    if (btn) btn.classList.add('active');
+    document.getElementById('page-title').textContent = PAGE_TITLES[id] || id;
+    document.getElementById('sidebar').classList.remove('open');
+    if (id === 'balances'      && window.loadBalanceUsers)      window.loadBalanceUsers();
+    if (id === 'verification'  && window.renderKYCLive)        window.renderKYCLive();
+    if (id === 'settings'      && window.loadCryptoAddresses)  window.loadCryptoAddresses();
+    if (id === 'support'       && window.renderSupportLive)    window.renderSupportLive();
+    if (id === 'notifications' && window.renderNotificationsLive) window.renderNotificationsLive();
+    if (id === 'trades'        && window.renderTradesLive)     window.renderTradesLive();
+  }
+
+  /* ============================================================
+     MODALS
+  ============================================================ */
+  function openModal(id)  { document.getElementById(id).classList.add('open'); }
+  function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+  document.querySelectorAll('.modal-overlay').forEach(el => {
+    el.addEventListener('click', e => { if (e.target === el) el.classList.remove('open'); });
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') document.querySelectorAll('.modal-overlay.open').forEach(el => el.classList.remove('open'));
+  });
+
+  /* ============================================================
+     TOAST
+  ============================================================ */
+  let toastTimer;
+  function showToast(msg, type='success') {
+    const t = document.getElementById('toast');
+    const icons = {
+      success: `<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>`,
+      error:   `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`,
+    };
+    t.className = `toast ${type} show`;
+    t.innerHTML = (icons[type]||icons.success) + `<span>${msg}</span>`;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+  }
+
+  /* ============================================================
+     DARK MODE
+  ============================================================ */
+  const sunIcon  = `<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>`;
+  const moonIcon = `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>`;
+  function toggleDark() {
+    const isDark = document.body.classList.toggle('dark');
+    document.getElementById('dark-icon').innerHTML = isDark ? sunIcon : moonIcon;
+    localStorage.setItem('xantex-theme', isDark ? 'dark' : 'light');
+  }
+  if (localStorage.getItem('xantex-theme') === 'dark') {
+    document.body.classList.add('dark');
+    document.getElementById('dark-icon').innerHTML = sunIcon;
+  }
+
+  /* ============================================================
+     SIDEBAR (mobile)
+  ============================================================ */
+  function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
+  document.addEventListener('click', e => {
+    const sb = document.getElementById('sidebar');
+    const hb = document.getElementById('hamburger');
+    if (sb && sb.classList.contains('open') && !sb.contains(e.target) && hb && !hb.contains(e.target)) {
+      sb.classList.remove('open');
+    }
+  });
+
+  /* ============================================================
+     INIT (called after login)
+  ============================================================ */
+  function renderAll() {
+    renderRecentUsers();
+    renderUsers();
+    renderKYC();
+    renderAccounts();
+    renderPositions();
+    renderDeposits();
+    renderWithdrawals();
+    renderTransactions();
+    renderAdjLog();
+    renderAudit();
+    renderActivity();
+    renderAnnouncements();
+    renderMarketsControl();
+  }
+
+  // Live activity ticker
+  setInterval(() => {
+    const badge = document.getElementById('activity-badge');
+    if (badge) badge.textContent = Math.floor(Math.random() * 5) + 10;
+  }, 8000);
+</script>
+
+<!-- ═══ Supabase integration ═══ -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./supabase.js"></script>
+<script>
+/* ============================================================
+   OPS PANEL — SUPABASE DATA LAYER
+   All render functions below override their static-data
+   counterparts. Static data is rendered first as a fallback,
+   then replaced with live Supabase rows when available.
+============================================================ */
+
+// ── Helpers ──────────────────────────────────────────────────
+function fmtDate(ts) {
+  if (!ts) return '—';
+  return new Date(ts).toLocaleString('en-GB', {
+    day:'2-digit', month:'short', year:'numeric',
+    hour:'2-digit', minute:'2-digit',
+  });
+}
+
+// ── Upgrade adminLogin to use Supabase Auth ──────────────────
+const _origAdminLogin = adminLogin;
+window.adminLogin = async function() {
+  const emailOrUser = document.getElementById('admin-user').value.trim();
+  const pass        = document.getElementById('admin-pass').value;
+  const db = window.XANTEX_DB;
+
+  if (db && emailOrUser.includes('@')) {
+    const { error } = await db.auth.signInWithPassword({ email: emailOrUser, password: pass });
+    if (!error) {
+      document.getElementById('login-gate').style.display = 'none';
+      document.getElementById('main-app').style.display   = 'flex';
+      renderAll();
+      return;
+    }
+  }
+  _origAdminLogin(); // fallback to hardcoded admin/admin123
+};
+
+// ── Users ─────────────────────────────────────────────────────
+async function _loadUsers() {
+  const db = window.XANTEX_DB;
+  if (!db) return null;
+  const [{ data: profiles }, { data: accounts }] = await Promise.all([
+    db.from('profiles').select('id, first_name, last_name, email, country, kyc_status, status, created_at').order('created_at', { ascending: false }),
+    db.from('trading_accounts').select('user_id, balance, type'),
+  ]);
+  if (!profiles?.length) return null;
+  const COLORS = ['#1a5cff','#22a06b','#7c3aed','#f5a623','#e60023'];
+  return profiles.map((p, i) => {
+    const accs  = accounts?.filter(a => a.user_id === p.id) || [];
+    const total = accs.reduce((s, a) => s + (parseFloat(a.balance) || 0), 0);
+    const live  = accs.some(a => a.type?.toLowerCase().includes('live'));
+    return {
+      id:      p.id,
+      name:    `${p.first_name || ''} ${p.last_name || ''}`.trim() || p.email,
+      email:   p.email,
+      country: p.country || '—',
+      type:    live ? 'Live' : 'Demo',
+      balance: '$' + total.toLocaleString('en-US', { minimumFractionDigits: 2 }),
+      joined:  new Date(p.created_at).toLocaleDateString('en-GB'),
+      status:  p.status || 'active',
+      kyc:     p.kyc_status || 'pending',
+      color:   COLORS[i % COLORS.length],
+    };
+  });
+}
+
+async function renderUsersLive() {
+  renderRecentUsers(); renderUsers(); // static first
+  const users = await _loadUsers();
+  if (!users) return;
+  USERS.splice(0, USERS.length, ...users);
+  renderRecentUsers(); renderUsers();
+}
+window.renderUsersLive = renderUsersLive;
+
+// ── KYC ───────────────────────────────────────────────────────
+async function renderKYCLive() {
+  const db = window.XANTEX_DB; if (!db) return;
+  const { data, error } = await db
+    .from('kyc_submissions')
+    .select('id, user_id, document_type, submitted_at, status, front_url, back_url, selfie_url, proof_address_url, profiles(first_name, last_name, email, country)')
+    .order('submitted_at', { ascending: false });
+  const tbody = document.getElementById('kyc-tbody');
+  if (!data?.length) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:24px;">No KYC submissions found</td></tr>';
+    return;
+  }
+  tbody.innerHTML = data.map(k => {
+    const p    = k.profiles || {};
+    const name = `${p.first_name||''} ${p.last_name||''}`.trim() || p.email || '—';
+    const docsJson = JSON.stringify({ front:k.front_url, back:k.back_url, selfie:k.selfie_url, addr:k.proof_address_url, name, docType:k.document_type, status:k.status, id:k.id }).replace(/'/g,"&#39;");
+    return `<tr>
+      <td><div class="user-name">${name}</div></td>
+      <td><div class="user-email">${p.email||'—'}</div></td>
+      <td>${p.country||'—'}</td>
+      <td>${k.document_type||'—'}</td>
+      <td>${fmtDate(k.submitted_at)}</td>
+      <td><span class="badge-pill ${k.status==='pending'?'pill-orange':k.status==='verified'?'pill-green':'pill-red'}">${k.status}</span></td>
+      <td><div class="row-actions">
+        <button class="btn btn--sm btn--outline" onclick="viewKYCDocs('${encodeURIComponent(docsJson)}')">View Docs</button>
+        <button class="btn btn--sm btn--green" onclick="opsApproveKYC('${k.id}')">Approve</button>
+        <button class="btn btn--sm btn--red"   onclick="opsRejectKYC('${k.id}')">Reject</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+// ── Reset password ────────────────────────────────────────────
+window.resetUserPassword = async function(email) {
+  if (!email || email === 'undefined') { showToast('No email on record for this user','error'); return; }
+  const db = window.XANTEX_DB;
+  if (!db) { showToast('No DB connection','error'); return; }
+  const { error } = await db.auth.resetPasswordForEmail(email, {
+    redirectTo: window.location.origin + '/login.html',
+  });
+  if (error) { showToast('Error: ' + error.message, 'error'); return; }
+  showToast(`Password reset email sent to ${email}`, 'success');
+};
+
+// ── Delete user ───────────────────────────────────────────────
+let _delUserId   = null;
+let _delUserEmail = null;
+
+window.confirmDeleteUser = function(id, name, email) {
+  _delUserId    = id;
+  _delUserEmail = email;
+
+  // Populate modal
+  const initials = name.split(' ').map(n => n[0]).join('').toUpperCase() || '?';
+  document.getElementById('del-user-avatar').textContent = initials;
+  document.getElementById('del-user-name').textContent   = name;
+  document.getElementById('del-user-email').textContent  = email;
+  document.getElementById('del-confirm-hint').textContent = email;
+
+  // Reset confirm input and button
+  const inp = document.getElementById('del-confirm-input');
+  const btn = document.getElementById('del-confirm-btn');
+  if (inp) { inp.value = ''; inp.style.borderColor = ''; }
+  if (btn) btn.disabled = true;
+
+  openModal('modal-delete-user');
+  setTimeout(() => inp?.focus(), 120);
+};
+
+window.delCheckConfirm = function(val) {
+  const btn = document.getElementById('del-confirm-btn');
+  const inp = document.getElementById('del-confirm-input');
+  const match = val.trim().toLowerCase() === (_delUserEmail || '').toLowerCase();
+  if (btn) btn.disabled = !match;
+  if (inp) inp.style.borderColor = val ? (match ? 'var(--green)' : 'var(--red)') : '';
+};
+
+window.execDeleteUser = async function() {
+  const db = window.XANTEX_DB;
+  if (!db || !_delUserId) return;
+
+  const btn = document.getElementById('del-confirm-btn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Deleting…'; }
+
+  try {
+    // Delete in order: requests → accounts → profile
+    await db.from('deposit_requests').delete().eq('user_id', _delUserId);
+    await db.from('withdrawal_requests').delete().eq('user_id', _delUserId);
+    await db.from('transactions').delete().eq('user_id', _delUserId);
+    await db.from('positions').delete().eq('user_id', _delUserId);
+    await db.from('kyc_submissions').delete().eq('user_id', _delUserId);
+    await db.from('trading_accounts').delete().eq('user_id', _delUserId);
+    const { error } = await db.from('profiles').delete().eq('id', _delUserId);
+    if (error) throw error;
+
+    // Ban the auth.users entry so dashboard forces sign-out even if auth record remains
+    await db.from('banned_users').upsert({ user_id: _delUserId, banned_at: new Date().toISOString() }, { onConflict: 'user_id' });
+
+    closeModal('modal-delete-user');
+    showToast(`User deleted successfully`, 'success');
+
+    // Remove from local USERS array and re-render
+    const idx = USERS.findIndex(u => u.id === _delUserId);
+    if (idx !== -1) USERS.splice(idx, 1);
+    renderRecentUsers();
+    renderUsers();
+  } catch (e) {
+    showToast('Delete failed: ' + e.message, 'error');
+    if (btn) { btn.disabled = false; btn.innerHTML = '<svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg> Delete Permanently'; }
+  } finally {
+    _delUserId = null; _delUserEmail = null;
+  }
+};
+
+window.renderKYCLive = renderKYCLive;
+
+window.viewKYCDocs = function(encoded) {
+  const k = JSON.parse(decodeURIComponent(encoded));
+  document.getElementById('kyc-modal-name').textContent = k.name + ' — ' + (k.docType || 'KYC Document');
+  document.getElementById('kyc-modal-meta').textContent = 'Status: ' + k.status;
+  const docs = [
+    { label: 'Front of Document', url: k.front },
+    { label: 'Back of Document',  url: k.back  },
+    { label: 'Selfie with Document', url: k.selfie },
+    { label: 'Proof of Address', url: k.addr  },
+  ].filter(d => d.url);
+  const body = document.getElementById('kyc-docs-body');
+  if (!docs.length) {
+    body.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--muted);padding:32px;">No documents uploaded yet.</div>';
+  } else {
+    body.style.gridTemplateColumns = docs.length === 1 ? '1fr' : '1fr 1fr';
+    body.innerHTML = docs.map(d => `
+      <div style="border:1px solid var(--border);border-radius:8px;overflow:hidden;">
+        <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);padding:8px 12px;border-bottom:1px solid var(--border);">${d.label}</div>
+        <a href="${d.url}" target="_blank" title="Open full size">
+          <img src="${d.url}" alt="${d.label}" style="width:100%;max-height:220px;object-fit:cover;display:block;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div style="display:none;align-items:center;justify-content:center;height:120px;color:var(--muted);font-size:13px;flex-direction:column;gap:8px;">
+            <svg viewBox="0 0 24 24" style="width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:1.5;"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            <span>Click to open file</span>
+          </div>
+        </a>
+      </div>`).join('');
+  }
+  document.getElementById('kyc-action-btns').innerHTML = `
+    <button class="btn btn--green" onclick="opsApproveKYC('${k.id}');closeModal('modal-kyc-docs')">Approve</button>
+    <button class="btn btn--red"   onclick="opsRejectKYC('${k.id}');closeModal('modal-kyc-docs')">Reject</button>`;
+  openModal('modal-kyc-docs');
+};
+
+window.opsApproveKYC = async id => {
+  const { error } = await window.XANTEX_DB.from('kyc_submissions').update({ status:'verified' }).eq('id', id);
+  if (error) { showToast('Error: '+error.message,'error'); return; }
+  // Also update the profile kyc_status
+  const { data: sub } = await window.XANTEX_DB.from('kyc_submissions').select('user_id').eq('id', id).single();
+  if (sub) await window.XANTEX_DB.from('profiles').update({ kyc_status:'verified' }).eq('id', sub.user_id);
+  showToast('KYC approved','success'); renderKYCLive();
+};
+window.opsRejectKYC = async id => {
+  const { error } = await window.XANTEX_DB.from('kyc_submissions').update({ status:'rejected' }).eq('id', id);
+  if (error) { showToast('Error: '+error.message,'error'); return; }
+  const { data: sub } = await window.XANTEX_DB.from('kyc_submissions').select('user_id').eq('id', id).single();
+  if (sub) await window.XANTEX_DB.from('profiles').update({ kyc_status:'rejected' }).eq('id', sub.user_id);
+  showToast('KYC rejected','error'); renderKYCLive();
+};
+
+// ── Trading Accounts ──────────────────────────────────────────
+async function renderAccountsLive() {
+  renderAccounts();
+  const db = window.XANTEX_DB; if (!db) return;
+  const { data } = await db
+    .from('trading_accounts')
+    .select('*, profiles(first_name, last_name)')
+    .order('created_at', { ascending: false });
+  if (!data?.length) return;
+  document.getElementById('accounts-tbody').innerHTML = data.map(a => {
+    const name = a.profiles ? `${a.profiles.first_name} ${a.profiles.last_name}` : '—';
+    const bal  = parseFloat(a.balance || 0).toLocaleString('en-US', { minimumFractionDigits: 2 });
+    const live = a.type?.toLowerCase().includes('live');
+    return `<tr>
+      <td style="font-weight:600;">#${a.account_number || a.id.slice(0,8)}</td>
+      <td>${name}</td>
+      <td><span class="badge-pill pill-blue">${a.platform || '—'}</span></td>
+      <td><span class="badge-pill ${live?'pill-green':'pill-blue'}">${live?'Live':'Demo'}</span></td>
+      <td style="font-weight:600;">$${bal}</td>
+      <td>$${bal}</td>
+      <td>${a.leverage || '1:200'}</td>
+      <td><span class="badge-pill pill-green">active</span></td>
+      <td><div class="row-actions">
+        <button class="btn btn--sm btn--outline" onclick="showPage('balances',null)">Adjust</button>
+        <button class="btn btn--sm btn--red" onclick="opsSuspendAccount('${a.id}')">Suspend</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+window.renderAccountsLive = renderAccountsLive;
+window.opsSuspendAccount = async id => {
+  await window.XANTEX_DB.from('trading_accounts').update({ status:'suspended' }).eq('id', id);
+  showToast('Account suspended','error'); renderAccountsLive();
+};
+
+// ── Positions ─────────────────────────────────────────────────
+async function renderPositionsLive() {
+  renderPositions();
+  const db = window.XANTEX_DB; if (!db) return;
+  const { data } = await db
+    .from('positions')
+    .select('*, profiles(first_name, last_name)')
+    .eq('status','open').order('opened_at', { ascending: false });
+  if (!data?.length) return;
+  document.getElementById('positions-tbody').innerHTML = data.map(p => {
+    const pnl  = parseFloat(p.floating_pnl || 0);
+    const up   = pnl >= 0;
+    const name = p.profiles ? `${p.profiles.first_name} ${p.profiles.last_name}` : '—';
+    return `<tr>
+      <td style="font-weight:600;">#${p.id.slice(0,8)}</td>
+      <td>${name}</td>
+      <td>${p.account_number || '—'}</td>
+      <td style="font-weight:700;">${p.symbol}</td>
+      <td><span class="badge-pill ${p.direction==='buy'?'pill-green':'pill-red'}">${(p.direction||'').toUpperCase()}</span></td>
+      <td>${p.lots}</td>
+      <td>${p.open_price}</td>
+      <td>${p.current_price || p.open_price}</td>
+      <td style="color:var(--red);">${p.stop_loss || '—'}</td>
+      <td style="color:var(--green);">${p.take_profit || '—'}</td>
+      <td style="font-weight:700;color:${up?'var(--green)':'var(--red)'};">${up?'+':''}$${Math.abs(pnl).toFixed(2)}</td>
+      <td><button class="btn btn--sm btn--red" onclick="opsForceClose('${p.id}')">Force Close</button></td>
+    </tr>`;
+  }).join('');
+}
+window.renderPositionsLive = renderPositionsLive;
+window.opsForceClose = async id => {
+  if (!confirm('Force close this position?')) return;
+  await window.XANTEX_DB.from('positions').update({ status:'closed' }).eq('id', id);
+  showToast('Position closed','success'); renderPositionsLive();
+};
+
+// ── Deposits ──────────────────────────────────────────────────
+async function renderDepositsLive() {
+  renderDeposits();
+  const db = window.XANTEX_DB; if (!db) return;
+  const { data } = await db
+    .from('transactions')
+    .select('*, profiles(first_name, last_name)')
+    .eq('type','deposit').order('created_at', { ascending: false });
+  if (!data?.length) return;
+  document.getElementById('deposits-tbody').innerHTML = data.map(d => {
+    const name = d.profiles ? `${d.profiles.first_name} ${d.profiles.last_name}` : '—';
+    const amt  = parseFloat(d.amount || 0).toLocaleString('en-US', { minimumFractionDigits: 2 });
+    return `<tr>
+      <td style="font-weight:600;">${d.id.slice(0,8).toUpperCase()}</td>
+      <td>${name}</td>
+      <td style="font-weight:700;">$${amt}</td>
+      <td>${d.payment_method || '—'}</td>
+      <td style="font-size:12px;">${fmtDate(d.created_at)}</td>
+      <td><span class="badge-pill ${d.status==='approved'?'pill-green':d.status==='pending'?'pill-orange':'pill-red'}">${d.status}</span></td>
+      <td><div class="row-actions">
+        ${d.status==='pending'
+          ? `<button class="btn btn--sm btn--green" onclick="opsApproveDeposit('${d.id}')">Approve</button>
+             <button class="btn btn--sm btn--red" onclick="opsRejectDeposit('${d.id}')">Reject</button>`
+          : `<button class="btn btn--sm btn--outline">View</button>`}
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+window.renderDepositsLive = renderDepositsLive;
+window.opsApproveDeposit = async id => {
+  await window.XANTEX_DB.from('transactions').update({ status:'approved' }).eq('id', id);
+  showToast('Deposit approved','success'); renderDepositsLive();
+};
+window.opsRejectDeposit = async id => {
+  await window.XANTEX_DB.from('transactions').update({ status:'rejected' }).eq('id', id);
+  showToast('Deposit rejected','error'); renderDepositsLive();
+};
+
+// ── Withdrawals ───────────────────────────────────────────────
+async function renderWithdrawalsLive() {
+  renderWithdrawals();
+  const db = window.XANTEX_DB; if (!db) return;
+  const { data } = await db
+    .from('transactions')
+    .select('*, profiles(first_name, last_name)')
+    .eq('type','withdrawal').order('created_at', { ascending: false });
+  if (!data?.length) return;
+  document.getElementById('withdrawals-tbody').innerHTML = data.map(w => {
+    const name = w.profiles ? `${w.profiles.first_name} ${w.profiles.last_name}` : '—';
+    const amt  = parseFloat(w.amount || 0).toLocaleString('en-US', { minimumFractionDigits: 2 });
+    return `<tr>
+      <td style="font-weight:600;">${w.id.slice(0,8).toUpperCase()}</td>
+      <td>${name}</td>
+      <td style="font-weight:700;">$${amt}</td>
+      <td style="font-size:12px;">${w.destination || '—'}</td>
+      <td style="font-size:12px;">${fmtDate(w.created_at)}</td>
+      <td><span class="badge-pill ${w.status==='approved'?'pill-green':w.status==='pending'?'pill-orange':'pill-red'}">${w.status}</span></td>
+      <td><div class="row-actions">
+        ${w.status==='pending'
+          ? `<button class="btn btn--sm btn--green" onclick="opsApproveWithdrawal('${w.id}')">Approve</button>
+             <button class="btn btn--sm btn--red" onclick="opsRejectWithdrawal('${w.id}')">Reject</button>`
+          : `<button class="btn btn--sm btn--outline">View</button>`}
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+window.renderWithdrawalsLive = renderWithdrawalsLive;
+window.opsApproveWithdrawal = async id => {
+  await window.XANTEX_DB.from('transactions').update({ status:'approved' }).eq('id', id);
+  showToast('Withdrawal approved','success'); renderWithdrawalsLive();
+};
+window.opsRejectWithdrawal = async id => {
+  await window.XANTEX_DB.from('transactions').update({ status:'rejected' }).eq('id', id);
+  showToast('Withdrawal rejected','error'); renderWithdrawalsLive();
+};
+
+// ── All Transactions ──────────────────────────────────────────
+async function renderTransactionsLive() {
+  renderTransactions();
+  const db = window.XANTEX_DB; if (!db) return;
+  const { data } = await db
+    .from('transactions')
+    .select('*, profiles(first_name, last_name)')
+    .order('created_at', { ascending: false })
+    .limit(100);
+  if (!data?.length) return;
+  document.getElementById('txn-tbody').innerHTML = data.map(t => {
+    const name = t.profiles ? `${t.profiles.first_name} ${t.profiles.last_name}` : '—';
+    const amt  = parseFloat(t.amount || 0).toLocaleString('en-US', { minimumFractionDigits: 2 });
+    const dep  = t.type === 'deposit';
+    return `<tr>
+      <td style="font-weight:600;">${t.id.slice(0,8).toUpperCase()}</td>
+      <td>${name}</td>
+      <td><span class="badge-pill ${dep?'pill-green':'pill-orange'}">${t.type}</span></td>
+      <td style="font-weight:700;">$${amt}</td>
+      <td style="font-size:12px;">${t.account_id || '—'}</td>
+      <td style="font-size:12px;">${fmtDate(t.created_at)}</td>
+      <td><span class="badge-pill ${t.status==='approved'?'pill-green':t.status==='pending'?'pill-orange':'pill-red'}">${t.status}</span></td>
+    </tr>`;
+  }).join('');
+}
+window.renderTransactionsLive = renderTransactionsLive;
+
+// ── Audit Log ─────────────────────────────────────────────────
+async function renderAuditLive() {
+  renderAudit();
+  const db = window.XANTEX_DB; if (!db) return;
+  const { data } = await db
+    .from('audit_log')
+    .select('*')
+    .order('created_at', { ascending: false })
+    .limit(50);
+  if (!data?.length) return;
+  document.getElementById('audit-tbody').innerHTML = data.map(a => `
+    <tr>
+      <td style="font-size:12px;">${fmtDate(a.created_at)}</td>
+      <td><span class="badge-pill pill-purple">${a.admin_email || 'Admin'}</span></td>
+      <td style="font-weight:600;">${a.action}</td>
+      <td style="font-size:12px;">${a.target || '—'}</td>
+      <td style="font-size:12px;color:var(--muted);">${a.details || '—'}</td>
+      <td style="font-size:11px;color:var(--muted);">${a.ip_address || '—'}</td>
+    </tr>`).join('');
+}
+window.renderAuditLive = renderAuditLive;
+
+// ── Announcements ─────────────────────────────────────────────
+async function renderAnnouncementsLive() {
+  renderAnnouncements();
+  const db = window.XANTEX_DB; if (!db) return;
+  const { data } = await db
+    .from('announcements')
+    .select('*')
+    .order('created_at', { ascending: false })
+    .limit(20);
+  if (!data?.length) return;
+  document.getElementById('ann-list').innerHTML = data.map(a => `
+    <div style="border:1px solid var(--border);border-radius:8px;padding:12px 14px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+        <div style="font-size:13px;font-weight:700;">${a.title}</div>
+        <span class="badge-pill ${a.type==='warning'?'pill-orange':a.type==='success'?'pill-green':'pill-blue'}">${a.type}</span>
+      </div>
+      <div style="font-size:12px;color:var(--muted);">${a.body || ''}</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:6px;">
+        ${fmtDate(a.created_at)} ·
+        <span style="color:var(--red);cursor:pointer;" onclick="opsDeleteAnnouncement('${a.id}')">Delete</span>
+      </div>
+    </div>`).join('');
+}
+window.renderAnnouncementsLive = renderAnnouncementsLive;
+window.opsDeleteAnnouncement = async id => {
+  await window.XANTEX_DB.from('announcements').delete().eq('id', id);
+  showToast('Deleted','error'); renderAnnouncementsLive();
+};
+
+// ── Patch publishAnnouncement ─────────────────────────────────
+const _origPublishAnnouncement = publishAnnouncement;
+window.publishAnnouncement = async function() {
+  const title    = document.getElementById('ann-title').value.trim();
+  const body     = document.getElementById('ann-body').value.trim();
+  const type     = document.getElementById('ann-type').value.toLowerCase();
+  const audience = document.getElementById('ann-audience').value;
+  const schedule = document.getElementById('ann-schedule').value;
+  if (!title) { showToast('Please enter a title','error'); return; }
+  const db = window.XANTEX_DB;
+  if (db) {
+    await db.from('announcements').insert({
+      title, body, type, audience,
+      scheduled_at: schedule || null,
+      published: !schedule,
+    });
+  }
+  showToast('Announcement published','success');
+  renderAnnouncementsLive();
+};
+
+// ── Balances page: load users into dropdown ───────────────────
+window.loadBalanceUsers = async function() {
+  const db = window.XANTEX_DB;
+  const sel = document.getElementById('adj-user-select');
+  if (!sel || !db) return;
+  sel.innerHTML = '<option value="">— loading users… —</option>';
+  const { data: users, error } = await db.from('profiles')
+    .select('id, first_name, last_name, email')
+    .order('email', { ascending: true });
+  if (error) {
+    sel.innerHTML = '<option value="">— error loading users —</option>';
+    showToast('Could not load users: ' + error.message + '. Make sure your account is in the admin_users table.', 'error');
+    return;
+  }
+  if (!users || users.length === 0) {
+    sel.innerHTML = '<option value="">— no users found (check admin_users table) —</option>';
+    return;
+  }
+  sel.innerHTML = '<option value="">— choose a user —</option>';
+  users.forEach(u => {
+    const opt = document.createElement('option');
+    opt.value = u.id;
+    const name = `${u.first_name || ''} ${u.last_name || ''}`.trim();
+    opt.textContent = name ? `${name} (${u.email})` : u.email || u.id.slice(0,8);
+    sel.appendChild(opt);
+  });
+};
+
+window.loadUserAccounts = async function() {
+  const db = window.XANTEX_DB;
+  const userId = document.getElementById('adj-user-select').value;
+  const accSel = document.getElementById('adj-account');
+  const noAccBox = document.getElementById('adj-no-account-box');
+  const balDisplay = document.getElementById('adj-current-bal');
+  accSel.innerHTML = '<option value="">— loading… —</option>';
+  if (noAccBox) noAccBox.style.display = 'none';
+  if (balDisplay) balDisplay.textContent = '';
+  if (!userId || !db) { accSel.innerHTML = '<option value="">— select user first —</option>'; return; }
+  const { data: accounts, error } = await db.from('trading_accounts')
+    .select('id, account_number, type, balance, equity, currency')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false });
+  if (error) { accSel.innerHTML = '<option value="">— error: ' + error.message + ' —</option>'; return; }
+  if (!accounts || accounts.length === 0) {
+    accSel.innerHTML = '<option value="">— no accounts found —</option>';
+    if (noAccBox) noAccBox.style.display = 'block';
+    return;
+  }
+  accSel.innerHTML = '<option value="">— choose an account —</option>';
+  accounts.forEach(a => {
+    const opt = document.createElement('option');
+    opt.value = a.id;
+    const bal = parseFloat(a.balance||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+    opt.textContent = `#${a.account_number || a.id.slice(0,8)} · ${a.type} · ${a.currency||'USD'} $${bal}`;
+    accSel.appendChild(opt);
+  });
+  // Auto-select first account and show its balance
+  if (accounts.length === 1) {
+    accSel.value = accounts[0].id;
+    showAccountBalance(accounts[0]);
+  }
+  accSel.onchange = function() {
+    const found = accounts.find(a => a.id === accSel.value);
+    if (found) showAccountBalance(found); else if(balDisplay) balDisplay.textContent = '';
+  };
+};
+
+function showAccountBalance(acc) {
+  let box = document.getElementById('adj-current-bal');
+  if (!box) {
+    box = document.createElement('div');
+    box.id = 'adj-current-bal';
+    box.style.cssText = 'background:rgba(26,92,255,0.08);border:1px solid rgba(26,92,255,0.25);border-radius:8px;padding:12px 16px;font-size:14px;margin-top:4px;';
+    const accSel = document.getElementById('adj-account');
+    accSel?.parentNode?.insertAdjacentElement('afterend', box);
+  }
+  const bal = parseFloat(acc.balance||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  const eq  = parseFloat(acc.equity||acc.balance||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  box.innerHTML = `<span style="color:var(--muted);font-size:12px;">Current balance</span><br>
+    <strong style="font-size:18px;">$${bal}</strong>
+    <span style="color:var(--muted);font-size:12px;margin-left:12px;">Equity: $${eq}</span>`;
+}
+
+window.createAccountForUser = async function() {
+  const db = window.XANTEX_DB;
+  const userId = document.getElementById('adj-user-select').value;
+  const accType = document.getElementById('adj-new-acc-type').value;
+  const initBal = parseFloat(document.getElementById('adj-new-acc-bal').value) || 0;
+  if (!userId || !db) return;
+  const { error } = await db.from('trading_accounts').insert({
+    user_id: userId, platform: 'MT5',
+    type: accType, account_type: 'Standard',
+    currency: 'USD', balance: initBal,
+    equity: initBal, leverage: '1:200',
+  });
+  if (error) { showToast('Error: ' + error.message, 'error'); return; }
+  showToast('Account created', 'success');
+  window.loadUserAccounts();
+};
+
+// ── Patch applyAdjustment ─────────────────────────────────────
+const _origApplyAdjustment = applyAdjustment;
+window.applyAdjustment = async function() {
+  const accId   = document.getElementById('adj-account').value;
+  const adjType = document.getElementById('adj-type').value;
+  const amount  = parseFloat(document.getElementById('adj-amount').value);
+  const reason  = document.getElementById('adj-reason').value.trim();
+  if (!accId || !amount || !reason) { showToast('Please fill all required fields','error'); return; }
+
+  const db = window.XANTEX_DB;
+  if (!db) { showToast('No database connection','error'); return; }
+
+  // Verify admin has an active Supabase session
+  let session;
+  try {
+    const { data } = await db.auth.getSession();
+    session = data?.session;
+  } catch(e) {}
+  if (!session) {
+    showToast('Session expired — please log out and log back in with your admin email','error');
+    return;
+  }
+
+  // Fetch current balance
+  const { data: acc, error: fetchErr } = await db.from('trading_accounts')
+    .select('balance, equity, user_id, account_number').eq('id', accId).single();
+  if (fetchErr || !acc) { showToast('Account not found: ' + (fetchErr?.message || 'no rows'), 'error'); return; }
+
+  const before = parseFloat(acc.balance || 0);
+  let after = before;
+  if (adjType.startsWith('Credit') || adjType.startsWith('Bonus')) after = before + amount;
+  else if (adjType.startsWith('Debit'))  after = Math.max(0, before - amount);
+  else if (adjType.startsWith('Set'))    after = amount;
+
+  // Update balance — use .select() so we can detect silent RLS blocks (0 rows updated)
+  const { data: updated, error: updErr } = await db.from('trading_accounts')
+    .update({ balance: after, equity: after })
+    .eq('id', accId)
+    .select('id');
+
+  if (updErr) { showToast('Update error: ' + updErr.message, 'error'); return; }
+  if (!updated || updated.length === 0) {
+    showToast('Permission denied — your account may not be in the admin_users table. Check Supabase Dashboard → admin_users.', 'error');
+    return;
+  }
+
+  // Log the transaction
+  const txnType = adjType.startsWith('Debit') ? 'withdrawal' : adjType.startsWith('Bonus') ? 'bonus' : 'adjustment';
+  const { error: txnErr } = await db.from('transactions').insert({
+    user_id: acc.user_id,
+    account_id: accId,
+    type: txnType,
+    amount,
+    status: 'completed',
+    description: reason,
+    payment_method: 'Admin Adjustment',
+  });
+  if (txnErr) console.warn('Transaction log failed:', txnErr.message);
+
+  showToast(`Balance updated: $${before.toFixed(2)} → $${after.toFixed(2)}`, 'success');
+  // Clear input fields
+  document.getElementById('adj-amount').value = '';
+  document.getElementById('adj-reason').value = '';
+  // Refresh account dropdown and balance display
+  await window.loadUserAccounts();
+  // Re-select the same account
+  const accSel = document.getElementById('adj-account');
+  if (accSel) { accSel.value = accId; accSel.dispatchEvent(new Event('change')); }
+  renderAccountsLive();
+};
+
+// ── Patch saveUser ────────────────────────────────────────────
+const _origSaveUser = saveUser;
+window.saveUser = async function() {
+  const modal   = document.getElementById('modal-add-user');
+  const inputs  = modal.querySelectorAll('input, select');
+  const [firstName, lastName, email, phone] = [0,1,2,3].map(i => inputs[i].value.trim());
+  const country = inputs[4].value;
+  const accType = inputs[5].value;
+  const platform = inputs[6].value;
+  const initBal = parseFloat(inputs[7]?.value) || 0;
+
+  if (!email || !firstName) { showToast('First name and email are required','error'); return; }
+
+  const db = window.XANTEX_DB;
+  if (!db) { showToast('User created (offline mode)','success'); closeModal('modal-add-user'); return; }
+
+  const userId = crypto.randomUUID();
+  await db.from('profiles').upsert({
+    id: userId, first_name: firstName, last_name: lastName,
+    email, phone, country, kyc_status: 'pending', status: 'active',
+  });
+
+  if (initBal > 0) {
+    await db.from('trading_accounts').insert({
+      user_id: userId, platform,
+      type: accType.toLowerCase().includes('live') ? 'live' : 'demo',
+      account_type: 'Standard', currency: 'USD',
+      balance: initBal, leverage: '1:200',
+    });
+  }
+
+  showToast('User created successfully','success');
+  closeModal('modal-add-user');
+  renderUsersLive();
+};
+
+// ── Crypto Deposit Addresses ──────────────────────────────────
+const CRYPTO_COINS = [
+  { key:'ETH',  label:'ETH — Ethereum'         },
+  { key:'USDT', label:'USDT — Tether (ERC20)'  },
+  { key:'USDC', label:'USDC — USD Coin (ERC20)'},
+  { key:'WBTC', label:'WBTC — Wrapped Bitcoin' },
+  { key:'BNB',  label:'BNB  — BNB (ERC20)'     },
+  { key:'LINK', label:'LINK — Chainlink'        },
+  { key:'UNI',  label:'UNI  — Uniswap'         },
+  { key:'DAI',  label:'DAI  — Dai Stablecoin'  },
+  { key:'SHIB', label:'SHIB — Shiba Inu'       },
+  { key:'AAVE', label:'AAVE — Aave'            },
+];
+
+async function loadCryptoAddresses() {
+  const db = window.XANTEX_DB;
+  let saved = {};
+  if (db) {
+    try {
+      const { data } = await db.from('platform_settings').select('key,value').like('key','crypto_address_%');
+      (data||[]).forEach(r => { saved[r.key.replace('crypto_address_','')] = r.value; });
+    } catch(e) {}
+  }
+  // Fall back to localStorage
+  CRYPTO_COINS.forEach(c => {
+    if (!saved[c.key]) saved[c.key] = localStorage.getItem('xantex_addr_'+c.key) || '';
+  });
+  const grid = document.getElementById('crypto-addr-grid');
+  if (!grid) return;
+  grid.innerHTML = CRYPTO_COINS.map(c => `
+    <div class="field" style="margin:0;">
+      <label style="font-size:11px;">${c.label}</label>
+      <input type="text" id="addr-${c.key}" placeholder="0x…" value="${saved[c.key]||''}" style="font-size:11px;font-family:monospace;">
+    </div>`).join('');
+}
+
+window.saveCryptoAddresses = async function() {
+  const db = window.XANTEX_DB;
+  const rows = CRYPTO_COINS.map(c => ({
+    key:   'crypto_address_' + c.key,
+    value: (document.getElementById('addr-'+c.key)?.value || '').trim(),
+  })).filter(r => r.value);
+  // Always save to localStorage for immediate cross-page effect
+  rows.forEach(r => localStorage.setItem('xantex_addr_'+r.key.replace('crypto_address_',''), r.value));
+  if (db) {
+    try {
+      await db.from('platform_settings').upsert(rows, { onConflict: 'key' });
+    } catch(e) {}
+  }
+  showToast('Crypto addresses saved', 'success');
+};
+
+// ── Override renderAll to use live versions ───────────────────
+window.renderAll = function() {
+  renderUsersLive();
+  renderKYCLive();
+  renderAccountsLive();
+  renderPositionsLive();
+  renderDepositsLive();
+  renderWithdrawalsLive();
+  renderTransactionsLive();
+  renderAuditLive();
+  renderAnnouncementsLive();
+  renderAdjLog();
+  renderActivity();
+  renderMarketsControl();
+  loadDashboardStats();
+  // Load badge counts for new sections
+  loadSupportBadge();
+};
+
+async function loadSupportBadge() {
+  const db = window.XANTEX_DB; if (!db) return;
+  const { count } = await db.from('support_tickets').select('id', { count:'exact', head:true }).eq('status','open');
+  const badge = document.getElementById('badge-support');
+  if (badge) badge.textContent = count > 0 ? count : '';
+}
+
+// ── Real-time dashboard stats ─────────────────────────────────
+async function loadDashboardStats() {
+  const db = window.XANTEX_DB;
+  if (!db) return;
+  try {
+    const [
+      { count: totalUsers },
+      { count: liveAccounts },
+      { data: aumData },
+      { count: openPositions },
+      { count: pendingDeposits },
+      { count: pendingWithdrawals },
+      { count: kycPending },
+    ] = await Promise.all([
+      db.from('profiles').select('id', { count: 'exact', head: true }),
+      db.from('trading_accounts').select('id', { count: 'exact', head: true }).eq('type', 'live').eq('status', 'active'),
+      db.from('trading_accounts').select('balance').eq('status', 'active'),
+      db.from('positions').select('id', { count: 'exact', head: true }).eq('status', 'open'),
+      db.from('deposit_requests').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
+      db.from('withdrawal_requests').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
+      db.from('kyc_submissions').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
+    ]);
+
+    const aum = (aumData || []).reduce((s, a) => s + (parseFloat(a.balance) || 0), 0);
+
+    const stats = document.querySelectorAll('.stat-card');
+    if (stats[0]) stats[0].querySelector('.stat-card__value').textContent = (totalUsers || 0).toLocaleString();
+    if (stats[1]) stats[1].querySelector('.stat-card__value').textContent = (liveAccounts || 0).toLocaleString();
+    if (stats[2]) stats[2].querySelector('.stat-card__value').textContent = '$' + (aum / 1e6).toFixed(1) + 'M';
+    if (stats[3]) stats[3].querySelector('.stat-card__value').textContent = (openPositions || 0).toLocaleString();
+    if (stats[4]) stats[4].querySelector('.stat-card__value').textContent = (pendingDeposits || 0);
+    if (stats[5]) stats[5].querySelector('.stat-card__value').textContent = (pendingWithdrawals || 0);
+    if (stats[6]) stats[6].querySelector('.stat-card__value').textContent = (kycPending || 0);
+
+    // Sidebar badges — live counts only
+    const setBadge = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val > 0 ? val : ''; };
+    setBadge('badge-users',       totalUsers       || 0);
+    setBadge('badge-kyc',         kycPending        || 0);
+    setBadge('badge-deposits',    pendingDeposits   || 0);
+    setBadge('badge-withdrawals', pendingWithdrawals|| 0);
+  } catch (e) { console.warn('[ops] stats:', e); }
+}
+
+// ── Upgrade Deposits panel to also read from deposit_requests ─
+async function renderDepositsLive() {
+  renderDeposits();
+  const db = window.XANTEX_DB; if (!db) return;
+  const { data } = await db
+    .from('deposit_requests')
+    .select('*, profiles(first_name, last_name)')
+    .order('created_at', { ascending: false });
+  if (!data?.length) return;
+  document.getElementById('deposits-tbody').innerHTML = data.map(d => {
+    const name = d.profiles ? `${d.profiles.first_name} ${d.profiles.last_name}` : '—';
+    const amt  = parseFloat(d.amount || 0).toLocaleString('en-US', { minimumFractionDigits: 2 });
+    return `<tr>
+      <td style="font-weight:600;">${d.id.slice(0,8).toUpperCase()}</td>
+      <td>${name}</td>
+      <td style="font-weight:700;">$${amt}</td>
+      <td>${d.payment_method || '—'}</td>
+      <td style="font-size:12px;">${fmtDate(d.created_at)}</td>
+      <td><span class="badge-pill ${d.status==='approved'?'pill-green':d.status==='pending'?'pill-orange':'pill-red'}">${d.status}</span></td>
+      <td><div class="row-actions">
+        ${d.status==='pending'
+          ? `<button class="btn btn--sm btn--green" onclick="opsApproveDepositReq('${d.id}')">Approve</button>
+             <button class="btn btn--sm btn--red" onclick="opsRejectDepositReq('${d.id}')">Reject</button>`
+          : `<button class="btn btn--sm btn--outline">View</button>`}
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+window.renderDepositsLive = renderDepositsLive;
+window.opsApproveDepositReq = async id => {
+  await window.XANTEX_DB.from('deposit_requests').update({ status:'approved', reviewed_at: new Date().toISOString() }).eq('id', id);
+  showToast('Deposit approved','success'); renderDepositsLive(); loadDashboardStats();
+};
+window.opsRejectDepositReq = async id => {
+  await window.XANTEX_DB.from('deposit_requests').update({ status:'rejected', reviewed_at: new Date().toISOString() }).eq('id', id);
+  showToast('Deposit rejected','error'); renderDepositsLive(); loadDashboardStats();
+};
+
+// ── Upgrade Withdrawals panel to read from withdrawal_requests ─
+async function renderWithdrawalsLive() {
+  renderWithdrawals();
+  const db = window.XANTEX_DB; if (!db) return;
+  const { data } = await db
+    .from('withdrawal_requests')
+    .select('*, profiles(first_name, last_name)')
+    .order('created_at', { ascending: false });
+  if (!data?.length) return;
+  document.getElementById('withdrawals-tbody').innerHTML = data.map(w => {
+    const name = w.profiles ? `${w.profiles.first_name} ${w.profiles.last_name}` : '—';
+    const amt  = parseFloat(w.amount || 0).toLocaleString('en-US', { minimumFractionDigits: 2 });
+    return `<tr>
+      <td style="font-weight:600;">${w.id.slice(0,8).toUpperCase()}</td>
+      <td>${name}</td>
+      <td style="font-weight:700;">$${amt}</td>
+      <td style="font-size:12px;">${w.destination_type || '—'} ${w.destination_name ? '· ' + w.destination_name : ''}</td>
+      <td style="font-size:12px;">${fmtDate(w.created_at)}</td>
+      <td><span class="badge-pill ${w.status==='approved'||w.status==='completed'?'pill-green':w.status==='pending'?'pill-orange':'pill-red'}">${w.status}</span></td>
+      <td><div class="row-actions">
+        ${w.status==='pending'
+          ? `<button class="btn btn--sm btn--green" onclick="opsApproveWithdrawalReq('${w.id}')">Approve</button>
+             <button class="btn btn--sm btn--red" onclick="opsRejectWithdrawalReq('${w.id}')">Reject</button>`
+          : `<button class="btn btn--sm btn--outline">View</button>`}
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+window.renderWithdrawalsLive = renderWithdrawalsLive;
+window.opsApproveWithdrawalReq = async id => {
+  await window.XANTEX_DB.from('withdrawal_requests').update({ status:'approved', reviewed_at: new Date().toISOString() }).eq('id', id);
+  showToast('Withdrawal approved','success'); renderWithdrawalsLive(); loadDashboardStats();
+};
+window.opsRejectWithdrawalReq = async id => {
+  await window.XANTEX_DB.from('withdrawal_requests').update({ status:'rejected', reviewed_at: new Date().toISOString() }).eq('id', id);
+  showToast('Withdrawal rejected','error'); renderWithdrawalsLive(); loadDashboardStats();
+};
+
+// ── Support Tickets ───────────────────────────────────────────
+let _supportFilter = 'all';
+
+window.filterSupport = function(type, btn) {
+  _supportFilter = type;
+  document.querySelectorAll('#support-filter-tabs .tab-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderSupportLive();
+};
+
+async function renderSupportLive() {
+  const db = window.XANTEX_DB; if (!db) return;
+  const tbody = document.getElementById('support-tbody');
+  if (tbody) tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--muted);">Loading…</td></tr>';
+
+  let q = db.from('support_tickets')
+    .select('*, profiles(first_name, last_name, email)')
+    .order('created_at', { ascending: false });
+  if (_supportFilter !== 'all') q = q.eq('status', _supportFilter);
+
+  const { data, error } = await q;
+  if (error) { showToast('Error loading tickets: ' + error.message, 'error'); return; }
+
+  const badge = document.getElementById('badge-support');
+  const open = (data||[]).filter(t => t.status === 'open').length;
+  if (badge) badge.textContent = open > 0 ? open : '';
+
+  if (!data?.length) {
+    if (tbody) tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--muted);">No tickets found</td></tr>';
+    return;
+  }
+  if (tbody) tbody.innerHTML = data.map(t => {
+    const p    = t.profiles || {};
+    const name = `${p.first_name||''} ${p.last_name||''}`.trim() || p.email || '—';
+    const msg  = (t.message || '').substring(0, 120) + ((t.message||'').length > 120 ? '…' : '');
+    const isClosed = t.status === 'closed';
+    return `<tr>
+      <td><div class="user-cell"><div class="user-avatar" style="background:var(--blue);">${name.split(' ').map(n=>n[0]||'').join('').toUpperCase().slice(0,2)||'?'}</div>
+        <div><div class="user-name">${name}</div><div class="user-email">${p.email||'—'}</div></div></div></td>
+      <td style="font-weight:600;">${t.subject||'(no subject)'}</td>
+      <td style="font-size:12px;color:var(--muted);max-width:220px;">${msg}</td>
+      <td style="font-size:12px;">${fmtDate(t.created_at)}</td>
+      <td><span class="badge-pill ${isClosed?'pill-green':'pill-orange'}">${t.status}</span></td>
+      <td><textarea id="reply-${t.id}" style="width:200px;min-height:60px;border:1.5px solid var(--border);border-radius:6px;padding:6px 8px;font-size:12px;resize:vertical;">${t.admin_reply||''}</textarea></td>
+      <td><div class="row-actions">
+        <button class="btn btn--sm btn--primary" onclick="opsSaveReply('${t.id}')">Save</button>
+        ${!isClosed ? `<button class="btn btn--sm btn--green" onclick="opsCloseTicket('${t.id}')">Close</button>` : ''}
+        <button class="btn btn--sm btn--red" onclick="opsDeleteTicket('${t.id}')">Delete</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+window.renderSupportLive = renderSupportLive;
+
+window.opsSaveReply = async id => {
+  const reply = document.getElementById('reply-'+id)?.value?.trim() || '';
+  const { error } = await window.XANTEX_DB.from('support_tickets')
+    .update({ admin_reply: reply, updated_at: new Date().toISOString() }).eq('id', id);
+  if (error) { showToast('Error: '+error.message,'error'); return; }
+  showToast('Reply saved','success');
+};
+window.opsCloseTicket = async id => {
+  const reply = document.getElementById('reply-'+id)?.value?.trim() || '';
+  const { error } = await window.XANTEX_DB.from('support_tickets')
+    .update({ status:'closed', admin_reply: reply || undefined, updated_at: new Date().toISOString() }).eq('id', id);
+  if (error) { showToast('Error: '+error.message,'error'); return; }
+  showToast('Ticket closed','success'); renderSupportLive();
+};
+window.opsDeleteTicket = async id => {
+  if (!confirm('Delete this ticket permanently?')) return;
+  await window.XANTEX_DB.from('support_tickets').delete().eq('id', id);
+  showToast('Ticket deleted','error'); renderSupportLive();
+};
+
+// ── User Notifications ────────────────────────────────────────
+async function renderNotificationsLive() {
+  const db = window.XANTEX_DB; if (!db) return;
+  const tbody = document.getElementById('notif-tbody');
+  if (tbody) tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--muted);">Loading…</td></tr>';
+
+  const [{ data: users }, { data: notifs }] = await Promise.all([
+    db.from('profiles').select('id, first_name, last_name, email').order('email', { ascending: true }),
+    db.from('notifications').select('*'),
+  ]);
+
+  if (!users?.length) {
+    if (tbody) tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--muted);">No users found</td></tr>';
+    return;
+  }
+
+  const notifMap = {};
+  (notifs||[]).forEach(n => { notifMap[n.user_id] = n; });
+
+  const COLORS = ['#1a5cff','#22a06b','#7c3aed','#f5a623','#e60023'];
+  if (tbody) tbody.innerHTML = users.map((u, i) => {
+    const n    = notifMap[u.id] || {};
+    const name = `${u.first_name||''} ${u.last_name||''}`.trim() || u.email;
+    const init = name.split(' ').map(w=>w[0]||'').join('').toUpperCase().slice(0,2)||'?';
+    const col  = COLORS[i % COLORS.length];
+    const enabled = !!n.enabled;
+    return `<tr>
+      <td><div class="user-cell"><div class="user-avatar" style="background:${col};">${init}</div>
+        <div><div class="user-name">${name}</div><div class="user-email">${u.email}</div></div></div></td>
+      <td><input type="text" id="ntitle-${u.id}" value="${(n.title||'').replace(/"/g,'&quot;')}" placeholder="Notification title…"
+        style="width:180px;height:34px;border:1.5px solid var(--border);border-radius:6px;padding:0 10px;font-size:13px;"></td>
+      <td><textarea id="nmsg-${u.id}" style="width:260px;min-height:60px;border:1.5px solid var(--border);border-radius:6px;padding:6px 10px;font-size:12px;resize:vertical;" placeholder="Write notification message…">${n.message||''}</textarea></td>
+      <td>
+        <label class="toggle-switch">
+          <input type="checkbox" id="nenabled-${u.id}" ${enabled?'checked':''}>
+          <span class="toggle-slider"></span>
+        </label>
+      </td>
+      <td><div class="row-actions">
+        <button class="btn btn--sm btn--primary" onclick="opsSaveNotif('${u.id}')">Save</button>
+        <button class="btn btn--sm btn--outline" onclick="opsClearNotif('${u.id}')">Clear</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+window.renderNotificationsLive = renderNotificationsLive;
+
+window.opsSaveNotif = async userId => {
+  const title   = document.getElementById('ntitle-'+userId)?.value?.trim() || '';
+  const message = document.getElementById('nmsg-'+userId)?.value?.trim() || '';
+  const enabled = document.getElementById('nenabled-'+userId)?.checked || false;
+  const { error } = await window.XANTEX_DB.from('notifications').upsert(
+    { user_id: userId, title, message, enabled, updated_at: new Date().toISOString() },
+    { onConflict: 'user_id' }
+  );
+  if (error) { showToast('Error: '+error.message,'error'); return; }
+  showToast('Notification saved','success');
+};
+window.opsClearNotif = async userId => {
+  await window.XANTEX_DB.from('notifications').upsert(
+    { user_id: userId, title: '', message: '', enabled: false, updated_at: new Date().toISOString() },
+    { onConflict: 'user_id' }
+  );
+  showToast('Notification cleared','success'); renderNotificationsLive();
+};
+
+// ── Trades History ────────────────────────────────────────────
+async function renderTradesLive() {
+  const db = window.XANTEX_DB; if (!db) return;
+
+  // Load users for select dropdown + settings table
+  const { data: users } = await db.from('profiles')
+    .select('id, first_name, last_name, email, trades_active, trade_percent')
+    .order('email', { ascending: true });
+
+  // Populate user dropdown
+  const sel = document.getElementById('trade-user-sel');
+  if (sel && users?.length) {
+    sel.innerHTML = '<option value="">— choose user —</option>' + users.map(u => {
+      const name = `${u.first_name||''} ${u.last_name||''}`.trim() || u.email;
+      return `<option value="${u.id}">${name} (${u.email})</option>`;
+    }).join('');
+  }
+
+  // Render settings table
+  const settTbody = document.getElementById('trade-settings-tbody');
+  const COLORS = ['#1a5cff','#22a06b','#7c3aed','#f5a623','#e60023'];
+  if (settTbody && users?.length) {
+    settTbody.innerHTML = users.map((u, i) => {
+      const name = `${u.first_name||''} ${u.last_name||''}`.trim() || u.email;
+      const init = name.split(' ').map(w=>w[0]||'').join('').toUpperCase().slice(0,2)||'?';
+      const col  = COLORS[i % COLORS.length];
+      return `<tr>
+        <td><div class="user-cell"><div class="user-avatar" style="background:${col};">${init}</div>
+          <div><div class="user-name">${name}</div><div class="user-email">${u.email}</div></div></div></td>
+        <td><input type="number" id="tpct-${u.id}" value="${u.trade_percent||0}" step="0.1" min="0" max="100"
+          style="width:90px;height:34px;border:1.5px solid var(--border);border-radius:6px;padding:0 10px;font-size:13px;"></td>
+        <td><label class="toggle-switch"><input type="checkbox" id="ton-${u.id}" ${u.trades_active?'checked':''}><span class="toggle-slider"></span></label></td>
+        <td><button class="btn btn--sm btn--primary" onclick="opsSaveTradeSetting('${u.id}')">Save</button></td>
+      </tr>`;
+    }).join('');
+  }
+
+  // Load trade records
+  const { data: trades } = await db.from('trades')
+    .select('*, profiles(first_name, last_name, email)')
+    .order('created_at', { ascending: false })
+    .limit(100);
+
+  const tbody = document.getElementById('trades-tbody');
+  if (!trades?.length) {
+    if (tbody) tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--muted);">No trade records yet</td></tr>';
+    return;
+  }
+  if (tbody) tbody.innerHTML = trades.map(t => {
+    const p    = t.profiles || {};
+    const name = `${p.first_name||''} ${p.last_name||''}`.trim() || p.email || '—';
+    const pnl  = parseFloat(t.pnl || 0);
+    const up   = pnl >= 0;
+    return `<tr>
+      <td>${name}</td>
+      <td><span class="badge-pill pill-blue">${t.market||'—'}</span></td>
+      <td style="font-weight:700;">${t.pair||'—'}</td>
+      <td><span class="badge-pill ${t.direction==='buy'?'pill-green':'pill-red'}">${(t.direction||'').toUpperCase()}</span></td>
+      <td>${t.size||'—'}</td>
+      <td style="font-weight:700;color:${up?'var(--green)':'var(--red)'};">${up?'+':''}$${Math.abs(pnl).toFixed(2)}</td>
+      <td style="font-size:12px;">${fmtDate(t.created_at)}</td>
+      <td><button class="btn btn--sm btn--red" onclick="opsDeleteTrade('${t.id}')">Delete</button></td>
+    </tr>`;
+  }).join('');
+}
+window.renderTradesLive = renderTradesLive;
+
+window.opsSaveTradeSetting = async userId => {
+  const pct    = parseFloat(document.getElementById('tpct-'+userId)?.value) || 0;
+  const active = document.getElementById('ton-'+userId)?.checked || false;
+  const { error } = await window.XANTEX_DB.from('profiles')
+    .update({ trade_percent: pct, trades_active: active }).eq('id', userId);
+  if (error) { showToast('Error: '+error.message,'error'); return; }
+  showToast('Trade settings saved','success');
+};
+
+window.addTradeRecord = async () => {
+  const db     = window.XANTEX_DB; if (!db) return;
+  const userId = document.getElementById('trade-user-sel')?.value;
+  const market = document.getElementById('trade-market')?.value;
+  const pair   = document.getElementById('trade-pair')?.value?.trim();
+  const dir    = document.getElementById('trade-direction')?.value;
+  const size   = parseFloat(document.getElementById('trade-size')?.value) || 0;
+  const pnl    = parseFloat(document.getElementById('trade-pnl')?.value) || 0;
+  if (!userId || !pair) { showToast('Select a user and enter a pair','error'); return; }
+  const { error } = await db.from('trades').insert({ user_id: userId, market, pair, direction: dir, size, pnl });
+  if (error) { showToast('Error: '+error.message,'error'); return; }
+  showToast('Trade added','success');
+  document.getElementById('trade-pair').value = '';
+  document.getElementById('trade-size').value = '';
+  document.getElementById('trade-pnl').value  = '';
+  renderTradesLive();
+};
+
+window.opsDeleteTrade = async id => {
+  if (!confirm('Delete this trade record?')) return;
+  await window.XANTEX_DB.from('trades').delete().eq('id', id);
+  showToast('Trade deleted','error'); renderTradesLive();
+};
+</script>
+</body>
+</html>
