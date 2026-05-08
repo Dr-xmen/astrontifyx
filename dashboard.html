@@ -1840,29 +1840,3 @@ window.addEventListener('load', async () => {
 </body>
 
 </html>
-
-
-
-function viewWithdrawalDetails(index){
-
-  const w = WITHDRAWALS[index];
-
-  if(!w){
-    alert('Withdrawal details not found');
-    return;
-  }
-
-  alert(
-`WITHDRAWAL DETAILS
-
-Transaction ID: ${w.id || 'N/A'}
-Method: ${w.method || 'Crypto Withdrawal'}
-Amount: $${w.amount || '0.00'}
-Status: ${w.status || 'Pending'}
-Date: ${w.date || new Date().toLocaleString()}
-Wallet/Bank: ${w.wallet || w.wallet_address || w.bank_name || 'Not provided'}
-Account Name: ${w.account_name || 'N/A'}
-Account Number: ${w.account_number || 'N/A'}`
-  );
-
-}
