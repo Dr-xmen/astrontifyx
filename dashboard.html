@@ -1373,5 +1373,88 @@ function loadMarketWidget(){
 }
 </script>
 
+
+<!-- SUPABASE CONNECTION -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+
+/*
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+REPLACE THESE 2 VALUES WITH YOUR OWN
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. SUPABASE PROJECT URL
+2. SUPABASE ANON PUBLIC KEY
+
+GET THEM FROM:
+Supabase Dashboard
+→ Settings
+→ API
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+*/
+
+const SUPABASE_URL = 'https://guguugokdhiwobmuopro.supabase.co';
+
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd1Z3V1Z29rZGhpd29ibXVvcHJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNTgwNzIsImV4cCI6MjA5MzczNDA3Mn0.uaKxvC9PfevyNcgtRg8Hhzaljn9ae3pp3aqgFUMfSo8';
+
+/*
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+CREATE SUPABASE CLIENT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+*/
+
+const supabase = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_ANON_KEY
+);
+
+/*
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+MAKE CLIENT GLOBAL
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+*/
+
+window.supabaseClient = supabase;
+
+console.log('Supabase Connected');
+
+/*
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+TEST DATABASE CONNECTION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+*/
+
+async function testDatabaseConnection(){
+
+  try{
+
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .limit(1);
+
+    if(error){
+
+      console.error('DATABASE ERROR:', error);
+
+    }else{
+
+      console.log('DATABASE CONNECTED SUCCESSFULLY');
+      console.log(data);
+
+    }
+
+  }catch(err){
+
+    console.error('SUPABASE CONNECTION FAILED:', err);
+
+  }
+
+}
+
+testDatabaseConnection();
+
+</script>
+
 </body>
 </html>
