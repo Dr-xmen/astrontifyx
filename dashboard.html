@@ -267,6 +267,57 @@ background:transparent !important;
   margin-top:-2px !important;
 }
 
+
+.withdraw-modal{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.75);
+display:none;
+align-items:center;
+justify-content:center;
+z-index:99999;
+padding:20px;
+backdrop-filter:blur(6px);
+}
+.withdraw-modal.active{
+display:flex;
+}
+.withdraw-box{
+width:100%;
+max-width:520px;
+background:var(--bg2);
+border:1px solid var(--border2);
+border-radius:20px;
+padding:24px;
+box-shadow:0 20px 60px rgba(0,0,0,.45);
+animation:fadeIn .25s ease;
+}
+.withdraw-detail-row{
+display:flex;
+justify-content:space-between;
+gap:14px;
+padding:10px 0;
+border-bottom:1px solid var(--border);
+font-size:13px;
+}
+.withdraw-detail-row:last-child{
+border-bottom:none;
+}
+.view-details-btn{
+background:linear-gradient(135deg,#4f6ef7,#7c3aed);
+border:none;
+color:#fff;
+padding:7px 14px;
+border-radius:8px;
+cursor:pointer;
+font-size:12px;
+font-weight:600;
+}
+.view-details-btn:hover{
+opacity:.9;
+transform:translateY(-1px);
+}
+
 </style>
 </head>
 <body>
@@ -370,7 +421,56 @@ background:transparent !important;
         "colorTheme": "dark",
         "locale": "en"
       }
-      </script>
+      
+function viewWithdrawalDetails(index){
+
+  const w = WITHDRAWALS[index];
+
+  if(!w) return;
+
+  document.getElementById('withdrawDetailsContent').innerHTML = `
+    <div class="withdraw-detail-row">
+      <span>Transaction ID</span>
+      <strong>${w.id || 'N/A'}</strong>
+    </div>
+
+    <div class="withdraw-detail-row">
+      <span>Date</span>
+      <strong>${w.date || new Date().toLocaleString()}</strong>
+    </div>
+
+    <div class="withdraw-detail-row">
+      <span>Amount</span>
+      <strong>$${Number(w.amount || 0).toLocaleString()}</strong>
+    </div>
+
+    <div class="withdraw-detail-row">
+      <span>Method</span>
+      <strong>${w.method || 'Crypto Withdrawal'}</strong>
+    </div>
+
+    <div class="withdraw-detail-row">
+      <span>Wallet / Bank</span>
+      <strong>${w.wallet_address || w.account_number || 'N/A'}</strong>
+    </div>
+
+    <div class="withdraw-detail-row">
+      <span>Status</span>
+      <strong>${w.status || 'pending'}</strong>
+    </div>
+  `;
+
+  document.getElementById('withdrawDetailsModal')
+    .classList.add('active');
+}
+
+function closeWithdrawalDetails(){
+
+  document.getElementById('withdrawDetailsModal')
+    .classList.remove('active');
+}
+
+</script>
     </div>
 
   </div>
@@ -1327,9 +1427,107 @@ function toast(msg){
 }
 
 render();
+
+function viewWithdrawalDetails(index){
+
+  const w = WITHDRAWALS[index];
+
+  if(!w) return;
+
+  document.getElementById('withdrawDetailsContent').innerHTML = `
+    <div class="withdraw-detail-row">
+      <span>Transaction ID</span>
+      <strong>${w.id || 'N/A'}</strong>
+    </div>
+
+    <div class="withdraw-detail-row">
+      <span>Date</span>
+      <strong>${w.date || new Date().toLocaleString()}</strong>
+    </div>
+
+    <div class="withdraw-detail-row">
+      <span>Amount</span>
+      <strong>$${Number(w.amount || 0).toLocaleString()}</strong>
+    </div>
+
+    <div class="withdraw-detail-row">
+      <span>Method</span>
+      <strong>${w.method || 'Crypto Withdrawal'}</strong>
+    </div>
+
+    <div class="withdraw-detail-row">
+      <span>Wallet / Bank</span>
+      <strong>${w.wallet_address || w.account_number || 'N/A'}</strong>
+    </div>
+
+    <div class="withdraw-detail-row">
+      <span>Status</span>
+      <strong>${w.status || 'pending'}</strong>
+    </div>
+  `;
+
+  document.getElementById('withdrawDetailsModal')
+    .classList.add('active');
+}
+
+function closeWithdrawalDetails(){
+
+  document.getElementById('withdrawDetailsModal')
+    .classList.remove('active');
+}
+
 </script>
 
-<script src="https://s3.tradingview.com/tv.js"></script>
+<script src="https://s3.tradingview.com/tv.js">
+function viewWithdrawalDetails(index){
+
+  const w = WITHDRAWALS[index];
+
+  if(!w) return;
+
+  document.getElementById('withdrawDetailsContent').innerHTML = `
+    <div class="withdraw-detail-row">
+      <span>Transaction ID</span>
+      <strong>${w.id || 'N/A'}</strong>
+    </div>
+
+    <div class="withdraw-detail-row">
+      <span>Date</span>
+      <strong>${w.date || new Date().toLocaleString()}</strong>
+    </div>
+
+    <div class="withdraw-detail-row">
+      <span>Amount</span>
+      <strong>$${Number(w.amount || 0).toLocaleString()}</strong>
+    </div>
+
+    <div class="withdraw-detail-row">
+      <span>Method</span>
+      <strong>${w.method || 'Crypto Withdrawal'}</strong>
+    </div>
+
+    <div class="withdraw-detail-row">
+      <span>Wallet / Bank</span>
+      <strong>${w.wallet_address || w.account_number || 'N/A'}</strong>
+    </div>
+
+    <div class="withdraw-detail-row">
+      <span>Status</span>
+      <strong>${w.status || 'pending'}</strong>
+    </div>
+  `;
+
+  document.getElementById('withdrawDetailsModal')
+    .classList.add('active');
+}
+
+function closeWithdrawalDetails(){
+
+  document.getElementById('withdrawDetailsModal')
+    .classList.remove('active');
+}
+
+</script>
 
 <script>
 function loadTradingView(){
@@ -1377,11 +1575,109 @@ function loadMarketWidget(){
     `;
   }
 }
+
+function viewWithdrawalDetails(index){
+
+  const w = WITHDRAWALS[index];
+
+  if(!w) return;
+
+  document.getElementById('withdrawDetailsContent').innerHTML = `
+    <div class="withdraw-detail-row">
+      <span>Transaction ID</span>
+      <strong>${w.id || 'N/A'}</strong>
+    </div>
+
+    <div class="withdraw-detail-row">
+      <span>Date</span>
+      <strong>${w.date || new Date().toLocaleString()}</strong>
+    </div>
+
+    <div class="withdraw-detail-row">
+      <span>Amount</span>
+      <strong>$${Number(w.amount || 0).toLocaleString()}</strong>
+    </div>
+
+    <div class="withdraw-detail-row">
+      <span>Method</span>
+      <strong>${w.method || 'Crypto Withdrawal'}</strong>
+    </div>
+
+    <div class="withdraw-detail-row">
+      <span>Wallet / Bank</span>
+      <strong>${w.wallet_address || w.account_number || 'N/A'}</strong>
+    </div>
+
+    <div class="withdraw-detail-row">
+      <span>Status</span>
+      <strong>${w.status || 'pending'}</strong>
+    </div>
+  `;
+
+  document.getElementById('withdrawDetailsModal')
+    .classList.add('active');
+}
+
+function closeWithdrawalDetails(){
+
+  document.getElementById('withdrawDetailsModal')
+    .classList.remove('active');
+}
+
 </script>
 
 
 <!-- SUPABASE CONNECTION -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+function viewWithdrawalDetails(index){
+
+  const w = WITHDRAWALS[index];
+
+  if(!w) return;
+
+  document.getElementById('withdrawDetailsContent').innerHTML = `
+    <div class="withdraw-detail-row">
+      <span>Transaction ID</span>
+      <strong>${w.id || 'N/A'}</strong>
+    </div>
+
+    <div class="withdraw-detail-row">
+      <span>Date</span>
+      <strong>${w.date || new Date().toLocaleString()}</strong>
+    </div>
+
+    <div class="withdraw-detail-row">
+      <span>Amount</span>
+      <strong>$${Number(w.amount || 0).toLocaleString()}</strong>
+    </div>
+
+    <div class="withdraw-detail-row">
+      <span>Method</span>
+      <strong>${w.method || 'Crypto Withdrawal'}</strong>
+    </div>
+
+    <div class="withdraw-detail-row">
+      <span>Wallet / Bank</span>
+      <strong>${w.wallet_address || w.account_number || 'N/A'}</strong>
+    </div>
+
+    <div class="withdraw-detail-row">
+      <span>Status</span>
+      <strong>${w.status || 'pending'}</strong>
+    </div>
+  `;
+
+  document.getElementById('withdrawDetailsModal')
+    .classList.add('active');
+}
+
+function closeWithdrawalDetails(){
+
+  document.getElementById('withdrawDetailsModal')
+    .classList.remove('active');
+}
+
+</script>
 
 <script>
 
@@ -1424,10 +1720,108 @@ window.supabaseClient = supabaseClient;
 
 console.log('Supabase Connected');
 
+
+function viewWithdrawalDetails(index){
+
+  const w = WITHDRAWALS[index];
+
+  if(!w) return;
+
+  document.getElementById('withdrawDetailsContent').innerHTML = `
+    <div class="withdraw-detail-row">
+      <span>Transaction ID</span>
+      <strong>${w.id || 'N/A'}</strong>
+    </div>
+
+    <div class="withdraw-detail-row">
+      <span>Date</span>
+      <strong>${w.date || new Date().toLocaleString()}</strong>
+    </div>
+
+    <div class="withdraw-detail-row">
+      <span>Amount</span>
+      <strong>$${Number(w.amount || 0).toLocaleString()}</strong>
+    </div>
+
+    <div class="withdraw-detail-row">
+      <span>Method</span>
+      <strong>${w.method || 'Crypto Withdrawal'}</strong>
+    </div>
+
+    <div class="withdraw-detail-row">
+      <span>Wallet / Bank</span>
+      <strong>${w.wallet_address || w.account_number || 'N/A'}</strong>
+    </div>
+
+    <div class="withdraw-detail-row">
+      <span>Status</span>
+      <strong>${w.status || 'pending'}</strong>
+    </div>
+  `;
+
+  document.getElementById('withdrawDetailsModal')
+    .classList.add('active');
+}
+
+function closeWithdrawalDetails(){
+
+  document.getElementById('withdrawDetailsModal')
+    .classList.remove('active');
+}
+
 </script>
 
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+function viewWithdrawalDetails(index){
+
+  const w = WITHDRAWALS[index];
+
+  if(!w) return;
+
+  document.getElementById('withdrawDetailsContent').innerHTML = `
+    <div class="withdraw-detail-row">
+      <span>Transaction ID</span>
+      <strong>${w.id || 'N/A'}</strong>
+    </div>
+
+    <div class="withdraw-detail-row">
+      <span>Date</span>
+      <strong>${w.date || new Date().toLocaleString()}</strong>
+    </div>
+
+    <div class="withdraw-detail-row">
+      <span>Amount</span>
+      <strong>$${Number(w.amount || 0).toLocaleString()}</strong>
+    </div>
+
+    <div class="withdraw-detail-row">
+      <span>Method</span>
+      <strong>${w.method || 'Crypto Withdrawal'}</strong>
+    </div>
+
+    <div class="withdraw-detail-row">
+      <span>Wallet / Bank</span>
+      <strong>${w.wallet_address || w.account_number || 'N/A'}</strong>
+    </div>
+
+    <div class="withdraw-detail-row">
+      <span>Status</span>
+      <strong>${w.status || 'pending'}</strong>
+    </div>
+  `;
+
+  document.getElementById('withdrawDetailsModal')
+    .classList.add('active');
+}
+
+function closeWithdrawalDetails(){
+
+  document.getElementById('withdrawDetailsModal')
+    .classList.remove('active');
+}
+
+</script>
 
 
 
@@ -1834,6 +2228,55 @@ window.addEventListener('load', async () => {
   await loadDeposits();
   await loadWithdrawals();
 });
+
+
+function viewWithdrawalDetails(index){
+
+  const w = WITHDRAWALS[index];
+
+  if(!w) return;
+
+  document.getElementById('withdrawDetailsContent').innerHTML = `
+    <div class="withdraw-detail-row">
+      <span>Transaction ID</span>
+      <strong>${w.id || 'N/A'}</strong>
+    </div>
+
+    <div class="withdraw-detail-row">
+      <span>Date</span>
+      <strong>${w.date || new Date().toLocaleString()}</strong>
+    </div>
+
+    <div class="withdraw-detail-row">
+      <span>Amount</span>
+      <strong>$${Number(w.amount || 0).toLocaleString()}</strong>
+    </div>
+
+    <div class="withdraw-detail-row">
+      <span>Method</span>
+      <strong>${w.method || 'Crypto Withdrawal'}</strong>
+    </div>
+
+    <div class="withdraw-detail-row">
+      <span>Wallet / Bank</span>
+      <strong>${w.wallet_address || w.account_number || 'N/A'}</strong>
+    </div>
+
+    <div class="withdraw-detail-row">
+      <span>Status</span>
+      <strong>${w.status || 'pending'}</strong>
+    </div>
+  `;
+
+  document.getElementById('withdrawDetailsModal')
+    .classList.add('active');
+}
+
+function closeWithdrawalDetails(){
+
+  document.getElementById('withdrawDetailsModal')
+    .classList.remove('active');
+}
 
 </script>
 
