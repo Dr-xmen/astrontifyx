@@ -186,7 +186,6 @@ label{font-size:11.5px;color:var(--text3);margin-bottom:6px;display:block;font-w
   .g3{grid-template-columns:1fr 1fr}
   .settings-layout{grid-template-columns:1fr}
   .sidebar{width:62px}
-  .sidebar 
   .ticker-bar{display:none}
 }
 @media(max-width:580px){
@@ -714,287 +713,299 @@ function copyAddr(){
 }
 
 // ── WITHDRAW ──────────────────────────────────────────────────────────
+
 function pgWithdraw() {
   return `
-<div class="grid g12" style="margin-bottom:14px">
-  <div class="card">
-    <div class="section-hdr"><span class="section-title">Crypto Withdrawal</span></div>
-    <div class="fg"><label>Currency</label><select>${COINS.map(c=>`<option>${c.name} (${c.sym})</option>`).join('')}</select></div>
-    <div class="fg"><label>Network</label><select><option>Native / Mainnet</option><option>ERC-20</option><option>TRC-20</option><option>BEP-20</option></select></div>
-    <div class="fg"><label>Destination Address</label><input placeholder="Enter wallet address…"></div>
-    <div class="fg"><label>Amount (USD)</label><input type="number" placeholder="0.00"></div>
-    <div style="background:var(--bg3);border-radius:10px;padding:12px;margin-bottom:14px;font-size:12.5px">
-      <div style="display:flex;justify-content:space-between;margin-bottom:5px"><span style="color:var(--text3)">Network Fee</span><span>≈ $33.62</span></div>
-      <div style="display:flex;justify-content:space-between;margin-bottom:5px"><span style="color:var(--text3)">You Receive</span><span class="up" style="font-weight:600">$466.38</span></div>
-      <div style="display:flex;justify-content:space-between"><span style="color:var(--text3)">Est. Time</span><span>~30 min</span></div>
-    </div>
-    <button class="btn btn-primary" style="width:100%;justify-content:center">${svgSend} Submit Withdrawal</button>
-  </div>
-  <div class="card">
-    <div class="section-hdr"><span class="section-title">Bank Wire Transfer</span></div>
-    <div class="fg"><label>Bank Name</label><input placeholder="e.g. Citibank, HSBC"></div>
-    <div class="fg"><label>Account Name</label><input placeholder="Full legal name"></div>
-    <div class="fg"><label>Account Number</label><input placeholder="Account number"></div>
-    <div class="fg"><label>SWIFT / IBAN Code</label><input placeholder="SWIFT or IBAN"></div>
-    <div class="grid g2" style="gap:10px">
-      <div class="fg"><label>Currency</label><select><option>USD</option><option>EUR</option><option>GBP</option><option>AED</option></select></div>
-      <div class="fg"><label>Amount</label><input type="number" placeholder="0.00"></div>
-    </div>
-    <button class="btn btn-primary" style="width:100%;justify-content:center">${svgBank} Request Bank Transfer</button>
-  </div>
-</div>
-<div class="card">
-  <div class="section-hdr"><span class="section-title">Withdrawal History</span><button class="btn btn-outline btn-sm">${svgDl} Export</button></div>
-  <div class="table-wrap"><table>
-    <thead><tr><th>ID</th><th>Method</th><th>Amount</th><th>Destination</th><th>Date</th><th>Status</th><th></th></tr></thead>
-    <tbody>${WITHDRAWALS.map(w=>`<tr>
-      <td style="color:var(--text3)">${w.id}</td><td>${w.method}</td>
-      <td class="mono">${w.amount}</td>
-      <td class="mono" style="font-size:11px;color:var(--text3)">${w.dest}</td>
-      <td style="color:var(--text3);font-size:11.5px">${w.date}</td>
-      <td>${badge(w.status,w.status==='completed'?'bg':w.status==='pending'?'ba':'br')}</td>
-      <td>${w.status==='pending'?`<button class="btn btn-red btn-sm">Cancel</button>`:''}</td>
-    </tr>`).join('')}</tbody>
-  </table></div>
-</div>`;
-}
-
-// ── SETTINGS ──────────────────────────────────────────────────────────
-function pgSettings() {
-  const tabs = [{k:'profile',icon:svgUser,label:'Profile'},{k:'security',icon:svgShield,label:'Security'},{k:'notifications',icon:svgBell,label:'Notifications'},{k:'preferences',icon:svgPal,label:'Preferences'}];
-  return `
-<div class="settings-layout">
-  <div class="card settings-nav" style="height:fit-content">
-    ${tabs.map(t=>`<div class="nav-item ${t.k===settTab?'active':''}" onclick="setSettTab('${t.k}')" style="margin-bottom:2px">
-      <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0">${t.icon.replace(/<svg[^>]*>/,'').replace('</svg>','')}</svg>
-      <span class="nav-label">${t.label}</span>
-    </div>`).join('')}
-  </div>
-  <div>${settTab==='profile'?settProfile():settTab==='security'?settSecurity():settTab==='notifications'?settNotifications():settPreferences()}</div>
-</div>`;
-}
-function settProfile(){return `<div class="card">
-  <div class="section-title" style="margin-bottom:18px">Profile Information</div>
-  <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px;padding-bottom:18px;border-bottom:1px solid var(--border)">
-    <div class="avatar" style="width:68px;height:68px;font-size:22px;border-radius:50%">AK</div>
-    <div><div style="font-size:15px;font-weight:600">Alex Kumar</div><div style="color:var(--text3);font-size:13px;margin-bottom:8px">alex.kumar@email.com</div>
-    <button class="btn btn-outline btn-sm">${svgCam} Change Photo</button></div>
-  </div>
-  <div class="grid g2" style="gap:12px">
-    <div class="fg"><label>First Name</label><input value="Alex"></div>
-    <div class="fg"><label>Last Name</label><input value="Kumar"></div>
-    <div class="fg"><label>Email Address</label><input value="alex.kumar@email.com"></div>
-    <div class="fg"><label>Phone Number</label><input value="+1 (555) 234-5678"></div>
-    <div class="fg"><label>Country</label><select><option>United States</option><option>United Kingdom</option><option>Singapore</option><option>UAE</option></select></div>
-    <div class="fg"><label>Base Currency</label><select><option>USD</option><option>EUR</option><option>GBP</option></select></div>
-    <div class="fg"><label>Language</label><select><option>English</option><option>Spanish</option><option>French</option><option>Arabic</option></select></div>
-    <div class="fg"><label>Timezone</label><select><option>UTC-05:00 Eastern</option><option>UTC+00:00 GMT</option><option>UTC+08:00 SGT</option></select></div>
-  </div>
-  <div class="divider"></div>
-  <div style="display:flex;gap:10px"><button class="btn btn-primary">${svgCheck} Save Changes</button><button class="btn btn-outline">Cancel</button></div>
-</div>`;}
-function settSecurity(){return `<div style="display:grid;gap:12px">
-  <div class="card"><div class="section-title" style="margin-bottom:14px">Change Password</div>
-    <div class="fg"><label>Current Password</label><input type="password" placeholder="••••••••"></div>
-    <div class="fg"><label>New Password</label><input type="password" placeholder="••••••••"></div>
-    <div class="fg" style="margin-bottom:14px"><label>Confirm Password</label><input type="password" placeholder="••••••••"></div>
-    <button class="btn btn-primary btn-sm">${svgKey} Update Password</button>
-  </div>
-  <div class="card"><div style="display:flex;justify-content:space-between;align-items:center">
-    <div><div class="section-title">Two-Factor Authentication</div><div style="font-size:12.5px;color:var(--text3);margin-top:3px">Secured with Google Authenticator</div></div>
-    <div class="toggle on" onclick="this.classList.toggle('on')"></div>
-  </div></div>
-  <div class="card"><div class="section-title" style="margin-bottom:14px">Login Activity</div>
-    ${[{d:'Chrome · Windows 11',ip:'192.168.1.1',t:'2024-03-08 14:22',cur:true},{d:'Safari · iPhone 15',ip:'10.0.0.42',t:'2024-03-07 09:15',cur:false},{d:'Firefox · macOS',ip:'172.16.0.5',t:'2024-03-05 17:40',cur:false}].map(l=>`
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)">
-      <div><div style="font-size:13px;font-weight:500">${l.d} ${l.cur?badge('Current','bg'):''}</div><div style="font-size:11.5px;color:var(--text3)">${l.ip} · ${l.t}</div></div>
-      ${!l.cur?`<button class="btn btn-red btn-sm">Revoke</button>`:''}
-    </div>`).join('')}
-  </div>
-</div>`;}
-function settNotifications(){
-  const items=[['Email Notifications','Receive updates via email','on'],['Push Notifications','Browser push notifications','on'],['SMS Notifications','Text message alerts','off'],['Trading Alerts','Position open/close notifications','on'],['Deposit Alerts','Deposit confirmation alerts','on'],['Withdrawal Alerts','Withdrawal status updates','on'],['Market News','Breaking market news','off'],['Price Alerts','Custom price level triggers','on']];
-  return `<div class="card"><div class="section-title" style="margin-bottom:16px">Notification Preferences</div>
-    ${items.map(([t,d,s])=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-bottom:1px solid var(--border)">
-      <div><div style="font-size:13.5px;font-weight:500">${t}</div><div style="font-size:12px;color:var(--text3);margin-top:2px">${d}</div></div>
-      <div class="toggle ${s==='on'?'on':''}" onclick="this.classList.toggle('on')"></div>
-    </div>`).join('')}
-  </div>`;}
-function settPreferences(){return `<div style="display:grid;gap:12px">
-  <div class="card"><div class="section-title" style="margin-bottom:14px">Theme</div>
-    <div style="display:flex;gap:10px">
-      <div onclick="isDark=true;document.body.classList.remove('light')" style="flex:1;border:2px solid ${isDark?'var(--accent)':'var(--border2)'};border-radius:12px;padding:14px;cursor:pointer;text-align:center;transition:border .2s">
-        <div style="font-size:22px;margin-bottom:6px">🌑</div><div style="font-size:13px;font-weight:600">Dark</div>
+  <div class="grid g12" style="margin-bottom:14px">
+    <div class="card">
+      <div class="section-hdr">
+        <span class="section-title">Crypto Withdrawal</span>
       </div>
-      <div onclick="isDark=false;document.body.classList.add('light')" style="flex:1;border:2px solid ${!isDark?'var(--accent)':'var(--border2)'};border-radius:12px;padding:14px;cursor:pointer;text-align:center;transition:border .2s">
-        <div style="font-size:22px;margin-bottom:6px">🌕</div><div style="font-size:13px;font-weight:600">Light</div>
+
+      <div class="fg">
+        <label>Currency</label>
+        <select>
+          ${COINS.map(c => `<option>${c.sym} - ${c.name}</option>`).join('')}
+        </select>
       </div>
+
+      <div class="fg">
+        <label>Wallet Address</label>
+        <input placeholder="Enter destination wallet address">
+      </div>
+
+      <div class="grid g2">
+        <div class="fg">
+          <label>Amount</label>
+          <input type="number" placeholder="0.00">
+        </div>
+        <div class="fg">
+          <label>Network</label>
+          <select>
+            <option>Mainnet</option>
+            <option>ERC20</option>
+            <option>TRC20</option>
+            <option>BEP20</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" style="width:100%;justify-content:center">
+        Submit Withdrawal
+      </button>
+    </div>
+
+    <div class="card">
+      <div class="section-hdr">
+        <span class="section-title">Bank Withdrawal</span>
+      </div>
+
+      <div class="fg">
+        <label>Bank Name</label>
+        <input placeholder="Enter bank name">
+      </div>
+
+      <div class="grid g2">
+        <div class="fg">
+          <label>Account Number</label>
+          <input placeholder="Account number">
+        </div>
+
+        <div class="fg">
+          <label>Account Name</label>
+          <input placeholder="Account name">
+        </div>
+      </div>
+
+      <div class="fg">
+        <label>Amount</label>
+        <input type="number" placeholder="0.00">
+      </div>
+
+      <button class="btn btn-outline" style="width:100%;justify-content:center">
+        Request Bank Withdrawal
+      </button>
     </div>
   </div>
-  <div class="card"><div class="section-title" style="margin-bottom:14px">Trading Defaults</div>
-    <div class="grid g2" style="gap:12px">
-      <div class="fg"><label>Default Lot Size</label><input type="number" value="0.1" step="0.01"></div>
-      <div class="fg"><label>Default Leverage</label><select><option>1:1</option><option>1:5</option><option>1:10</option><option selected>1:20</option><option>1:50</option></select></div>
-      <div class="fg"><label>Default Order</label><select><option>Market</option><option>Limit</option><option>Stop</option></select></div>
-      <div class="fg"><label>Risk Per Trade (%)</label><input type="number" value="2" min="0.5" max="100"></div>
+
+  <div class="card">
+    <div class="section-hdr">
+      <span class="section-title">Withdrawal History</span>
     </div>
-  </div>
-  <div class="card"><div class="section-title" style="margin-bottom:14px">Other Preferences</div>
-    ${[['Sound Effects','Play audio on trade execution','on'],['Confirm Before Trade','Confirmation modal before placing orders','on'],['Show PnL in %','Display profit/loss as percentage','off']].map(([t,d,s])=>`
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)">
-      <div><div style="font-size:13.5px;font-weight:500">${t}</div><div style="font-size:12px;color:var(--text3)">${d}</div></div>
-      <div class="toggle ${s==='on'?'on':''}" onclick="this.classList.toggle('on')"></div>
-    </div>`).join('')}
-  </div>
-</div>`;}
-function setSettTab(t){settTab=t;destroyCharts();render();}
 
-// ── HISTORY ───────────────────────────────────────────────────────────
-function pgHistory() {
-  const tabs=[{k:'trades',l:'Trades'},{k:'deposits',l:'Deposits'},{k:'withdrawals',l:'Withdrawals'},{k:'logins',l:'Login History'}];
-  const logins=[{d:'Chrome · Windows 11',ip:'192.168.1.1',loc:'New York, US',t:'2024-03-08 14:22',s:'success'},{d:'Safari · iPhone 15',ip:'10.0.0.42',loc:'London, UK',t:'2024-03-07 09:15',s:'success'},{d:'Unknown Device',ip:'185.220.101.5',loc:'Unknown',t:'2024-03-06 02:11',s:'failed'},{d:'Firefox · macOS',ip:'172.16.0.5',loc:'Singapore',t:'2024-03-05 17:40',s:'success'}];
-  return `
-<div class="tabs">${tabs.map(t=>`<div class="tab ${t.k===histTab?'active':''}" onclick="setHistTab('${t.k}')">${t.l}</div>`).join('')}</div>
-<div class="card">
-  <div class="filter-bar">
-    <div class="search-wrap"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input placeholder="Search transactions…"></div>
-    <select style="width:135px"><option>All Status</option><option>Completed</option><option>Pending</option><option>Rejected</option></select>
-    <input type="date" style="width:135px">
-    <input type="date" style="width:135px">
-    <button class="btn btn-primary btn-sm">${svgDl} CSV</button>
-    <button class="btn btn-outline btn-sm">${svgPdf} PDF</button>
-  </div>
-  ${histTab==='trades'?`<div class="table-wrap"><table>
-    <thead><tr><th>ID</th><th>Pair</th><th>Type</th><th>Size</th><th>Open</th><th>Close</th><th>P&amp;L</th><th>Date</th></tr></thead>
-    <tbody>${TRADES.concat(TRADES).map(h=>`<tr>
-      <td style="color:var(--text3)">${h.id}</td><td>${h.pair}</td>
-      <td>${badge(h.type,h.type==='BUY'?'bg':'br')}</td>
-      <td class="mono">${h.size}</td>
-      <td class="mono">${h.open>10?h.open.toLocaleString():h.open}</td>
-      <td class="mono">${h.close>10?h.close.toLocaleString():h.close}</td>
-      <td class="mono up">+$${h.pnl.toFixed(2)}</td>
-      <td style="color:var(--text3);font-size:11.5px">${h.date}</td>
-    </tr>`).join('')}</tbody>
-  </table></div>`
-  :histTab==='deposits'?`<div class="table-wrap"><table>
-    <thead><tr><th>ID</th><th>Asset</th><th>Amount</th><th>TxID</th><th>Date</th><th>Status</th></tr></thead>
-    <tbody>${DEPOSITS.concat(DEPOSITS).map(d=>`<tr>
-      <td style="color:var(--text3)">${d.id}</td><td>${d.method}</td>
-      <td class="mono">${d.amount}</td>
-      <td class="mono" style="font-size:11px">${d.txid}</td>
-      <td style="color:var(--text3);font-size:11.5px">${d.date}</td>
-      <td>${badge(d.status,d.status==='completed'?'bg':d.status==='pending'?'ba':'br')}</td>
-    </tr>`).join('')}</tbody>
-  </table></div>`
-  :histTab==='withdrawals'?`<div class="table-wrap"><table>
-    <thead><tr><th>ID</th><th>Method</th><th>Amount</th><th>Destination</th><th>Date</th><th>Status</th></tr></thead>
-    <tbody>${WITHDRAWALS.concat(WITHDRAWALS).map(w=>`<tr>
-      <td style="color:var(--text3)">${w.id}</td><td>${w.method}</td>
-      <td class="mono">${w.amount}</td>
-      <td class="mono" style="font-size:11px">${w.dest}</td>
-      <td style="color:var(--text3);font-size:11.5px">${w.date}</td>
-      <td>${badge(w.status,w.status==='completed'?'bg':w.status==='pending'?'ba':'br')}</td>
-    </tr>`).join('')}</tbody>
-  </table></div>`
-  :`<div class="table-wrap"><table>
-    <thead><tr><th>Device</th><th>IP Address</th><th>Location</th><th>Date</th><th>Status</th></tr></thead>
-    <tbody>${logins.map(l=>`<tr>
-      <td>${l.d}</td><td class="mono">${l.ip}</td><td>${l.loc}</td>
-      <td style="color:var(--text3);font-size:11.5px">${l.t}</td>
-      <td>${badge(l.s,l.s==='success'?'bg':'br')}</td>
-    </tr>`).join('')}</tbody>
-  </table></div>`}
-</div>`;
-}
-function setHistTab(t){histTab=t;destroyCharts();render();}
-
-// ── CHARTS ────────────────────────────────────────────────────────────
-function rndData(n,start,vol,drift=0){
-  const d=[];let v=start;
-  for(let i=0;i<n;i++){v+=((Math.random()-.47)*vol)+(drift*vol);d.push(Math.max(1,+v.toFixed(2)));}
-  return d;
-}
-const gOpts=(grid,text)=>({responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:grid},ticks:{color:text,font:{size:10}}},y:{grid:{color:grid},ticks:{color:text,font:{size:10}}}}});
-
-function initCharts(){
-  const dark = document.body.classList.contains('light');
-  const grid = dark?'rgba(0,0,0,0.06)':'rgba(255,255,255,0.05)';
-  const text = dark?'#8892b0':'#5a6380';
-
-  if(page==='dashboard'){
-    const pc=document.getElementById('cPortfolio');
-    if(pc&&!charts.p){
-      const data=rndData(9,47000,500,.07);
-      const opts=gOpts(grid,text);
-      opts.scales.y.ticks.callback=v=>'$'+v.toLocaleString();
-      charts.p=new Chart(pc,{type:'line',data:{labels:['9:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','Now'],datasets:[{data,fill:true,borderColor:'#4f6ef7',borderWidth:2,backgroundColor:'rgba(79,110,247,0.1)',tension:.4,pointRadius:0,pointHoverRadius:4}]},options:opts});
-    }
-    const ac=document.getElementById('cAlloc');
-    if(ac&&!charts.a){
-      charts.a=new Chart(ac,{type:'doughnut',data:{labels:['Crypto','Forex','Stocks','Metals'],datasets:[{data:[45,25,20,10],backgroundColor:['#4f6ef7','#22c55e','#f59e0b','#14b8a6'],borderWidth:0,hoverOffset:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},cutout:'72%'}});
-    }
-  }
-  if(page==='markets'){
-    const mc=document.getElementById('cMarket');
-    if(mc&&!charts.m){
-      const data=rndData(30,62000,1200,.05);
-      const opts=gOpts(grid,text);
-      opts.scales.x.display=false;
-      opts.scales.y.ticks.callback=v=>'$'+v.toLocaleString();
-      charts.m=new Chart(mc,{type:'line',data:{labels:data.map((_,i)=>i),datasets:[{data,fill:true,borderColor:'#22c55e',borderWidth:2,backgroundColor:'rgba(34,197,94,0.08)',tension:.4,pointRadius:0}]},options:opts});
-    }
-  }
-  if(page==='terminal'){
-    const tc=document.getElementById('cTerminal');
-    if(tc&&!charts.t){
-      const opens=[],highs=[],lows=[],closes=[],lr':'badge-red'}">${w.status}</span></td></tr>`).join('')}</tbody></table></div>`
-    :`<div class="table-wrap"><table><thead><tr><th>Device</th><th>IP</th><th>Location</th><th>Date</th><th>Status</th></tr></thead><tbody>${[{device:'Chrome · Windows 11',ip:'192.168.1.1',loc:'New York, US',date:'2024-03-08 14:22',s:'success'},{device:'Safari · iPhone 15',ip:'10.0.0.42',loc:'London, UK',date:'2024-03-07 09:15',s:'success'},{device:'Unknown Device',ip:'185.220.101.5',loc:'Unknown',date:'2024-03-06 02:11',s:'failed'},{device:'Firefox · macOS',ip:'172.16.0.5',loc:'Singapore',date:'2024-03-05 17:40',s:'success'}].map(l=>`<tr><td>${l.device}</td><td class="mono">${l.ip}</td><td>${l.loc}</td><td style="color:var(--text3);font-size:12px">${l.date}</td><td><span class="badge ${l.s==='success'?'badge-green':'badge-red'}">${l.s}</span></td></tr>`).join('')}</tbody></table></div>`}
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Method</th>
+            <th>Amount</th>
+            <th>Date</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${WITHDRAWALS.map(w => `
+          <tr>
+            <td>${w.id}</td>
+            <td>${w.method}</td>
+            <td>${w.amount}</td>
+            <td>${w.date}</td>
+            <td>${badge(w.status, w.status === 'completed' ? 'bg' : w.status === 'pending' ? 'ba' : 'br')}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
   </div>`;
 }
-function setHistoryTab(t){historyTab=t;destroyCharts();render();}
 
-function genData(n,start,vol,trend=0){const d=[];let v=start;for(let i=0;i<n;i++){v+=((Math.random()-0.48)*vol)+(trend*vol);d.push(Math.max(1,Math.round(v*100)/100));}return d;}
+function pgHistory() {
+  return `
+  <div class="card">
+    <div class="section-hdr">
+      <span class="section-title">Trading History</span>
+    </div>
 
-function initCharts(){
-  const cc={accent:'#4f6ef7',green:'#22c55e',red:'#ef4444',grid:'rgba(255,255,255,0.05)',text:'#5a6380'};
-  if(currentPage==='dashboard'){
-    const pc=document.getElementById('portfolioChart');
-    if(pc&&!charts.portfolio){
-      const data=genData(9,47000,500,0.06);
-      charts.portfolio=new Chart(pc,{type:'line',data:{labels:['9:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','Now'],datasets:[{data,fill:true,borderColor:cc.accent,borderWidth:2,backgroundColor:'rgba(79,110,247,0.12)',tension:0.4,pointRadius:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:cc.grid},ticks:{color:cc.text,font:{size:11}}},y:{grid:{color:cc.grid},ticks:{color:cc.text,font:{size:11},callback:v=>'$'+v.toLocaleString()}}}}});
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Pair</th>
+            <th>Type</th>
+            <th>P&L</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${TRADES.map(t => `
+          <tr>
+            <td>${t.id}</td>
+            <td>${t.pair}</td>
+            <td>${badge(t.type, t.type === 'BUY' ? 'bg' : 'br')}</td>
+            <td class="mono up">+$${t.pnl.toFixed(2)}</td>
+            <td>${t.date}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+  </div>`;
+}
+
+function pgSettings() {
+  return `
+  <div class="settings-layout">
+    <div class="card settings-nav">
+      <div class="nav-item active">
+        <span class="nav-label">Profile</span>
+      </div>
+      <div class="nav-item">
+        <span class="nav-label">Security</span>
+      </div>
+      <div class="nav-item">
+        <span class="nav-label">Notifications</span>
+      </div>
+      <div class="nav-item">
+        <span class="nav-label">Preferences</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-hdr">
+        <span class="section-title">Profile Settings</span>
+      </div>
+
+      <div class="grid g2">
+        <div class="fg">
+          <label>Full Name</label>
+          <input value="Alex Kane">
+        </div>
+
+        <div class="fg">
+          <label>Email Address</label>
+          <input value="alex@nexusmarkets.com">
+        </div>
+
+        <div class="fg">
+          <label>Country</label>
+          <select>
+            <option>Nigeria</option>
+            <option>United Kingdom</option>
+            <option>United States</option>
+          </select>
+        </div>
+
+        <div class="fg">
+          <label>Base Currency</label>
+          <select>
+            <option>USD</option>
+            <option>EUR</option>
+            <option>GBP</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="btn btn-primary">
+        Save Changes
+      </button>
+    </div>
+  </div>`;
+}
+
+function initCharts() {
+  if (typeof Chart === 'undefined') return;
+
+  const commonOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false }
+    },
+    scales: {
+      x: {
+        ticks: { color: '#8892b0' },
+        grid: { color: 'rgba(255,255,255,0.05)' }
+      },
+      y: {
+        ticks: { color: '#8892b0' },
+        grid: { color: 'rgba(255,255,255,0.05)' }
+      }
     }
-    const ac=document.getElementById('allocChart');
-    if(ac&&!charts.alloc){
-      charts.alloc=new Chart(ac,{type:'doughnut',data:{labels:['Crypto','Forex','Stocks','Metals'],datasets:[{data:[45,25,20,10],backgroundColor:['#4f6ef7','#22c55e','#f59e0b','#14b8a6'],borderWidth:0,hoverOffset:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},cutout:'70%'}});
-    }
-  } else if(currentPage==='markets'){
-    const mc=document.getElementById('marketChart');
-    if(mc&&!charts.market){
-      const data=genData(30,62000,1200,0.05);
-      charts.market=new Chart(mc,{type:'line',data:{labels:data.map((_,i)=>i),datasets:[{data,fill:true,borderColor:cc.green,borderWidth:2,backgroundColor:'rgba(34,197,94,0.1)',tension:0.4,pointRadius:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{display:false},y:{grid:{color:cc.grid},ticks:{color:cc.text,font:{size:10},callback:v=>'$'+v.toLocaleString()}}}}});
-    }
-  } else if(currentPage==='terminal'){
-    const tc=document.getElementById('terminalChart');
-    if(tc&&!charts.terminal){
-      const opens=[],highs=[],lows=[],closes=[],lbls=[];let p=65000;
-      for(let i=0;i<60;i++){const o=p,c=p+(Math.random()-0.48)*400,h=Math.max(o,c)+(Math.random()*200),l=Math.min(o,c)-(Math.random()*200);opens.push(Math.round(o));highs.push(Math.round(h));lows.push(Math.round(l));closes.push(Math.round(c));p=c;lbls.push(i%10===0?`${i}m`:'');}
-      charts.terminal=new Chart(tc,{type:'bar',data:{labels:lbls,datasets:[{data:highs.map((h,i)=>[lows[i],h]),backgroundColor:closes.map((c,i)=>c>=opens[i]?'rgba(34,197,94,0.6)':'rgba(239,68,68,0.6)'),borderColor:closes.map((c,i)=>c>=opens[i]?cc.green:cc.red),borderWidth:1,barPercentage:0.4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:cc.grid},ticks:{color:cc.text,font:{size:10},maxRotation:0}},y:{grid:{color:cc.grid},ticks:{color:cc.text,font:{size:10},callback:v=>'$'+v.toLocaleString()}}}}});
-    }
+  };
+
+  const portfolio = document.getElementById('cPortfolio');
+  if (portfolio) {
+    charts.portfolio = new Chart(portfolio, {
+      type: 'line',
+      data: {
+        labels: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+        datasets: [{
+          data: [32000, 33800, 35100, 34400, 36800, 40100, 48342],
+          borderColor: '#4f6ef7',
+          tension: 0.4
+        }]
+      },
+      options: commonOptions
+    });
+  }
+
+  const alloc = document.getElementById('cAlloc');
+  if (alloc) {
+    charts.alloc = new Chart(alloc, {
+      type: 'doughnut',
+      data: {
+        labels: ['Crypto','Forex','Stocks','Metals'],
+        datasets: [{
+          data: [45,25,20,10],
+          backgroundColor: ['#4f6ef7','#22c55e','#f59e0b','#14b8a6']
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } }
+      }
+    });
+  }
+
+  const market = document.getElementById('cMarket');
+  if (market) {
+    charts.market = new Chart(market, {
+      type: 'line',
+      data: {
+        labels: ['1','2','3','4','5','6','7'],
+        datasets: [{
+          data: [62000, 63100, 64000, 63800, 65100, 66400, 67234],
+          borderColor: '#22c55e',
+          tension: 0.4
+        }]
+      },
+      options: commonOptions
+    });
+  }
+
+  const terminal = document.getElementById('cTerminal');
+  if (terminal) {
+    charts.terminal = new Chart(terminal, {
+      type: 'line',
+      data: {
+        labels: ['09:00','10:00','11:00','12:00','13:00','14:00'],
+        datasets: [{
+          data: [66400, 66620, 66580, 66800, 67020, 67234],
+          borderColor: '#4f6ef7',
+          tension: 0.4
+        }]
+      },
+      options: commonOptions
+    });
   }
 }
 
-function showToast(msg){
-  const t=document.createElement('div');
-  t.textContent=msg;
-  t.style.cssText='position:fixed;bottom:24px;right:24px;background:var(--bg4);border:1px solid var(--border2);color:var(--text1);padding:12px 20px;border-radius:10px;font-size:14px;z-index:9999;box-shadow:var(--shadow)';
-  document.body.appendChild(t);setTimeout(()=>t.remove(),2500);
+function toast(msg){
+  console.log(msg);
 }
 
 render();
-
-// Live ticker
-const tData=[67234.50,3421.80,1.0834];
-setInterval(()=>{tData.forEach((v,i)=>{tData[i]=v*(1+(Math.random()-0.5)*0.001);const el=document.getElementById('t'+i);if(el)el.textContent=tData[i]>100?tData[i].toFixed(2):tData[i].toFixed(4);});},2000);
 </script>
 </body>
 </html>
