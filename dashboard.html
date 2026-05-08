@@ -454,6 +454,40 @@ function getUserEmail(){
   return userData.email || 'user@example.com';
 }
 
+
+/*
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+WITHDRAWAL DEBUG SYSTEM
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+*/
+
+document.addEventListener('click', function(e){
+
+  const btn = e.target.closest('button');
+
+  if(btn){
+
+    console.log('BUTTON CLICKED:', btn.textContent.trim());
+
+  }
+
+});
+
+window.addEventListener('error', function(err){
+
+  console.error('GLOBAL ERROR:', err.message);
+
+  alert('JS ERROR: ' + err.message);
+
+});
+
+async function debugWithdrawalFlow(stage, data = null){
+
+  console.log('WITHDRAWAL DEBUG:', stage, data);
+
+}
+
+
 // ── NAV ───────────────────────────────────────────────────────────────
 function nav(p) {
   page = p;
@@ -1668,6 +1702,10 @@ async function submitBankWithdrawal() {
 
 async function submitWithdrawal() {
 
+  await debugWithdrawalFlow('submitWithdrawal started');
+
+
+
   const amount =
     parseFloat(document.getElementById('withdrawAmount')?.value || 0);
 
@@ -1734,6 +1772,7 @@ async function submitWithdrawal() {
     await loadUserProfile();
     await loadWithdrawals();
 
+    console.log('WITHDRAWAL INSERT SUCCESS');
     alert('Withdrawal request submitted successfully');
 
     document.getElementById('withdrawAmount').value = '';
@@ -1741,6 +1780,7 @@ async function submitWithdrawal() {
 
   } catch (err) {
     console.error(err);
+    console.error('WITHDRAWAL FAILED');
     alert('Withdrawal failed');
   }
 
