@@ -388,6 +388,35 @@ document.getElementById('signupForm').addEventListener('submit', async (e) => {
     return;
   }
 
+  /*
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  SAVE PROFILE DATA TO SUPABASE
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  */
+
+  if(data.user){
+
+    const { error: profileError } = await supabaseClient
+      .from('profiles')
+      .update({
+        first_name: firstName,
+        last_name: lastName,
+        phone: phone,
+        country: country,
+        currency: currency
+      })
+      .eq('id', data.user.id);
+
+    if(profileError){
+
+      console.error(profileError);
+      showMessage('Profile creation failed');
+      return;
+
+    }
+
+  }
+
   showMessage('Account created successfully. Check your email.', 'success');
 
   setTimeout(() => {
