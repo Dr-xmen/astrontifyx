@@ -2891,5 +2891,47 @@ window.opsDeleteTrade = async id => {
   showToast('Trade deleted','error'); renderTradesLive();
 };
 </script>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+const SUPABASE_URL = "https://guguugokdhiwobmuopro.supabase.co";
+
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd1Z3V1Z29rZGhpd29ibXVvcHJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNTgwNzIsImV4cCI6MjA5MzczNDA3Mn0.uaKxvC9PfevyNcgtRg8Hhzaljn9ae3pp3aqgFUMfSo8";
+
+const supabase = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_ANON_KEY
+);
+
+console.log("AstrontifyX Supabase Connected");
+
+async function testConnection(){
+
+  try{
+
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .limit(5);
+
+    console.log("Profiles:", data);
+
+    if(error){
+      console.error(error);
+    }
+
+  }catch(err){
+
+    console.error(err);
+
+  }
+
+}
+
+testConnection();
+
+</script>
+
 </body>
 </html>
