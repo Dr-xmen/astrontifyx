@@ -1712,7 +1712,9 @@ async function submitWithdrawal() {
     document.querySelector('input[placeholder="0.00"]');
 
   const walletInput =
-    document.querySelector('#withdrawWallet');
+    document.querySelector('#withdrawWallet') ||
+    document.querySelector('input[placeholder*="wallet"]') ||
+    document.querySelector('input[placeholder*="Wallet"]');
 
   const assetInput =
     document.querySelector('#withdrawAsset');
