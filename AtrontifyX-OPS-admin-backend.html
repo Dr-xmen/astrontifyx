@@ -1381,402 +1381,61 @@
   /* ============================================================
      AUTH
   ============================================================ */
-  function adminLogin() {
-    const u = document.getElementById('admin-user').value;
-    const p = document.getElementById('admin-pass').value;
-    if (u === 'admin' && p === 'admin123') {
-      document.getElementById('login-gate').style.display = 'none';
-      document.getElementById('main-app').style.display   = 'flex';
-      renderAll();
-    } else {
-      document.getElementById('login-err').style.display = 'block';
+  
+async function adminLogin(){
+
+  const username =
+    document.getElementById('admin-user').value.trim();
+
+  const password =
+    document.getElementById('admin-pass').value.trim();
+
+  const loginErr =
+    document.getElementById('login-err');
+
+  loginErr.style.display = 'none';
+
+  try{
+
+    const { data, error } = await supabase
+      .from('admins')
+      .select('*')
+      .eq('username', username)
+      .eq('password', password)
+      .single();
+
+    if(error || !data){
+
+      loginErr.innerText =
+        'Invalid admin credentials';
+
+      loginErr.style.display = 'block';
+
+      return;
+
     }
+
+    document.getElementById('login-gate')
+      .style.display = 'none';
+
+    document.getElementById('main-app')
+      .style.display = 'block';
+
+    console.log('ADMIN AUTH SUCCESS');
+
+  }catch(err){
+
+    console.error(err);
+
+    loginErr.innerText =
+      'Connection error';
+
+    loginErr.style.display = 'block';
+
   }
 
-  /* ============================================================
-     SAMPLE DATA
-  ============================================================ */
-  const USERS       = [];
-  const POSITIONS   = [];
-  const DEPOSITS    = [];
-  const WITHDRAWALS = [];
-
-  const KYC = [];
-
-  const ADJ_LOG    = [];
-  const AUDIT_LOG  = [];
-  const ACTIVITY_FEED = [];
-
-  /* ============================================================
-     RENDER FUNCTIONS
-  ============================================================ */
-  function renderRecentUsers() {
-    document.getElementById('recent-users-tbody').innerHTML = USERS.slice(0,5).map(u => `
-      <tr class="mkt-row">
-        <td><div class="user-cell"><div class="user-avatar" style="background:${u.color};">${u.name.split(' ').map(n=>n[0]).join('')}</div><div><div class="user-name">${u.name}</div><div class="user-email">${u.email}</div></div></div></td>
-        <td>${u.country}</td>
-        <td>${u.joined}</td>
-        <td><span class="badge-pill ${u.status==='active'?'pill-green':'pill-red'}">${u.status}</span></td>
-        <td><span class="badge-pill ${u.kyc==='verified'?'pill-blue':u.kyc==='pending'?'pill-orange':'pill-red'}">${u.kyc}</span></td>
-        <td><button class="btn btn--sm btn--outline" onclick="openModal('modal-add-user')">Edit</button></td>
-      </tr>`).join('');
-  }
-
-  function renderUsers() {
-    document.getElementById('users-tbody').innerHTML = USERS.map(u => `
-      <tr>
-        <td><input type="checkbox"></td>
-        <td><div class="user-cell"><div class="user-avatar" style="background:${u.color};">${u.name.split(' ').map(n=>n[0]).join('')}</div><div><div class="user-name">${u.name}</div><div class="user-email">${u.email}</div></div></div></td>
-        <td>${u.country}</td>
-        <td><span class="badge-pill ${u.type==='Live'?'pill-green':'pill-blue'}">${u.type}</span></td>
-        <td style="font-weight:600;">${u.balance}</td>
-        <td>${u.joined}</td>
-        <td><span class="badge-pill ${u.status==='active'?'pill-green':'pill-red'}">${u.status}</span></td>
-        <td><span class="badge-pill ${u.kyc==='verified'?'pill-blue':u.kyc==='pending'?'pill-orange':'pill-red'}">${u.kyc}</span></td>
-        <td><div class="row-actions">
-          <button class="btn btn--sm btn--outline" onclick="editUser('${u.id}')">Edit</button>
-          <button class="btn btn--sm btn--${u.status==='active'?'orange':'green'}" onclick="toggleUserStatus('${u.id}')">${u.status==='active'?'Suspend':'Activate'}</button>
-          <button class="btn btn--sm btn--outline" onclick="resetUserPassword('${u.email}')">Reset PWD</button>
-          <button class="btn btn--sm btn--red" onclick="confirmDeleteUser('${u.id}','${u.name.replace(/'/g,"\\'")}','${u.email}')">Delete</button>
-        </div></td>
-      </tr>`).join('');
-  }
-
-  function renderKYC() {
-    document.getElementById('kyc-tbody').innerHTML = KYC.map(k => `
-      <tr>
-        <td><div class="user-name">${k.user}</div></td>
-        <td>${k.doc}</td>
-        <td>${k.submitted}</td>
-        <td><span class="badge-pill ${k.status==='pending'?'pill-orange':k.status==='verified'?'pill-green':'pill-red'}">${k.status}</span></td>
-        <td><div class="row-actions">
-          <button class="btn btn--sm btn--green" onclick="showToast('KYC approved','success')">Approve</button>
-          <button class="btn btn--sm btn--red" onclick="showToast('KYC rejected','error')">Reject</button>
-          <button class="btn btn--sm btn--outline">View Docs</button>
-        </div></td>
-      </tr>`).join('');
-  }
-
-  function renderAccounts() {
-    document.getElementById('accounts-tbody').innerHTML = USERS.map((u,i) => `
-      <tr>
-        <td style="font-weight:600;">#1048${2931+i}</td>
-        <td>${u.name}</td>
-        <td><span class="badge-pill pill-blue">${['MT4','MT5','cTrader','MT4','MT5','MT4','MT5','cTrader'][i]}</span></td>
-        <td><span class="badge-pill ${u.type==='Live'?'pill-green':'pill-blue'}">${u.type}</span></td>
-        <td style="font-weight:600;">${u.balance}</td>
-        <td>${u.balance}</td>
-        <td>1:200</td>
-        <td><span class="badge-pill ${u.status==='active'?'pill-green':'pill-red'}">${u.status}</span></td>
-        <td><div class="row-actions">
-          <button class="btn btn--sm btn--outline" onclick="showPage('balances',document.querySelector('[onclick*=balances]'))">Adjust</button>
-          <button class="btn btn--sm btn--red" onclick="showToast('Account suspended','error')">Suspend</button>
-        </div></td>
-      </tr>`).join('');
-  }
-
-  function renderPositions() {
-    document.getElementById('positions-tbody').innerHTML = POSITIONS.map(p => {
-      const up = !p.pnl.startsWith('-');
-      return `<tr>
-        <td style="font-weight:600;">${p.ticket}</td>
-        <td>${p.user}</td>
-        <td>${p.acc}</td>
-        <td style="font-weight:700;">${p.sym}</td>
-        <td><span class="badge-pill ${p.type==='Buy'?'pill-green':'pill-red'}">${p.type}</span></td>
-        <td>${p.lots}</td>
-        <td>${p.open}</td>
-        <td>${p.curr}</td>
-        <td style="color:var(--red);">${p.sl}</td>
-        <td style="color:var(--green);">${p.tp}</td>
-        <td style="font-weight:700;color:${up?'var(--green)':'var(--red)'};">${p.pnl}</td>
-        <td><button class="btn btn--sm btn--red" onclick="showToast('Position closed','error')">Force Close</button></td>
-      </tr>`;
-    }).join('');
-  }
-
-  function renderDeposits() {
-    document.getElementById('deposits-tbody').innerHTML = DEPOSITS.map(d => `
-      <tr>
-        <td style="font-weight:600;">${d.id}</td>
-        <td>${d.user}</td>
-        <td style="font-weight:700;">${d.amount}</td>
-        <td>${d.method}</td>
-        <td>${d.submitted}</td>
-        <td><span class="badge-pill ${d.status==='approved'?'pill-green':d.status==='pending'?'pill-orange':'pill-red'}">${d.status}</span></td>
-        <td><div class="row-actions">
-          ${d.status==='pending'?`
-          <button class="btn btn--sm btn--green" onclick="showToast('Deposit approved','success')">Approve</button>
-          <button class="btn btn--sm btn--red" onclick="showToast('Deposit rejected','error')">Reject</button>`
-          : `<button class="btn btn--sm btn--outline">View</button>`}
-        </div></td>
-      </tr>`).join('');
-  }
-
-  function renderWithdrawals() {
-    document.getElementById('withdrawals-tbody').innerHTML = WITHDRAWALS.map(w => `
-      <tr>
-        <td style="font-weight:600;">${w.id}</td>
-        <td>${w.user}</td>
-        <td style="font-weight:700;">${w.amount}</td>
-        <td style="font-size:12px;">${w.dest}</td>
-        <td>${w.requested}</td>
-        <td><span class="badge-pill ${w.status==='approved'?'pill-green':w.status==='pending'?'pill-orange':'pill-red'}">${w.status}</span></td>
-        <td><div class="row-actions">
-          ${w.status==='pending'?`
-          <button class="btn btn--sm btn--green" onclick="showToast('Withdrawal approved','success')">Approve</button>
-          <button class="btn btn--sm btn--red" onclick="showToast('Withdrawal rejected','error')">Reject</button>`
-          : `<button class="btn btn--sm btn--outline">View</button>`}
-        </div></td>
-      </tr>`).join('');
-  }
-
-  function renderTransactions() {
-    const all = [
-      ...DEPOSITS.map(d=>({id:d.id, user:d.user, type:'Deposit',    amt:d.amount,  acc:'MT4-001', date:d.submitted,   status:d.status})),
-      ...WITHDRAWALS.map(w=>({id:w.id, user:w.user, type:'Withdrawal', amt:w.amount, acc:'MT4-001', date:w.requested, status:w.status})),
-    ];
-    document.getElementById('txn-tbody').innerHTML = all.map(t => `
-      <tr>
-        <td style="font-weight:600;">${t.id}</td>
-        <td>${t.user}</td>
-        <td><span class="badge-pill ${t.type==='Deposit'?'pill-green':'pill-orange'}">${t.type}</span></td>
-        <td style="font-weight:700;">${t.amt}</td>
-        <td>${t.acc}</td>
-        <td>${t.date}</td>
-        <td><span class="badge-pill ${t.status==='approved'?'pill-green':t.status==='pending'?'pill-orange':'pill-red'}">${t.status}</span></td>
-      </tr>`).join('');
-  }
-
-  function renderAdjLog() {
-    document.getElementById('adj-log-tbody').innerHTML = ADJ_LOG.map(a => `
-      <tr>
-        <td style="font-size:12px;">${a.time}</td>
-        <td style="font-weight:600;">${a.acc}</td>
-        <td>${a.user}</td>
-        <td><span class="badge-pill pill-green">${a.type}</span></td>
-        <td style="font-weight:700;color:var(--green);">${a.amt}</td>
-        <td>${a.before}</td>
-        <td style="font-weight:600;">${a.after}</td>
-        <td style="font-size:11px;">${a.admin}</td>
-        <td style="font-size:12px;color:var(--muted);">${a.reason}</td>
-      </tr>`).join('');
-  }
-
-  function renderAudit() {
-    document.getElementById('audit-tbody').innerHTML = AUDIT_LOG.map(a => `
-      <tr>
-        <td style="font-size:12px;">${a.time}</td>
-        <td><span class="badge-pill pill-purple">${a.admin}</span></td>
-        <td style="font-weight:600;">${a.action}</td>
-        <td style="font-size:12px;">${a.target}</td>
-        <td style="font-size:12px;color:var(--muted);">${a.details}</td>
-        <td style="font-size:11px;color:var(--muted);">${a.ip}</td>
-      </tr>`).join('');
-  }
-
-  function renderActivity() {
-    const html = ACTIVITY_FEED.map(a => `
-      <div class="activity-item">
-        <div class="activity-dot" style="background:var(--${a.dot});"></div>
-        <div class="activity-text">${a.text}</div>
-        <div class="activity-time">${a.time}</div>
-      </div>`).join('');
-    const el1 = document.getElementById('dash-activity');
-    const el2 = document.getElementById('activity-feed');
-    if (el1) el1.innerHTML = html;
-    if (el2) el2.innerHTML = html;
-  }
-
-  function renderAnnouncements() {
-    document.getElementById('ann-list').innerHTML = [
-      { title:'Scheduled Maintenance', body:'Platform maintenance on 5 May 02:00–04:00 UTC.', type:'warning', time:'1 May' },
-      { title:'New Trading Hours — Crypto', body:'Crypto markets now trade 24/7.', type:'info', time:'28 Apr' },
-      { title:'Bonus Campaign Live', body:'50% deposit bonus for all clients this week.', type:'success', time:'25 Apr' },
-    ].map(a => `
-      <div style="border:1px solid var(--border);border-radius:8px;padding:12px 14px;">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
-          <div style="font-size:13px;font-weight:700;">${a.title}</div>
-          <span class="badge-pill ${a.type==='warning'?'pill-orange':a.type==='success'?'pill-green':'pill-blue'}">${a.type}</span>
-        </div>
-        <div style="font-size:12px;color:var(--muted);">${a.body}</div>
-        <div style="font-size:11px;color:var(--muted);margin-top:6px;">${a.time} · <span style="color:var(--red);cursor:pointer;" onclick="showToast('Announcement deleted','error')">Delete</span></div>
-      </div>`).join('');
-  }
-
-  function renderMarketsControl() {
-    const mkts = ['EUR/USD','GBP/USD','BTC/USD','ETH/USD','XAU/USD','US30','SPX500','NAS100','WTI Oil','AAPL','NVDA','TSLA'];
-    document.getElementById('mkt-toggles').innerHTML = mkts.map(m => `
-      <div class="toggle-wrap">
-        <div><div class="toggle-wrap__label">${m}</div></div>
-        <label class="toggle-switch">
-          <input type="checkbox" checked onchange="showToast('${m} updated','success')">
-          <span class="toggle-slider"></span>
-        </label>
-      </div>`).join('');
-  }
-
-  /* ============================================================
-     ACTIONS
-  ============================================================ */
-  function editUser(id) { openModal('modal-add-user'); }
-  function toggleUserStatus(id) { showToast('User status updated','success'); }
-  function filterUsers(type, btn) {
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-  }
-  function searchUsers(q) { /* filter users-tbody rows */ }
-  function toggleSelectAll(cb) {
-    document.querySelectorAll('#users-tbody input[type=checkbox]').forEach(c => c.checked = cb.checked);
-  }
-  function applyAdjustment() {
-    const acc = document.getElementById('adj-account').value;
-    const amt = document.getElementById('adj-amount').value;
-    const reason = document.getElementById('adj-reason').value;
-    if (!acc || !amt || !reason) { showToast('Please fill all required fields','error'); return; }
-    showToast('Balance adjusted successfully','success');
-  }
-  function publishAnnouncement() {
-    const title = document.getElementById('ann-title').value;
-    if (!title) { showToast('Please enter a title','error'); return; }
-    showToast('Announcement published','success');
-    renderAnnouncements();
-  }
-  function saveUser() {
-    showToast('User created successfully','success');
-    closeModal('modal-add-user');
-  }
-  function exportCSV(type) { showToast(`${type}.csv exported`,'success'); }
-
-  /* ============================================================
-     NAV / PAGE
-  ============================================================ */
-  const PAGE_TITLES = {
-    dashboard:'Dashboard', activity:'Live Activity', users:'User Management',
-    verification:'KYC / Verification', accounts:'Trading Accounts',
-    balances:'Balances & P&L', positions:'Open Positions',
-    deposits:'Deposits', withdrawals:'Withdrawals', transactions:'All Transactions',
-    announcements:'Announcements', 'markets-control':'Markets Control',
-    settings:'System Settings', audit:'Audit Log',
-    support:'Support Tickets', notifications:'User Notifications', trades:'Trades History',
-  };
-
-  function showPage(id, btn) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-    const page = document.getElementById('page-' + id);
-    if (page) page.classList.add('active');
-    if (btn) btn.classList.add('active');
-    document.getElementById('page-title').textContent = PAGE_TITLES[id] || id;
-    document.getElementById('sidebar').classList.remove('open');
-    if (id === 'balances'      && window.loadBalanceUsers)      window.loadBalanceUsers();
-    if (id === 'verification'  && window.renderKYCLive)        window.renderKYCLive();
-    if (id === 'settings'      && window.loadCryptoAddresses)  window.loadCryptoAddresses();
-    if (id === 'support'       && window.renderSupportLive)    window.renderSupportLive();
-    if (id === 'notifications' && window.renderNotificationsLive) window.renderNotificationsLive();
-    if (id === 'trades'        && window.renderTradesLive)     window.renderTradesLive();
-  }
-
-  /* ============================================================
-     MODALS
-  ============================================================ */
-  function openModal(id)  { document.getElementById(id).classList.add('open'); }
-  function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-  document.querySelectorAll('.modal-overlay').forEach(el => {
-    el.addEventListener('click', e => { if (e.target === el) el.classList.remove('open'); });
-  });
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') document.querySelectorAll('.modal-overlay.open').forEach(el => el.classList.remove('open'));
-  });
-
-  /* ============================================================
-     TOAST
-  ============================================================ */
-  let toastTimer;
-  function showToast(msg, type='success') {
-    const t = document.getElementById('toast');
-    const icons = {
-      success: `<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>`,
-      error:   `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`,
-    };
-    t.className = `toast ${type} show`;
-    t.innerHTML = (icons[type]||icons.success) + `<span>${msg}</span>`;
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
-  }
-
-  /* ============================================================
-     DARK MODE
-  ============================================================ */
-  const sunIcon  = `<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>`;
-  const moonIcon = `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>`;
-  function toggleDark() {
-    const isDark = document.body.classList.toggle('dark');
-    document.getElementById('dark-icon').innerHTML = isDark ? sunIcon : moonIcon;
-    localStorage.setItem('xantex-theme', isDark ? 'dark' : 'light');
-  }
-  if (localStorage.getItem('xantex-theme') === 'dark') {
-    document.body.classList.add('dark');
-    document.getElementById('dark-icon').innerHTML = sunIcon;
-  }
-
-  /* ============================================================
-     SIDEBAR (mobile)
-  ============================================================ */
-  function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
-  document.addEventListener('click', e => {
-    const sb = document.getElementById('sidebar');
-    const hb = document.getElementById('hamburger');
-    if (sb && sb.classList.contains('open') && !sb.contains(e.target) && hb && !hb.contains(e.target)) {
-      sb.classList.remove('open');
-    }
-  });
-
-  /* ============================================================
-     INIT (called after login)
-  ============================================================ */
-  function renderAll() {
-    renderRecentUsers();
-    renderUsers();
-    renderKYC();
-    renderAccounts();
-    renderPositions();
-    renderDeposits();
-    renderWithdrawals();
-    renderTransactions();
-    renderAdjLog();
-    renderAudit();
-    renderActivity();
-    renderAnnouncements();
-    renderMarketsControl();
-  }
-
-  // Live activity ticker
-  setInterval(() => {
-    const badge = document.getElementById('activity-badge');
-    if (badge) badge.textContent = Math.floor(Math.random() * 5) + 10;
-  }, 8000);
-</script>
-
-<!-- ═══ Supabase integration ═══ -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="./supabase.js"></script>
-<script>
-/* ============================================================
-   OPS PANEL — SUPABASE DATA LAYER
-   All render functions below override their static-data
-   counterparts. Static data is rendered first as a fallback,
-   then replaced with live Supabase rows when available.
-============================================================ */
-
-// ── Helpers ──────────────────────────────────────────────────
-function fmtDate(ts) {
-  if (!ts) return '—';
-  return new Date(ts).toLocaleString('en-GB', {
-    day:'2-digit', month:'short', year:'numeric',
-    hour:'2-digit', minute:'2-digit',
-  });
 }
+
 
 // ── Upgrade adminLogin to use Supabase Auth ──────────────────
 const _origAdminLogin = adminLogin;
@@ -2931,6 +2590,74 @@ async function testConnection(){
 
 testConnection();
 
+</script>
+
+
+<script>
+
+async function loadDashboardStats(){
+
+  try{
+
+    const [
+      usersRes,
+      withdrawalsRes,
+      depositsRes,
+      accountsRes
+    ] = await Promise.all([
+
+      supabase.from('profiles').select('*',{count:'exact'}),
+      supabase.from('withdrawals').select('*',{count:'exact'}).eq('status','pending'),
+      supabase.from('deposits').select('*',{count:'exact'}).eq('status','pending'),
+      supabase.from('trading_accounts').select('*',{count:'exact'})
+
+    ]);
+
+    const totalUsers =
+      usersRes.count || 0;
+
+    const pendingWithdrawals =
+      withdrawalsRes.count || 0;
+
+    const pendingDeposits =
+      depositsRes.count || 0;
+
+    const totalAccounts =
+      accountsRes.count || 0;
+
+    document.querySelector('.stat-card--blue .stat-card__value').innerText =
+      totalUsers;
+
+    document.querySelector('.stat-card--purple .stat-card__value').innerText =
+      totalAccounts;
+
+    const statCards =
+      document.querySelectorAll('.stat-card .stat-card__value');
+
+    if(statCards[4]){
+      statCards[4].innerText = pendingDeposits;
+    }
+
+    if(statCards[5]){
+      statCards[5].innerText = pendingWithdrawals;
+    }
+
+    document.getElementById('badge-users').innerText =
+      totalUsers;
+
+    document.getElementById('badge-withdrawals').innerText =
+      pendingWithdrawals;
+
+    document.getElementById('badge-deposits').innerText =
+      pendingDeposits;
+
+  }catch(err){
+
+    console.error(err);
+
+  }
+
+}
 
 async function loadUsers(){
 
@@ -2939,7 +2666,7 @@ async function loadUsers(){
     const { data, error } = await supabase
       .from('profiles')
       .select('*')
-      .order('created_at', { ascending:false });
+      .order('created_at',{ascending:false});
 
     if(error){
       console.error(error);
@@ -2952,34 +2679,13 @@ async function loadUsers(){
     const recentBody =
       document.getElementById('recent-users-tbody');
 
-    if(!tbody || !recentBody){
-      console.error('Users table containers not found');
-      return;
-    }
+    if(!tbody || !recentBody) return;
 
     tbody.innerHTML = '';
     recentBody.innerHTML = '';
 
-    const badgeUsers =
-      document.getElementById('badge-users');
-
-    if(badgeUsers){
-      badgeUsers.innerText = data.length;
-    }
-
-    const usersSub =
-      document.querySelector('#page-users .page-header__sub');
-
-    if(usersSub){
-      usersSub.innerText = `${data.length} registered users`;
-    }
-
-    const dashboardStat =
-      document.querySelector('.stat-card--blue .stat-card__value');
-
-    if(dashboardStat){
-      dashboardStat.innerText = data.length;
-    }
+    document.querySelector('#page-users .page-header__sub')
+      .innerText = `${data.length} registered users`;
 
     data.forEach((user,index)=>{
 
@@ -2993,30 +2699,23 @@ async function loadUsers(){
 
       const row = `
       <tr>
-        <td>
-          <input type="checkbox">
-        </td>
+        <td><input type="checkbox"></td>
 
         <td>
           <div class="user-cell">
-
-            <div class="user-avatar"
-              style="background:#7c3aed;">
+            <div class="user-avatar" style="background:#7c3aed;">
               ${initials}
             </div>
 
             <div>
-
               <div class="user-name">
                 ${user.full_name || 'Unnamed User'}
               </div>
 
               <div class="user-email">
-                ${user.email || 'No email'}
+                ${user.email || 'No Email'}
               </div>
-
             </div>
-
           </div>
         </td>
 
@@ -3025,14 +2724,11 @@ async function loadUsers(){
         <td>${user.account_type || 'live'}</td>
 
         <td>
-          $${Number(user.balance || 0)
-            .toLocaleString()}
+          $${Number(user.balance || 0).toLocaleString()}
         </td>
 
         <td>
-          ${user.created_at
-            ? new Date(user.created_at).toLocaleDateString()
-            : '—'}
+          ${new Date(user.created_at).toLocaleDateString()}
         </td>
 
         <td>
@@ -3048,36 +2744,21 @@ async function loadUsers(){
         </td>
 
         <td>
-
           <div class="row-actions">
-
             <button class="btn btn--sm btn--outline">
               View
             </button>
-
           </div>
-
         </td>
-
       </tr>`;
 
-      tbody.insertAdjacentHTML(
-        'beforeend',
-        row
-      );
+      tbody.insertAdjacentHTML('beforeend', row);
 
       if(index < 5){
-
-        recentBody.insertAdjacentHTML(
-          'beforeend',
-          row
-        );
-
+        recentBody.insertAdjacentHTML('beforeend', row);
       }
 
     });
-
-    console.log('Users loaded successfully');
 
   }catch(err){
 
@@ -3087,15 +2768,188 @@ async function loadUsers(){
 
 }
 
-document.addEventListener('DOMContentLoaded', ()=>{
+async function loadWithdrawals(){
 
-  setTimeout(()=>{
-    loadUsers();
+  try{
+
+    const { data, error } = await supabase
+      .from('withdrawals')
+      .select(`
+        *,
+        profiles(full_name,email)
+      `)
+      .order('created_at',{ascending:false});
+
+    if(error){
+      console.error(error);
+      return;
+    }
+
+    const tbody =
+      document.getElementById('withdrawals-tbody');
+
+    if(!tbody) return;
+
+    tbody.innerHTML = '';
+
+    data.forEach(item=>{
+
+      tbody.insertAdjacentHTML('beforeend',`
+
+      <tr>
+
+        <td>#${item.id}</td>
+
+        <td>
+          ${item.profiles?.full_name || 'Unknown User'}
+        </td>
+
+        <td>
+          $${Number(item.amount || 0).toLocaleString()}
+        </td>
+
+        <td>
+          ${item.wallet_address || item.method || '—'}
+        </td>
+
+        <td>
+          ${new Date(item.created_at).toLocaleDateString()}
+        </td>
+
+        <td>
+          <span class="badge-pill pill-orange">
+            ${item.status || 'pending'}
+          </span>
+        </td>
+
+        <td>
+
+          <div class="row-actions">
+
+            <button class="btn btn--green btn--sm">
+              Approve
+            </button>
+
+            <button class="btn btn--red btn--sm">
+              Reject
+            </button>
+
+          </div>
+
+        </td>
+
+      </tr>
+
+      `);
+
+    });
+
+  }catch(err){
+
+    console.error(err);
+
+  }
+
+}
+
+async function loadDeposits(){
+
+  try{
+
+    const { data, error } = await supabase
+      .from('deposits')
+      .select(`
+        *,
+        profiles(full_name,email)
+      `)
+      .order('created_at',{ascending:false});
+
+    if(error){
+      console.error(error);
+      return;
+    }
+
+    const tbody =
+      document.getElementById('deposits-tbody');
+
+    if(!tbody) return;
+
+    tbody.innerHTML = '';
+
+    data.forEach(item=>{
+
+      tbody.insertAdjacentHTML('beforeend',`
+
+      <tr>
+
+        <td>#${item.id}</td>
+
+        <td>
+          ${item.profiles?.full_name || 'Unknown User'}
+        </td>
+
+        <td>
+          $${Number(item.amount || 0).toLocaleString()}
+        </td>
+
+        <td>
+          ${item.method || 'Crypto'}
+        </td>
+
+        <td>
+          ${new Date(item.created_at).toLocaleDateString()}
+        </td>
+
+        <td>
+          <span class="badge-pill pill-blue">
+            ${item.status || 'pending'}
+          </span>
+        </td>
+
+        <td>
+
+          <div class="row-actions">
+
+            <button class="btn btn--green btn--sm">
+              Approve
+            </button>
+
+            <button class="btn btn--red btn--sm">
+              Reject
+            </button>
+
+          </div>
+
+        </td>
+
+      </tr>
+
+      `);
+
+    });
+
+  }catch(err){
+
+    console.error(err);
+
+  }
+
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+
+  setTimeout(async()=>{
+
+    await loadDashboardStats();
+    await loadUsers();
+    await loadWithdrawals();
+    await loadDeposits();
+
+    console.log('LIVE ADMIN BACKEND INITIALIZED');
+
   },1000);
 
 });
-
-
 
 </script>
 
