@@ -1180,26 +1180,70 @@ function pgWithdraw() {
       <table>
         <thead>
           <tr>
-            <th>ID</th>
-            <th>Method</th>
-            <th>Amount</th>
             <th>Date</th>
+            <th>Amount ($)</th>
             <th>Status</th>
+            <th>View Details</th>
           </tr>
         </thead>
+
         <tbody>
-          ${WITHDRAWALS.map(w => `
+
+          ${WITHDRAWALS.map((w,index) => `
+
           <tr>
-            <td>${w.id}</td>
-            <td>${w.method}</td>
-            <td>${w.amount}</td>
+
             <td>${w.date}</td>
-            <td>${badge(w.status, w.status === 'completed' ? 'bg' : w.status === 'pending' ? 'ba' : 'br')}</td>
-          </tr>`).join('')}
+
+            <td class="mono">
+              $${Number(w.amount || 0).toLocaleString()}
+            </td>
+
+            <td>
+              ${badge(w.status, w.status === 'completed' ? 'bg' : 'ba')}
+            </td>
+
+            <td>
+              <button class="btn btn-primary btn-sm"
+                onclick="viewWithdrawalDetails(${index})">
+
+                View Details
+
+              </button>
+            </td>
+
+          </tr>
+
+          `).join('')}
+
         </tbody>
       </table>
     </div>
-  </div>`;
+  </div>
+
+<div id="withdrawDetailsModal"
+style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:99999;align-items:center;justify-content:center;padding:20px">
+
+<div style="width:100%;max-width:520px;background:var(--bg2);border:1px solid var(--border2);border-radius:20px;padding:24px">
+
+<div class="section-hdr">
+
+<span class="section-title">Withdrawal Details</span>
+
+<button class="btn btn-outline btn-sm"
+onclick="closeWithdrawalDetails()">
+
+Close
+
+</button>
+
+</div>
+
+<div id="withdrawDetailsContent"></div>
+
+</div>
+
+</div>`;
 }
 
 function pgHistory() {
