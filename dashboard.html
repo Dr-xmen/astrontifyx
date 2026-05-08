@@ -1390,42 +1390,6 @@ window.supabaseClient = supabaseClient;
 
 console.log('Supabase Connected');
 
-/*
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-TEST DATABASE CONNECTION
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-*/
-
-async function testDatabaseConnection(){
-
-  try{
-
-    const { data, error } = await supabase
-      window.supabaseClient.from('profiles')
-      .select('*')
-      .limit(1);
-
-    if(error){
-
-      console.error('DATABASE ERROR:', error);
-
-    }else{
-
-      console.log('DATABASE CONNECTED SUCCESSFULLY');
-      console.log(data);
-
-    }
-
-  }catch(err){
-
-    console.error('SUPABASE CONNECTION FAILED:', err);
-
-  }
-
-}
-
-testDatabaseConnection();
-
 </script>
 
 
@@ -1440,113 +1404,126 @@ testDatabaseConnection();
 
 
 
+
 <script type="module">
 
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
-const SUPABASE_URL =
-  window.SUPABASE_URL ||
-  'https://YOUR_PROJECT.supabase.co';
+const SUPABASE_URL = 'https://guguugokdhiwobmuopro.supabase.co';
 
-const SUPABASE_ANON_KEY =
-  window.SUPABASE_ANON_KEY ||
-  'YOUR_ANON_KEY';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd1Z3V1Z29rZGhpd29ibXVvcHJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNTgwNzIsImV4cCI6MjA5MzczNDA3Mn0.uaKxvC9PfevyNcgtRg8Hhzaljn9ae3pp3aqgFUMfSo8';
 
-if (
-  SUPABASE_URL.includes('YOUR_PROJECT') ||
-  SUPABASE_ANON_KEY === 'YOUR_ANON_KEY'
-) {
-  console.warn('Replace SUPABASE credentials in dashboard.html');
-} else {
+const supabase = createClient(
+  SUPABASE_URL,
+  SUPABASE_ANON_KEY
+);
 
-  const supabase = createClient(
-    SUPABASE_URL,
-    SUPABASE_ANON_KEY
-  );
+window.supabase = supabase;
 
-  async function loadUserProfile() {
+window.userData = {
+  fullName: 'New User',
+  email: '',
+  balance: 0
+};
 
-    try {
+async function loadUserProfile() {
 
-      const authResponse = await supabase.auth.getUser();
+  try {
 
-      if (
-        !authResponse ||
-        !authResponse.data ||
-        !authResponse.data.user
-      ) {
-        console.warn('No logged in user found');
-        return;
-      }
+    const { data: authData, error: authError } =
+      await supabase.auth.getUser();
 
-      const user = authResponse.data.user;
+    if (authError) {
+      console.error(authError);
+      return;
+    }
 
-      const profileResponse = await supabase
+    if (!authData || !authData.user) {
+      console.warn('No authenticated user found');
+      return;
+    }
+
+    const user = authData.user;
+
+    const { data: profile, error: profileError } =
+      await supabase
         .from('profiles')
         .select('*')
         .eq('id', user.id)
         .single();
 
-      if (profileResponse.error) {
-        console.error(profileResponse.error);
-        return;
-      }
-
-      const profile = profileResponse.data;
-
-      if (!profile) {
-        return;
-      }
-
-      const firstName = profile.first_name || '';
-      const lastName = profile.last_name || '';
-
-      const initials =
-        (firstName.charAt(0) + lastName.charAt(0)).toUpperCase() || 'US';
-
-      const avatar = document.getElementById('userAvatar');
-
-      if (avatar) {
-        avatar.textContent = initials;
-      }
-
-      const setMoney = (id, value) => {
-        const el = document.getElementById(id);
-
-        if (el) {
-          el.textContent =
-            '$' +
-            Number(value || 0).toLocaleString(undefined, {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2
-            });
-        }
-      };
-
-      setMoney('portfolioBalance', profile.balance);
-      setMoney('equityValue', profile.equity);
-      setMoney('freeMargin', profile.free_margin);
-      setMoney('totalPnl', profile.total_pnl);
-
-      const winEl = document.getElementById('winningTrades');
-
-      if (winEl) {
-        winEl.textContent =
-          Number(profile.winning_trades || 0) +
-          ' winning trades';
-      }
-
-    } catch (err) {
-      console.error('Dashboard loading error:', err);
+    if (profileError) {
+      console.error(profileError);
+      return;
     }
+
+    if (!profile) {
+      console.warn('No profile found');
+      return;
+    }
+
+    const firstName = profile.first_name || '';
+    const lastName = profile.last_name || '';
+
+    const fullName =
+      `${firstName} ${lastName}`.trim() || 'New User';
+
+    const initials =
+      `${firstName.charAt(0)}${lastName.charAt(0)}`
+        .toUpperCase() || 'NU';
+
+    window.userData = {
+      fullName,
+      email: user.email || '',
+      balance: profile.balance || 0
+    };
+
+    const avatar = document.getElementById('userAvatar');
+
+    if (avatar) {
+      avatar.textContent = initials;
+    }
+
+    const setMoney = (id, value) => {
+
+      const el = document.getElementById(id);
+
+      if (!el) return;
+
+      el.textContent =
+        '$' +
+        Number(value || 0).toLocaleString(undefined, {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        });
+    };
+
+    setMoney('portfolioBalance', profile.balance);
+    setMoney('equityValue', profile.equity);
+    setMoney('freeMargin', profile.free_margin);
+    setMoney('totalPnl', profile.total_pnl);
+
+    const winEl = document.getElementById('winningTrades');
+
+    if (winEl) {
+      winEl.textContent =
+        `${Number(profile.winning_trades || 0)} winning trades`;
+    }
+
+    console.log('LIVE PROFILE LOADED:', profile);
+
+  } catch (err) {
+
+    console.error('Dashboard loading error:', err);
 
   }
 
-  window.addEventListener('load', loadUserProfile);
-
 }
+
+window.addEventListener('load', loadUserProfile);
 
 </script>
 
 </body>
+
 </html>
