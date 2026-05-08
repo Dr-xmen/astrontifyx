@@ -34,7 +34,7 @@ body{font-family:'Space Grotesk',sans-serif;background:var(--bg1);color:var(--te
 .sidebar{width:220px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;transition:width .3s;overflow:hidden}
 .sidebar.collapsed{width:64px}
 .sidebar.collapsed .nav-label,.sidebar.collapsed .nav-section,.sidebar.collapsed .logo-text{opacity:0;pointer-events:none;width:0;overflow:hidden}
-.logo{padding:18px 16px;display:flex;align-items:center;justify-content:center;gap:10px;border-bottom:1px solid var(--border);flex-shrink:0}
+.logo{height:72px;padding:10px 12px;display:flex;align-items:center;justify-content:center;border-bottom:1px solid var(--border);flex-shrink:0;overflow:hidden}
 .logo-icon{width:36px;height:36px;background:var(--accentg);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#fff;font-size:18px;font-weight:700}
 .logo-text{font-size:18px;font-weight:700;letter-spacing:2px;background:var(--accentg);-webkit-background-clip:text;-webkit-text-fill-color:transparent;white-space:nowrap}
 .nav{padding:10px 8px;flex:1;overflow-y:auto;overflow-x:hidden}
@@ -187,10 +187,13 @@ label{font-size:11.5px;color:var(--text3);margin-bottom:6px;display:block;font-w
   padding:14px 0;
 }
 
+
 .sidebar.collapsed .logo img{
-  width:36px !important;
-  height:36px !important;
+  width:44px !important;
+  max-height:44px !important;
+  object-fit:contain;
 }
+
 
 .sidebar.collapsed .logo-text{
   display:none;
@@ -219,7 +222,7 @@ label{font-size:11.5px;color:var(--text3);margin-bottom:6px;display:block;font-w
 <div class="logo">
   <img src="assets/logo.png"
        alt="AtrontifyX Logo"
-       style="width:200px;height:200px;object-fit:contain;border-radius:0px;flex-shrink:0">
+       style="width:42px;height:42px;object-fit:contain;border-radius:12px;flex-shrink:0">
 
   
 </div>
