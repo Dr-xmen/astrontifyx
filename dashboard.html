@@ -442,8 +442,8 @@ const STOCKS = [
 ];
 const POSITIONS = [];
 const TRADES = [];
-const DEPOSITS = [];
-const WITHDRAWALS = [];
+let DEPOSITS = [];
+let WITHDRAWALS = [];
 
 
 function getUserDisplayName(){
@@ -1520,7 +1520,155 @@ async function loadUserProfile() {
 
 }
 
-window.addEventListener('load', loadUserProfile);
+
+async function loadDeposits() {
+
+  try {
+
+    const { data: authData } = await supabase.auth.getUser();
+
+    if (!authData?.user) return;
+
+    const { data, error } = await supabase
+      .from('deposits')
+      .select('*')
+      .eq('user_id', authData.user.id)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+
+    DEPOSITS = data || [];
+
+    if (page === 'deposit') {
+      render();
+    }
+
+  } catch (err) {
+    console.error(err);
+  }
+
+}
+
+async function loadWithdrawals() {
+
+  try {
+
+    const { data: authData } = await supabase.auth.getUser();
+
+    if (!authData?.user) return;
+
+    const { data, error } = await supabase
+      .from('withdrawals')
+      .select('*')
+      .eq('user_id', authData.user.id)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+
+    WITHDRAWALS = data || [];
+
+    if (page === 'withdraw' || page === 'history') {
+      render();
+    }
+
+  } catch (err) {
+    console.error(err);
+  }
+
+}
+
+async function submitWithdrawal() {
+
+  const amount =
+    parseFloat(document.getElementById('withdrawAmount')?.value || 0);
+
+  const wallet =
+    document.getElementById('withdrawWallet')?.value || '';
+
+  const asset =
+    document.getElementById('withdrawAsset')?.value || 'USDT';
+
+  if (!amount || amount <= 0) {
+    alert('Enter a valid withdrawal amount');
+    return;
+  }
+
+  if (!wallet) {
+    alert('Enter wallet address');
+    return;
+  }
+
+  try {
+
+    const { data: authData } = await supabase.auth.getUser();
+
+    if (!authData?.user) {
+      alert('Authentication required');
+      return;
+    }
+
+    if (amount > Number(window.userData.balance || 0)) {
+      alert('Insufficient balance');
+      return;
+    }
+
+    const { error: insertError } = await supabase
+      .from('withdrawals')
+      .insert({
+        user_id: authData.user.id,
+        asset,
+        amount,
+        wallet_address: wallet,
+        status: 'pending'
+      });
+
+    if (insertError) {
+      console.error(insertError);
+      alert(insertError.message);
+      return;
+    }
+
+    const newBalance =
+      Number(window.userData.balance || 0) - amount;
+
+    const { error: balanceError } = await supabase
+      .from('profiles')
+      .update({ balance: newBalance })
+      .eq('id', authData.user.id);
+
+    if (balanceError) {
+      console.error(balanceError);
+    }
+
+    window.userData.balance = newBalance;
+
+    await loadUserProfile();
+    await loadWithdrawals();
+
+    alert('Withdrawal request submitted successfully');
+
+    document.getElementById('withdrawAmount').value = '';
+    document.getElementById('withdrawWallet').value = '';
+
+  } catch (err) {
+    console.error(err);
+    alert('Withdrawal failed');
+  }
+
+}
+
+
+window.addEventListener('load', async () => {
+  await loadUserProfile();
+  await loadDeposits();
+  await loadWithdrawals();
+});
 
 </script>
 
