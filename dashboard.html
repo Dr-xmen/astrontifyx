@@ -1787,6 +1787,10 @@ async function submitWithdrawal() {
 }
 
 
+
+window.submitBankWithdrawal = submitBankWithdrawal;
+window.submitWithdrawal = submitWithdrawal;
+
 window.addEventListener('load', async () => {
   await loadUserProfile();
   await loadDeposits();
