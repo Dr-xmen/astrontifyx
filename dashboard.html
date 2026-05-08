@@ -34,7 +34,7 @@ body{font-family:'Space Grotesk',sans-serif;background:var(--bg1);color:var(--te
 .sidebar{width:220px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;transition:width .3s;overflow:hidden}
 .sidebar.collapsed{width:64px}
 .sidebar.collapsed .nav-label,.sidebar.collapsed .nav-section,.sidebar.collapsed .logo-text{opacity:0;pointer-events:none;width:0;overflow:hidden}
-.logo{height:72px;padding:8px 10px;display:flex;align-items:center;justify-content:center;border-bottom:1px solid var(--border);flex-shrink:0;overflow:hidden}
+.logo{height:72px;padding:10px 12px;display:flex;align-items:center;justify-content:center;border-bottom:1px solid var(--border);flex-shrink:0;overflow:hidden}
 .logo-icon{width:36px;height:36px;background:var(--accentg);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#fff;font-size:18px;font-weight:700}
 .logo-text{font-size:18px;font-weight:700;letter-spacing:2px;background:var(--accentg);-webkit-background-clip:text;-webkit-text-fill-color:transparent;white-space:nowrap}
 .nav{padding:10px 8px;flex:1;overflow-y:auto;overflow-x:hidden}
@@ -211,6 +211,21 @@ label{font-size:11.5px;color:var(--text3);margin-bottom:6px;display:block;font-w
   .g2,.g12,.g23{grid-template-columns:1fr}
   .content{padding:12px}
 }
+
+.tradingview-widget-container,
+.tradingview-widget-container iframe{
+  height:30px !important;
+  min-height:30px !important;
+}
+
+.tradingview-widget-container iframe{
+  width:100% !important;
+}
+
+.ticker-bar{
+  align-items:center !important;
+}
+
 </style>
 </head>
 <body>
@@ -222,7 +237,7 @@ label{font-size:11.5px;color:var(--text3);margin-bottom:6px;display:block;font-w
 <div class="logo">
   <img src="assets/logo.png"
        alt="AtrontifyX Logo"
-       style="width:140px;height:48px;object-fit:contain;display:block;flex-shrink:0">
+       style="width:180px;height:100px;object-fit:contain;border-radius:12px;flex-shrink:0">
 
   
 </div>
@@ -285,55 +300,41 @@ label{font-size:11.5px;color:var(--text3);margin-bottom:6px;display:block;font-w
           <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
         </div>
         <span class="page-title" id="pageTitle">Dashboard</span>
-        <div class="ticker-bar" style="padding:0;height:34px;background:transparent;border:none">
+        
+<div class="ticker-bar"
+     style="padding:0 8px;height:30px;background:var(--bg3);border-radius:8px;overflow:hidden;flex:1;min-width:0">
 
-          <div class="tradingview-widget-container" style="width:100%;height:34px">
-            
-            <div class="tradingview-widget-container__widget"></div>
+  <div class="tradingview-widget-container"
+       style="width:100%;height:30px">
 
-            <script
-              type="text/javascript"
-              src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js"
-              async>
-            {
-              "symbols": [
-                {
-                  "proName": "BINANCE:BTCUSDT",
-                  "title": "BTC/USD"
-                },
-                {
-                  "proName": "BINANCE:ETHUSDT",
-                  "title": "ETH/USD"
-                },
-                {
-                  "proName": "FX:EURUSD",
-                  "title": "EUR/USD"
-                },
-                {
-                  "proName": "FX:GBPUSD",
-                  "title": "GBP/USD"
-                },
-                {
-                  "proName": "OANDA:XAUUSD",
-                  "title": "GOLD"
-                },
-                {
-                  "proName": "FOREXCOM:SPXUSD",
-                  "title": "SPX500"
-                }
-              ],
-              "showSymbolLogo": false,
-              "isTransparent": true,
-              "displayMode": "adaptive",
-              "colorTheme": "dark",
-              "locale": "en"
-            }
-            </script>
+    <div class="tradingview-widget-container__widget"></div>
 
-          </div>
+    <script
+      type="text/javascript"
+      src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js"
+      async>
+    {
+      "symbols": [
+        {"proName":"BINANCE:BTCUSDT","title":"BTC/USD"},
+        {"proName":"BINANCE:ETHUSDT","title":"ETH/USD"},
+        {"proName":"FX:EURUSD","title":"EUR/USD"},
+        {"proName":"FX:GBPUSD","title":"GBP/USD"},
+        {"proName":"OANDA:XAUUSD","title":"GOLD"},
+        {"proName":"FOREXCOM:SPXUSD","title":"SPX500"}
+      ],
+      "showSymbolLogo": false,
+      "isTransparent": true,
+      "displayMode": "compact",
+      "colorTheme": "dark",
+      "locale": "en"
+    }
+    </script>
 
-        </div>
+  </div>
+
+</div>
       </div>
+
       <div class="tb-right">
         <div class="tb-btn">
           <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
