@@ -962,7 +962,7 @@ function pgWithdraw() {
 
       <div class="fg">
         <label>Amount</label>
-        <input type="number" placeholder="0.00">
+        <input id="bankWithdrawAmount" type="number" placeholder="0.00">
       </div>
 
       <button class="btn btn-outline" style="width:100%;justify-content:center">
@@ -1628,6 +1628,8 @@ async function submitBankWithdrawal() {
 
   const accountNumber =
     document.getElementById('accountNumber')?.value || '';
+
+  console.log('CRYPTO WITHDRAW CLICKED');
 
   const amount =
     parseFloat(document.getElementById('bankWithdrawAmount')?.value || 0);
