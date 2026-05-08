@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -214,6 +215,7 @@ label{font-size:11.5px;color:var(--text3);margin-bottom:6px;display:block;font-w
 </style>
 </head>
 <body>
+
 <div class="app">
 
   <!-- SIDEBAR -->
@@ -310,10 +312,13 @@ label{font-size:11.5px;color:var(--text3);margin-bottom:6px;display:block;font-w
     </div>
 
     <!-- CONTENT -->
-    <div class="content fade-in" id="content"></div>
-  </div>
+    
+<div class="content fade-in" id="content">
+  <div id="pageRender"></div>
 </div>
 
+  </div>
+</div>
 
 <script>
 // ── STATE ─────────────────────────────────────────────────────────────
@@ -1217,54 +1222,9 @@ function toast(msg){
 render();
 </script>
 
-<script src="https://s3.tradingview.com/tv.js"></script>
-
 <script>
-function loadTradingView(){
-
-  const chart = document.getElementById('tvchart');
-
-  if(chart){
-
-    chart.innerHTML = '';
-
-    new TradingView.widget({
-      autosize: true,
-      symbol: "BINANCE:BTCUSDT",
-      interval: "15",
-      timezone: "Etc/UTC",
-      theme: document.body.classList.contains('light') ? 'light' : 'dark',
-      style: "1",
-      locale: "en",
-      toolbar_bg: "transparent",
-      enable_publishing: false,
-      hide_top_toolbar: false,
-      allow_symbol_change: true,
-      container_id: "tvchart"
-    });
-
-  }
-}
-
-function loadMarketWidget(){
-
-  const market = document.getElementById('tradingview_market');
-
-  if(market){
-
-    market.innerHTML = `
-      <iframe
-        src="https://s.tradingview.com/widgetembed/?frameElementId=tradingview_market&symbol=BINANCE:BTCUSDT&interval=60&hidesidetoolbar=1&symboledit=1&saveimage=0&toolbarbg=transparent&studies=[]&theme=${document.body.classList.contains('light') ? 'light' : 'dark'}"
-        width="100%"
-        height="100%"
-        frameborder="0"
-        allowtransparency="true"
-        scrolling="no"
-        style="height:100%;min-height:140px;border:none;border-radius:12px"
-      ></iframe>
-    `;
-  }
-}
+document.getElementById('pageTitle').textContent = 'Dashboard';
+document.getElementById('pageRender').innerHTML = pgDashboard();
 </script>
 
 </body>
