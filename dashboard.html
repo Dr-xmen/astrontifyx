@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NEXUS Trading Platform</title>
+<title>AtrontifyX Trading Platform</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -181,6 +181,22 @@ label{font-size:11.5px;color:var(--text3);margin-bottom:6px;display:block;font-w
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
 .fade-in{animation:fadeIn .25s ease forwards}
 
+
+.sidebar.collapsed .logo{
+  justify-content:center;
+  padding:14px 0;
+}
+
+.sidebar.collapsed .logo img{
+  width:36px !important;
+  height:36px !important;
+}
+
+.sidebar.collapsed .logo-text{
+  display:none;
+}
+
+
 @media(max-width:860px){
   .g4{grid-template-columns:1fr 1fr}
   .g3{grid-template-columns:1fr 1fr}
@@ -199,10 +215,18 @@ label{font-size:11.5px;color:var(--text3);margin-bottom:6px;display:block;font-w
 
   <!-- SIDEBAR -->
   <div class="sidebar" id="sidebar">
-    <div class="logo">
-      <div class="logo-icon">N</div>
-      <div class="logo-text">NEXUS</div>
-    </div>
+    
+<div class="logo">
+  <img src="logo.png"
+       alt="AtrontifyX Logo"
+       style="width:42px;height:42px;object-fit:contain;border-radius:12px;flex-shrink:0">
+
+  <div class="logo-text"
+       style="font-size:17px;font-weight:700;letter-spacing:1px">
+       AtrontifyX
+  </div>
+</div>
+
     <nav class="nav" id="sideNav">
       <div class="nav-section">Main</div>
       <div class="nav-item active" data-page="dashboard" onclick="nav('dashboard')">
@@ -299,12 +323,12 @@ let page = 'dashboard', isDark = true, selCoin = 'BTC',
 let charts = {};
 
 
-const userData = JSON.parse(localStorage.getItem('nexusUser') || '{}');
+const userData = JSON.parse(localStorage.getItem('atrontifyxUser') || '{}');
 
 window.addEventListener('DOMContentLoaded', () => {
 
-  if(!localStorage.getItem('nexusUser')){
-    localStorage.setItem('nexusUser', JSON.stringify({
+  if(!localStorage.getItem('atrontifyxUser')){
+    localStorage.setItem('atrontifyxUser', JSON.stringify({
       fullName:'',
       email:''
     }));
