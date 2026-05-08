@@ -1703,55 +1703,69 @@ async function submitBankWithdrawal() {
 
 
 
+
 async function submitWithdrawal() {
 
   console.log('CRYPTO WITHDRAWAL STARTED');
 
-  const amountInput =
-    document.querySelector('#withdrawAmount') ||
-    document.querySelector('input[placeholder="0.00"]');
+  const allInputs = Array.from(document.querySelectorAll('input'));
 
-  const walletInput =
-    document.querySelector('#withdrawWallet') ||
-    document.querySelector('input[placeholder*="wallet"]') ||
-    document.querySelector('input[placeholder*="Wallet"]');
+  console.log('ALL INPUTS:', allInputs);
 
-  const assetInput =
-    document.querySelector('#withdrawAsset');
+  let wallet = '';
+  let amount = 0;
 
-  const amount =
-    parseFloat(amountInput?.value || 0);
+  allInputs.forEach((input) => {
 
-  const wallet =
-    walletInput?.value || '';
+    const placeholder =
+      (input.placeholder || '').toLowerCase();
 
-  const asset =
-    assetInput?.value || 'USDT';
+    const value =
+      (input.value || '').trim();
 
-  console.log('WITHDRAW VALUES:', {
-    amount,
-    wallet,
-    asset
+    if (
+      placeholder.includes('wallet') &&
+      value.length > 0
+    ) {
+      wallet = value;
+    }
+
+    if (
+      placeholder === '0.00' ||
+      placeholder.includes('amount')
+    ) {
+
+      const parsed = parseFloat(value);
+
+      if (!isNaN(parsed) && parsed > 0) {
+        amount = parsed;
+      }
+
+    }
+
   });
 
-  if (isNaN(amount) || amount <= 0) {
-    alert('Enter a valid withdrawal amount');
+  console.log('FINAL WALLET:', wallet);
+  console.log('FINAL AMOUNT:', amount);
+
+  if (!wallet) {
+    alert('Enter wallet address');
     return;
   }
 
-  if (!wallet.trim()) {
-    alert('Enter wallet address');
+  if (!amount || amount <= 0) {
+    alert('Enter valid withdrawal amount');
     return;
   }
 
   try {
 
-    const { data: authData, error: authError } =
-      await supabase.auth.getUser();
+    const {
+      data: { user }
+    } = await supabase.auth.getUser();
 
-    if (authError || !authData?.user) {
-      console.error(authError);
-      alert('Authentication required');
+    if (!user) {
+      alert('Login required');
       return;
     }
 
@@ -1765,41 +1779,39 @@ async function submitWithdrawal() {
       return;
     }
 
-    const { error: insertError } =
-      await supabase
-        .from('withdrawals')
-        .insert({
-          user_id: authData.user.id,
-          asset,
-          amount,
-          wallet_address: wallet,
-          status: 'pending'
-        });
+    const { error } = await supabase
+      .from('withdrawals')
+      .insert({
+        user_id: user.id,
+        amount: amount,
+        asset: 'BTC',
+        wallet_address: wallet,
+        method: 'crypto',
+        status: 'pending'
+      });
 
-    if (insertError) {
-      console.error(insertError);
-      alert(insertError.message);
+    if (error) {
+      console.error(error);
+      alert(error.message);
       return;
     }
 
     const newBalance = currentBalance - amount;
 
-    const { error: updateError } =
-      await supabase
-        .from('profiles')
-        .update({ balance: newBalance })
-        .eq('id', authData.user.id);
+    await supabase
+      .from('profiles')
+      .update({
+        balance: newBalance
+      })
+      .eq('id', user.id);
 
-    if (updateError) {
-      console.error(updateError);
+    if (window.userData) {
+      window.userData.balance = newBalance;
     }
 
-    window.userData.balance = newBalance;
+    alert('Crypto withdrawal submitted successfully');
 
-    await loadUserProfile();
-    await loadWithdrawals();
-
-    alert('Withdrawal request submitted successfully');
+    location.reload();
 
   } catch (err) {
 
@@ -1809,6 +1821,7 @@ async function submitWithdrawal() {
   }
 
 }
+
 
 
 
