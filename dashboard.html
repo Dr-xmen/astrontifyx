@@ -487,6 +487,23 @@ background:transparent !important;
   }
 }
 
+
+body.sidebar-overlay-active{
+overflow:hidden;
+}
+
+@media(max-width:860px){
+
+.sidebar{
+left:-260px !important;
+}
+
+.sidebar.mobile-open{
+left:0 !important;
+}
+
+}
+
 </style>
 </head>
 <body>
@@ -727,20 +744,51 @@ function toggleSidebar() {
 
   if(window.innerWidth <= 860){
     sidebar.classList.toggle('mobile-open');
+    document.body.classList.toggle('sidebar-overlay-active');
   }else{
     sidebar.classList.toggle('collapsed');
   }
 }
 
-document.addEventListener('click', function(e){
-  const sidebar = document.getElementById('sidebar');
+// CLOSE SIDEBAR WHEN CLICKING NAVIGATION ITEMS ON MOBILE
+document.addEventListener('DOMContentLoaded', () => {
 
-  if(window.innerWidth <= 860 &&
-     sidebar.classList.contains('mobile-open') &&
-     !sidebar.contains(e.target) &&
-     !e.target.closest('.tb-btn')){
-      sidebar.classList.remove('mobile-open');
+  document.querySelectorAll('.nav-item[data-page]').forEach(item => {
+
+    item.addEventListener('click', () => {
+
+      if(window.innerWidth <= 860){
+
+        const sidebar = document.getElementById('sidebar');
+
+        sidebar.classList.remove('mobile-open');
+
+        document.body.classList.remove('sidebar-overlay-active');
+
+      }
+
+    });
+
+  });
+
+});
+
+// CLOSE SIDEBAR WHEN CLICKING OUTSIDE
+document.addEventListener('click', function(e){
+
+  const sidebar = document.getElementById('sidebar');
+  const menuBtn = e.target.closest('.tb-btn');
+
+  if(
+    window.innerWidth <= 860 &&
+    sidebar.classList.contains('mobile-open') &&
+    !sidebar.contains(e.target) &&
+    !menuBtn
+  ){
+    sidebar.classList.remove('mobile-open');
+    document.body.classList.remove('sidebar-overlay-active');
   }
+
 });
 
 function toggleTheme() {
