@@ -390,7 +390,7 @@ background:transparent !important;
         <div class="tb-btn" onclick="toggleTheme()">
           <svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18V3z" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2" fill="none"/></svg>
         </div>
-        <div class="avatar" id="userAvatar">NU</div>
+        <div class="avatar" id="userAvatar">--</div>
       </div>
     </div>
 
@@ -1529,6 +1529,118 @@ document.addEventListener('DOMContentLoaded', () => {
   }, 1500);
 
 });
+</script>
+
+
+
+
+
+<script type="module">
+
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+const SUPABASE_URL =
+  window.SUPABASE_URL ||
+  'https://YOUR_PROJECT.supabase.co';
+
+const SUPABASE_ANON_KEY =
+  window.SUPABASE_ANON_KEY ||
+  'YOUR_ANON_KEY';
+
+if (
+  SUPABASE_URL.includes('YOUR_PROJECT') ||
+  SUPABASE_ANON_KEY === 'YOUR_ANON_KEY'
+) {
+  console.warn('Replace SUPABASE credentials in dashboard.html');
+} else {
+
+  const supabase = createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
+  );
+
+  async function loadUserProfile() {
+
+    try {
+
+      const authResponse = await supabase.auth.getUser();
+
+      if (
+        !authResponse ||
+        !authResponse.data ||
+        !authResponse.data.user
+      ) {
+        console.warn('No logged in user found');
+        return;
+      }
+
+      const user = authResponse.data.user;
+
+      const profileResponse = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+      if (profileResponse.error) {
+        console.error(profileResponse.error);
+        return;
+      }
+
+      const profile = profileResponse.data;
+
+      if (!profile) {
+        return;
+      }
+
+      const firstName = profile.first_name || '';
+      const lastName = profile.last_name || '';
+
+      const initials =
+        (firstName.charAt(0) + lastName.charAt(0)).toUpperCase() || 'US';
+
+      const avatar = document.getElementById('userAvatar');
+
+      if (avatar) {
+        avatar.textContent = initials;
+      }
+
+      const setMoney = (id, value) => {
+        const el = document.getElementById(id);
+
+        if (el) {
+          el.textContent =
+            '$' +
+            Number(value || 0).toLocaleString(undefined, {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2
+            });
+        }
+      };
+
+      setMoney('portfolioBalance', profile.balance);
+      setMoney('equityValue', profile.equity);
+      setMoney('freeMargin', profile.free_margin);
+      setMoney('totalPnl', profile.total_pnl);
+
+      const winEl = document.getElementById('winningTrades');
+
+      if (winEl) {
+        winEl.textContent =
+          Number(profile.winning_trades || 0) +
+          ' winning trades';
+      }
+
+    } catch (err) {
+      console.error('Dashboard loading error:', err);
+    }
+
+  }
+
+  window.addEventListener('load', loadUserProfile);
+
+}
+
 </script>
 
 </body>
