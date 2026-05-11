@@ -1382,7 +1382,59 @@
      AUTH
   ============================================================ */
   
+async function adminLogin(){
 
+  const username =
+    document.getElementById('admin-user').value.trim();
+
+  const password =
+    document.getElementById('admin-pass').value.trim();
+
+  const loginErr =
+    document.getElementById('login-err');
+
+  loginErr.style.display = 'none';
+
+  try{
+
+    const { data, error } = await supabase
+      .from('admins')
+      .select('*')
+      .eq('username', username)
+      .eq('password', password)
+      .single();
+
+    if(error || !data){
+
+      loginErr.innerText =
+        'Invalid admin credentials';
+
+      loginErr.style.display = 'block';
+
+      return;
+
+    }
+
+    document.getElementById('login-gate')
+      .style.display = 'none';
+
+    document.getElementById('main-app')
+      .style.display = 'block';
+
+    console.log('ADMIN AUTH SUCCESS');
+
+  }catch(err){
+
+    console.error(err);
+
+    loginErr.innerText =
+      'Connection error';
+
+    loginErr.style.display = 'block';
+
+  }
+
+}
 
 
 // ── Upgrade adminLogin to use Supabase Auth ──────────────────
@@ -2499,17 +2551,14 @@ window.opsDeleteTrade = async id => {
 };
 </script>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 
 <script>
-const SUPABASE_URL = "https://guguugokdhiwobmuopro.supabase.co";
+const SUPABASE_URL = "https://guguugokdhiwobmuopro.supabaseClient.co";
 
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd1Z3V1Z29rZGhpd29ibXVvcHJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNTgwNzIsImV4cCI6MjA5MzczNDA3Mn0.uaKxvC9PfevyNcgtRg8Hhzaljn9ae3pp3aqgFUMfSo8";
 
-const supabase = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_ANON_KEY
-);
+
 
 console.log("AstrontifyX Supabase Connected");
 
@@ -2554,10 +2603,10 @@ async function loadDashboardStats(){
       accountsRes
     ] = await Promise.all([
 
-      supabase.from('profiles').select('*',{count:'exact'}),
-      supabase.from('withdrawals').select('*',{count:'exact'}).eq('status','pending'),
-      supabase.from('deposits').select('*',{count:'exact'}).eq('status','pending'),
-      supabase.from('trading_accounts').select('*',{count:'exact'})
+      supabaseClient.from('profiles').select('*',{count:'exact'}),
+      supabaseClient.from('withdrawals').select('*',{count:'exact'}).eq('status','pending'),
+      supabaseClient.from('deposits').select('*',{count:'exact'}).eq('status','pending'),
+      supabaseClient.from('trading_accounts').select('*',{count:'exact'})
 
     ]);
 
@@ -2902,7 +2951,21 @@ document.addEventListener('DOMContentLoaded',()=>{
 </script>
 
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
+
+const SUPABASE_URL =
+'https://guguugokdhiwobmuopro.supabase.co';
+
+const SUPABASE_ANON_KEY =
+'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd1Z3V1Z29rZGhpd29ibXVvcHJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNTgwNzIsImV4cCI6MjA5MzczNDA3Mn0.uaKxvC9PfevyNcgtRg8Hhzaljn9ae3pp3aqgFUMfSo8';
+
+const supabaseClient =
+window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_ANON_KEY
+);
 
 async function adminLogin(){
 
@@ -2924,7 +2987,7 @@ async function adminLogin(){
   try{
 
     const { data, error } =
-      await supabase.auth.signInWithPassword({
+      await supabaseClient.auth.signInWithPassword({
 
         email,
         password
@@ -2944,7 +3007,7 @@ async function adminLogin(){
     }
 
     const { data: adminCheck } =
-      await supabase
+      await supabaseClient
       .from('admins')
       .select('*')
       .eq('id', data.user.id)
@@ -2958,7 +3021,7 @@ async function adminLogin(){
       loginErr.style.display =
         'block';
 
-      await supabase.auth.signOut();
+      await supabaseClient.auth.signOut();
 
       return;
 
@@ -2969,8 +3032,6 @@ async function adminLogin(){
 
     document.getElementById('main-app')
       .style.display = 'block';
-
-    console.log('SECURE ADMIN LOGIN SUCCESS');
 
   }catch(err){
 
@@ -2986,7 +3047,7 @@ async function adminLogin(){
 
 }
 
-supabase.auth.getSession()
+supabaseClient.auth.getSession()
 .then(({ data }) => {
 
   if(data.session){
@@ -3003,7 +3064,7 @@ supabase.auth.getSession()
 
 async function logoutAdmin(){
 
-  await supabase.auth.signOut();
+  await supabaseClient.auth.signOut();
 
   location.reload();
 
