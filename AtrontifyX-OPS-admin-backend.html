@@ -1939,30 +1939,42 @@ window.execDeleteUser = async function() {
   if (btn) { btn.disabled = true; btn.textContent = 'Deleting...'; }
 
   try {
-    // Delete in order: requests -> accounts -> profile
-    await db.from('deposit_requests').delete().eq('user_id', _delUserId);
-    await db.from('withdrawal_requests').delete().eq('user_id', _delUserId);
-    await db.from('transactions').delete().eq('user_id', _delUserId);
-    await db.from('positions').delete().eq('user_id', _delUserId);
-    await db.from('kyc_submissions').delete().eq('user_id', _delUserId);
-    await db.from('trading_accounts').delete().eq('user_id', _delUserId);
-    const { error } = await db.from('profiles').delete().eq('id', _delUserId);
-    if (error) throw error;
+    const { error } = await db.rpc('ops_delete_user', { target_user_id: _delUserId });
 
-    // Ban the auth.users entry so dashboard forces sign-out even if auth record remains
-    await db.from('banned_users').upsert({ user_id: _delUserId, banned_at: new Date().toISOString() }, { onConflict: 'user_id' });
+    if (error) {
+      // Fallback for projects that have not added the RPC yet: remove app data and ban login.
+      console.warn('ops_delete_user RPC failed, using frontend fallback:', error.message);
+      await db.from('deposit_requests').delete().eq('user_id', _delUserId);
+      await db.from('withdrawal_requests').delete().eq('user_id', _delUserId);
+      await db.from('transactions').delete().eq('user_id', _delUserId);
+      await db.from('positions').delete().eq('user_id', _delUserId);
+      await db.from('kyc_submissions').delete().eq('user_id', _delUserId);
+      await db.from('trades').delete().eq('user_id', _delUserId);
+      await db.from('notifications').delete().eq('user_id', _delUserId);
+      await db.from('support_tickets').delete().eq('user_id', _delUserId);
+      await db.from('trading_accounts').delete().eq('user_id', _delUserId);
+      await db.from('banned_users').upsert(
+        { user_id: _delUserId, banned_at: new Date().toISOString() },
+        { onConflict: 'user_id' }
+      );
+      const profileDelete = await db.from('profiles').delete().eq('id', _delUserId);
+      if (profileDelete.error) throw profileDelete.error;
+      showToast('User app data deleted. Add ops_delete_user SQL to also remove Auth user.', 'success');
+    } else {
+      showToast('User deleted successfully', 'success');
+    }
 
     closeModal('modal-delete-user');
-    showToast(`User deleted successfully`, 'success');
-
-    // Remove from local USERS array and re-render
     const idx = USERS.findIndex(u => u.id === _delUserId);
     if (idx !== -1) USERS.splice(idx, 1);
     renderRecentUsers();
     renderUsers();
+    if (typeof renderUsersLive === 'function') renderUsersLive();
+    if (typeof loadDashboardStats === 'function') loadDashboardStats();
   } catch (e) {
     showToast('Delete failed: ' + e.message, 'error');
     if (btn) { btn.disabled = false; btn.innerHTML = '<svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg> Delete Permanently'; }
+    return;
   } finally {
     _delUserId = null; _delUserEmail = null;
   }
