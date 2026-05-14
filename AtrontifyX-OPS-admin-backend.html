@@ -1359,8 +1359,8 @@
       </div>
       <!-- Confirm input -->
       <div style="margin-top:16px;">
-        <label style="font-size:12px;font-weight:600;color:var(--muted);display:block;margin-bottom:6px;">Type <strong id="del-confirm-hint" style="color:var(--text);font-family:monospace;"></strong> to confirm</label>
-        <input type="text" id="del-confirm-input" placeholder="Type email to confirm" style="width:100%;height:42px;border:1.5px solid var(--border);border-radius:8px;padding:0 14px;font-size:13px;font-family:monospace;outline:none;transition:border-color .15s;" oninput="delCheckConfirm(this.value)">
+        <label style="font-size:12px;font-weight:600;color:var(--muted);display:block;margin-bottom:6px;">Type <strong id="del-confirm-hint" style="color:var(--text);font-family:monospace;"></strong> or <strong style="color:var(--text);font-family:monospace;">DELETE</strong> to confirm</label>
+        <input type="text" id="del-confirm-input" placeholder="Type email or DELETE to confirm" style="width:100%;height:42px;border:1.5px solid var(--border);border-radius:8px;padding:0 14px;font-size:13px;font-family:monospace;outline:none;transition:border-color .15s;" oninput="delCheckConfirm(this.value)">
       </div>
     </div>
     <div class="modal__foot">
@@ -1903,21 +1903,25 @@ let _delUserId   = null;
 let _delUserEmail = null;
 
 window.confirmDeleteUser = function(id, name, email) {
-  _delUserId    = id;
-  _delUserEmail = email;
+  _delUserId = id;
+  _delUserEmail = email || '';
 
-  // Populate modal
-  const initials = name.split(' ').map(n => n[0]).join('').toUpperCase() || '?';
+  const displayName = name || 'Selected user';
+  const displayEmail = email || 'No email on profile';
+  const initials = displayName.split(' ').map(n => n[0]).join('').toUpperCase() || '?';
+
   document.getElementById('del-user-avatar').textContent = initials;
-  document.getElementById('del-user-name').textContent   = name;
-  document.getElementById('del-user-email').textContent  = email;
-  document.getElementById('del-confirm-hint').textContent = email;
+  document.getElementById('del-user-name').textContent = displayName;
+  document.getElementById('del-user-email').textContent = displayEmail;
+  document.getElementById('del-confirm-hint').textContent = email || 'DELETE';
 
-  // Reset confirm input and button
   const inp = document.getElementById('del-confirm-input');
   const btn = document.getElementById('del-confirm-btn');
   if (inp) { inp.value = ''; inp.style.borderColor = ''; }
-  if (btn) btn.disabled = true;
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = '<svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg> Delete Permanently';
+  }
 
   openModal('modal-delete-user');
   setTimeout(() => inp?.focus(), 120);
@@ -1926,7 +1930,9 @@ window.confirmDeleteUser = function(id, name, email) {
 window.delCheckConfirm = function(val) {
   const btn = document.getElementById('del-confirm-btn');
   const inp = document.getElementById('del-confirm-input');
-  const match = val.trim().toLowerCase() === (_delUserEmail || '').toLowerCase();
+  const typed = val.trim().toLowerCase();
+  const email = (_delUserEmail || '').toLowerCase();
+  const match = typed === 'delete' || (!!email && typed === email);
   if (btn) btn.disabled = !match;
   if (inp) inp.style.borderColor = val ? (match ? 'var(--green)' : 'var(--red)') : '';
 };
