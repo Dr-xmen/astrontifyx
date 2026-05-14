@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>AtrontifyX OPS â€” Admin Backend</title>
+  <title>AtrontifyX OPS - Admin Backend</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
@@ -354,7 +354,7 @@
   <div style="background:#1a1d27;border:1px solid #2a2d3a;border-radius:14px;padding:40px;width:100%;max-width:380px;text-align:center;">
     <div style="font-size:11px;font-weight:800;letter-spacing:0.12em;background:var(--red);color:#fff;padding:3px 10px;border-radius:4px;display:inline-block;margin-bottom:16px;">OPS ADMIN</div>
     <div style="font-size:22px;font-weight:700;color:#fff;margin-bottom:6px;">AtrontifyX Admin Backend</div>
-    <div style="font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:28px;">Restricted access â€” authorised personnel only</div>
+    <div style="font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:28px;">Restricted access - authorised personnel only</div>
     <div style="display:flex;flex-direction:column;gap:12px;text-align:left;">
       <div style="display:flex;flex-direction:column;gap:4px;">
         <label style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.07em;">Admin Email</label>
@@ -362,7 +362,7 @@
       </div>
       <div style="display:flex;flex-direction:column;gap:4px;">
         <label style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.07em;">Password</label>
-        <input id="admin-pass" type="password" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" style="height:42px;background:#0f1117;border:1.5px solid #2a2d3a;border-radius:8px;padding:0 14px;font-size:14px;color:#fff;outline:none;" onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='#2a2d3a'" onkeydown="if(event.key==='Enter')adminLogin()">
+        <input id="admin-pass" type="password" placeholder="********" style="height:42px;background:#0f1117;border:1.5px solid #2a2d3a;border-radius:8px;padding:0 14px;font-size:14px;color:#fff;outline:none;" onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='#2a2d3a'" onkeydown="if(event.key==='Enter')adminLogin()">
       </div>
       <div id="login-err" style="font-size:12px;color:var(--red);display:none;">Incorrect credentials. Try again.</div>
       <button onclick="adminLogin()" style="height:44px;background:var(--blue);color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;margin-top:4px;">Sign In to OPS</button>
@@ -403,12 +403,12 @@
       <button class="nav-item" onclick="showPage('users',this)">
         <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
         All Users
-        <span class="nav-item__badge badge-green" id="badge-users">â€”</span>
+        <span class="nav-item__badge badge-green" id="badge-users">-</span>
       </button>
       <button class="nav-item" onclick="showPage('verification',this)">
         <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
         KYC / Verification
-        <span class="nav-item__badge badge-orange" id="badge-kyc">â€”</span>
+        <span class="nav-item__badge badge-orange" id="badge-kyc">-</span>
       </button>
 
       <div class="sidebar__section-label">Accounts</div>
@@ -429,12 +429,12 @@
       <button class="nav-item" onclick="showPage('deposits',this)">
         <svg viewBox="0 0 24 24"><path d="M12 2v20M17 7H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
         Deposits
-        <span class="nav-item__badge badge-orange" id="badge-deposits">â€”</span>
+        <span class="nav-item__badge badge-orange" id="badge-deposits">-</span>
       </button>
       <button class="nav-item" onclick="showPage('withdrawals',this)">
         <svg viewBox="0 0 24 24"><polyline points="17 11 12 6 7 11"/><line x1="12" y1="18" x2="12" y2="6"/></svg>
         Withdrawals
-        <span class="nav-item__badge badge-red" id="badge-withdrawals">â€”</span>
+        <span class="nav-item__badge badge-red" id="badge-withdrawals">-</span>
       </button>
       <button class="nav-item" onclick="showPage('transactions',this)">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -455,7 +455,7 @@
       <button class="nav-item" onclick="showPage('support',this)">
         <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
         Support Tickets
-        <span class="nav-item__badge badge-orange" id="badge-support">â€”</span>
+        <span class="nav-item__badge badge-orange" id="badge-support">-</span>
       </button>
       <button class="nav-item" onclick="showPage('notifications',this)">
         <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
@@ -481,7 +481,7 @@
       <div class="sidebar__avatar">SA</div>
       <div>
         <div class="sidebar__user-name"></div>
-        <div class="sidebar__user-role">Full access Â· OPS</div>
+        <div class="sidebar__user-role">Full access - OPS</div>
       </div>
       <button class="sidebar__logout" onclick="logoutAdmin()" title="Sign out">
         <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
@@ -500,10 +500,10 @@
         <span></span><span></span><span></span>
       </button>
       <div class="topbar__title" id="page-title">Dashboard</div>
-      <span class="topbar__env">ADMIN Â· OPS</span>
+      <span class="topbar__env">ADMIN - OPS</span>
       <div class="topbar__search">
         <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="text" placeholder="Search users, accountsâ€¦">
+        <input type="text" placeholder="Search users, accounts...">
       </div>
       <div class="topbar__right">
         <button class="dark-toggle" id="dark-toggle" onclick="toggleDark()" title="Dark mode">
@@ -520,7 +520,7 @@
     <!-- CONTENT -->
     <div class="content">
 
-      <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• DASHBOARD â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+      <!-- ==================== DASHBOARD ==================== -->
       <div class="page active" id="page-dashboard">
         <div class="page-header">
           <div>
@@ -537,22 +537,22 @@
           <div class="stat-card stat-card--blue">
             <div class="stat-card__label"><svg style="stroke:#fff" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Total Users</div>
             <div class="stat-card__value">0</div>
-            <div class="stat-card__change">â–² +124 this week</div>
+            <div class="stat-card__change">^ +124 this week</div>
           </div>
           <div class="stat-card stat-card--purple">
             <div class="stat-card__label"><svg style="stroke:#fff" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/></svg>Live Accounts</div>
             <div class="stat-card__value">0</div>
-            <div class="stat-card__change">â–² +38 today</div>
+            <div class="stat-card__change">^ +38 today</div>
           </div>
           <div class="stat-card">
             <div class="stat-card__label"><svg style="stroke:var(--green)" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Total AUM</div>
             <div class="stat-card__value">$0</div>
-            <div class="stat-card__change up">â–² +$2.1M today</div>
+            <div class="stat-card__change up">^ +$2.1M today</div>
           </div>
           <div class="stat-card">
             <div class="stat-card__label"><svg style="stroke:var(--blue)" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Open Positions</div>
             <div class="stat-card__value">0</div>
-            <div class="stat-card__change up">â–² Live</div>
+            <div class="stat-card__change up">^ Live</div>
           </div>
           <div class="stat-card">
             <div class="stat-card__label"><svg style="stroke:var(--orange)" viewBox="0 0 24 24"><path d="M12 2v20M17 7H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Pending Deposits</div>
@@ -572,7 +572,7 @@
           <div class="stat-card">
             <div class="stat-card__label"><svg style="stroke:var(--green)" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Today's Volume</div>
             <div class="stat-card__value">$0</div>
-            <div class="stat-card__change up">â–² +12% vs yesterday</div>
+            <div class="stat-card__change up">^ +12% vs yesterday</div>
           </div>
         </div>
 
@@ -599,7 +599,7 @@
         </div>
       </div>
 
-      <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• ALL USERS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+      <!-- ==================== ALL USERS ==================== -->
       <div class="page" id="page-users">
         <div class="page-header">
           <div>
@@ -628,7 +628,7 @@
                 <button class="tab-btn" onclick="filterUsers('demo',this)">Demo</button>
                 <button class="tab-btn" onclick="filterUsers('suspended',this)">Suspended</button>
               </div>
-              <input type="text" placeholder="Search name or emailâ€¦" style="height:34px;border:1.5px solid var(--border);border-radius:7px;padding:0 12px;font-size:13px;outline:none;width:220px;" oninput="searchUsers(this.value)">
+              <input type="text" placeholder="Search name or email..." style="height:34px;border:1.5px solid var(--border);border-radius:7px;padding:0 12px;font-size:13px;outline:none;width:220px;" oninput="searchUsers(this.value)">
               <select style="height:34px;border:1.5px solid var(--border);border-radius:7px;padding:0 12px;font-size:13px;outline:none;appearance:none;min-width:140px;">
                 <option>All Countries</option>
                 <option>Nigeria</option><option>United Kingdom</option><option>UAE</option><option>USA</option>
@@ -651,7 +651,7 @@
         </div>
       </div>
 
-      <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• KYC â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+      <!-- ==================== KYC ==================== -->
       <div class="page" id="page-verification">
         <div class="page-header">
           <div>
@@ -671,7 +671,7 @@
         </div>
       </div>
 
-      <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• ACCOUNTS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+      <!-- ==================== ACCOUNTS ==================== -->
       <div class="page" id="page-accounts">
         <div class="page-header">
           <div>
@@ -696,7 +696,7 @@
         </div>
       </div>
 
-      <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• BALANCES â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+      <!-- ==================== BALANCES ==================== -->
       <div class="page" id="page-balances">
         <div class="page-header">
           <div>
@@ -711,18 +711,18 @@
               <div class="field">
                 <label>Select User</label>
                 <select id="adj-user-select" onchange="loadUserAccounts()">
-                  <option value="">â€” choose a user â€”</option>
+                  <option value="">- choose a user -</option>
                 </select>
               </div>
               <div class="field">
                 <label>Select Account</label>
                 <select id="adj-account">
-                  <option value="">â€” select user first â€”</option>
+                  <option value="">- select user first -</option>
                 </select>
               </div>
             </div>
             <div id="adj-no-account-box" style="display:none;background:rgba(255,165,0,.08);border:1px solid rgba(255,165,0,.3);border-radius:8px;padding:14px 16px;margin-bottom:16px;">
-              <div style="font-size:13px;color:#f5a623;margin-bottom:10px;">âš  This user has no trading accounts. Create one to proceed.</div>
+              <div style="font-size:13px;color:#f5a623;margin-bottom:10px;">!  This user has no trading accounts. Create one to proceed.</div>
               <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;">
                 <div class="field" style="margin:0;flex:1;min-width:120px;">
                   <label style="font-size:11px;">Account Type</label>
@@ -754,7 +754,7 @@
               </div>
               <div class="field--full field">
                 <label>Reason / Notes</label>
-                <textarea placeholder="Internal reason for this adjustment (required)â€¦" id="adj-reason"></textarea>
+                <textarea placeholder="Internal reason for this adjustment (required)..." id="adj-reason"></textarea>
               </div>
             </div>
             <div style="margin-top:16px;display:flex;gap:10px;">
@@ -777,7 +777,7 @@
         </div>
       </div>
 
-      <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• POSITIONS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+      <!-- ==================== POSITIONS ==================== -->
       <div class="page" id="page-positions">
         <div class="page-header">
           <div>
@@ -800,7 +800,7 @@
         </div>
       </div>
 
-      <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• DEPOSITS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+      <!-- ==================== DEPOSITS ==================== -->
       <div class="page" id="page-deposits">
         <div class="page-header">
           <div>
@@ -825,7 +825,7 @@
         </div>
       </div>
 
-      <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• WITHDRAWALS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+      <!-- ==================== WITHDRAWALS ==================== -->
       <div class="page" id="page-withdrawals">
         <div class="page-header">
           <div>
@@ -846,7 +846,7 @@
         </div>
       </div>
 
-      <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• TRANSACTIONS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+      <!-- ==================== TRANSACTIONS ==================== -->
       <div class="page" id="page-transactions">
         <div class="page-header">
           <div>
@@ -868,7 +868,7 @@
         </div>
       </div>
 
-      <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• ANNOUNCEMENTS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+      <!-- ==================== ANNOUNCEMENTS ==================== -->
       <div class="page" id="page-announcements">
         <div class="page-header">
           <div>
@@ -883,11 +883,11 @@
               <div style="display:flex;flex-direction:column;gap:14px;">
                 <div class="field">
                   <label>Title</label>
-                  <input type="text" placeholder="Announcement titleâ€¦" id="ann-title">
+                  <input type="text" placeholder="Announcement title..." id="ann-title">
                 </div>
                 <div class="field">
                   <label>Message</label>
-                  <textarea placeholder="Write your announcementâ€¦" id="ann-body" style="min-height:120px;"></textarea>
+                  <textarea placeholder="Write your announcement..." id="ann-body" style="min-height:120px;"></textarea>
                 </div>
                 <div class="field">
                   <label>Type</label>
@@ -927,7 +927,7 @@
         </div>
       </div>
 
-      <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• MARKETS CONTROL â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+      <!-- ==================== MARKETS CONTROL ==================== -->
       <div class="page" id="page-markets-control">
         <div class="page-header">
           <div>
@@ -964,7 +964,7 @@
                 <div class="field">
                   <label>Trading Hours</label>
                   <select>
-                    <option>24/5 (Monâ€“Fri)</option>
+                    <option>24/5 (Mon-Fri)</option>
                     <option>24/7</option>
                     <option>Market hours only</option>
                     <option>Suspended</option>
@@ -977,7 +977,7 @@
         </div>
       </div>
 
-      <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SETTINGS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+      <!-- ==================== SETTINGS ==================== -->
       <div class="page" id="page-settings">
         <div class="page-header">
           <div>
@@ -1048,7 +1048,7 @@
         </div>
       </div>
 
-      <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• AUDIT LOG â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+      <!-- ==================== AUDIT LOG ==================== -->
       <div class="page" id="page-audit">
         <div class="page-header">
           <div>
@@ -1067,7 +1067,7 @@
         </div>
       </div>
 
-      <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SUPPORT TICKETS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+      <!-- ==================== SUPPORT TICKETS ==================== -->
       <div class="page" id="page-support">
         <div class="page-header">
           <div>
@@ -1099,7 +1099,7 @@
         </div>
       </div>
 
-      <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• USER NOTIFICATIONS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+      <!-- ==================== USER NOTIFICATIONS ==================== -->
       <div class="page" id="page-notifications">
         <div class="page-header">
           <div>
@@ -1128,7 +1128,7 @@
         </div>
       </div>
 
-      <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• TRADES HISTORY â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+      <!-- ==================== TRADES HISTORY ==================== -->
       <div class="page" id="page-trades">
         <div class="page-header">
           <div>
@@ -1164,7 +1164,7 @@
             <div class="form-grid form-grid--3" style="gap:12px;">
               <div class="field">
                 <label>User</label>
-                <select id="trade-user-sel"><option value="">â€” choose user â€”</option></select>
+                <select id="trade-user-sel"><option value="">- choose user -</option></select>
               </div>
               <div class="field">
                 <label>Market</label>
@@ -1219,7 +1219,7 @@
         </div>
       </div>
 
-      <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• ACTIVITY â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+      <!-- ==================== ACTIVITY ==================== -->
       <div class="page" id="page-activity">
         <div class="page-header">
           <div><div class="page-header__title">Live Activity Feed</div><div class="page-header__sub">Real-time platform events</div></div>
@@ -1233,7 +1233,7 @@
   </div><!-- /main -->
 </div><!-- /layout -->
 
-<!-- â•â•â•â•â•â•â•â• MODALS â•â•â•â•â•â•â•â• -->
+<!-- ======== MODALS ======== -->
 
 <!-- Add User -->
 <div class="modal-overlay" id="modal-add-user">
@@ -1252,7 +1252,7 @@
         <div class="field"><label>Account Type</label><select><option>Live</option><option>Demo</option></select></div>
         <div class="field"><label>Platform</label><select><option>MT4</option><option>MT5</option><option>cTrader</option><option>TradingView</option></select></div>
         <div class="field"><label>Initial Balance (USD)</label><input type="number" placeholder="0.00"></div>
-        <div class="field--full field"><label>Temp Password</label><input type="text" placeholder="Auto-generate or enterâ€¦"></div>
+        <div class="field--full field"><label>Temp Password</label><input type="text" placeholder="Auto-generate or enter..."></div>
       </div>
     </div>
     <div class="modal__foot">
@@ -1271,9 +1271,9 @@
     </div>
     <div class="modal__body">
       <div class="form-grid">
-        <div class="field--full field"><label>User ID or Email</label><input type="text" placeholder="Search userâ€¦"></div>
+        <div class="field--full field"><label>User ID or Email</label><input type="text" placeholder="Search user..."></div>
         <div class="field"><label>Platform</label><select><option>MT4</option><option>MT5</option><option>cTrader</option><option>TradingView</option></select></div>
-        <div class="field"><label>Account Type</label><select><option>Live â€” Raw+</option><option>Live â€” Instant</option><option>Live â€” Elite</option><option>Demo</option></select></div>
+        <div class="field"><label>Account Type</label><select><option>Live - Raw+</option><option>Live - Instant</option><option>Live - Elite</option><option>Demo</option></select></div>
         <div class="field"><label>Currency</label><select><option>USD</option><option>EUR</option><option>GBP</option></select></div>
         <div class="field"><label>Leverage</label><select><option>1:30</option><option>1:100</option><option>1:200</option></select></div>
         <div class="field"><label>Initial Balance (USD)</label><input type="number" placeholder="0.00"></div>
@@ -1295,10 +1295,10 @@
     </div>
     <div class="modal__body">
       <div class="form-grid">
-        <div class="field--full field"><label>User Account</label><input type="text" placeholder="Account ID or user emailâ€¦"></div>
+        <div class="field--full field"><label>User Account</label><input type="text" placeholder="Account ID or user email..."></div>
         <div class="field"><label>Amount (USD)</label><input type="number" placeholder="0.00"></div>
         <div class="field"><label>Payment Method</label><select><option>Bank Transfer</option><option>Card</option><option>Crypto</option><option>Internal</option></select></div>
-        <div class="field--full field"><label>Reference / Notes</label><input type="text" placeholder="Transaction referenceâ€¦"></div>
+        <div class="field--full field"><label>Reference / Notes</label><input type="text" placeholder="Transaction reference..."></div>
       </div>
     </div>
     <div class="modal__foot">
@@ -1690,7 +1690,7 @@ async function adminLogin(){
 }
 
 
-// â”€â”€ Upgrade adminLogin to use Supabase Auth â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// -- Upgrade adminLogin to use Supabase Auth ------------------
 const _origAdminLogin = adminLogin;
 
 async function atrontifyAdminAllowed(db, user, email) {
@@ -1817,12 +1817,12 @@ window.adminLogin = async function() {
   renderAll();
 };
 
-// â”€â”€ Users â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// -- Users -----------------------------------------------------
 async function _loadUsers() {
   const db = window.ATRONTIFY_DB;
   if (!db) return null;
   const [{ data: profiles }, { data: accounts }] = await Promise.all([
-    db.from('profiles').select('id, first_name, last_name, email, country, kyc_status, status, created_at').order('created_at', { ascending: false }),
+    db.from('profiles').select('*').order('created_at', { ascending: false }),
     db.from('trading_accounts').select('user_id, balance, type'),
   ]);
   if (!profiles?.length) return null;
@@ -1833,9 +1833,9 @@ async function _loadUsers() {
     const live  = accs.some(a => a.type?.toLowerCase().includes('live'));
     return {
       id:      p.id,
-      name:    `${p.first_name || ''} ${p.last_name || ''}`.trim() || p.email,
+      name:    p.full_name || p.name || `${p.first_name || ''} ${p.last_name || ''}`.trim() || p.username || p.id,
       email:   p.email,
-      country: p.country || 'â€”',
+      country: p.country || '-',
       type:    live ? 'Live' : 'Demo',
       balance: '$' + total.toLocaleString('en-US', { minimumFractionDigits: 2 }),
       joined:  new Date(p.created_at).toLocaleDateString('en-GB'),
@@ -1855,12 +1855,12 @@ async function renderUsersLive() {
 }
 window.renderUsersLive = renderUsersLive;
 
-// â”€â”€ KYC â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// -- KYC -------------------------------------------------------
 async function renderKYCLive() {
   const db = window.ATRONTIFY_DB; if (!db) return;
   const { data, error } = await db
     .from('kyc_submissions')
-    .select('id, user_id, document_type, submitted_at, status, front_url, back_url, selfie_url, proof_address_url, profiles(first_name, last_name, email, country)')
+    .select('id, user_id, document_type, submitted_at, status, front_url, back_url, selfie_url, proof_address_url, profiles(*)')
     .order('submitted_at', { ascending: false });
   const tbody = document.getElementById('kyc-tbody');
   if (!data?.length) {
@@ -1869,13 +1869,13 @@ async function renderKYCLive() {
   }
   tbody.innerHTML = data.map(k => {
     const p    = k.profiles || {};
-    const name = `${p.first_name||''} ${p.last_name||''}`.trim() || p.email || 'â€”';
+    const name = p.full_name || p.name || `${p.first_name||''} ${p.last_name||''}`.trim() || p.username || p.id || '-';
     const docsJson = JSON.stringify({ front:k.front_url, back:k.back_url, selfie:k.selfie_url, addr:k.proof_address_url, name, docType:k.document_type, status:k.status, id:k.id }).replace(/'/g,"&#39;");
     return `<tr>
       <td><div class="user-name">${name}</div></td>
-      <td><div class="user-email">${p.email||'â€”'}</div></td>
-      <td>${p.country||'â€”'}</td>
-      <td>${k.document_type||'â€”'}</td>
+      <td><div class="user-email">${p.email || p.username ||  p.username || '-'}</div></td>
+      <td>${p.country||'-'}</td>
+      <td>${k.document_type||'-'}</td>
       <td>${fmtDate(k.submitted_at)}</td>
       <td><span class="badge-pill ${k.status==='pending'?'pill-orange':k.status==='verified'?'pill-green':'pill-red'}">${k.status}</span></td>
       <td><div class="row-actions">
@@ -1886,7 +1886,7 @@ async function renderKYCLive() {
     </tr>`;
   }).join('');
 }
-// â”€â”€ Reset password â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// -- Reset password --------------------------------------------
 window.resetUserPassword = async function(email) {
   if (!email || email === 'undefined') { showToast('No email on record for this user','error'); return; }
   const db = window.ATRONTIFY_DB;
@@ -1898,7 +1898,7 @@ window.resetUserPassword = async function(email) {
   showToast(`Password reset email sent to ${email}`, 'success');
 };
 
-// â”€â”€ Delete user â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// -- Delete user -----------------------------------------------
 let _delUserId   = null;
 let _delUserEmail = null;
 
@@ -1936,10 +1936,10 @@ window.execDeleteUser = async function() {
   if (!db || !_delUserId) return;
 
   const btn = document.getElementById('del-confirm-btn');
-  if (btn) { btn.disabled = true; btn.textContent = 'Deletingâ€¦'; }
+  if (btn) { btn.disabled = true; btn.textContent = 'Deleting...'; }
 
   try {
-    // Delete in order: requests â†’ accounts â†’ profile
+    // Delete in order: requests -> accounts -> profile
     await db.from('deposit_requests').delete().eq('user_id', _delUserId);
     await db.from('withdrawal_requests').delete().eq('user_id', _delUserId);
     await db.from('transactions').delete().eq('user_id', _delUserId);
@@ -1972,7 +1972,7 @@ window.renderKYCLive = renderKYCLive;
 
 window.viewKYCDocs = function(encoded) {
   const k = JSON.parse(decodeURIComponent(encoded));
-  document.getElementById('kyc-modal-name').textContent = k.name + ' â€” ' + (k.docType || 'KYC Document');
+  document.getElementById('kyc-modal-name').textContent = k.name + ' - ' + (k.docType || 'KYC Document');
   document.getElementById('kyc-modal-meta').textContent = 'Status: ' + k.status;
   const docs = [
     { label: 'Front of Document', url: k.front },
@@ -2019,23 +2019,23 @@ window.opsRejectKYC = async id => {
   showToast('KYC rejected','error'); renderKYCLive();
 };
 
-// â”€â”€ Trading Accounts â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// -- Trading Accounts ------------------------------------------
 async function renderAccountsLive() {
   renderAccounts();
   const db = window.ATRONTIFY_DB; if (!db) return;
   const { data } = await db
     .from('trading_accounts')
-    .select('*, profiles(first_name, last_name)')
+    .select('*, profiles(*)')
     .order('created_at', { ascending: false });
   if (!data?.length) return;
   document.getElementById('accounts-tbody').innerHTML = data.map(a => {
-    const name = a.profiles ? `${a.profiles.first_name} ${a.profiles.last_name}` : 'â€”';
+    const name = a.profiles ? a.profiles.full_name || a.profiles.name || `${a.profiles.first_name || ''} ${a.profiles.last_name || ''}`.trim() || a.profiles.id : '-';
     const bal  = parseFloat(a.balance || 0).toLocaleString('en-US', { minimumFractionDigits: 2 });
     const live = a.type?.toLowerCase().includes('live');
     return `<tr>
       <td style="font-weight:600;">#${a.account_number || a.id.slice(0,8)}</td>
       <td>${name}</td>
-      <td><span class="badge-pill pill-blue">${a.platform || 'â€”'}</span></td>
+      <td><span class="badge-pill pill-blue">${a.platform || '-'}</span></td>
       <td><span class="badge-pill ${live?'pill-green':'pill-blue'}">${live?'Live':'Demo'}</span></td>
       <td style="font-weight:600;">$${bal}</td>
       <td>$${bal}</td>
@@ -2054,30 +2054,30 @@ window.opsSuspendAccount = async id => {
   showToast('Account suspended','error'); renderAccountsLive();
 };
 
-// â”€â”€ Positions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// -- Positions -------------------------------------------------
 async function renderPositionsLive() {
   renderPositions();
   const db = window.ATRONTIFY_DB; if (!db) return;
   const { data } = await db
     .from('positions')
-    .select('*, profiles(first_name, last_name)')
+    .select('*, profiles(*)')
     .eq('status','open').order('opened_at', { ascending: false });
   if (!data?.length) return;
   document.getElementById('positions-tbody').innerHTML = data.map(p => {
     const pnl  = parseFloat(p.floating_pnl || 0);
     const up   = pnl >= 0;
-    const name = p.profiles ? `${p.profiles.first_name} ${p.profiles.last_name}` : 'â€”';
+    const name = p.profiles ? p.profiles.full_name || p.profiles.name || `${p.profiles.first_name || ''} ${p.profiles.last_name || ''}`.trim() || p.profiles.id : '-';
     return `<tr>
       <td style="font-weight:600;">#${p.id.slice(0,8)}</td>
       <td>${name}</td>
-      <td>${p.account_number || 'â€”'}</td>
+      <td>${p.account_number || '-'}</td>
       <td style="font-weight:700;">${p.symbol}</td>
       <td><span class="badge-pill ${p.direction==='buy'?'pill-green':'pill-red'}">${(p.direction||'').toUpperCase()}</span></td>
       <td>${p.lots}</td>
       <td>${p.open_price}</td>
       <td>${p.current_price || p.open_price}</td>
-      <td style="color:var(--red);">${p.stop_loss || 'â€”'}</td>
-      <td style="color:var(--green);">${p.take_profit || 'â€”'}</td>
+      <td style="color:var(--red);">${p.stop_loss || '-'}</td>
+      <td style="color:var(--green);">${p.take_profit || '-'}</td>
       <td style="font-weight:700;color:${up?'var(--green)':'var(--red)'};">${up?'+':''}$${Math.abs(pnl).toFixed(2)}</td>
       <td><button class="btn btn--sm btn--red" onclick="opsForceClose('${p.id}')">Force Close</button></td>
     </tr>`;
@@ -2090,23 +2090,23 @@ window.opsForceClose = async id => {
   showToast('Position closed','success'); renderPositionsLive();
 };
 
-// â”€â”€ Deposits â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// -- Deposits --------------------------------------------------
 async function renderDepositsLive() {
   renderDeposits();
   const db = window.ATRONTIFY_DB; if (!db) return;
   const { data } = await db
     .from('transactions')
-    .select('*, profiles(first_name, last_name)')
+    .select('*, profiles(*)')
     .eq('type','deposit').order('created_at', { ascending: false });
   if (!data?.length) return;
   document.getElementById('deposits-tbody').innerHTML = data.map(d => {
-    const name = d.profiles ? `${d.profiles.first_name} ${d.profiles.last_name}` : 'â€”';
+    const name = d.profiles ? d.profiles.full_name || d.profiles.name || `${d.profiles.first_name || ''} ${d.profiles.last_name || ''}`.trim() || d.profiles.id : '-';
     const amt  = parseFloat(d.amount || 0).toLocaleString('en-US', { minimumFractionDigits: 2 });
     return `<tr>
       <td style="font-weight:600;">${d.id.slice(0,8).toUpperCase()}</td>
       <td>${name}</td>
       <td style="font-weight:700;">$${amt}</td>
-      <td>${d.payment_method || 'â€”'}</td>
+      <td>${d.payment_method || '-'}</td>
       <td style="font-size:12px;">${fmtDate(d.created_at)}</td>
       <td><span class="badge-pill ${d.status==='approved'?'pill-green':d.status==='pending'?'pill-orange':'pill-red'}">${d.status}</span></td>
       <td><div class="row-actions">
@@ -2128,23 +2128,23 @@ window.opsRejectDeposit = async id => {
   showToast('Deposit rejected','error'); renderDepositsLive();
 };
 
-// â”€â”€ Withdrawals â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// -- Withdrawals -----------------------------------------------
 async function renderWithdrawalsLive() {
   renderWithdrawals();
   const db = window.ATRONTIFY_DB; if (!db) return;
   const { data } = await db
     .from('transactions')
-    .select('*, profiles(first_name, last_name)')
+    .select('*, profiles(*)')
     .eq('type','withdrawal').order('created_at', { ascending: false });
   if (!data?.length) return;
   document.getElementById('withdrawals-tbody').innerHTML = data.map(w => {
-    const name = w.profiles ? `${w.profiles.first_name} ${w.profiles.last_name}` : 'â€”';
+    const name = w.profiles ? w.profiles.full_name || w.profiles.name || `${w.profiles.first_name || ''} ${w.profiles.last_name || ''}`.trim() || w.profiles.id : '-';
     const amt  = parseFloat(w.amount || 0).toLocaleString('en-US', { minimumFractionDigits: 2 });
     return `<tr>
       <td style="font-weight:600;">${w.id.slice(0,8).toUpperCase()}</td>
       <td>${name}</td>
       <td style="font-weight:700;">$${amt}</td>
-      <td style="font-size:12px;">${w.destination || 'â€”'}</td>
+      <td style="font-size:12px;">${w.destination || '-'}</td>
       <td style="font-size:12px;">${fmtDate(w.created_at)}</td>
       <td><span class="badge-pill ${w.status==='approved'?'pill-green':w.status==='pending'?'pill-orange':'pill-red'}">${w.status}</span></td>
       <td><div class="row-actions">
@@ -2166,18 +2166,18 @@ window.opsRejectWithdrawal = async id => {
   showToast('Withdrawal rejected','error'); renderWithdrawalsLive();
 };
 
-// â”€â”€ All Transactions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// -- All Transactions ------------------------------------------
 async function renderTransactionsLive() {
   renderTransactions();
   const db = window.ATRONTIFY_DB; if (!db) return;
   const { data } = await db
     .from('transactions')
-    .select('*, profiles(first_name, last_name)')
+    .select('*, profiles(*)')
     .order('created_at', { ascending: false })
     .limit(100);
   if (!data?.length) return;
   document.getElementById('txn-tbody').innerHTML = data.map(t => {
-    const name = t.profiles ? `${t.profiles.first_name} ${t.profiles.last_name}` : 'â€”';
+    const name = t.profiles ? t.profiles.full_name || t.profiles.name || `${t.profiles.first_name || ''} ${t.profiles.last_name || ''}`.trim() || t.profiles.id : '-';
     const amt  = parseFloat(t.amount || 0).toLocaleString('en-US', { minimumFractionDigits: 2 });
     const dep  = t.type === 'deposit';
     return `<tr>
@@ -2185,7 +2185,7 @@ async function renderTransactionsLive() {
       <td>${name}</td>
       <td><span class="badge-pill ${dep?'pill-green':'pill-orange'}">${t.type}</span></td>
       <td style="font-weight:700;">$${amt}</td>
-      <td style="font-size:12px;">${t.account_id || 'â€”'}</td>
+      <td style="font-size:12px;">${t.account_id || '-'}</td>
       <td style="font-size:12px;">${fmtDate(t.created_at)}</td>
       <td><span class="badge-pill ${t.status==='approved'?'pill-green':t.status==='pending'?'pill-orange':'pill-red'}">${t.status}</span></td>
     </tr>`;
@@ -2193,7 +2193,7 @@ async function renderTransactionsLive() {
 }
 window.renderTransactionsLive = renderTransactionsLive;
 
-// â”€â”€ Audit Log â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// -- Audit Log -------------------------------------------------
 async function renderAuditLive() {
   renderAudit();
   const db = window.ATRONTIFY_DB; if (!db) return;
@@ -2208,14 +2208,14 @@ async function renderAuditLive() {
       <td style="font-size:12px;">${fmtDate(a.created_at)}</td>
       <td><span class="badge-pill pill-purple">${a.admin_email || 'Admin'}</span></td>
       <td style="font-weight:600;">${a.action}</td>
-      <td style="font-size:12px;">${a.target || 'â€”'}</td>
-      <td style="font-size:12px;color:var(--muted);">${a.details || 'â€”'}</td>
-      <td style="font-size:11px;color:var(--muted);">${a.ip_address || 'â€”'}</td>
+      <td style="font-size:12px;">${a.target || '-'}</td>
+      <td style="font-size:12px;color:var(--muted);">${a.details || '-'}</td>
+      <td style="font-size:11px;color:var(--muted);">${a.ip_address || '-'}</td>
     </tr>`).join('');
 }
 window.renderAuditLive = renderAuditLive;
 
-// â”€â”€ Announcements â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// -- Announcements ---------------------------------------------
 async function renderAnnouncementsLive() {
   renderAnnouncements();
   const db = window.ATRONTIFY_DB; if (!db) return;
@@ -2233,7 +2233,7 @@ async function renderAnnouncementsLive() {
       </div>
       <div style="font-size:12px;color:var(--muted);">${a.body || ''}</div>
       <div style="font-size:11px;color:var(--muted);margin-top:6px;">
-        ${fmtDate(a.created_at)} Â·
+        ${fmtDate(a.created_at)} -
         <span style="color:var(--red);cursor:pointer;" onclick="opsDeleteAnnouncement('${a.id}')">Delete</span>
       </div>
     </div>`).join('');
@@ -2244,7 +2244,7 @@ window.opsDeleteAnnouncement = async id => {
   showToast('Deleted','error'); renderAnnouncementsLive();
 };
 
-// â”€â”€ Patch publishAnnouncement â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// -- Patch publishAnnouncement ---------------------------------
 const _origPublishAnnouncement = publishAnnouncement;
 window.publishAnnouncement = async function() {
   const title    = document.getElementById('ann-title').value.trim();
@@ -2265,30 +2265,30 @@ window.publishAnnouncement = async function() {
   renderAnnouncementsLive();
 };
 
-// â”€â”€ Balances page: load users into dropdown â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// -- Balances page: load users into dropdown -------------------
 window.loadBalanceUsers = async function() {
   const db = window.ATRONTIFY_DB;
   const sel = document.getElementById('adj-user-select');
   if (!sel || !db) return;
-  sel.innerHTML = '<option value="">â€” loading usersâ€¦ â€”</option>';
+  sel.innerHTML = '<option value="">- loading users... -</option>';
   const { data: users, error } = await db.from('profiles')
     .select('id, first_name, last_name, email')
-    .order('email', { ascending: true });
+    .order('created_at', { ascending: false });
   if (error) {
-    sel.innerHTML = '<option value="">â€” error loading users â€”</option>';
+    sel.innerHTML = '<option value="">- error loading users -</option>';
     showToast('Could not load users: ' + error.message + '. Make sure your account is in the admin_users table.', 'error');
     return;
   }
   if (!users || users.length === 0) {
-    sel.innerHTML = '<option value="">â€” no users found (check admin_users table) â€”</option>';
+    sel.innerHTML = '<option value="">- no users found (check admin_users table) -</option>';
     return;
   }
-  sel.innerHTML = '<option value="">â€” choose a user â€”</option>';
+  sel.innerHTML = '<option value="">- choose a user -</option>';
   users.forEach(u => {
     const opt = document.createElement('option');
     opt.value = u.id;
-    const name = `${u.first_name || ''} ${u.last_name || ''}`.trim();
-    opt.textContent = name ? `${name} (${u.email})` : u.email || u.id.slice(0,8);
+    const name = u.full_name || u.name || `${u.first_name || ''} ${u.last_name || ''}`.trim();
+    opt.textContent = name ? `${name} (${u.email || u.username || u.id})` : u.email || u.username || u.id.slice(0,8);
     sel.appendChild(opt);
   });
 };
@@ -2299,26 +2299,26 @@ window.loadUserAccounts = async function() {
   const accSel = document.getElementById('adj-account');
   const noAccBox = document.getElementById('adj-no-account-box');
   const balDisplay = document.getElementById('adj-current-bal');
-  accSel.innerHTML = '<option value="">â€” loadingâ€¦ â€”</option>';
+  accSel.innerHTML = '<option value="">- loading... -</option>';
   if (noAccBox) noAccBox.style.display = 'none';
   if (balDisplay) balDisplay.textContent = '';
-  if (!userId || !db) { accSel.innerHTML = '<option value="">â€” select user first â€”</option>'; return; }
+  if (!userId || !db) { accSel.innerHTML = '<option value="">- select user first -</option>'; return; }
   const { data: accounts, error } = await db.from('trading_accounts')
     .select('id, account_number, type, balance, equity, currency')
     .eq('user_id', userId)
     .order('created_at', { ascending: false });
-  if (error) { accSel.innerHTML = '<option value="">â€” error: ' + error.message + ' â€”</option>'; return; }
+  if (error) { accSel.innerHTML = '<option value="">- error: ' + error.message + ' -</option>'; return; }
   if (!accounts || accounts.length === 0) {
-    accSel.innerHTML = '<option value="">â€” no accounts found â€”</option>';
+    accSel.innerHTML = '<option value="">- no accounts found -</option>';
     if (noAccBox) noAccBox.style.display = 'block';
     return;
   }
-  accSel.innerHTML = '<option value="">â€” choose an account â€”</option>';
+  accSel.innerHTML = '<option value="">- choose an account -</option>';
   accounts.forEach(a => {
     const opt = document.createElement('option');
     opt.value = a.id;
     const bal = parseFloat(a.balance||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
-    opt.textContent = `#${a.account_number || a.id.slice(0,8)} Â· ${a.type} Â· ${a.currency||'USD'} $${bal}`;
+    opt.textContent = `#${a.account_number || a.id.slice(0,8)} - ${a.type} - ${a.currency||'USD'} $${bal}`;
     accSel.appendChild(opt);
   });
   // Auto-select first account and show its balance
@@ -2365,7 +2365,7 @@ window.createAccountForUser = async function() {
   window.loadUserAccounts();
 };
 
-// â”€â”€ Patch applyAdjustment â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// -- Patch applyAdjustment -------------------------------------
 const _origApplyAdjustment = applyAdjustment;
 window.applyAdjustment = async function() {
   const accId   = document.getElementById('adj-account').value;
@@ -2384,7 +2384,7 @@ window.applyAdjustment = async function() {
     session = data?.session;
   } catch(e) {}
   if (!session) {
-    showToast('Session expired â€” please log out and log back in with your admin email','error');
+    showToast('Session expired - please log out and log back in with your admin email','error');
     return;
   }
 
@@ -2399,7 +2399,7 @@ window.applyAdjustment = async function() {
   else if (adjType.startsWith('Debit'))  after = Math.max(0, before - amount);
   else if (adjType.startsWith('Set'))    after = amount;
 
-  // Update balance â€” use .select() so we can detect silent RLS blocks (0 rows updated)
+  // Update balance - use .select() so we can detect silent RLS blocks (0 rows updated)
   const { data: updated, error: updErr } = await db.from('trading_accounts')
     .update({ balance: after, equity: after })
     .eq('id', accId)
@@ -2407,7 +2407,7 @@ window.applyAdjustment = async function() {
 
   if (updErr) { showToast('Update error: ' + updErr.message, 'error'); return; }
   if (!updated || updated.length === 0) {
-    showToast('Permission denied â€” your account may not be in the admin_users table. Check Supabase Dashboard â†’ admin_users.', 'error');
+    showToast('Permission denied - your account may not be in the admin_users table. Check Supabase Dashboard -> admin_users.', 'error');
     return;
   }
 
@@ -2424,7 +2424,7 @@ window.applyAdjustment = async function() {
   });
   if (txnErr) console.warn('Transaction log failed:', txnErr.message);
 
-  showToast(`Balance updated: $${before.toFixed(2)} â†’ $${after.toFixed(2)}`, 'success');
+  showToast(`Balance updated: $${before.toFixed(2)} -> $${after.toFixed(2)}`, 'success');
   // Clear input fields
   document.getElementById('adj-amount').value = '';
   document.getElementById('adj-reason').value = '';
@@ -2436,7 +2436,7 @@ window.applyAdjustment = async function() {
   renderAccountsLive();
 };
 
-// â”€â”€ Patch saveUser â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// -- Patch saveUser --------------------------------------------
 const _origSaveUser = saveUser;
 window.saveUser = async function() {
   const modal   = document.getElementById('modal-add-user');
@@ -2472,18 +2472,18 @@ window.saveUser = async function() {
   renderUsersLive();
 };
 
-// â”€â”€ Crypto Deposit Addresses â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// -- Crypto Deposit Addresses ----------------------------------
 const CRYPTO_COINS = [
-  { key:'ETH',  label:'ETH â€” Ethereum'         },
-  { key:'USDT', label:'USDT â€” Tether (ERC20)'  },
-  { key:'USDC', label:'USDC â€” USD Coin (ERC20)'},
-  { key:'WBTC', label:'WBTC â€” Wrapped Bitcoin' },
-  { key:'BNB',  label:'BNB  â€” BNB (ERC20)'     },
-  { key:'LINK', label:'LINK â€” Chainlink'        },
-  { key:'UNI',  label:'UNI  â€” Uniswap'         },
-  { key:'DAI',  label:'DAI  â€” Dai Stablecoin'  },
-  { key:'SHIB', label:'SHIB â€” Shiba Inu'       },
-  { key:'AAVE', label:'AAVE â€” Aave'            },
+  { key:'ETH',  label:'ETH - Ethereum'         },
+  { key:'USDT', label:'USDT - Tether (ERC20)'  },
+  { key:'USDC', label:'USDC - USD Coin (ERC20)'},
+  { key:'WBTC', label:'WBTC - Wrapped Bitcoin' },
+  { key:'BNB',  label:'BNB  - BNB (ERC20)'     },
+  { key:'LINK', label:'LINK - Chainlink'        },
+  { key:'UNI',  label:'UNI  - Uniswap'         },
+  { key:'DAI',  label:'DAI  - Dai Stablecoin'  },
+  { key:'SHIB', label:'SHIB - Shiba Inu'       },
+  { key:'AAVE', label:'AAVE - Aave'            },
 ];
 
 async function loadCryptoAddresses() {
@@ -2504,7 +2504,7 @@ async function loadCryptoAddresses() {
   grid.innerHTML = CRYPTO_COINS.map(c => `
     <div class="field" style="margin:0;">
       <label style="font-size:11px;">${c.label}</label>
-      <input type="text" id="addr-${c.key}" placeholder="0xâ€¦" value="${saved[c.key]||''}" style="font-size:11px;font-family:monospace;">
+      <input type="text" id="addr-${c.key}" placeholder="0x..." value="${saved[c.key]||''}" style="font-size:11px;font-family:monospace;">
     </div>`).join('');
 }
 
@@ -2524,7 +2524,7 @@ window.saveCryptoAddresses = async function() {
   showToast('Crypto addresses saved', 'success');
 };
 
-// â”€â”€ Override renderAll to use live versions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// -- Override renderAll to use live versions -------------------
 window.renderAll = function() {
   renderUsersLive();
   renderKYCLive();
@@ -2550,7 +2550,7 @@ async function loadSupportBadge() {
   if (badge) badge.textContent = count > 0 ? count : '';
 }
 
-// â”€â”€ Real-time dashboard stats â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// -- Real-time dashboard stats ---------------------------------
 async function loadDashboardStats() {
   const db = window.ATRONTIFY_DB;
   if (!db) return;
@@ -2584,7 +2584,7 @@ async function loadDashboardStats() {
     if (stats[5]) stats[5].querySelector('.stat-card__value').textContent = (pendingWithdrawals || 0);
     if (stats[6]) stats[6].querySelector('.stat-card__value').textContent = (kycPending || 0);
 
-    // Sidebar badges â€” live counts only
+    // Sidebar badges - live counts only
     const setBadge = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val > 0 ? val : ''; };
     setBadge('badge-users',       totalUsers       || 0);
     setBadge('badge-kyc',         kycPending        || 0);
@@ -2593,23 +2593,23 @@ async function loadDashboardStats() {
   } catch (e) { console.warn('[ops] stats:', e); }
 }
 
-// â”€â”€ Upgrade Deposits panel to also read from deposit_requests â”€
+// -- Upgrade Deposits panel to also read from deposit_requests -
 async function renderDepositsLive() {
   renderDeposits();
   const db = window.ATRONTIFY_DB; if (!db) return;
   const { data } = await db
     .from('deposit_requests')
-    .select('*, profiles(first_name, last_name)')
+    .select('*, profiles(*)')
     .order('created_at', { ascending: false });
   if (!data?.length) return;
   document.getElementById('deposits-tbody').innerHTML = data.map(d => {
-    const name = d.profiles ? `${d.profiles.first_name} ${d.profiles.last_name}` : 'â€”';
+    const name = d.profiles ? d.profiles.full_name || d.profiles.name || `${d.profiles.first_name || ''} ${d.profiles.last_name || ''}`.trim() || d.profiles.id : '-';
     const amt  = parseFloat(d.amount || 0).toLocaleString('en-US', { minimumFractionDigits: 2 });
     return `<tr>
       <td style="font-weight:600;">${d.id.slice(0,8).toUpperCase()}</td>
       <td>${name}</td>
       <td style="font-weight:700;">$${amt}</td>
-      <td>${d.payment_method || 'â€”'}</td>
+      <td>${d.payment_method || '-'}</td>
       <td style="font-size:12px;">${fmtDate(d.created_at)}</td>
       <td><span class="badge-pill ${d.status==='approved'?'pill-green':d.status==='pending'?'pill-orange':'pill-red'}">${d.status}</span></td>
       <td><div class="row-actions">
@@ -2632,23 +2632,23 @@ window.opsRejectDepositReq = async id => {
   showToast('Deposit rejected','error'); renderDepositsLive(); loadDashboardStats();
 };
 
-// â”€â”€ Upgrade Withdrawals panel to read from withdrawal_requests â”€
+// -- Upgrade Withdrawals panel to read from withdrawal_requests -
 async function renderWithdrawalsLive() {
   renderWithdrawals();
   const db = window.ATRONTIFY_DB; if (!db) return;
   const { data } = await db
     .from('withdrawal_requests')
-    .select('*, profiles(first_name, last_name)')
+    .select('*, profiles(*)')
     .order('created_at', { ascending: false });
   if (!data?.length) return;
   document.getElementById('withdrawals-tbody').innerHTML = data.map(w => {
-    const name = w.profiles ? `${w.profiles.first_name} ${w.profiles.last_name}` : 'â€”';
+    const name = w.profiles ? w.profiles.full_name || w.profiles.name || `${w.profiles.first_name || ''} ${w.profiles.last_name || ''}`.trim() || w.profiles.id : '-';
     const amt  = parseFloat(w.amount || 0).toLocaleString('en-US', { minimumFractionDigits: 2 });
     return `<tr>
       <td style="font-weight:600;">${w.id.slice(0,8).toUpperCase()}</td>
       <td>${name}</td>
       <td style="font-weight:700;">$${amt}</td>
-      <td style="font-size:12px;">${w.destination_type || 'â€”'} ${w.destination_name ? 'Â· ' + w.destination_name : ''}</td>
+      <td style="font-size:12px;">${w.destination_type || '-'} ${w.destination_name ? '- ' + w.destination_name : ''}</td>
       <td style="font-size:12px;">${fmtDate(w.created_at)}</td>
       <td><span class="badge-pill ${w.status==='approved'||w.status==='completed'?'pill-green':w.status==='pending'?'pill-orange':'pill-red'}">${w.status}</span></td>
       <td><div class="row-actions">
@@ -2671,7 +2671,7 @@ window.opsRejectWithdrawalReq = async id => {
   showToast('Withdrawal rejected','error'); renderWithdrawalsLive(); loadDashboardStats();
 };
 
-// â”€â”€ Support Tickets â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// -- Support Tickets -------------------------------------------
 let _supportFilter = 'all';
 
 window.filterSupport = function(type, btn) {
@@ -2684,10 +2684,10 @@ window.filterSupport = function(type, btn) {
 async function renderSupportLive() {
   const db = window.ATRONTIFY_DB; if (!db) return;
   const tbody = document.getElementById('support-tbody');
-  if (tbody) tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--muted);">Loadingâ€¦</td></tr>';
+  if (tbody) tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--muted);">Loading...</td></tr>';
 
   let q = db.from('support_tickets')
-    .select('*, profiles(first_name, last_name, email)')
+    .select('*, profiles(*)')
     .order('created_at', { ascending: false });
   if (_supportFilter !== 'all') q = q.eq('status', _supportFilter);
 
@@ -2704,12 +2704,12 @@ async function renderSupportLive() {
   }
   if (tbody) tbody.innerHTML = data.map(t => {
     const p    = t.profiles || {};
-    const name = `${p.first_name||''} ${p.last_name||''}`.trim() || p.email || 'â€”';
-    const msg  = (t.message || '').substring(0, 120) + ((t.message||'').length > 120 ? 'â€¦' : '');
+    const name = p.full_name || p.name || `${p.first_name||''} ${p.last_name||''}`.trim() || p.username || p.id || '-';
+    const msg  = (t.message || '').substring(0, 120) + ((t.message||'').length > 120 ? '...' : '');
     const isClosed = t.status === 'closed';
     return `<tr>
       <td><div class="user-cell"><div class="user-avatar" style="background:var(--blue);">${name.split(' ').map(n=>n[0]||'').join('').toUpperCase().slice(0,2)||'?'}</div>
-        <div><div class="user-name">${name}</div><div class="user-email">${p.email||'â€”'}</div></div></div></td>
+        <div><div class="user-name">${name}</div><div class="user-email">${p.email || p.username ||  p.username || '-'}</div></div></div></td>
       <td style="font-weight:600;">${t.subject||'(no subject)'}</td>
       <td style="font-size:12px;color:var(--muted);max-width:220px;">${msg}</td>
       <td style="font-size:12px;">${fmtDate(t.created_at)}</td>
@@ -2745,14 +2745,14 @@ window.opsDeleteTicket = async id => {
   showToast('Ticket deleted','error'); renderSupportLive();
 };
 
-// â”€â”€ User Notifications â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// -- User Notifications ----------------------------------------
 async function renderNotificationsLive() {
   const db = window.ATRONTIFY_DB; if (!db) return;
   const tbody = document.getElementById('notif-tbody');
-  if (tbody) tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--muted);">Loadingâ€¦</td></tr>';
+  if (tbody) tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--muted);">Loading...</td></tr>';
 
   const [{ data: users }, { data: notifs }] = await Promise.all([
-    db.from('profiles').select('id, first_name, last_name, email').order('email', { ascending: true }),
+    db.from('profiles').select('*').order('created_at', { ascending: false }),
     db.from('notifications').select('*'),
   ]);
 
@@ -2767,16 +2767,16 @@ async function renderNotificationsLive() {
   const COLORS = ['#1a5cff','#22a06b','#7c3aed','#f5a623','#e60023'];
   if (tbody) tbody.innerHTML = users.map((u, i) => {
     const n    = notifMap[u.id] || {};
-    const name = `${u.first_name||''} ${u.last_name||''}`.trim() || u.email;
+    const name = u.full_name || u.name || `${u.first_name||''} ${u.last_name||''}`.trim() || u.username || u.id;
     const init = name.split(' ').map(w=>w[0]||'').join('').toUpperCase().slice(0,2)||'?';
     const col  = COLORS[i % COLORS.length];
     const enabled = !!n.enabled;
     return `<tr>
       <td><div class="user-cell"><div class="user-avatar" style="background:${col};">${init}</div>
-        <div><div class="user-name">${name}</div><div class="user-email">${u.email}</div></div></div></td>
-      <td><input type="text" id="ntitle-${u.id}" value="${(n.title||'').replace(/"/g,'&quot;')}" placeholder="Notification titleâ€¦"
+        <div><div class="user-name">${name}</div><div class="user-email">${u.email || u.username || u.id}</div></div></div></td>
+      <td><input type="text" id="ntitle-${u.id}" value="${(n.title||'').replace(/"/g,'&quot;')}" placeholder="Notification title..."
         style="width:180px;height:34px;border:1.5px solid var(--border);border-radius:6px;padding:0 10px;font-size:13px;"></td>
-      <td><textarea id="nmsg-${u.id}" style="width:260px;min-height:60px;border:1.5px solid var(--border);border-radius:6px;padding:6px 10px;font-size:12px;resize:vertical;" placeholder="Write notification messageâ€¦">${n.message||''}</textarea></td>
+      <td><textarea id="nmsg-${u.id}" style="width:260px;min-height:60px;border:1.5px solid var(--border);border-radius:6px;padding:6px 10px;font-size:12px;resize:vertical;" placeholder="Write notification message...">${n.message||''}</textarea></td>
       <td>
         <label class="toggle-switch">
           <input type="checkbox" id="nenabled-${u.id}" ${enabled?'checked':''}>
@@ -2811,21 +2811,21 @@ window.opsClearNotif = async userId => {
   showToast('Notification cleared','success'); renderNotificationsLive();
 };
 
-// â”€â”€ Trades History â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// -- Trades History --------------------------------------------
 async function renderTradesLive() {
   const db = window.ATRONTIFY_DB; if (!db) return;
 
   // Load users for select dropdown + settings table
   const { data: users } = await db.from('profiles')
     .select('id, first_name, last_name, email, trades_active, trade_percent')
-    .order('email', { ascending: true });
+    .order('created_at', { ascending: false });
 
   // Populate user dropdown
   const sel = document.getElementById('trade-user-sel');
   if (sel && users?.length) {
-    sel.innerHTML = '<option value="">â€” choose user â€”</option>' + users.map(u => {
-      const name = `${u.first_name||''} ${u.last_name||''}`.trim() || u.email;
-      return `<option value="${u.id}">${name} (${u.email})</option>`;
+    sel.innerHTML = '<option value="">- choose user -</option>' + users.map(u => {
+      const name = u.full_name || u.name || `${u.first_name||''} ${u.last_name||''}`.trim() || u.username || u.id;
+      return `<option value="${u.id}">${name} (${u.email || u.username || u.id})</option>`;
     }).join('');
   }
 
@@ -2834,12 +2834,12 @@ async function renderTradesLive() {
   const COLORS = ['#1a5cff','#22a06b','#7c3aed','#f5a623','#e60023'];
   if (settTbody && users?.length) {
     settTbody.innerHTML = users.map((u, i) => {
-      const name = `${u.first_name||''} ${u.last_name||''}`.trim() || u.email;
+      const name = u.full_name || u.name || `${u.first_name||''} ${u.last_name||''}`.trim() || u.username || u.id;
       const init = name.split(' ').map(w=>w[0]||'').join('').toUpperCase().slice(0,2)||'?';
       const col  = COLORS[i % COLORS.length];
       return `<tr>
         <td><div class="user-cell"><div class="user-avatar" style="background:${col};">${init}</div>
-          <div><div class="user-name">${name}</div><div class="user-email">${u.email}</div></div></div></td>
+          <div><div class="user-name">${name}</div><div class="user-email">${u.email || u.username || u.id}</div></div></div></td>
         <td><input type="number" id="tpct-${u.id}" value="${u.trade_percent||0}" step="0.1" min="0" max="100"
           style="width:90px;height:34px;border:1.5px solid var(--border);border-radius:6px;padding:0 10px;font-size:13px;"></td>
         <td><label class="toggle-switch"><input type="checkbox" id="ton-${u.id}" ${u.trades_active?'checked':''}><span class="toggle-slider"></span></label></td>
@@ -2850,7 +2850,7 @@ async function renderTradesLive() {
 
   // Load trade records
   const { data: trades } = await db.from('trades')
-    .select('*, profiles(first_name, last_name, email)')
+    .select('*, profiles(*)')
     .order('created_at', { ascending: false })
     .limit(100);
 
@@ -2861,15 +2861,15 @@ async function renderTradesLive() {
   }
   if (tbody) tbody.innerHTML = trades.map(t => {
     const p    = t.profiles || {};
-    const name = `${p.first_name||''} ${p.last_name||''}`.trim() || p.email || 'â€”';
+    const name = p.full_name || p.name || `${p.first_name||''} ${p.last_name||''}`.trim() || p.username || p.id || '-';
     const pnl  = parseFloat(t.pnl || 0);
     const up   = pnl >= 0;
     return `<tr>
       <td>${name}</td>
-      <td><span class="badge-pill pill-blue">${t.market||'â€”'}</span></td>
-      <td style="font-weight:700;">${t.pair||'â€”'}</td>
+      <td><span class="badge-pill pill-blue">${t.market||'-'}</span></td>
+      <td style="font-weight:700;">${t.pair||'-'}</td>
       <td><span class="badge-pill ${t.direction==='buy'?'pill-green':'pill-red'}">${(t.direction||'').toUpperCase()}</span></td>
-      <td>${t.size||'â€”'}</td>
+      <td>${t.size||'-'}</td>
       <td style="font-weight:700;color:${up?'var(--green)':'var(--red)'};">${up?'+':''}$${Math.abs(pnl).toFixed(2)}</td>
       <td style="font-size:12px;">${fmtDate(t.created_at)}</td>
       <td><button class="btn btn--sm btn--red" onclick="opsDeleteTrade('${t.id}')">Delete</button></td>
