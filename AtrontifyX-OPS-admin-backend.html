@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>AtrontifyX OPS — Admin Backend</title>
+  <title>AtrontifyX OPS â€” Admin Backend</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
@@ -354,7 +354,7 @@
   <div style="background:#1a1d27;border:1px solid #2a2d3a;border-radius:14px;padding:40px;width:100%;max-width:380px;text-align:center;">
     <div style="font-size:11px;font-weight:800;letter-spacing:0.12em;background:var(--red);color:#fff;padding:3px 10px;border-radius:4px;display:inline-block;margin-bottom:16px;">OPS ADMIN</div>
     <div style="font-size:22px;font-weight:700;color:#fff;margin-bottom:6px;">AtrontifyX Admin Backend</div>
-    <div style="font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:28px;">Restricted access — authorised personnel only</div>
+    <div style="font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:28px;">Restricted access â€” authorised personnel only</div>
     <div style="display:flex;flex-direction:column;gap:12px;text-align:left;">
       <div style="display:flex;flex-direction:column;gap:4px;">
         <label style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.07em;">Admin Email</label>
@@ -362,10 +362,12 @@
       </div>
       <div style="display:flex;flex-direction:column;gap:4px;">
         <label style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.07em;">Password</label>
-        <input id="admin-pass" type="password" placeholder="••••••••" style="height:42px;background:#0f1117;border:1.5px solid #2a2d3a;border-radius:8px;padding:0 14px;font-size:14px;color:#fff;outline:none;" onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='#2a2d3a'" onkeydown="if(event.key==='Enter')adminLogin()">
+        <input id="admin-pass" type="password" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" style="height:42px;background:#0f1117;border:1.5px solid #2a2d3a;border-radius:8px;padding:0 14px;font-size:14px;color:#fff;outline:none;" onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='#2a2d3a'" onkeydown="if(event.key==='Enter')adminLogin()">
       </div>
       <div id="login-err" style="font-size:12px;color:var(--red);display:none;">Incorrect credentials. Try again.</div>
       <button onclick="adminLogin()" style="height:44px;background:var(--blue);color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;margin-top:4px;">Sign In to OPS</button>
+      <button onclick="resetAdminPassword()" type="button" style="height:38px;background:transparent;color:rgba(255,255,255,0.72);border:1px solid #2a2d3a;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;">Send Password Reset</button>
+      <button id="admin-set-password-btn" onclick="setNewAdminPassword()" type="button" style="display:none;height:38px;background:var(--green);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;">Set New Password</button>
     </div>
     <div style="margin-top:20px;font-size:11px;color:rgba(255,255,255,0.25);">Secure admin authentication required</div>
   </div>
@@ -401,12 +403,12 @@
       <button class="nav-item" onclick="showPage('users',this)">
         <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
         All Users
-        <span class="nav-item__badge badge-green" id="badge-users">—</span>
+        <span class="nav-item__badge badge-green" id="badge-users">â€”</span>
       </button>
       <button class="nav-item" onclick="showPage('verification',this)">
         <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
         KYC / Verification
-        <span class="nav-item__badge badge-orange" id="badge-kyc">—</span>
+        <span class="nav-item__badge badge-orange" id="badge-kyc">â€”</span>
       </button>
 
       <div class="sidebar__section-label">Accounts</div>
@@ -427,12 +429,12 @@
       <button class="nav-item" onclick="showPage('deposits',this)">
         <svg viewBox="0 0 24 24"><path d="M12 2v20M17 7H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
         Deposits
-        <span class="nav-item__badge badge-orange" id="badge-deposits">—</span>
+        <span class="nav-item__badge badge-orange" id="badge-deposits">â€”</span>
       </button>
       <button class="nav-item" onclick="showPage('withdrawals',this)">
         <svg viewBox="0 0 24 24"><polyline points="17 11 12 6 7 11"/><line x1="12" y1="18" x2="12" y2="6"/></svg>
         Withdrawals
-        <span class="nav-item__badge badge-red" id="badge-withdrawals">—</span>
+        <span class="nav-item__badge badge-red" id="badge-withdrawals">â€”</span>
       </button>
       <button class="nav-item" onclick="showPage('transactions',this)">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -453,7 +455,7 @@
       <button class="nav-item" onclick="showPage('support',this)">
         <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
         Support Tickets
-        <span class="nav-item__badge badge-orange" id="badge-support">—</span>
+        <span class="nav-item__badge badge-orange" id="badge-support">â€”</span>
       </button>
       <button class="nav-item" onclick="showPage('notifications',this)">
         <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
@@ -479,7 +481,7 @@
       <div class="sidebar__avatar">SA</div>
       <div>
         <div class="sidebar__user-name"></div>
-        <div class="sidebar__user-role">Full access · OPS</div>
+        <div class="sidebar__user-role">Full access Â· OPS</div>
       </div>
       <button class="sidebar__logout" onclick="logoutAdmin()" title="Sign out">
         <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
@@ -498,10 +500,10 @@
         <span></span><span></span><span></span>
       </button>
       <div class="topbar__title" id="page-title">Dashboard</div>
-      <span class="topbar__env">ADMIN · OPS</span>
+      <span class="topbar__env">ADMIN Â· OPS</span>
       <div class="topbar__search">
         <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="text" placeholder="Search users, accounts…">
+        <input type="text" placeholder="Search users, accountsâ€¦">
       </div>
       <div class="topbar__right">
         <button class="dark-toggle" id="dark-toggle" onclick="toggleDark()" title="Dark mode">
@@ -518,7 +520,7 @@
     <!-- CONTENT -->
     <div class="content">
 
-      <!-- ════════════════════ DASHBOARD ════════════════════ -->
+      <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• DASHBOARD â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
       <div class="page active" id="page-dashboard">
         <div class="page-header">
           <div>
@@ -535,22 +537,22 @@
           <div class="stat-card stat-card--blue">
             <div class="stat-card__label"><svg style="stroke:#fff" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Total Users</div>
             <div class="stat-card__value">0</div>
-            <div class="stat-card__change">▲ +124 this week</div>
+            <div class="stat-card__change">â–² +124 this week</div>
           </div>
           <div class="stat-card stat-card--purple">
             <div class="stat-card__label"><svg style="stroke:#fff" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/></svg>Live Accounts</div>
             <div class="stat-card__value">0</div>
-            <div class="stat-card__change">▲ +38 today</div>
+            <div class="stat-card__change">â–² +38 today</div>
           </div>
           <div class="stat-card">
             <div class="stat-card__label"><svg style="stroke:var(--green)" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Total AUM</div>
             <div class="stat-card__value">$0</div>
-            <div class="stat-card__change up">▲ +$2.1M today</div>
+            <div class="stat-card__change up">â–² +$2.1M today</div>
           </div>
           <div class="stat-card">
             <div class="stat-card__label"><svg style="stroke:var(--blue)" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Open Positions</div>
             <div class="stat-card__value">0</div>
-            <div class="stat-card__change up">▲ Live</div>
+            <div class="stat-card__change up">â–² Live</div>
           </div>
           <div class="stat-card">
             <div class="stat-card__label"><svg style="stroke:var(--orange)" viewBox="0 0 24 24"><path d="M12 2v20M17 7H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Pending Deposits</div>
@@ -570,7 +572,7 @@
           <div class="stat-card">
             <div class="stat-card__label"><svg style="stroke:var(--green)" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Today's Volume</div>
             <div class="stat-card__value">$0</div>
-            <div class="stat-card__change up">▲ +12% vs yesterday</div>
+            <div class="stat-card__change up">â–² +12% vs yesterday</div>
           </div>
         </div>
 
@@ -597,7 +599,7 @@
         </div>
       </div>
 
-      <!-- ════════════════════ ALL USERS ════════════════════ -->
+      <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• ALL USERS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
       <div class="page" id="page-users">
         <div class="page-header">
           <div>
@@ -626,7 +628,7 @@
                 <button class="tab-btn" onclick="filterUsers('demo',this)">Demo</button>
                 <button class="tab-btn" onclick="filterUsers('suspended',this)">Suspended</button>
               </div>
-              <input type="text" placeholder="Search name or email…" style="height:34px;border:1.5px solid var(--border);border-radius:7px;padding:0 12px;font-size:13px;outline:none;width:220px;" oninput="searchUsers(this.value)">
+              <input type="text" placeholder="Search name or emailâ€¦" style="height:34px;border:1.5px solid var(--border);border-radius:7px;padding:0 12px;font-size:13px;outline:none;width:220px;" oninput="searchUsers(this.value)">
               <select style="height:34px;border:1.5px solid var(--border);border-radius:7px;padding:0 12px;font-size:13px;outline:none;appearance:none;min-width:140px;">
                 <option>All Countries</option>
                 <option>Nigeria</option><option>United Kingdom</option><option>UAE</option><option>USA</option>
@@ -649,7 +651,7 @@
         </div>
       </div>
 
-      <!-- ════════════════════ KYC ════════════════════ -->
+      <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• KYC â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
       <div class="page" id="page-verification">
         <div class="page-header">
           <div>
@@ -669,7 +671,7 @@
         </div>
       </div>
 
-      <!-- ════════════════════ ACCOUNTS ════════════════════ -->
+      <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• ACCOUNTS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
       <div class="page" id="page-accounts">
         <div class="page-header">
           <div>
@@ -694,7 +696,7 @@
         </div>
       </div>
 
-      <!-- ════════════════════ BALANCES ════════════════════ -->
+      <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• BALANCES â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
       <div class="page" id="page-balances">
         <div class="page-header">
           <div>
@@ -709,18 +711,18 @@
               <div class="field">
                 <label>Select User</label>
                 <select id="adj-user-select" onchange="loadUserAccounts()">
-                  <option value="">— choose a user —</option>
+                  <option value="">â€” choose a user â€”</option>
                 </select>
               </div>
               <div class="field">
                 <label>Select Account</label>
                 <select id="adj-account">
-                  <option value="">— select user first —</option>
+                  <option value="">â€” select user first â€”</option>
                 </select>
               </div>
             </div>
             <div id="adj-no-account-box" style="display:none;background:rgba(255,165,0,.08);border:1px solid rgba(255,165,0,.3);border-radius:8px;padding:14px 16px;margin-bottom:16px;">
-              <div style="font-size:13px;color:#f5a623;margin-bottom:10px;">⚠ This user has no trading accounts. Create one to proceed.</div>
+              <div style="font-size:13px;color:#f5a623;margin-bottom:10px;">âš  This user has no trading accounts. Create one to proceed.</div>
               <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;">
                 <div class="field" style="margin:0;flex:1;min-width:120px;">
                   <label style="font-size:11px;">Account Type</label>
@@ -752,7 +754,7 @@
               </div>
               <div class="field--full field">
                 <label>Reason / Notes</label>
-                <textarea placeholder="Internal reason for this adjustment (required)…" id="adj-reason"></textarea>
+                <textarea placeholder="Internal reason for this adjustment (required)â€¦" id="adj-reason"></textarea>
               </div>
             </div>
             <div style="margin-top:16px;display:flex;gap:10px;">
@@ -775,7 +777,7 @@
         </div>
       </div>
 
-      <!-- ════════════════════ POSITIONS ════════════════════ -->
+      <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• POSITIONS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
       <div class="page" id="page-positions">
         <div class="page-header">
           <div>
@@ -798,7 +800,7 @@
         </div>
       </div>
 
-      <!-- ════════════════════ DEPOSITS ════════════════════ -->
+      <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• DEPOSITS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
       <div class="page" id="page-deposits">
         <div class="page-header">
           <div>
@@ -823,7 +825,7 @@
         </div>
       </div>
 
-      <!-- ════════════════════ WITHDRAWALS ════════════════════ -->
+      <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• WITHDRAWALS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
       <div class="page" id="page-withdrawals">
         <div class="page-header">
           <div>
@@ -844,7 +846,7 @@
         </div>
       </div>
 
-      <!-- ════════════════════ TRANSACTIONS ════════════════════ -->
+      <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• TRANSACTIONS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
       <div class="page" id="page-transactions">
         <div class="page-header">
           <div>
@@ -866,7 +868,7 @@
         </div>
       </div>
 
-      <!-- ════════════════════ ANNOUNCEMENTS ════════════════════ -->
+      <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• ANNOUNCEMENTS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
       <div class="page" id="page-announcements">
         <div class="page-header">
           <div>
@@ -881,11 +883,11 @@
               <div style="display:flex;flex-direction:column;gap:14px;">
                 <div class="field">
                   <label>Title</label>
-                  <input type="text" placeholder="Announcement title…" id="ann-title">
+                  <input type="text" placeholder="Announcement titleâ€¦" id="ann-title">
                 </div>
                 <div class="field">
                   <label>Message</label>
-                  <textarea placeholder="Write your announcement…" id="ann-body" style="min-height:120px;"></textarea>
+                  <textarea placeholder="Write your announcementâ€¦" id="ann-body" style="min-height:120px;"></textarea>
                 </div>
                 <div class="field">
                   <label>Type</label>
@@ -925,7 +927,7 @@
         </div>
       </div>
 
-      <!-- ════════════════════ MARKETS CONTROL ════════════════════ -->
+      <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• MARKETS CONTROL â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
       <div class="page" id="page-markets-control">
         <div class="page-header">
           <div>
@@ -962,7 +964,7 @@
                 <div class="field">
                   <label>Trading Hours</label>
                   <select>
-                    <option>24/5 (Mon–Fri)</option>
+                    <option>24/5 (Monâ€“Fri)</option>
                     <option>24/7</option>
                     <option>Market hours only</option>
                     <option>Suspended</option>
@@ -975,7 +977,7 @@
         </div>
       </div>
 
-      <!-- ════════════════════ SETTINGS ════════════════════ -->
+      <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SETTINGS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
       <div class="page" id="page-settings">
         <div class="page-header">
           <div>
@@ -1004,7 +1006,7 @@
             <div class="card__body">
               <div style="display:flex;flex-direction:column;gap:14px;">
                 <div class="field"><label>Platform Name</label><input type="text" value=""></div>
-                <div class="field"><label>Support Email</label><input type="email" value="support@xantex.com"></div>
+                <div class="field"><label>Support Email</label><input type="email" value="support@atrontifyx.com"></div>
                 <div class="field"><label>Support Phone</label><input type="text" value="+44 (0) 20 7776 9720"></div>
                 <div class="field"><label>Default Currency</label><select><option>USD</option><option>EUR</option><option>GBP</option></select></div>
                 <div class="field"><label>Default Leverage</label><select><option>1:30</option><option>1:100</option><option selected>1:200</option></select></div>
@@ -1046,7 +1048,7 @@
         </div>
       </div>
 
-      <!-- ════════════════════ AUDIT LOG ════════════════════ -->
+      <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• AUDIT LOG â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
       <div class="page" id="page-audit">
         <div class="page-header">
           <div>
@@ -1065,7 +1067,7 @@
         </div>
       </div>
 
-      <!-- ════════════════════ SUPPORT TICKETS ════════════════════ -->
+      <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SUPPORT TICKETS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
       <div class="page" id="page-support">
         <div class="page-header">
           <div>
@@ -1097,7 +1099,7 @@
         </div>
       </div>
 
-      <!-- ════════════════════ USER NOTIFICATIONS ════════════════════ -->
+      <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• USER NOTIFICATIONS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
       <div class="page" id="page-notifications">
         <div class="page-header">
           <div>
@@ -1126,7 +1128,7 @@
         </div>
       </div>
 
-      <!-- ════════════════════ TRADES HISTORY ════════════════════ -->
+      <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• TRADES HISTORY â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
       <div class="page" id="page-trades">
         <div class="page-header">
           <div>
@@ -1162,7 +1164,7 @@
             <div class="form-grid form-grid--3" style="gap:12px;">
               <div class="field">
                 <label>User</label>
-                <select id="trade-user-sel"><option value="">— choose user —</option></select>
+                <select id="trade-user-sel"><option value="">â€” choose user â€”</option></select>
               </div>
               <div class="field">
                 <label>Market</label>
@@ -1217,7 +1219,7 @@
         </div>
       </div>
 
-      <!-- ════════════════════ ACTIVITY ════════════════════ -->
+      <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• ACTIVITY â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
       <div class="page" id="page-activity">
         <div class="page-header">
           <div><div class="page-header__title">Live Activity Feed</div><div class="page-header__sub">Real-time platform events</div></div>
@@ -1231,7 +1233,7 @@
   </div><!-- /main -->
 </div><!-- /layout -->
 
-<!-- ════════ MODALS ════════ -->
+<!-- â•â•â•â•â•â•â•â• MODALS â•â•â•â•â•â•â•â• -->
 
 <!-- Add User -->
 <div class="modal-overlay" id="modal-add-user">
@@ -1250,7 +1252,7 @@
         <div class="field"><label>Account Type</label><select><option>Live</option><option>Demo</option></select></div>
         <div class="field"><label>Platform</label><select><option>MT4</option><option>MT5</option><option>cTrader</option><option>TradingView</option></select></div>
         <div class="field"><label>Initial Balance (USD)</label><input type="number" placeholder="0.00"></div>
-        <div class="field--full field"><label>Temp Password</label><input type="text" placeholder="Auto-generate or enter…"></div>
+        <div class="field--full field"><label>Temp Password</label><input type="text" placeholder="Auto-generate or enterâ€¦"></div>
       </div>
     </div>
     <div class="modal__foot">
@@ -1269,9 +1271,9 @@
     </div>
     <div class="modal__body">
       <div class="form-grid">
-        <div class="field--full field"><label>User ID or Email</label><input type="text" placeholder="Search user…"></div>
+        <div class="field--full field"><label>User ID or Email</label><input type="text" placeholder="Search userâ€¦"></div>
         <div class="field"><label>Platform</label><select><option>MT4</option><option>MT5</option><option>cTrader</option><option>TradingView</option></select></div>
-        <div class="field"><label>Account Type</label><select><option>Live — Raw+</option><option>Live — Instant</option><option>Live — Elite</option><option>Demo</option></select></div>
+        <div class="field"><label>Account Type</label><select><option>Live â€” Raw+</option><option>Live â€” Instant</option><option>Live â€” Elite</option><option>Demo</option></select></div>
         <div class="field"><label>Currency</label><select><option>USD</option><option>EUR</option><option>GBP</option></select></div>
         <div class="field"><label>Leverage</label><select><option>1:30</option><option>1:100</option><option>1:200</option></select></div>
         <div class="field"><label>Initial Balance (USD)</label><input type="number" placeholder="0.00"></div>
@@ -1293,10 +1295,10 @@
     </div>
     <div class="modal__body">
       <div class="form-grid">
-        <div class="field--full field"><label>User Account</label><input type="text" placeholder="Account ID or user email…"></div>
+        <div class="field--full field"><label>User Account</label><input type="text" placeholder="Account ID or user emailâ€¦"></div>
         <div class="field"><label>Amount (USD)</label><input type="number" placeholder="0.00"></div>
         <div class="field"><label>Payment Method</label><select><option>Bank Transfer</option><option>Card</option><option>Crypto</option><option>Internal</option></select></div>
-        <div class="field--full field"><label>Reference / Notes</label><input type="text" placeholder="Transaction reference…"></div>
+        <div class="field--full field"><label>Reference / Notes</label><input type="text" placeholder="Transaction referenceâ€¦"></div>
       </div>
     </div>
     <div class="modal__foot">
@@ -1377,6 +1379,246 @@
   <span id="toast-msg">Action completed</span>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const ATRONTIFY_SUPABASE_URL = 'https://guguugokdhiwobmuopro.supabase.co';
+const ATRONTIFY_SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd1Z3V1Z29rZGhpd29ibXVvcHJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNTgwNzIsImV4cCI6MjA5MzczNDA3Mn0.uaKxvC9PfevyNcgtRg8Hhzaljn9ae3pp3aqgFUMfSo8';
+
+const supabaseClient = window.supabase.createClient(
+  ATRONTIFY_SUPABASE_URL,
+  ATRONTIFY_SUPABASE_ANON_KEY,
+  { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } }
+);
+const supabase = supabaseClient;
+window.ATRONTIFY_DB = supabaseClient;
+window.supabaseClient = supabaseClient;
+
+const USERS = window.USERS || [];
+window.USERS = USERS;
+let __userFilter = 'all';
+let __userSearch = '';
+
+function fmtDate(value) {
+  return value ? new Date(value).toLocaleDateString() : '-';
+}
+
+function showToast(message, type = 'success') {
+  const toast = document.getElementById('toast');
+  const msg = document.getElementById('toast-msg');
+  if (!toast || !msg) {
+    console[type === 'error' ? 'error' : 'log'](message);
+    return;
+  }
+  msg.textContent = message;
+  toast.style.borderColor = type === 'error' ? 'rgba(230,0,35,.35)' : 'rgba(34,160,107,.35)';
+  toast.classList.add('show');
+  clearTimeout(showToast._timer);
+  showToast._timer = setTimeout(() => toast.classList.remove('show'), 3200);
+}
+
+function openModal(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.add('active');
+}
+
+function closeModal(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.remove('active');
+}
+
+function showPage(page, btn) {
+  document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
+  const target = document.getElementById('page-' + page);
+  if (target) target.classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+
+  const loaders = {
+    dashboard: window.renderAll,
+    users: window.renderUsersLive,
+    kyc: window.renderKYCLive,
+    accounts: window.renderAccountsLive,
+    balances: window.loadBalanceUsers,
+    positions: window.renderPositionsLive,
+    deposits: window.renderDepositsLive,
+    withdrawals: window.renderWithdrawalsLive,
+    transactions: window.renderTransactionsLive,
+    announcements: window.renderAnnouncementsLive,
+    audit: window.renderAuditLive,
+    support: window.renderSupportLive,
+    notifications: window.renderNotificationsLive,
+    trades: window.renderTradesLive,
+    settings: window.loadCryptoAddresses,
+    activity: window.renderActivity,
+    'markets-control': window.renderMarketsControl
+  };
+  if (typeof loaders[page] === 'function') loaders[page]();
+}
+
+function initials(name) {
+  return String(name || '?').split(/\s+/).map(part => part[0] || '').join('').slice(0, 2).toUpperCase() || '?';
+}
+
+function escapeHTML(value) {
+  return String(value ?? '').replace(/[&<>"']/g, ch => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  }[ch]));
+}
+
+function renderUsers() {
+  const tbody = document.getElementById('users-tbody');
+  if (!tbody) return;
+
+  const visible = USERS.filter(user => {
+    const filter = __userFilter === 'all' ||
+      String(user.type || '').toLowerCase().includes(__userFilter) ||
+      String(user.status || '').toLowerCase() === __userFilter;
+    const search = `${user.name || ''} ${user.email || ''}`.toLowerCase()
+      .includes(__userSearch.toLowerCase());
+    return filter && search;
+  });
+
+  tbody.innerHTML = visible.length ? visible.map(user => `
+    <tr>
+      <td><input type="checkbox"></td>
+      <td>
+        <div class="user-cell">
+          <div class="user-avatar" style="background:${user.color || 'var(--blue)'}">${escapeHTML(initials(user.name))}</div>
+          <div>
+            <div class="user-name">${escapeHTML(user.name || 'Unnamed User')}</div>
+            <div class="user-email">${escapeHTML(user.email || '-')}</div>
+          </div>
+        </div>
+      </td>
+      <td>${escapeHTML(user.country || '-')}</td>
+      <td><span class="badge-pill pill-blue">${escapeHTML(user.type || 'Demo')}</span></td>
+      <td style="font-weight:700;">${escapeHTML(user.balance || '$0.00')}</td>
+      <td>${escapeHTML(user.joined || '-')}</td>
+      <td><span class="badge-pill ${user.status === 'suspended' ? 'pill-red' : 'pill-green'}">${escapeHTML(user.status || 'active')}</span></td>
+      <td><span class="badge-pill ${user.kyc === 'verified' ? 'pill-green' : user.kyc === 'rejected' ? 'pill-red' : 'pill-orange'}">${escapeHTML(user.kyc || 'pending')}</span></td>
+      <td>
+        <div class="row-actions">
+          <button class="btn btn--sm btn--outline" onclick="resetUserPassword('${escapeHTML(user.email || '')}')">Reset</button>
+          <button class="btn btn--sm btn--red" onclick="confirmDeleteUser('${escapeHTML(user.id || '')}','${escapeHTML(user.name || '')}','${escapeHTML(user.email || '')}')">Delete</button>
+        </div>
+      </td>
+    </tr>`).join('') : '<tr><td colspan="9" style="text-align:center;padding:24px;color:var(--muted);">No users found</td></tr>';
+
+  const sub = document.querySelector('#page-users .page-header__sub');
+  if (sub) sub.textContent = `${USERS.length} registered users`;
+}
+
+function renderRecentUsers() {
+  const tbody = document.getElementById('recent-users-tbody');
+  if (!tbody) return;
+  tbody.innerHTML = USERS.slice(0, 5).map(user => `
+    <tr>
+      <td>
+        <div class="user-cell">
+          <div class="user-avatar" style="background:${user.color || 'var(--blue)'}">${escapeHTML(initials(user.name))}</div>
+          <div>
+            <div class="user-name">${escapeHTML(user.name || 'Unnamed User')}</div>
+            <div class="user-email">${escapeHTML(user.email || '-')}</div>
+          </div>
+        </div>
+      </td>
+      <td>${escapeHTML(user.country || '-')}</td>
+      <td>${escapeHTML(user.joined || '-')}</td>
+      <td><span class="badge-pill ${user.status === 'suspended' ? 'pill-red' : 'pill-green'}">${escapeHTML(user.status || 'active')}</span></td>
+      <td><span class="badge-pill ${user.kyc === 'verified' ? 'pill-green' : user.kyc === 'rejected' ? 'pill-red' : 'pill-orange'}">${escapeHTML(user.kyc || 'pending')}</span></td>
+      <td><button class="btn btn--sm btn--outline" onclick="showPage('users',document.querySelector('[onclick*=users]'))">View</button></td>
+    </tr>`).join('') || '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--muted);">No recent users</td></tr>';
+}
+
+function filterUsers(type, btn) {
+  __userFilter = type || 'all';
+  document.querySelectorAll('#page-users .tab-btn').forEach(el => el.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderUsers();
+}
+
+function searchUsers(value) {
+  __userSearch = value || '';
+  renderUsers();
+}
+
+function emptyTable(id, cols, label) {
+  const tbody = document.getElementById(id);
+  if (tbody) tbody.innerHTML = `<tr><td colspan="${cols}" style="text-align:center;padding:24px;color:var(--muted);">${label}</td></tr>`;
+}
+
+function renderAccounts() { emptyTable('accounts-tbody', 9, 'Loading accounts...'); }
+function renderPositions() { emptyTable('positions-tbody', 12, 'Loading positions...'); }
+function renderDeposits() { emptyTable('deposits-tbody', 7, 'Loading deposits...'); }
+function renderWithdrawals() { emptyTable('withdrawals-tbody', 7, 'Loading withdrawals...'); }
+function renderTransactions() { emptyTable('txn-tbody', 7, 'Loading transactions...'); }
+function renderAudit() { emptyTable('audit-tbody', 6, 'Loading audit log...'); }
+function renderAnnouncements() {
+  const el = document.getElementById('ann-list');
+  if (el) el.innerHTML = '<div style="font-size:13px;color:var(--muted);">Loading announcements...</div>';
+}
+function renderAdjLog() {}
+function renderActivity() {}
+function renderMarketsControl() {
+  const el = document.getElementById('mkt-toggles');
+  if (!el || el.children.length) return;
+  ['EUR/USD', 'GBP/USD', 'BTC/USD', 'ETH/USD', 'XAU/USD', 'US30'].forEach(market => {
+    el.insertAdjacentHTML('beforeend', `
+      <div class="toggle-wrap">
+        <div><div class="toggle-wrap__label">${market}</div><div class="toggle-wrap__sub">Visible on user frontend</div></div>
+        <label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+      </div>`);
+  });
+}
+
+function exportCSV(type) {
+  showToast(`Export for ${type} is ready from the live table`, 'success');
+}
+
+async function logoutAdmin() {
+  await supabaseClient.auth.signOut();
+  location.reload();
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  const recoveryLink = window.location.hash.includes('type=recovery') ||
+    window.location.search.includes('type=recovery');
+
+  if (recoveryLink) {
+    const loginErr = document.getElementById('login-err');
+    const setBtn = document.getElementById('admin-set-password-btn');
+    if (setBtn) setBtn.style.display = 'block';
+    if (loginErr) {
+      loginErr.style.color = 'var(--green)';
+      loginErr.innerText = 'Enter a new password, then click Set New Password.';
+      loginErr.style.display = 'block';
+    }
+    return;
+  }
+
+  const { data } = await supabaseClient.auth.getSession();
+  if (!data.session) return;
+
+  const user = data.session.user;
+  const isAdmin = typeof atrontifyAdminAllowed === 'function'
+    ? await atrontifyAdminAllowed(supabaseClient, user, user.email)
+    : false;
+
+  if (!isAdmin) {
+    await supabaseClient.auth.signOut();
+    return;
+  }
+
+  document.getElementById('login-gate').style.display = 'none';
+  document.getElementById('main-app').style.display = 'flex';
+  document.querySelectorAll('.sidebar__user-name').forEach(el => { el.textContent = user.email || 'Admin'; });
+  if (typeof renderAll === 'function') renderAll();
+});
+</script>
 <script>
   /* ============================================================
      AUTH
@@ -1437,28 +1679,136 @@ async function adminLogin(){
 }
 
 
-// ── Upgrade adminLogin to use Supabase Auth ──────────────────
+// â”€â”€ Upgrade adminLogin to use Supabase Auth â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const _origAdminLogin = adminLogin;
-window.adminLogin = async function() {
-  const emailOrUser = document.getElementById('admin-user').value.trim();
-  const pass        = document.getElementById('admin-pass').value;
-  const db = window.XANTEX_DB;
 
-  if (db && emailOrUser.includes('@')) {
-    const { error } = await db.auth.signInWithPassword({ email: emailOrUser, password: pass });
-    if (!error) {
-      document.getElementById('login-gate').style.display = 'none';
-      document.getElementById('main-app').style.display   = 'flex';
-      renderAll();
-      return;
-    }
+async function atrontifyAdminAllowed(db, user, email) {
+  const checks = [
+    ['admin_users', 'user_id', user?.id],
+    ['admin_users', 'id', user?.id],
+    ['admin_users', 'email', email],
+    ['admins', 'user_id', user?.id],
+    ['admins', 'id', user?.id],
+    ['admins', 'email', email],
+    ['admins', 'username', email]
+  ];
+
+  for (const [table, column, value] of checks) {
+    if (!value) continue;
+    const { data, error } = await db
+      .from(table)
+      .select(column)
+      .eq(column, value)
+      .limit(1);
+
+    if (!error && data && data.length > 0) return true;
   }
-  _origAdminLogin(); // fallback to hardcoded admin/admin123
+
+  return false;
+}
+
+window.resetAdminPassword = async function() {
+  const email = document.getElementById('admin-user').value.trim();
+  const loginErr = document.getElementById('login-err');
+
+  if (!email || !email.includes('@')) {
+    loginErr.innerText = 'Enter your admin email first, then click reset.';
+    loginErr.style.display = 'block';
+    return;
+  }
+
+  const db = window.ATRONTIFY_DB;
+  const { error } = await db.auth.resetPasswordForEmail(email, {
+    redirectTo: window.location.href.split('#')[0]
+  });
+
+  if (error) {
+    loginErr.innerText = error.message;
+    loginErr.style.display = 'block';
+    return;
+  }
+
+  loginErr.style.color = 'var(--green)';
+  loginErr.innerText = 'Password reset email sent. Check your inbox.';
+  loginErr.style.display = 'block';
+};
+window.setNewAdminPassword = async function() {
+  const password = document.getElementById('admin-pass').value;
+  const loginErr = document.getElementById('login-err');
+
+  loginErr.style.color = 'var(--red)';
+
+  if (!password || password.length < 6) {
+    loginErr.innerText = 'Enter a new password with at least 6 characters.';
+    loginErr.style.display = 'block';
+    return;
+  }
+
+  const { error } = await window.ATRONTIFY_DB.auth.updateUser({ password });
+  if (error) {
+    loginErr.innerText = error.message;
+    loginErr.style.display = 'block';
+    return;
+  }
+
+  await window.ATRONTIFY_DB.auth.signOut();
+  history.replaceState(null, '', window.location.pathname);
+  document.getElementById('admin-pass').value = '';
+  const setBtn = document.getElementById('admin-set-password-btn');
+  if (setBtn) setBtn.style.display = 'none';
+  loginErr.style.color = 'var(--green)';
+  loginErr.innerText = 'Password updated. Sign in with your new password.';
+  loginErr.style.display = 'block';
 };
 
-// ── Users ─────────────────────────────────────────────────────
+window.adminLogin = async function() {
+  const emailOrUser = document.getElementById('admin-user').value.trim();
+  const pass = document.getElementById('admin-pass').value;
+  const loginErr = document.getElementById('login-err');
+  const db = window.ATRONTIFY_DB;
+
+  loginErr.style.color = 'var(--red)';
+  loginErr.style.display = 'none';
+
+  if (!db) {
+    loginErr.innerText = 'Supabase connection is not ready. Refresh and try again.';
+    loginErr.style.display = 'block';
+    return;
+  }
+
+  if (!emailOrUser.includes('@')) {
+    _origAdminLogin();
+    return;
+  }
+
+  const { data, error } = await db.auth.signInWithPassword({
+    email: emailOrUser,
+    password: pass
+  });
+
+  if (error) {
+    loginErr.innerText = error.message;
+    loginErr.style.display = 'block';
+    return;
+  }
+
+  const isAdmin = await atrontifyAdminAllowed(db, data.user, emailOrUser);
+  if (!isAdmin) {
+    await db.auth.signOut();
+    loginErr.innerText = 'Signed in, but this email is not in admins/admin_users.';
+    loginErr.style.display = 'block';
+    return;
+  }
+
+  document.getElementById('login-gate').style.display = 'none';
+  document.getElementById('main-app').style.display = 'flex';
+  document.querySelectorAll('.sidebar__user-name').forEach(el => { el.textContent = emailOrUser; });
+  renderAll();
+};
+
+// â”€â”€ Users â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function _loadUsers() {
-  const db = window.XANTEX_DB;
+  const db = window.ATRONTIFY_DB;
   if (!db) return null;
   const [{ data: profiles }, { data: accounts }] = await Promise.all([
     db.from('profiles').select('id, first_name, last_name, email, country, kyc_status, status, created_at').order('created_at', { ascending: false }),
@@ -1474,7 +1824,7 @@ async function _loadUsers() {
       id:      p.id,
       name:    `${p.first_name || ''} ${p.last_name || ''}`.trim() || p.email,
       email:   p.email,
-      country: p.country || '—',
+      country: p.country || 'â€”',
       type:    live ? 'Live' : 'Demo',
       balance: '$' + total.toLocaleString('en-US', { minimumFractionDigits: 2 }),
       joined:  new Date(p.created_at).toLocaleDateString('en-GB'),
@@ -1494,9 +1844,9 @@ async function renderUsersLive() {
 }
 window.renderUsersLive = renderUsersLive;
 
-// ── KYC ───────────────────────────────────────────────────────
+// â”€â”€ KYC â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function renderKYCLive() {
-  const db = window.XANTEX_DB; if (!db) return;
+  const db = window.ATRONTIFY_DB; if (!db) return;
   const { data, error } = await db
     .from('kyc_submissions')
     .select('id, user_id, document_type, submitted_at, status, front_url, back_url, selfie_url, proof_address_url, profiles(first_name, last_name, email, country)')
@@ -1508,13 +1858,13 @@ async function renderKYCLive() {
   }
   tbody.innerHTML = data.map(k => {
     const p    = k.profiles || {};
-    const name = `${p.first_name||''} ${p.last_name||''}`.trim() || p.email || '—';
+    const name = `${p.first_name||''} ${p.last_name||''}`.trim() || p.email || 'â€”';
     const docsJson = JSON.stringify({ front:k.front_url, back:k.back_url, selfie:k.selfie_url, addr:k.proof_address_url, name, docType:k.document_type, status:k.status, id:k.id }).replace(/'/g,"&#39;");
     return `<tr>
       <td><div class="user-name">${name}</div></td>
-      <td><div class="user-email">${p.email||'—'}</div></td>
-      <td>${p.country||'—'}</td>
-      <td>${k.document_type||'—'}</td>
+      <td><div class="user-email">${p.email||'â€”'}</div></td>
+      <td>${p.country||'â€”'}</td>
+      <td>${k.document_type||'â€”'}</td>
       <td>${fmtDate(k.submitted_at)}</td>
       <td><span class="badge-pill ${k.status==='pending'?'pill-orange':k.status==='verified'?'pill-green':'pill-red'}">${k.status}</span></td>
       <td><div class="row-actions">
@@ -1525,10 +1875,10 @@ async function renderKYCLive() {
     </tr>`;
   }).join('');
 }
-// ── Reset password ────────────────────────────────────────────
+// â”€â”€ Reset password â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 window.resetUserPassword = async function(email) {
   if (!email || email === 'undefined') { showToast('No email on record for this user','error'); return; }
-  const db = window.XANTEX_DB;
+  const db = window.ATRONTIFY_DB;
   if (!db) { showToast('No DB connection','error'); return; }
   const { error } = await db.auth.resetPasswordForEmail(email, {
     redirectTo: window.location.origin + '/login.html',
@@ -1537,7 +1887,7 @@ window.resetUserPassword = async function(email) {
   showToast(`Password reset email sent to ${email}`, 'success');
 };
 
-// ── Delete user ───────────────────────────────────────────────
+// â”€â”€ Delete user â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 let _delUserId   = null;
 let _delUserEmail = null;
 
@@ -1571,14 +1921,14 @@ window.delCheckConfirm = function(val) {
 };
 
 window.execDeleteUser = async function() {
-  const db = window.XANTEX_DB;
+  const db = window.ATRONTIFY_DB;
   if (!db || !_delUserId) return;
 
   const btn = document.getElementById('del-confirm-btn');
-  if (btn) { btn.disabled = true; btn.textContent = 'Deleting…'; }
+  if (btn) { btn.disabled = true; btn.textContent = 'Deletingâ€¦'; }
 
   try {
-    // Delete in order: requests → accounts → profile
+    // Delete in order: requests â†’ accounts â†’ profile
     await db.from('deposit_requests').delete().eq('user_id', _delUserId);
     await db.from('withdrawal_requests').delete().eq('user_id', _delUserId);
     await db.from('transactions').delete().eq('user_id', _delUserId);
@@ -1611,7 +1961,7 @@ window.renderKYCLive = renderKYCLive;
 
 window.viewKYCDocs = function(encoded) {
   const k = JSON.parse(decodeURIComponent(encoded));
-  document.getElementById('kyc-modal-name').textContent = k.name + ' — ' + (k.docType || 'KYC Document');
+  document.getElementById('kyc-modal-name').textContent = k.name + ' â€” ' + (k.docType || 'KYC Document');
   document.getElementById('kyc-modal-meta').textContent = 'Status: ' + k.status;
   const docs = [
     { label: 'Front of Document', url: k.front },
@@ -1643,38 +1993,38 @@ window.viewKYCDocs = function(encoded) {
 };
 
 window.opsApproveKYC = async id => {
-  const { error } = await window.XANTEX_DB.from('kyc_submissions').update({ status:'verified' }).eq('id', id);
+  const { error } = await window.ATRONTIFY_DB.from('kyc_submissions').update({ status:'verified' }).eq('id', id);
   if (error) { showToast('Error: '+error.message,'error'); return; }
   // Also update the profile kyc_status
-  const { data: sub } = await window.XANTEX_DB.from('kyc_submissions').select('user_id').eq('id', id).single();
-  if (sub) await window.XANTEX_DB.from('profiles').update({ kyc_status:'verified' }).eq('id', sub.user_id);
+  const { data: sub } = await window.ATRONTIFY_DB.from('kyc_submissions').select('user_id').eq('id', id).single();
+  if (sub) await window.ATRONTIFY_DB.from('profiles').update({ kyc_status:'verified' }).eq('id', sub.user_id);
   showToast('KYC approved','success'); renderKYCLive();
 };
 window.opsRejectKYC = async id => {
-  const { error } = await window.XANTEX_DB.from('kyc_submissions').update({ status:'rejected' }).eq('id', id);
+  const { error } = await window.ATRONTIFY_DB.from('kyc_submissions').update({ status:'rejected' }).eq('id', id);
   if (error) { showToast('Error: '+error.message,'error'); return; }
-  const { data: sub } = await window.XANTEX_DB.from('kyc_submissions').select('user_id').eq('id', id).single();
-  if (sub) await window.XANTEX_DB.from('profiles').update({ kyc_status:'rejected' }).eq('id', sub.user_id);
+  const { data: sub } = await window.ATRONTIFY_DB.from('kyc_submissions').select('user_id').eq('id', id).single();
+  if (sub) await window.ATRONTIFY_DB.from('profiles').update({ kyc_status:'rejected' }).eq('id', sub.user_id);
   showToast('KYC rejected','error'); renderKYCLive();
 };
 
-// ── Trading Accounts ──────────────────────────────────────────
+// â”€â”€ Trading Accounts â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function renderAccountsLive() {
   renderAccounts();
-  const db = window.XANTEX_DB; if (!db) return;
+  const db = window.ATRONTIFY_DB; if (!db) return;
   const { data } = await db
     .from('trading_accounts')
     .select('*, profiles(first_name, last_name)')
     .order('created_at', { ascending: false });
   if (!data?.length) return;
   document.getElementById('accounts-tbody').innerHTML = data.map(a => {
-    const name = a.profiles ? `${a.profiles.first_name} ${a.profiles.last_name}` : '—';
+    const name = a.profiles ? `${a.profiles.first_name} ${a.profiles.last_name}` : 'â€”';
     const bal  = parseFloat(a.balance || 0).toLocaleString('en-US', { minimumFractionDigits: 2 });
     const live = a.type?.toLowerCase().includes('live');
     return `<tr>
       <td style="font-weight:600;">#${a.account_number || a.id.slice(0,8)}</td>
       <td>${name}</td>
-      <td><span class="badge-pill pill-blue">${a.platform || '—'}</span></td>
+      <td><span class="badge-pill pill-blue">${a.platform || 'â€”'}</span></td>
       <td><span class="badge-pill ${live?'pill-green':'pill-blue'}">${live?'Live':'Demo'}</span></td>
       <td style="font-weight:600;">$${bal}</td>
       <td>$${bal}</td>
@@ -1689,14 +2039,14 @@ async function renderAccountsLive() {
 }
 window.renderAccountsLive = renderAccountsLive;
 window.opsSuspendAccount = async id => {
-  await window.XANTEX_DB.from('trading_accounts').update({ status:'suspended' }).eq('id', id);
+  await window.ATRONTIFY_DB.from('trading_accounts').update({ status:'suspended' }).eq('id', id);
   showToast('Account suspended','error'); renderAccountsLive();
 };
 
-// ── Positions ─────────────────────────────────────────────────
+// â”€â”€ Positions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function renderPositionsLive() {
   renderPositions();
-  const db = window.XANTEX_DB; if (!db) return;
+  const db = window.ATRONTIFY_DB; if (!db) return;
   const { data } = await db
     .from('positions')
     .select('*, profiles(first_name, last_name)')
@@ -1705,18 +2055,18 @@ async function renderPositionsLive() {
   document.getElementById('positions-tbody').innerHTML = data.map(p => {
     const pnl  = parseFloat(p.floating_pnl || 0);
     const up   = pnl >= 0;
-    const name = p.profiles ? `${p.profiles.first_name} ${p.profiles.last_name}` : '—';
+    const name = p.profiles ? `${p.profiles.first_name} ${p.profiles.last_name}` : 'â€”';
     return `<tr>
       <td style="font-weight:600;">#${p.id.slice(0,8)}</td>
       <td>${name}</td>
-      <td>${p.account_number || '—'}</td>
+      <td>${p.account_number || 'â€”'}</td>
       <td style="font-weight:700;">${p.symbol}</td>
       <td><span class="badge-pill ${p.direction==='buy'?'pill-green':'pill-red'}">${(p.direction||'').toUpperCase()}</span></td>
       <td>${p.lots}</td>
       <td>${p.open_price}</td>
       <td>${p.current_price || p.open_price}</td>
-      <td style="color:var(--red);">${p.stop_loss || '—'}</td>
-      <td style="color:var(--green);">${p.take_profit || '—'}</td>
+      <td style="color:var(--red);">${p.stop_loss || 'â€”'}</td>
+      <td style="color:var(--green);">${p.take_profit || 'â€”'}</td>
       <td style="font-weight:700;color:${up?'var(--green)':'var(--red)'};">${up?'+':''}$${Math.abs(pnl).toFixed(2)}</td>
       <td><button class="btn btn--sm btn--red" onclick="opsForceClose('${p.id}')">Force Close</button></td>
     </tr>`;
@@ -1725,27 +2075,27 @@ async function renderPositionsLive() {
 window.renderPositionsLive = renderPositionsLive;
 window.opsForceClose = async id => {
   if (!confirm('Force close this position?')) return;
-  await window.XANTEX_DB.from('positions').update({ status:'closed' }).eq('id', id);
+  await window.ATRONTIFY_DB.from('positions').update({ status:'closed' }).eq('id', id);
   showToast('Position closed','success'); renderPositionsLive();
 };
 
-// ── Deposits ──────────────────────────────────────────────────
+// â”€â”€ Deposits â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function renderDepositsLive() {
   renderDeposits();
-  const db = window.XANTEX_DB; if (!db) return;
+  const db = window.ATRONTIFY_DB; if (!db) return;
   const { data } = await db
     .from('transactions')
     .select('*, profiles(first_name, last_name)')
     .eq('type','deposit').order('created_at', { ascending: false });
   if (!data?.length) return;
   document.getElementById('deposits-tbody').innerHTML = data.map(d => {
-    const name = d.profiles ? `${d.profiles.first_name} ${d.profiles.last_name}` : '—';
+    const name = d.profiles ? `${d.profiles.first_name} ${d.profiles.last_name}` : 'â€”';
     const amt  = parseFloat(d.amount || 0).toLocaleString('en-US', { minimumFractionDigits: 2 });
     return `<tr>
       <td style="font-weight:600;">${d.id.slice(0,8).toUpperCase()}</td>
       <td>${name}</td>
       <td style="font-weight:700;">$${amt}</td>
-      <td>${d.payment_method || '—'}</td>
+      <td>${d.payment_method || 'â€”'}</td>
       <td style="font-size:12px;">${fmtDate(d.created_at)}</td>
       <td><span class="badge-pill ${d.status==='approved'?'pill-green':d.status==='pending'?'pill-orange':'pill-red'}">${d.status}</span></td>
       <td><div class="row-actions">
@@ -1759,31 +2109,31 @@ async function renderDepositsLive() {
 }
 window.renderDepositsLive = renderDepositsLive;
 window.opsApproveDeposit = async id => {
-  await window.XANTEX_DB.from('transactions').update({ status:'approved' }).eq('id', id);
+  await window.ATRONTIFY_DB.from('transactions').update({ status:'approved' }).eq('id', id);
   showToast('Deposit approved','success'); renderDepositsLive();
 };
 window.opsRejectDeposit = async id => {
-  await window.XANTEX_DB.from('transactions').update({ status:'rejected' }).eq('id', id);
+  await window.ATRONTIFY_DB.from('transactions').update({ status:'rejected' }).eq('id', id);
   showToast('Deposit rejected','error'); renderDepositsLive();
 };
 
-// ── Withdrawals ───────────────────────────────────────────────
+// â”€â”€ Withdrawals â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function renderWithdrawalsLive() {
   renderWithdrawals();
-  const db = window.XANTEX_DB; if (!db) return;
+  const db = window.ATRONTIFY_DB; if (!db) return;
   const { data } = await db
     .from('transactions')
     .select('*, profiles(first_name, last_name)')
     .eq('type','withdrawal').order('created_at', { ascending: false });
   if (!data?.length) return;
   document.getElementById('withdrawals-tbody').innerHTML = data.map(w => {
-    const name = w.profiles ? `${w.profiles.first_name} ${w.profiles.last_name}` : '—';
+    const name = w.profiles ? `${w.profiles.first_name} ${w.profiles.last_name}` : 'â€”';
     const amt  = parseFloat(w.amount || 0).toLocaleString('en-US', { minimumFractionDigits: 2 });
     return `<tr>
       <td style="font-weight:600;">${w.id.slice(0,8).toUpperCase()}</td>
       <td>${name}</td>
       <td style="font-weight:700;">$${amt}</td>
-      <td style="font-size:12px;">${w.destination || '—'}</td>
+      <td style="font-size:12px;">${w.destination || 'â€”'}</td>
       <td style="font-size:12px;">${fmtDate(w.created_at)}</td>
       <td><span class="badge-pill ${w.status==='approved'?'pill-green':w.status==='pending'?'pill-orange':'pill-red'}">${w.status}</span></td>
       <td><div class="row-actions">
@@ -1797,18 +2147,18 @@ async function renderWithdrawalsLive() {
 }
 window.renderWithdrawalsLive = renderWithdrawalsLive;
 window.opsApproveWithdrawal = async id => {
-  await window.XANTEX_DB.from('transactions').update({ status:'approved' }).eq('id', id);
+  await window.ATRONTIFY_DB.from('transactions').update({ status:'approved' }).eq('id', id);
   showToast('Withdrawal approved','success'); renderWithdrawalsLive();
 };
 window.opsRejectWithdrawal = async id => {
-  await window.XANTEX_DB.from('transactions').update({ status:'rejected' }).eq('id', id);
+  await window.ATRONTIFY_DB.from('transactions').update({ status:'rejected' }).eq('id', id);
   showToast('Withdrawal rejected','error'); renderWithdrawalsLive();
 };
 
-// ── All Transactions ──────────────────────────────────────────
+// â”€â”€ All Transactions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function renderTransactionsLive() {
   renderTransactions();
-  const db = window.XANTEX_DB; if (!db) return;
+  const db = window.ATRONTIFY_DB; if (!db) return;
   const { data } = await db
     .from('transactions')
     .select('*, profiles(first_name, last_name)')
@@ -1816,7 +2166,7 @@ async function renderTransactionsLive() {
     .limit(100);
   if (!data?.length) return;
   document.getElementById('txn-tbody').innerHTML = data.map(t => {
-    const name = t.profiles ? `${t.profiles.first_name} ${t.profiles.last_name}` : '—';
+    const name = t.profiles ? `${t.profiles.first_name} ${t.profiles.last_name}` : 'â€”';
     const amt  = parseFloat(t.amount || 0).toLocaleString('en-US', { minimumFractionDigits: 2 });
     const dep  = t.type === 'deposit';
     return `<tr>
@@ -1824,7 +2174,7 @@ async function renderTransactionsLive() {
       <td>${name}</td>
       <td><span class="badge-pill ${dep?'pill-green':'pill-orange'}">${t.type}</span></td>
       <td style="font-weight:700;">$${amt}</td>
-      <td style="font-size:12px;">${t.account_id || '—'}</td>
+      <td style="font-size:12px;">${t.account_id || 'â€”'}</td>
       <td style="font-size:12px;">${fmtDate(t.created_at)}</td>
       <td><span class="badge-pill ${t.status==='approved'?'pill-green':t.status==='pending'?'pill-orange':'pill-red'}">${t.status}</span></td>
     </tr>`;
@@ -1832,10 +2182,10 @@ async function renderTransactionsLive() {
 }
 window.renderTransactionsLive = renderTransactionsLive;
 
-// ── Audit Log ─────────────────────────────────────────────────
+// â”€â”€ Audit Log â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function renderAuditLive() {
   renderAudit();
-  const db = window.XANTEX_DB; if (!db) return;
+  const db = window.ATRONTIFY_DB; if (!db) return;
   const { data } = await db
     .from('audit_log')
     .select('*')
@@ -1847,17 +2197,17 @@ async function renderAuditLive() {
       <td style="font-size:12px;">${fmtDate(a.created_at)}</td>
       <td><span class="badge-pill pill-purple">${a.admin_email || 'Admin'}</span></td>
       <td style="font-weight:600;">${a.action}</td>
-      <td style="font-size:12px;">${a.target || '—'}</td>
-      <td style="font-size:12px;color:var(--muted);">${a.details || '—'}</td>
-      <td style="font-size:11px;color:var(--muted);">${a.ip_address || '—'}</td>
+      <td style="font-size:12px;">${a.target || 'â€”'}</td>
+      <td style="font-size:12px;color:var(--muted);">${a.details || 'â€”'}</td>
+      <td style="font-size:11px;color:var(--muted);">${a.ip_address || 'â€”'}</td>
     </tr>`).join('');
 }
 window.renderAuditLive = renderAuditLive;
 
-// ── Announcements ─────────────────────────────────────────────
+// â”€â”€ Announcements â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function renderAnnouncementsLive() {
   renderAnnouncements();
-  const db = window.XANTEX_DB; if (!db) return;
+  const db = window.ATRONTIFY_DB; if (!db) return;
   const { data } = await db
     .from('announcements')
     .select('*')
@@ -1872,18 +2222,18 @@ async function renderAnnouncementsLive() {
       </div>
       <div style="font-size:12px;color:var(--muted);">${a.body || ''}</div>
       <div style="font-size:11px;color:var(--muted);margin-top:6px;">
-        ${fmtDate(a.created_at)} ·
+        ${fmtDate(a.created_at)} Â·
         <span style="color:var(--red);cursor:pointer;" onclick="opsDeleteAnnouncement('${a.id}')">Delete</span>
       </div>
     </div>`).join('');
 }
 window.renderAnnouncementsLive = renderAnnouncementsLive;
 window.opsDeleteAnnouncement = async id => {
-  await window.XANTEX_DB.from('announcements').delete().eq('id', id);
+  await window.ATRONTIFY_DB.from('announcements').delete().eq('id', id);
   showToast('Deleted','error'); renderAnnouncementsLive();
 };
 
-// ── Patch publishAnnouncement ─────────────────────────────────
+// â”€â”€ Patch publishAnnouncement â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const _origPublishAnnouncement = publishAnnouncement;
 window.publishAnnouncement = async function() {
   const title    = document.getElementById('ann-title').value.trim();
@@ -1892,7 +2242,7 @@ window.publishAnnouncement = async function() {
   const audience = document.getElementById('ann-audience').value;
   const schedule = document.getElementById('ann-schedule').value;
   if (!title) { showToast('Please enter a title','error'); return; }
-  const db = window.XANTEX_DB;
+  const db = window.ATRONTIFY_DB;
   if (db) {
     await db.from('announcements').insert({
       title, body, type, audience,
@@ -1904,25 +2254,25 @@ window.publishAnnouncement = async function() {
   renderAnnouncementsLive();
 };
 
-// ── Balances page: load users into dropdown ───────────────────
+// â”€â”€ Balances page: load users into dropdown â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 window.loadBalanceUsers = async function() {
-  const db = window.XANTEX_DB;
+  const db = window.ATRONTIFY_DB;
   const sel = document.getElementById('adj-user-select');
   if (!sel || !db) return;
-  sel.innerHTML = '<option value="">— loading users… —</option>';
+  sel.innerHTML = '<option value="">â€” loading usersâ€¦ â€”</option>';
   const { data: users, error } = await db.from('profiles')
     .select('id, first_name, last_name, email')
     .order('email', { ascending: true });
   if (error) {
-    sel.innerHTML = '<option value="">— error loading users —</option>';
+    sel.innerHTML = '<option value="">â€” error loading users â€”</option>';
     showToast('Could not load users: ' + error.message + '. Make sure your account is in the admin_users table.', 'error');
     return;
   }
   if (!users || users.length === 0) {
-    sel.innerHTML = '<option value="">— no users found (check admin_users table) —</option>';
+    sel.innerHTML = '<option value="">â€” no users found (check admin_users table) â€”</option>';
     return;
   }
-  sel.innerHTML = '<option value="">— choose a user —</option>';
+  sel.innerHTML = '<option value="">â€” choose a user â€”</option>';
   users.forEach(u => {
     const opt = document.createElement('option');
     opt.value = u.id;
@@ -1933,31 +2283,31 @@ window.loadBalanceUsers = async function() {
 };
 
 window.loadUserAccounts = async function() {
-  const db = window.XANTEX_DB;
+  const db = window.ATRONTIFY_DB;
   const userId = document.getElementById('adj-user-select').value;
   const accSel = document.getElementById('adj-account');
   const noAccBox = document.getElementById('adj-no-account-box');
   const balDisplay = document.getElementById('adj-current-bal');
-  accSel.innerHTML = '<option value="">— loading… —</option>';
+  accSel.innerHTML = '<option value="">â€” loadingâ€¦ â€”</option>';
   if (noAccBox) noAccBox.style.display = 'none';
   if (balDisplay) balDisplay.textContent = '';
-  if (!userId || !db) { accSel.innerHTML = '<option value="">— select user first —</option>'; return; }
+  if (!userId || !db) { accSel.innerHTML = '<option value="">â€” select user first â€”</option>'; return; }
   const { data: accounts, error } = await db.from('trading_accounts')
     .select('id, account_number, type, balance, equity, currency')
     .eq('user_id', userId)
     .order('created_at', { ascending: false });
-  if (error) { accSel.innerHTML = '<option value="">— error: ' + error.message + ' —</option>'; return; }
+  if (error) { accSel.innerHTML = '<option value="">â€” error: ' + error.message + ' â€”</option>'; return; }
   if (!accounts || accounts.length === 0) {
-    accSel.innerHTML = '<option value="">— no accounts found —</option>';
+    accSel.innerHTML = '<option value="">â€” no accounts found â€”</option>';
     if (noAccBox) noAccBox.style.display = 'block';
     return;
   }
-  accSel.innerHTML = '<option value="">— choose an account —</option>';
+  accSel.innerHTML = '<option value="">â€” choose an account â€”</option>';
   accounts.forEach(a => {
     const opt = document.createElement('option');
     opt.value = a.id;
     const bal = parseFloat(a.balance||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
-    opt.textContent = `#${a.account_number || a.id.slice(0,8)} · ${a.type} · ${a.currency||'USD'} $${bal}`;
+    opt.textContent = `#${a.account_number || a.id.slice(0,8)} Â· ${a.type} Â· ${a.currency||'USD'} $${bal}`;
     accSel.appendChild(opt);
   });
   // Auto-select first account and show its balance
@@ -1988,7 +2338,7 @@ function showAccountBalance(acc) {
 }
 
 window.createAccountForUser = async function() {
-  const db = window.XANTEX_DB;
+  const db = window.ATRONTIFY_DB;
   const userId = document.getElementById('adj-user-select').value;
   const accType = document.getElementById('adj-new-acc-type').value;
   const initBal = parseFloat(document.getElementById('adj-new-acc-bal').value) || 0;
@@ -2004,7 +2354,7 @@ window.createAccountForUser = async function() {
   window.loadUserAccounts();
 };
 
-// ── Patch applyAdjustment ─────────────────────────────────────
+// â”€â”€ Patch applyAdjustment â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const _origApplyAdjustment = applyAdjustment;
 window.applyAdjustment = async function() {
   const accId   = document.getElementById('adj-account').value;
@@ -2013,7 +2363,7 @@ window.applyAdjustment = async function() {
   const reason  = document.getElementById('adj-reason').value.trim();
   if (!accId || !amount || !reason) { showToast('Please fill all required fields','error'); return; }
 
-  const db = window.XANTEX_DB;
+  const db = window.ATRONTIFY_DB;
   if (!db) { showToast('No database connection','error'); return; }
 
   // Verify admin has an active Supabase session
@@ -2023,7 +2373,7 @@ window.applyAdjustment = async function() {
     session = data?.session;
   } catch(e) {}
   if (!session) {
-    showToast('Session expired — please log out and log back in with your admin email','error');
+    showToast('Session expired â€” please log out and log back in with your admin email','error');
     return;
   }
 
@@ -2038,7 +2388,7 @@ window.applyAdjustment = async function() {
   else if (adjType.startsWith('Debit'))  after = Math.max(0, before - amount);
   else if (adjType.startsWith('Set'))    after = amount;
 
-  // Update balance — use .select() so we can detect silent RLS blocks (0 rows updated)
+  // Update balance â€” use .select() so we can detect silent RLS blocks (0 rows updated)
   const { data: updated, error: updErr } = await db.from('trading_accounts')
     .update({ balance: after, equity: after })
     .eq('id', accId)
@@ -2046,7 +2396,7 @@ window.applyAdjustment = async function() {
 
   if (updErr) { showToast('Update error: ' + updErr.message, 'error'); return; }
   if (!updated || updated.length === 0) {
-    showToast('Permission denied — your account may not be in the admin_users table. Check Supabase Dashboard → admin_users.', 'error');
+    showToast('Permission denied â€” your account may not be in the admin_users table. Check Supabase Dashboard â†’ admin_users.', 'error');
     return;
   }
 
@@ -2063,7 +2413,7 @@ window.applyAdjustment = async function() {
   });
   if (txnErr) console.warn('Transaction log failed:', txnErr.message);
 
-  showToast(`Balance updated: $${before.toFixed(2)} → $${after.toFixed(2)}`, 'success');
+  showToast(`Balance updated: $${before.toFixed(2)} â†’ $${after.toFixed(2)}`, 'success');
   // Clear input fields
   document.getElementById('adj-amount').value = '';
   document.getElementById('adj-reason').value = '';
@@ -2075,7 +2425,7 @@ window.applyAdjustment = async function() {
   renderAccountsLive();
 };
 
-// ── Patch saveUser ────────────────────────────────────────────
+// â”€â”€ Patch saveUser â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const _origSaveUser = saveUser;
 window.saveUser = async function() {
   const modal   = document.getElementById('modal-add-user');
@@ -2088,7 +2438,7 @@ window.saveUser = async function() {
 
   if (!email || !firstName) { showToast('First name and email are required','error'); return; }
 
-  const db = window.XANTEX_DB;
+  const db = window.ATRONTIFY_DB;
   if (!db) { showToast('User created (offline mode)','success'); closeModal('modal-add-user'); return; }
 
   const userId = crypto.randomUUID();
@@ -2111,22 +2461,22 @@ window.saveUser = async function() {
   renderUsersLive();
 };
 
-// ── Crypto Deposit Addresses ──────────────────────────────────
+// â”€â”€ Crypto Deposit Addresses â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const CRYPTO_COINS = [
-  { key:'ETH',  label:'ETH — Ethereum'         },
-  { key:'USDT', label:'USDT — Tether (ERC20)'  },
-  { key:'USDC', label:'USDC — USD Coin (ERC20)'},
-  { key:'WBTC', label:'WBTC — Wrapped Bitcoin' },
-  { key:'BNB',  label:'BNB  — BNB (ERC20)'     },
-  { key:'LINK', label:'LINK — Chainlink'        },
-  { key:'UNI',  label:'UNI  — Uniswap'         },
-  { key:'DAI',  label:'DAI  — Dai Stablecoin'  },
-  { key:'SHIB', label:'SHIB — Shiba Inu'       },
-  { key:'AAVE', label:'AAVE — Aave'            },
+  { key:'ETH',  label:'ETH â€” Ethereum'         },
+  { key:'USDT', label:'USDT â€” Tether (ERC20)'  },
+  { key:'USDC', label:'USDC â€” USD Coin (ERC20)'},
+  { key:'WBTC', label:'WBTC â€” Wrapped Bitcoin' },
+  { key:'BNB',  label:'BNB  â€” BNB (ERC20)'     },
+  { key:'LINK', label:'LINK â€” Chainlink'        },
+  { key:'UNI',  label:'UNI  â€” Uniswap'         },
+  { key:'DAI',  label:'DAI  â€” Dai Stablecoin'  },
+  { key:'SHIB', label:'SHIB â€” Shiba Inu'       },
+  { key:'AAVE', label:'AAVE â€” Aave'            },
 ];
 
 async function loadCryptoAddresses() {
-  const db = window.XANTEX_DB;
+  const db = window.ATRONTIFY_DB;
   let saved = {};
   if (db) {
     try {
@@ -2136,25 +2486,25 @@ async function loadCryptoAddresses() {
   }
   // Fall back to localStorage
   CRYPTO_COINS.forEach(c => {
-    if (!saved[c.key]) saved[c.key] = localStorage.getItem('xantex_addr_'+c.key) || '';
+    if (!saved[c.key]) saved[c.key] = localStorage.getItem('atrontify_addr_'+c.key) || '';
   });
   const grid = document.getElementById('crypto-addr-grid');
   if (!grid) return;
   grid.innerHTML = CRYPTO_COINS.map(c => `
     <div class="field" style="margin:0;">
       <label style="font-size:11px;">${c.label}</label>
-      <input type="text" id="addr-${c.key}" placeholder="0x…" value="${saved[c.key]||''}" style="font-size:11px;font-family:monospace;">
+      <input type="text" id="addr-${c.key}" placeholder="0xâ€¦" value="${saved[c.key]||''}" style="font-size:11px;font-family:monospace;">
     </div>`).join('');
 }
 
 window.saveCryptoAddresses = async function() {
-  const db = window.XANTEX_DB;
+  const db = window.ATRONTIFY_DB;
   const rows = CRYPTO_COINS.map(c => ({
     key:   'crypto_address_' + c.key,
     value: (document.getElementById('addr-'+c.key)?.value || '').trim(),
   })).filter(r => r.value);
   // Always save to localStorage for immediate cross-page effect
-  rows.forEach(r => localStorage.setItem('xantex_addr_'+r.key.replace('crypto_address_',''), r.value));
+  rows.forEach(r => localStorage.setItem('atrontify_addr_'+r.key.replace('crypto_address_',''), r.value));
   if (db) {
     try {
       await db.from('platform_settings').upsert(rows, { onConflict: 'key' });
@@ -2163,7 +2513,7 @@ window.saveCryptoAddresses = async function() {
   showToast('Crypto addresses saved', 'success');
 };
 
-// ── Override renderAll to use live versions ───────────────────
+// â”€â”€ Override renderAll to use live versions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 window.renderAll = function() {
   renderUsersLive();
   renderKYCLive();
@@ -2183,15 +2533,15 @@ window.renderAll = function() {
 };
 
 async function loadSupportBadge() {
-  const db = window.XANTEX_DB; if (!db) return;
+  const db = window.ATRONTIFY_DB; if (!db) return;
   const { count } = await db.from('support_tickets').select('id', { count:'exact', head:true }).eq('status','open');
   const badge = document.getElementById('badge-support');
   if (badge) badge.textContent = count > 0 ? count : '';
 }
 
-// ── Real-time dashboard stats ─────────────────────────────────
+// â”€â”€ Real-time dashboard stats â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function loadDashboardStats() {
-  const db = window.XANTEX_DB;
+  const db = window.ATRONTIFY_DB;
   if (!db) return;
   try {
     const [
@@ -2223,7 +2573,7 @@ async function loadDashboardStats() {
     if (stats[5]) stats[5].querySelector('.stat-card__value').textContent = (pendingWithdrawals || 0);
     if (stats[6]) stats[6].querySelector('.stat-card__value').textContent = (kycPending || 0);
 
-    // Sidebar badges — live counts only
+    // Sidebar badges â€” live counts only
     const setBadge = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val > 0 ? val : ''; };
     setBadge('badge-users',       totalUsers       || 0);
     setBadge('badge-kyc',         kycPending        || 0);
@@ -2232,23 +2582,23 @@ async function loadDashboardStats() {
   } catch (e) { console.warn('[ops] stats:', e); }
 }
 
-// ── Upgrade Deposits panel to also read from deposit_requests ─
+// â”€â”€ Upgrade Deposits panel to also read from deposit_requests â”€
 async function renderDepositsLive() {
   renderDeposits();
-  const db = window.XANTEX_DB; if (!db) return;
+  const db = window.ATRONTIFY_DB; if (!db) return;
   const { data } = await db
     .from('deposit_requests')
     .select('*, profiles(first_name, last_name)')
     .order('created_at', { ascending: false });
   if (!data?.length) return;
   document.getElementById('deposits-tbody').innerHTML = data.map(d => {
-    const name = d.profiles ? `${d.profiles.first_name} ${d.profiles.last_name}` : '—';
+    const name = d.profiles ? `${d.profiles.first_name} ${d.profiles.last_name}` : 'â€”';
     const amt  = parseFloat(d.amount || 0).toLocaleString('en-US', { minimumFractionDigits: 2 });
     return `<tr>
       <td style="font-weight:600;">${d.id.slice(0,8).toUpperCase()}</td>
       <td>${name}</td>
       <td style="font-weight:700;">$${amt}</td>
-      <td>${d.payment_method || '—'}</td>
+      <td>${d.payment_method || 'â€”'}</td>
       <td style="font-size:12px;">${fmtDate(d.created_at)}</td>
       <td><span class="badge-pill ${d.status==='approved'?'pill-green':d.status==='pending'?'pill-orange':'pill-red'}">${d.status}</span></td>
       <td><div class="row-actions">
@@ -2263,31 +2613,31 @@ async function renderDepositsLive() {
 
 window.renderDepositsLive = renderDepositsLive;
 window.opsApproveDepositReq = async id => {
-  await window.XANTEX_DB.from('deposit_requests').update({ status:'approved', reviewed_at: new Date().toISOString() }).eq('id', id);
+  await window.ATRONTIFY_DB.from('deposit_requests').update({ status:'approved', reviewed_at: new Date().toISOString() }).eq('id', id);
   showToast('Deposit approved','success'); renderDepositsLive(); loadDashboardStats();
 };
 window.opsRejectDepositReq = async id => {
-  await window.XANTEX_DB.from('deposit_requests').update({ status:'rejected', reviewed_at: new Date().toISOString() }).eq('id', id);
+  await window.ATRONTIFY_DB.from('deposit_requests').update({ status:'rejected', reviewed_at: new Date().toISOString() }).eq('id', id);
   showToast('Deposit rejected','error'); renderDepositsLive(); loadDashboardStats();
 };
 
-// ── Upgrade Withdrawals panel to read from withdrawal_requests ─
+// â”€â”€ Upgrade Withdrawals panel to read from withdrawal_requests â”€
 async function renderWithdrawalsLive() {
   renderWithdrawals();
-  const db = window.XANTEX_DB; if (!db) return;
+  const db = window.ATRONTIFY_DB; if (!db) return;
   const { data } = await db
     .from('withdrawal_requests')
     .select('*, profiles(first_name, last_name)')
     .order('created_at', { ascending: false });
   if (!data?.length) return;
   document.getElementById('withdrawals-tbody').innerHTML = data.map(w => {
-    const name = w.profiles ? `${w.profiles.first_name} ${w.profiles.last_name}` : '—';
+    const name = w.profiles ? `${w.profiles.first_name} ${w.profiles.last_name}` : 'â€”';
     const amt  = parseFloat(w.amount || 0).toLocaleString('en-US', { minimumFractionDigits: 2 });
     return `<tr>
       <td style="font-weight:600;">${w.id.slice(0,8).toUpperCase()}</td>
       <td>${name}</td>
       <td style="font-weight:700;">$${amt}</td>
-      <td style="font-size:12px;">${w.destination_type || '—'} ${w.destination_name ? '· ' + w.destination_name : ''}</td>
+      <td style="font-size:12px;">${w.destination_type || 'â€”'} ${w.destination_name ? 'Â· ' + w.destination_name : ''}</td>
       <td style="font-size:12px;">${fmtDate(w.created_at)}</td>
       <td><span class="badge-pill ${w.status==='approved'||w.status==='completed'?'pill-green':w.status==='pending'?'pill-orange':'pill-red'}">${w.status}</span></td>
       <td><div class="row-actions">
@@ -2302,15 +2652,15 @@ async function renderWithdrawalsLive() {
 
 window.renderWithdrawalsLive = renderWithdrawalsLive;
 window.opsApproveWithdrawalReq = async id => {
-  await window.XANTEX_DB.from('withdrawal_requests').update({ status:'approved', reviewed_at: new Date().toISOString() }).eq('id', id);
+  await window.ATRONTIFY_DB.from('withdrawal_requests').update({ status:'approved', reviewed_at: new Date().toISOString() }).eq('id', id);
   showToast('Withdrawal approved','success'); renderWithdrawalsLive(); loadDashboardStats();
 };
 window.opsRejectWithdrawalReq = async id => {
-  await window.XANTEX_DB.from('withdrawal_requests').update({ status:'rejected', reviewed_at: new Date().toISOString() }).eq('id', id);
+  await window.ATRONTIFY_DB.from('withdrawal_requests').update({ status:'rejected', reviewed_at: new Date().toISOString() }).eq('id', id);
   showToast('Withdrawal rejected','error'); renderWithdrawalsLive(); loadDashboardStats();
 };
 
-// ── Support Tickets ───────────────────────────────────────────
+// â”€â”€ Support Tickets â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 let _supportFilter = 'all';
 
 window.filterSupport = function(type, btn) {
@@ -2321,9 +2671,9 @@ window.filterSupport = function(type, btn) {
 };
 
 async function renderSupportLive() {
-  const db = window.XANTEX_DB; if (!db) return;
+  const db = window.ATRONTIFY_DB; if (!db) return;
   const tbody = document.getElementById('support-tbody');
-  if (tbody) tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--muted);">Loading…</td></tr>';
+  if (tbody) tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--muted);">Loadingâ€¦</td></tr>';
 
   let q = db.from('support_tickets')
     .select('*, profiles(first_name, last_name, email)')
@@ -2343,12 +2693,12 @@ async function renderSupportLive() {
   }
   if (tbody) tbody.innerHTML = data.map(t => {
     const p    = t.profiles || {};
-    const name = `${p.first_name||''} ${p.last_name||''}`.trim() || p.email || '—';
-    const msg  = (t.message || '').substring(0, 120) + ((t.message||'').length > 120 ? '…' : '');
+    const name = `${p.first_name||''} ${p.last_name||''}`.trim() || p.email || 'â€”';
+    const msg  = (t.message || '').substring(0, 120) + ((t.message||'').length > 120 ? 'â€¦' : '');
     const isClosed = t.status === 'closed';
     return `<tr>
       <td><div class="user-cell"><div class="user-avatar" style="background:var(--blue);">${name.split(' ').map(n=>n[0]||'').join('').toUpperCase().slice(0,2)||'?'}</div>
-        <div><div class="user-name">${name}</div><div class="user-email">${p.email||'—'}</div></div></div></td>
+        <div><div class="user-name">${name}</div><div class="user-email">${p.email||'â€”'}</div></div></div></td>
       <td style="font-weight:600;">${t.subject||'(no subject)'}</td>
       <td style="font-size:12px;color:var(--muted);max-width:220px;">${msg}</td>
       <td style="font-size:12px;">${fmtDate(t.created_at)}</td>
@@ -2366,29 +2716,29 @@ window.renderSupportLive = renderSupportLive;
 
 window.opsSaveReply = async id => {
   const reply = document.getElementById('reply-'+id)?.value?.trim() || '';
-  const { error } = await window.XANTEX_DB.from('support_tickets')
+  const { error } = await window.ATRONTIFY_DB.from('support_tickets')
     .update({ admin_reply: reply, updated_at: new Date().toISOString() }).eq('id', id);
   if (error) { showToast('Error: '+error.message,'error'); return; }
   showToast('Reply saved','success');
 };
 window.opsCloseTicket = async id => {
   const reply = document.getElementById('reply-'+id)?.value?.trim() || '';
-  const { error } = await window.XANTEX_DB.from('support_tickets')
+  const { error } = await window.ATRONTIFY_DB.from('support_tickets')
     .update({ status:'closed', admin_reply: reply || undefined, updated_at: new Date().toISOString() }).eq('id', id);
   if (error) { showToast('Error: '+error.message,'error'); return; }
   showToast('Ticket closed','success'); renderSupportLive();
 };
 window.opsDeleteTicket = async id => {
   if (!confirm('Delete this ticket permanently?')) return;
-  await window.XANTEX_DB.from('support_tickets').delete().eq('id', id);
+  await window.ATRONTIFY_DB.from('support_tickets').delete().eq('id', id);
   showToast('Ticket deleted','error'); renderSupportLive();
 };
 
-// ── User Notifications ────────────────────────────────────────
+// â”€â”€ User Notifications â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function renderNotificationsLive() {
-  const db = window.XANTEX_DB; if (!db) return;
+  const db = window.ATRONTIFY_DB; if (!db) return;
   const tbody = document.getElementById('notif-tbody');
-  if (tbody) tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--muted);">Loading…</td></tr>';
+  if (tbody) tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--muted);">Loadingâ€¦</td></tr>';
 
   const [{ data: users }, { data: notifs }] = await Promise.all([
     db.from('profiles').select('id, first_name, last_name, email').order('email', { ascending: true }),
@@ -2413,9 +2763,9 @@ async function renderNotificationsLive() {
     return `<tr>
       <td><div class="user-cell"><div class="user-avatar" style="background:${col};">${init}</div>
         <div><div class="user-name">${name}</div><div class="user-email">${u.email}</div></div></div></td>
-      <td><input type="text" id="ntitle-${u.id}" value="${(n.title||'').replace(/"/g,'&quot;')}" placeholder="Notification title…"
+      <td><input type="text" id="ntitle-${u.id}" value="${(n.title||'').replace(/"/g,'&quot;')}" placeholder="Notification titleâ€¦"
         style="width:180px;height:34px;border:1.5px solid var(--border);border-radius:6px;padding:0 10px;font-size:13px;"></td>
-      <td><textarea id="nmsg-${u.id}" style="width:260px;min-height:60px;border:1.5px solid var(--border);border-radius:6px;padding:6px 10px;font-size:12px;resize:vertical;" placeholder="Write notification message…">${n.message||''}</textarea></td>
+      <td><textarea id="nmsg-${u.id}" style="width:260px;min-height:60px;border:1.5px solid var(--border);border-radius:6px;padding:6px 10px;font-size:12px;resize:vertical;" placeholder="Write notification messageâ€¦">${n.message||''}</textarea></td>
       <td>
         <label class="toggle-switch">
           <input type="checkbox" id="nenabled-${u.id}" ${enabled?'checked':''}>
@@ -2435,7 +2785,7 @@ window.opsSaveNotif = async userId => {
   const title   = document.getElementById('ntitle-'+userId)?.value?.trim() || '';
   const message = document.getElementById('nmsg-'+userId)?.value?.trim() || '';
   const enabled = document.getElementById('nenabled-'+userId)?.checked || false;
-  const { error } = await window.XANTEX_DB.from('notifications').upsert(
+  const { error } = await window.ATRONTIFY_DB.from('notifications').upsert(
     { user_id: userId, title, message, enabled, updated_at: new Date().toISOString() },
     { onConflict: 'user_id' }
   );
@@ -2443,16 +2793,16 @@ window.opsSaveNotif = async userId => {
   showToast('Notification saved','success');
 };
 window.opsClearNotif = async userId => {
-  await window.XANTEX_DB.from('notifications').upsert(
+  await window.ATRONTIFY_DB.from('notifications').upsert(
     { user_id: userId, title: '', message: '', enabled: false, updated_at: new Date().toISOString() },
     { onConflict: 'user_id' }
   );
   showToast('Notification cleared','success'); renderNotificationsLive();
 };
 
-// ── Trades History ────────────────────────────────────────────
+// â”€â”€ Trades History â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function renderTradesLive() {
-  const db = window.XANTEX_DB; if (!db) return;
+  const db = window.ATRONTIFY_DB; if (!db) return;
 
   // Load users for select dropdown + settings table
   const { data: users } = await db.from('profiles')
@@ -2462,7 +2812,7 @@ async function renderTradesLive() {
   // Populate user dropdown
   const sel = document.getElementById('trade-user-sel');
   if (sel && users?.length) {
-    sel.innerHTML = '<option value="">— choose user —</option>' + users.map(u => {
+    sel.innerHTML = '<option value="">â€” choose user â€”</option>' + users.map(u => {
       const name = `${u.first_name||''} ${u.last_name||''}`.trim() || u.email;
       return `<option value="${u.id}">${name} (${u.email})</option>`;
     }).join('');
@@ -2500,15 +2850,15 @@ async function renderTradesLive() {
   }
   if (tbody) tbody.innerHTML = trades.map(t => {
     const p    = t.profiles || {};
-    const name = `${p.first_name||''} ${p.last_name||''}`.trim() || p.email || '—';
+    const name = `${p.first_name||''} ${p.last_name||''}`.trim() || p.email || 'â€”';
     const pnl  = parseFloat(t.pnl || 0);
     const up   = pnl >= 0;
     return `<tr>
       <td>${name}</td>
-      <td><span class="badge-pill pill-blue">${t.market||'—'}</span></td>
-      <td style="font-weight:700;">${t.pair||'—'}</td>
+      <td><span class="badge-pill pill-blue">${t.market||'â€”'}</span></td>
+      <td style="font-weight:700;">${t.pair||'â€”'}</td>
       <td><span class="badge-pill ${t.direction==='buy'?'pill-green':'pill-red'}">${(t.direction||'').toUpperCase()}</span></td>
-      <td>${t.size||'—'}</td>
+      <td>${t.size||'â€”'}</td>
       <td style="font-weight:700;color:${up?'var(--green)':'var(--red)'};">${up?'+':''}$${Math.abs(pnl).toFixed(2)}</td>
       <td style="font-size:12px;">${fmtDate(t.created_at)}</td>
       <td><button class="btn btn--sm btn--red" onclick="opsDeleteTrade('${t.id}')">Delete</button></td>
@@ -2520,14 +2870,14 @@ window.renderTradesLive = renderTradesLive;
 window.opsSaveTradeSetting = async userId => {
   const pct    = parseFloat(document.getElementById('tpct-'+userId)?.value) || 0;
   const active = document.getElementById('ton-'+userId)?.checked || false;
-  const { error } = await window.XANTEX_DB.from('profiles')
+  const { error } = await window.ATRONTIFY_DB.from('profiles')
     .update({ trade_percent: pct, trades_active: active }).eq('id', userId);
   if (error) { showToast('Error: '+error.message,'error'); return; }
   showToast('Trade settings saved','success');
 };
 
 window.addTradeRecord = async () => {
-  const db     = window.XANTEX_DB; if (!db) return;
+  const db     = window.ATRONTIFY_DB; if (!db) return;
   const userId = document.getElementById('trade-user-sel')?.value;
   const market = document.getElementById('trade-market')?.value;
   const pair   = document.getElementById('trade-pair')?.value?.trim();
@@ -2546,531 +2896,16 @@ window.addTradeRecord = async () => {
 
 window.opsDeleteTrade = async id => {
   if (!confirm('Delete this trade record?')) return;
-  await window.XANTEX_DB.from('trades').delete().eq('id', id);
+  await window.ATRONTIFY_DB.from('trades').delete().eq('id', id);
   showToast('Trade deleted','error'); renderTradesLive();
 };
 </script>
-
-
-
-<script>
-const SUPABASE_URL = "https://guguugokdhiwobmuopro.supabaseClient.co";
-
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd1Z3V1Z29rZGhpd29ibXVvcHJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNTgwNzIsImV4cCI6MjA5MzczNDA3Mn0.uaKxvC9PfevyNcgtRg8Hhzaljn9ae3pp3aqgFUMfSo8";
-
-
-
-console.log("AstrontifyX Supabase Connected");
-
-async function testConnection(){
-
-  try{
-
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('*')
-      .limit(5);
-
-    console.log("Profiles:", data);
-
-    if(error){
-      console.error(error);
-    }
-
-  }catch(err){
-
-    console.error(err);
-
-  }
-
-}
-
-testConnection();
-
-</script>
-
-
-<script>
-
-async function loadDashboardStats(){
-
-  try{
-
-    const [
-      usersRes,
-      withdrawalsRes,
-      depositsRes,
-      accountsRes
-    ] = await Promise.all([
-
-      supabaseClient.from('profiles').select('*',{count:'exact'}),
-      supabaseClient.from('withdrawals').select('*',{count:'exact'}).eq('status','pending'),
-      supabaseClient.from('deposits').select('*',{count:'exact'}).eq('status','pending'),
-      supabaseClient.from('trading_accounts').select('*',{count:'exact'})
-
-    ]);
-
-    const totalUsers =
-      usersRes.count || 0;
-
-    const pendingWithdrawals =
-      withdrawalsRes.count || 0;
-
-    const pendingDeposits =
-      depositsRes.count || 0;
-
-    const totalAccounts =
-      accountsRes.count || 0;
-
-    document.querySelector('.stat-card--blue .stat-card__value').innerText =
-      totalUsers;
-
-    document.querySelector('.stat-card--purple .stat-card__value').innerText =
-      totalAccounts;
-
-    const statCards =
-      document.querySelectorAll('.stat-card .stat-card__value');
-
-    if(statCards[4]){
-      statCards[4].innerText = pendingDeposits;
-    }
-
-    if(statCards[5]){
-      statCards[5].innerText = pendingWithdrawals;
-    }
-
-    document.getElementById('badge-users').innerText =
-      totalUsers;
-
-    document.getElementById('badge-withdrawals').innerText =
-      pendingWithdrawals;
-
-    document.getElementById('badge-deposits').innerText =
-      pendingDeposits;
-
-  }catch(err){
-
-    console.error(err);
-
-  }
-
-}
-
-async function loadUsers(){
-
-  try{
-
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('*')
-      .order('created_at',{ascending:false});
-
-    if(error){
-      console.error(error);
-      return;
-    }
-
-    const tbody =
-      document.getElementById('users-tbody');
-
-    const recentBody =
-      document.getElementById('recent-users-tbody');
-
-    if(!tbody || !recentBody) return;
-
-    tbody.innerHTML = '';
-    recentBody.innerHTML = '';
-
-    document.querySelector('#page-users .page-header__sub')
-      .innerText = `${data.length} registered users`;
-
-    data.forEach((user,index)=>{
-
-      const initials =
-        (user.full_name || 'U')
-        .split(' ')
-        .map(v=>v[0] || '')
-        .join('')
-        .substring(0,2)
-        .toUpperCase();
-
-      const row = `
-      <tr>
-        <td><input type="checkbox"></td>
-
-        <td>
-          <div class="user-cell">
-            <div class="user-avatar" style="background:#7c3aed;">
-              ${initials}
-            </div>
-
-            <div>
-              <div class="user-name">
-                ${user.full_name || 'Unnamed User'}
-              </div>
-
-              <div class="user-email">
-                ${user.email || 'No Email'}
-              </div>
-            </div>
-          </div>
-        </td>
-
-        <td>${user.country || '—'}</td>
-
-        <td>${user.account_type || 'live'}</td>
-
-        <td>
-          $${Number(user.balance || 0).toLocaleString()}
-        </td>
-
-        <td>
-          ${new Date(user.created_at).toLocaleDateString()}
-        </td>
-
-        <td>
-          <span class="badge-pill pill-green">
-            ${user.status || 'active'}
-          </span>
-        </td>
-
-        <td>
-          <span class="badge-pill pill-blue">
-            ${user.kyc_status || 'pending'}
-          </span>
-        </td>
-
-        <td>
-          <div class="row-actions">
-            <button class="btn btn--sm btn--outline">
-              View
-            </button>
-          </div>
-        </td>
-      </tr>`;
-
-      tbody.insertAdjacentHTML('beforeend', row);
-
-      if(index < 5){
-        recentBody.insertAdjacentHTML('beforeend', row);
-      }
-
-    });
-
-  }catch(err){
-
-    console.error(err);
-
-  }
-
-}
-
-async function loadWithdrawals(){
-
-  try{
-
-    const { data, error } = await supabase
-      .from('withdrawals')
-      .select(`
-        *,
-        profiles(full_name,email)
-      `)
-      .order('created_at',{ascending:false});
-
-    if(error){
-      console.error(error);
-      return;
-    }
-
-    const tbody =
-      document.getElementById('withdrawals-tbody');
-
-    if(!tbody) return;
-
-    tbody.innerHTML = '';
-
-    data.forEach(item=>{
-
-      tbody.insertAdjacentHTML('beforeend',`
-
-      <tr>
-
-        <td>#${item.id}</td>
-
-        <td>
-          ${item.profiles?.full_name || 'Unknown User'}
-        </td>
-
-        <td>
-          $${Number(item.amount || 0).toLocaleString()}
-        </td>
-
-        <td>
-          ${item.wallet_address || item.method || '—'}
-        </td>
-
-        <td>
-          ${new Date(item.created_at).toLocaleDateString()}
-        </td>
-
-        <td>
-          <span class="badge-pill pill-orange">
-            ${item.status || 'pending'}
-          </span>
-        </td>
-
-        <td>
-
-          <div class="row-actions">
-
-            <button class="btn btn--green btn--sm">
-              Approve
-            </button>
-
-            <button class="btn btn--red btn--sm">
-              Reject
-            </button>
-
-          </div>
-
-        </td>
-
-      </tr>
-
-      `);
-
-    });
-
-  }catch(err){
-
-    console.error(err);
-
-  }
-
-}
-
-async function loadDeposits(){
-
-  try{
-
-    const { data, error } = await supabase
-      .from('deposits')
-      .select(`
-        *,
-        profiles(full_name,email)
-      `)
-      .order('created_at',{ascending:false});
-
-    if(error){
-      console.error(error);
-      return;
-    }
-
-    const tbody =
-      document.getElementById('deposits-tbody');
-
-    if(!tbody) return;
-
-    tbody.innerHTML = '';
-
-    data.forEach(item=>{
-
-      tbody.insertAdjacentHTML('beforeend',`
-
-      <tr>
-
-        <td>#${item.id}</td>
-
-        <td>
-          ${item.profiles?.full_name || 'Unknown User'}
-        </td>
-
-        <td>
-          $${Number(item.amount || 0).toLocaleString()}
-        </td>
-
-        <td>
-          ${item.method || 'Crypto'}
-        </td>
-
-        <td>
-          ${new Date(item.created_at).toLocaleDateString()}
-        </td>
-
-        <td>
-          <span class="badge-pill pill-blue">
-            ${item.status || 'pending'}
-          </span>
-        </td>
-
-        <td>
-
-          <div class="row-actions">
-
-            <button class="btn btn--green btn--sm">
-              Approve
-            </button>
-
-            <button class="btn btn--red btn--sm">
-              Reject
-            </button>
-
-          </div>
-
-        </td>
-
-      </tr>
-
-      `);
-
-    });
-
-  }catch(err){
-
-    console.error(err);
-
-  }
-
-}
-
-document.addEventListener('DOMContentLoaded',()=>{
-
-  setTimeout(async()=>{
-
-    await loadDashboardStats();
-    await loadUsers();
-    await loadWithdrawals();
-    await loadDeposits();
-
-    console.log('LIVE ADMIN BACKEND INITIALIZED');
-
-  },1000);
-
-});
-
-</script>
-
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<script>
-
-const SUPABASE_URL =
-'https://guguugokdhiwobmuopro.supabase.co';
-
-const SUPABASE_ANON_KEY =
-'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd1Z3V1Z29rZGhpd29ibXVvcHJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNTgwNzIsImV4cCI6MjA5MzczNDA3Mn0.uaKxvC9PfevyNcgtRg8Hhzaljn9ae3pp3aqgFUMfSo8';
-
-const supabaseClient =
-window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_ANON_KEY
-);
-
-async function adminLogin(){
-
-  const email =
-    document.getElementById('admin-user')
-    .value
-    .trim();
-
-  const password =
-    document.getElementById('admin-pass')
-    .value
-    .trim();
-
-  const loginErr =
-    document.getElementById('login-err');
-
-  loginErr.style.display = 'none';
-
-  try{
-
-    const { data, error } =
-      await supabaseClient.auth.signInWithPassword({
-
-        email,
-        password
-
-      });
-
-    if(error){
-
-      loginErr.innerText =
-        error.message;
-
-      loginErr.style.display =
-        'block';
-
-      return;
-
-    }
-
-    const { data: adminCheck } =
-      await supabaseClient
-      .from('admins')
-      .select('*')
-      .eq('id', data.user.id)
-      .single();
-
-    if(!adminCheck){
-
-      loginErr.innerText =
-        'Not authorized';
-
-      loginErr.style.display =
-        'block';
-
-      await supabaseClient.auth.signOut();
-
-      return;
-
-    }
-
-    document.getElementById('login-gate')
-      .style.display = 'none';
-
-    document.getElementById('main-app')
-      .style.display = 'block';
-
-  }catch(err){
-
-    console.error(err);
-
-    loginErr.innerText =
-      'Connection error';
-
-    loginErr.style.display =
-      'block';
-
-  }
-
-}
-
-supabaseClient.auth.getSession()
-.then(({ data }) => {
-
-  if(data.session){
-
-    document.getElementById('login-gate')
-      .style.display = 'none';
-
-    document.getElementById('main-app')
-      .style.display = 'block';
-
-  }
-
-});
-
-async function logoutAdmin(){
-
-  await supabaseClient.auth.signOut();
-
-  location.reload();
-
-}
-
-</script>
-
 </body>
 </html>
+
+
+
+
+
+
+
