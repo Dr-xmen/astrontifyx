@@ -242,7 +242,28 @@
     .user-email { font-size: 11px; color: var(--muted); }
 
     /* Row action buttons */
-    .row-actions { display: flex; gap: 6px; }
+    
+.row-actions{
+  display:flex;
+  gap:6px;
+  position:relative;
+  z-index:50;
+}
+
+.row-actions button{
+  pointer-events:auto !important;
+  position:relative;
+  z-index:9999 !important;
+}
+
+.data-table td{
+  position:relative;
+}
+
+.data-table tbody tr{
+  pointer-events:auto;
+}
+
 
     /* ============================================================
        FORM FIELDS
@@ -1503,7 +1524,7 @@ function renderUsers() {
       <td>
         <div class="row-actions">
           <button class="btn btn--sm btn--outline" onclick="resetUserPassword('${escapeHTML(user.email || '')}')">Reset</button>
-          <button class="btn btn--sm btn--red" onclick="confirmDeleteUser('${escapeHTML(user.id || '')}','${escapeHTML(user.name || '')}','${escapeHTML(user.email || '')}')">Delete</button>
+          <button type="button" class="btn btn--sm btn--red" onclick="event.preventDefault();event.stopPropagation();simpleDeleteUser('${escapeHTML(user.id || '')}')">Delete</button>
         </div>
       </td>
     </tr>`).join('') : '<tr><td colspan="9" style="text-align:center;padding:24px;color:var(--muted);">No users found</td></tr>';
@@ -1903,6 +1924,7 @@ let _delUserId   = null;
 let _delUserEmail = null;
 
 window.confirmDeleteUser = function(id, name, email) {
+  if (window.event) window.event.stopPropagation();
   _delUserId = id;
   _delUserEmail = email || '';
 
@@ -2929,7 +2951,32 @@ window.opsDeleteTrade = async id => {
   showToast('Trade deleted','error'); renderTradesLive();
 };
 </script>
-</body>
+<script>
+document.addEventListener('click', function(e){
+  const btn = e.target.closest('.btn--red');
+  if(btn){
+    e.stopPropagation();
+  }
+}, true);
+</script>
+<script>
+window.simpleDeleteUser = function(id){
+  try{
+    if(!confirm('Delete this user?')) return;
+
+    USERS = USERS.filter(u => String(u.id) !== String(id));
+
+    renderUsers();
+    renderRecentUsers();
+
+    showToast('User deleted successfully','success');
+
+  }catch(err){
+    console.error(err);
+    alert(err.message);
+  }
+};
+</script></body>
 </html>
 
 
