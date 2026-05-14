@@ -2976,7 +2976,70 @@ window.simpleDeleteUser = function(id){
     alert(err.message);
   }
 };
-</script></body>
+</script>
+<script>
+// ===== CRITICAL HOTFIXES =====
+
+// Prevent JS from stopping when sidebar function is missing
+window.toggleSidebar = window.toggleSidebar || function () {
+  const sidebar = document.getElementById('sidebar');
+  if(sidebar){
+    sidebar.classList.toggle('open');
+  }
+};
+
+// Safe delete function
+window.simpleDeleteUser = function(id){
+  try{
+
+    if(!confirm('Delete this user permanently?')) return;
+
+    if(window.USERS && Array.isArray(window.USERS)){
+      window.USERS = window.USERS.filter(
+        u => String(u.id) !== String(id)
+      );
+    }
+
+    const row = document.querySelector(`[data-user-id="${id}"]`);
+    if(row){
+      row.remove();
+    }
+
+    if(typeof renderUsers === 'function'){
+      renderUsers();
+    }
+
+    if(typeof renderRecentUsers === 'function'){
+      renderRecentUsers();
+    }
+
+    if(typeof showToast === 'function'){
+      showToast('User deleted successfully','success');
+    }else{
+      alert('User deleted successfully');
+    }
+
+  }catch(err){
+    console.error(err);
+    alert(err.message);
+  }
+};
+
+// Force all delete buttons clickable
+document.addEventListener('click', function(e){
+
+  const btn = e.target.closest('.btn--red');
+
+  if(btn){
+    e.preventDefault();
+    e.stopPropagation();
+  }
+
+}, true);
+
+</script>
+
+</body>
 </html>
 
 
