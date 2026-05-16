@@ -3054,7 +3054,11 @@ document.addEventListener('click', function(e){
   const id    = btn.getAttribute('data-delete-user');
   const name  = btn.getAttribute('data-name')  || '';
   const email = btn.getAttribute('data-email') || '';
-  robustDeleteUser(id, name, email);
+  if (typeof window.robustDeleteUser === 'function') {
+    window.robustDeleteUser(id, name, email);
+  } else {
+    console.error('robustDeleteUser not loaded yet');
+  }
 });
 
 </script>
