@@ -1871,7 +1871,10 @@ async function renderUsersLive() {
   renderRecentUsers(); renderUsers(); // static first
   const users = await _loadUsers();
   if (!users) return;
-  USERS.splice(0, USERS.length, ...users);
+  // Filter out any users that were deleted this session
+  const deleted = window._deletedUserIds || new Set();
+  const filtered = users.filter(u => !deleted.has(String(u.id)));
+  USERS.splice(0, USERS.length, ...filtered);
   renderRecentUsers(); renderUsers();
 }
 window.renderUsersLive = renderUsersLive;
@@ -3169,14 +3172,19 @@ window.robustDeleteUser = function(id, name, email) {
           }
         }
 
-        // Always remove from local USERS array and re-render
-        if (window.USERS && Array.isArray(window.USERS)) {
-          window.USERS = window.USERS.filter(u => String(u.id) !== String(uid));
-        }
-        // Remove row from DOM instantly
-        const row = document.querySelector(`[data-delete-user="${uid}"]`);
-        if (row) row.closest('tr')?.remove();
+        // Track deleted IDs so live DB re-fetches can't bring them back
+        window._deletedUserIds = window._deletedUserIds || new Set();
+        window._deletedUserIds.add(String(uid));
 
+        // Remove from local USERS array
+        if (window.USERS && Array.isArray(window.USERS)) {
+          window.USERS = window.USERS.filter(u => !window._deletedUserIds.has(String(u.id)));
+        }
+
+        // Remove row from DOM instantly
+        document.querySelectorAll('[data-delete-user="' + uid + '"]').forEach(el => el.closest('tr') && el.closest('tr').remove());
+
+        // Re-render locally only — do NOT call renderUsersLive (it re-fetches from DB and restores the row)
         if (typeof renderUsers === 'function') renderUsers();
         if (typeof renderRecentUsers === 'function') renderRecentUsers();
 
