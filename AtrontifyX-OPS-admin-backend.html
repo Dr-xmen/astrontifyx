@@ -1381,7 +1381,7 @@
       <!-- Confirm input -->
       <div style="margin-top:16px;">
         <label style="font-size:12px;font-weight:600;color:var(--muted);display:block;margin-bottom:6px;">Type <strong id="del-confirm-hint" style="color:var(--text);font-family:monospace;"></strong> or <strong style="color:var(--text);font-family:monospace;">DELETE</strong> to confirm</label>
-        <input type="text" id="del-confirm-input" placeholder="Type email or DELETE to confirm" style="width:100%;height:42px;border:1.5px solid var(--border);border-radius:8px;padding:0 14px;font-size:13px;font-family:monospace;outline:none;transition:border-color .15s;" oninput="delCheckConfirm(this.value)">
+        <input type="text" id="del-confirm-input" placeholder="Type email or DELETE to confirm" style="width:100%;height:42px;border:1.5px solid var(--border);border-radius:8px;padding:0 14px;font-size:13px;font-family:monospace;outline:none;transition:border-color .15s;">
       </div>
     </div>
     <div class="modal__foot">
@@ -2063,7 +2063,7 @@ window.resetUserPassword = async function(email) {
 let _delUserId   = null;
 let _delUserEmail = null;
 
-window.confirmDeleteUser = function(id, name, email) {
+window.confirmDeleteUser = function(id, name, email) { return; // disabled - handled by click listener
   if (window.event) window.event.stopPropagation();
   _delUserId = id;
   _delUserEmail = email || '';
@@ -2099,7 +2099,7 @@ window.delCheckConfirm = function(val) {
   if (inp) inp.style.borderColor = val ? (match ? 'var(--green)' : 'var(--red)') : '';
 };
 
-window.execDeleteUser = async function() {
+window.execDeleteUser = async function() { return; // disabled - handled by click listener
   const db = window.ATRONTIFY_DB;
   if (!db || !_delUserId) return;
 
