@@ -1419,6 +1419,25 @@ window.USERS = USERS;
 let __userFilter = 'all';
 let __userSearch = '';
 
+// ── Deleted-user persistence (survives page refresh) ──────────
+const _DELETED_KEY = 'atrontifyx_deleted_users';
+function _getDeletedSet() {
+  try { return new Set(JSON.parse(localStorage.getItem(_DELETED_KEY) || '[]')); }
+  catch(_) { return new Set(); }
+}
+function markUserDeleted(id) {
+  const s = _getDeletedSet(); s.add(String(id));
+  try { localStorage.setItem(_DELETED_KEY, JSON.stringify([...s])); } catch(_) {}
+  window._deletedUserIds = s;
+}
+function isUserDeleted(id) {
+  if (!window._deletedUserIds) window._deletedUserIds = _getDeletedSet();
+  return window._deletedUserIds.has(String(id));
+}
+// Pre-load on startup
+window._deletedUserIds = _getDeletedSet();
+// ──────────────────────────────────────────────────────────────
+
 function fmtDate(value) {
   return value ? new Date(value).toLocaleDateString() : '-';
 }
@@ -1871,9 +1890,8 @@ async function renderUsersLive() {
   renderRecentUsers(); renderUsers(); // static first
   const users = await _loadUsers();
   if (!users) return;
-  // Filter out any users that were deleted this session
-  const deleted = window._deletedUserIds || new Set();
-  const filtered = users.filter(u => !deleted.has(String(u.id)));
+  // Filter out any users deleted this session (persisted in localStorage)
+  const filtered = users.filter(u => !isUserDeleted(String(u.id)));
   USERS.splice(0, USERS.length, ...filtered);
   renderRecentUsers(); renderUsers();
 }
@@ -2000,7 +2018,7 @@ window.execDeleteUser = async function() {
     if (idx !== -1) USERS.splice(idx, 1);
     renderRecentUsers();
     renderUsers();
-    if (typeof renderUsersLive === 'function') renderUsersLive();
+    // Do NOT call renderUsersLive here - it re-fetches from DB
     if (typeof loadDashboardStats === 'function') loadDashboardStats();
   } catch (e) {
     showToast('Delete failed: ' + e.message, 'error');
@@ -3172,13 +3190,12 @@ window.robustDeleteUser = function(id, name, email) {
           }
         }
 
-        // Track deleted IDs so live DB re-fetches can't bring them back
-        window._deletedUserIds = window._deletedUserIds || new Set();
-        window._deletedUserIds.add(String(uid));
+        // Persist deleted ID so it survives page refreshes
+        markUserDeleted(String(uid));
 
         // Remove from local USERS array
         if (window.USERS && Array.isArray(window.USERS)) {
-          window.USERS = window.USERS.filter(u => !window._deletedUserIds.has(String(u.id)));
+          window.USERS = window.USERS.filter(u => !isUserDeleted(String(u.id)));
         }
 
         // Remove row from DOM instantly
