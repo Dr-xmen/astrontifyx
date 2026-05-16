@@ -1439,12 +1439,12 @@ function showToast(message, type = 'success') {
 
 function openModal(id) {
   const el = document.getElementById(id);
-  if (el) el.classList.add('active');
+  if (el) { el.classList.add('open'); el.classList.add('active'); }
 }
 
 function closeModal(id) {
   const el = document.getElementById(id);
-  if (el) el.classList.remove('active');
+  if (el) { el.classList.remove('open'); el.classList.remove('active'); }
 }
 
 function showPage(page, btn) {
