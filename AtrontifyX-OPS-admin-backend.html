@@ -3158,115 +3158,66 @@ window.simpleDeleteUser = function(id){
   }
 };
 
-// Delegate delete clicks — fully self-contained, no external function dependency
+// Delete button click handler
 document.addEventListener('click', function(e){
-  const btn = e.target.closest('[data-delete-user]');
+  var btn = e.target.closest('[data-delete-user]');
   if (!btn) return;
   e.preventDefault();
   e.stopPropagation();
-  const id    = btn.getAttribute('data-delete-user');
-  const name  = btn.getAttribute('data-name')  || '';
-  const email = btn.getAttribute('data-email') || '';
 
-  if (!id) return;
+  var uid   = btn.getAttribute('data-delete-user');
+  var uname = btn.getAttribute('data-name')  || 'this user';
+  var email = btn.getAttribute('data-email') || '';
+  if (!uid) return;
 
-  // --- Populate modal ---
-  const avatar = document.getElementById('del-user-avatar');
-  const uname  = document.getElementById('del-user-name');
-  const uemail = document.getElementById('del-user-email');
-  const hint   = document.getElementById('del-confirm-hint');
-  const inp    = document.getElementById('del-confirm-input');
-  const confirmBtn = document.getElementById('del-confirm-btn');
-
-  const displayName  = name  || 'Unknown User';
-  const displayEmail = email || '';
-  const ini = displayName.split(/\s+/).map(function(p){ return p[0] || ''; }).join('').slice(0,2).toUpperCase() || '?';
-
-  if (avatar) avatar.textContent = ini;
-  if (uname)  uname.textContent  = displayName;
-  if (uemail) uemail.textContent = displayEmail || '—';
-  if (hint)   hint.textContent   = displayEmail || 'DELETE';
-  if (inp)  { inp.value = ''; inp.style.borderColor = ''; }
-  if (confirmBtn) {
-    confirmBtn.disabled = true;
-    confirmBtn.innerHTML = '<svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg> Delete Permanently';
-    confirmBtn.dataset.pendingId    = id;
-    confirmBtn.dataset.pendingEmail = displayEmail;
+  // Simple native confirm — 100% reliable, no modal issues
+  var msg = 'Delete user: ' + uname + (email ? ' (' + email + ')' : '') + '?\n\nThis cannot be undone. Type DELETE below to confirm.';
+  var typed = window.prompt(msg, '');
+  if (!typed || typed.trim().toUpperCase() !== 'DELETE') {
+    return; // cancelled or wrong input
   }
 
-  if (inp) {
-    inp.oninput = function() {
-      var typed = this.value.trim().toLowerCase();
-      var match = typed === 'delete' || (displayEmail && typed === displayEmail.toLowerCase());
-      if (confirmBtn) confirmBtn.disabled = !match;
-      this.style.borderColor = this.value ? (match ? 'var(--green)' : 'var(--red)') : '';
-    };
-  }
-
-  if (confirmBtn) {
-    confirmBtn.onclick = async function() {
-      var uid = this.dataset.pendingId;
-      if (!uid) return;
-      this.disabled = true;
-      this.textContent = 'Deleting…';
-
-      try {
-        var db = window.ATRONTIFY_DB;
-        if (db) {
-          var rpcResult = await db.rpc('ops_delete_user', { target_user_id: uid });
-          if (rpcResult.error) {
-            var relatedTables = ['deposits','withdrawals','transactions','trades','kyc_verifications','trading_accounts','accounts'];
-            for (var t of relatedTables) {
-              try { await db.from(t).delete().eq('user_id', uid); } catch(_) {}
-            }
-            try {
-              var profResult = await db.from('profiles').delete().eq('id', uid);
-              if (profResult.error) console.warn('Profile delete error:', profResult.error.message);
-            } catch(e) { console.warn('Profile delete exception:', e); }
+  // Do the delete
+  (async function(){
+    try {
+      var db = window.ATRONTIFY_DB;
+      if (db) {
+        // Try RPC
+        var rpc = await db.rpc('ops_delete_user', { target_user_id: uid });
+        if (rpc.error) {
+          // Fallback: delete related records then profile
+          var tables = ['deposits','withdrawals','transactions','trades','kyc_verifications','trading_accounts','accounts'];
+          for (var t of tables) {
+            try { await db.from(t).delete().eq('user_id', uid); } catch(_){}
           }
+          var pr = await db.from('profiles').delete().eq('id', uid);
+          if (pr.error) console.warn('Profile delete:', pr.error.message);
         }
-
-        // Remove from local array
-        if (window.USERS && Array.isArray(window.USERS)) {
-          window.USERS = window.USERS.filter(function(u){ return String(u.id) !== String(uid); });
-        }
-
-        // Remove row from DOM
-        document.querySelectorAll('[data-delete-user="' + uid + '"]').forEach(function(el){
-          var row = el.closest('tr');
-          if (row) row.remove();
-        });
-
-        // Re-render
-        if (typeof renderUsers === 'function') renderUsers();
-        if (typeof renderRecentUsers === 'function') renderRecentUsers();
-
-        // Close modal
-        var overlay = document.getElementById('modal-delete-user');
-        if (overlay) { overlay.classList.remove('open'); overlay.classList.remove('active'); }
-
-        // Toast
-        var toast = document.getElementById('toast');
-        var toastMsg = document.getElementById('toast-msg');
-        if (toast && toastMsg) {
-          toastMsg.textContent = 'User deleted successfully';
-          toast.className = 'toast success show';
-          setTimeout(function(){ toast.classList.remove('show'); }, 3200);
-        }
-
-      } catch(err) {
-        console.error('Delete error:', err);
-        alert('Delete failed: ' + (err.message || err));
-        this.disabled = false;
-        this.textContent = 'Delete Permanently';
       }
-    };
-  }
 
-  // Open modal
-  var overlay = document.getElementById('modal-delete-user');
-  if (overlay) { overlay.classList.add('open'); overlay.classList.add('active'); }
-  setTimeout(function(){ if(inp) inp.focus(); }, 120);
+      // Remove from local array
+      if (window.USERS) window.USERS = window.USERS.filter(function(u){ return String(u.id) !== String(uid); });
+
+      // Remove row from DOM
+      var row = btn.closest('tr');
+      if (row) row.remove();
+
+      // Re-render counts
+      if (typeof renderUsers === 'function') renderUsers();
+      if (typeof renderRecentUsers === 'function') renderRecentUsers();
+
+      // Toast
+      var toast = document.getElementById('toast');
+      var toastMsg = document.getElementById('toast-msg');
+      if (toast && toastMsg) {
+        toastMsg.textContent = 'User deleted successfully';
+        toast.className = 'toast success show';
+        setTimeout(function(){ toast.classList.remove('show'); }, 3200);
+      }
+    } catch(err) {
+      alert('Delete failed: ' + (err.message || err));
+    }
+  })();
 });
 
 </script>
