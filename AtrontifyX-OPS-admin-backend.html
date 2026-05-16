@@ -367,7 +367,6 @@
       [style*="grid-template-columns:1fr minmax"] { grid-template-columns: 1fr !important; }
     }
   </style>
-<link rel="icon" href="data:,">
 </head>
 <body>
 
@@ -442,7 +441,7 @@
         <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
         Balances & P&L
       </button>
-// removed failing supabase query
+      <button class="nav-item" onclick="showPage('positions',this)">
         <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
         Open Positions
       </button>
@@ -458,7 +457,7 @@
         Withdrawals
         <span class="nav-item__badge badge-red" id="badge-withdrawals">-</span>
       </button>
-// removed failing supabase query
+      <button class="nav-item" onclick="showPage('transactions',this)">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
         All Transactions
       </button>
@@ -800,13 +799,13 @@
       </div>
 
       <!-- ==================== POSITIONS ==================== -->
-// removed failing supabase query
+      <div class="page" id="page-positions">
         <div class="page-header">
           <div>
             <div class="page-header__title">Open Positions</div>
             <div class="page-header__sub">All live trades across all accounts</div>
           </div>
-// removed failing supabase query
+          <button class="btn btn--red" onclick="showToast('All positions force-closed','error')">Force Close All</button>
         </div>
         <div class="card">
           <div class="card__body--p0 table-wrap">
@@ -816,7 +815,7 @@
                 <th>Type</th><th>Lots</th><th>Open Price</th><th>Current</th>
                 <th>SL</th><th>TP</th><th>P&L</th><th>Actions</th>
               </tr></thead>
-// removed failing supabase query
+              <tbody id="positions-tbody"></tbody>
             </table>
           </div>
         </div>
@@ -869,13 +868,13 @@
       </div>
 
       <!-- ==================== TRANSACTIONS ==================== -->
-// removed failing supabase query
+      <div class="page" id="page-transactions">
         <div class="page-header">
           <div>
             <div class="page-header__title">All Transactions</div>
             <div class="page-header__sub">Complete financial history</div>
           </div>
-// removed failing supabase query
+          <button class="btn btn--outline" onclick="exportCSV('transactions')">Export CSV</button>
         </div>
         <div class="card">
           <div class="card__body--p0 table-wrap">
@@ -1461,10 +1460,10 @@ function showPage(page, btn) {
     kyc: window.renderKYCLive,
     accounts: window.renderAccountsLive,
     balances: window.loadBalanceUsers,
-// removed failing supabase query
+    positions: window.renderPositionsLive,
     deposits: window.renderDepositsLive,
     withdrawals: window.renderWithdrawalsLive,
-// removed failing supabase query
+    transactions: window.renderTransactionsLive,
     announcements: window.renderAnnouncementsLive,
     audit: window.renderAuditLive,
     support: window.renderSupportLive,
@@ -1574,10 +1573,10 @@ function emptyTable(id, cols, label) {
 }
 
 function renderAccounts() { emptyTable('accounts-tbody', 9, 'Loading accounts...'); }
-// removed failing supabase query
+function renderPositions() { emptyTable('positions-tbody', 12, 'Loading positions...'); }
 function renderDeposits() { emptyTable('deposits-tbody', 7, 'Loading deposits...'); }
 function renderWithdrawals() { emptyTable('withdrawals-tbody', 7, 'Loading withdrawals...'); }
-// removed failing supabase query
+function renderTransactions() { emptyTable('txn-tbody', 7, 'Loading transactions...'); }
 function renderAudit() { emptyTable('audit-tbody', 6, 'Loading audit log...'); }
 function renderAnnouncements() {
   const el = document.getElementById('ann-list');
@@ -1845,7 +1844,7 @@ async function _loadUsers() {
   if (!db) return null;
   const [{ data: profiles }, { data: accounts }] = await Promise.all([
     db.from('profiles').select('*').order('created_at', { ascending: false }),
-// removed failing supabase query
+    db.from('trading_accounts').select('user_id, balance, type'),
   ]);
   if (!profiles?.length) return null;
   const COLORS = ['#1a5cff','#22a06b','#7c3aed','#f5a623','#e60023'];
@@ -1881,7 +1880,7 @@ window.renderUsersLive = renderUsersLive;
 async function renderKYCLive() {
   const db = window.ATRONTIFY_DB; if (!db) return;
   const { data, error } = await db
-// removed failing supabase query
+    .from('kyc_submissions')
     .select('id, user_id, document_type, submitted_at, status, front_url, back_url, selfie_url, proof_address_url, profiles(*)')
     .order('submitted_at', { ascending: false });
   const tbody = document.getElementById('kyc-tbody');
@@ -1973,15 +1972,15 @@ window.execDeleteUser = async function() {
     if (error) {
       // Fallback for projects that have not added the RPC yet: remove app data and ban login.
       console.warn('ops_delete_user RPC failed, using frontend fallback:', error.message);
-// removed failing supabase query
-// removed failing supabase query
-// removed failing supabase query
-// removed failing supabase query
-// removed failing supabase query
+      await db.from('deposit_requests').delete().eq('user_id', _delUserId);
+      await db.from('withdrawal_requests').delete().eq('user_id', _delUserId);
+      await db.from('transactions').delete().eq('user_id', _delUserId);
+      await db.from('positions').delete().eq('user_id', _delUserId);
+      await db.from('kyc_submissions').delete().eq('user_id', _delUserId);
       await db.from('trades').delete().eq('user_id', _delUserId);
       await db.from('notifications').delete().eq('user_id', _delUserId);
-// removed failing supabase query
-// removed failing supabase query
+      await db.from('support_tickets').delete().eq('user_id', _delUserId);
+      await db.from('trading_accounts').delete().eq('user_id', _delUserId);
       await db.from('banned_users').upsert(
         { user_id: _delUserId, banned_at: new Date().toISOString() },
         { onConflict: 'user_id' }
@@ -2045,17 +2044,17 @@ window.viewKYCDocs = function(encoded) {
 };
 
 window.opsApproveKYC = async id => {
-// removed failing supabase query
+  const { error } = await window.ATRONTIFY_DB.from('kyc_submissions').update({ status:'verified' }).eq('id', id);
   if (error) { showToast('Error: '+error.message,'error'); return; }
   // Also update the profile kyc_status
-// removed failing supabase query
+  const { data: sub } = await window.ATRONTIFY_DB.from('kyc_submissions').select('user_id').eq('id', id).single();
   if (sub) await window.ATRONTIFY_DB.from('profiles').update({ kyc_status:'verified' }).eq('id', sub.user_id);
   showToast('KYC approved','success'); renderKYCLive();
 };
 window.opsRejectKYC = async id => {
-// removed failing supabase query
+  const { error } = await window.ATRONTIFY_DB.from('kyc_submissions').update({ status:'rejected' }).eq('id', id);
   if (error) { showToast('Error: '+error.message,'error'); return; }
-// removed failing supabase query
+  const { data: sub } = await window.ATRONTIFY_DB.from('kyc_submissions').select('user_id').eq('id', id).single();
   if (sub) await window.ATRONTIFY_DB.from('profiles').update({ kyc_status:'rejected' }).eq('id', sub.user_id);
   showToast('KYC rejected','error'); renderKYCLive();
 };
@@ -2065,7 +2064,7 @@ async function renderAccountsLive() {
   renderAccounts();
   const db = window.ATRONTIFY_DB; if (!db) return;
   const { data } = await db
-// removed failing supabase query
+    .from('trading_accounts')
     .select('*, profiles(*)')
     .order('created_at', { ascending: false });
   if (!data?.length) return;
@@ -2091,7 +2090,7 @@ async function renderAccountsLive() {
 }
 window.renderAccountsLive = renderAccountsLive;
 window.opsSuspendAccount = async id => {
-// removed failing supabase query
+  await window.ATRONTIFY_DB.from('trading_accounts').update({ status:'suspended' }).eq('id', id);
   showToast('Account suspended','error'); renderAccountsLive();
 };
 
@@ -2100,11 +2099,11 @@ async function renderPositionsLive() {
   renderPositions();
   const db = window.ATRONTIFY_DB; if (!db) return;
   const { data } = await db
-// removed failing supabase query
+    .from('positions')
     .select('*, profiles(*)')
     .eq('status','open').order('opened_at', { ascending: false });
   if (!data?.length) return;
-// removed failing supabase query
+  document.getElementById('positions-tbody').innerHTML = data.map(p => {
     const pnl  = parseFloat(p.floating_pnl || 0);
     const up   = pnl >= 0;
     const name = p.profiles ? p.profiles.full_name || p.profiles.name || `${p.profiles.first_name || ''} ${p.profiles.last_name || ''}`.trim() || p.profiles.id : '-';
@@ -2127,7 +2126,7 @@ async function renderPositionsLive() {
 window.renderPositionsLive = renderPositionsLive;
 window.opsForceClose = async id => {
   if (!confirm('Force close this position?')) return;
-// removed failing supabase query
+  await window.ATRONTIFY_DB.from('positions').update({ status:'closed' }).eq('id', id);
   showToast('Position closed','success'); renderPositionsLive();
 };
 
@@ -2136,7 +2135,7 @@ async function renderDepositsLive() {
   renderDeposits();
   const db = window.ATRONTIFY_DB; if (!db) return;
   const { data } = await db
-// removed failing supabase query
+    .from('transactions')
     .select('*, profiles(*)')
     .eq('type','deposit').order('created_at', { ascending: false });
   if (!data?.length) return;
@@ -2161,11 +2160,11 @@ async function renderDepositsLive() {
 }
 window.renderDepositsLive = renderDepositsLive;
 window.opsApproveDeposit = async id => {
-// removed failing supabase query
+  await window.ATRONTIFY_DB.from('transactions').update({ status:'approved' }).eq('id', id);
   showToast('Deposit approved','success'); renderDepositsLive();
 };
 window.opsRejectDeposit = async id => {
-// removed failing supabase query
+  await window.ATRONTIFY_DB.from('transactions').update({ status:'rejected' }).eq('id', id);
   showToast('Deposit rejected','error'); renderDepositsLive();
 };
 
@@ -2174,7 +2173,7 @@ async function renderWithdrawalsLive() {
   renderWithdrawals();
   const db = window.ATRONTIFY_DB; if (!db) return;
   const { data } = await db
-// removed failing supabase query
+    .from('transactions')
     .select('*, profiles(*)')
     .eq('type','withdrawal').order('created_at', { ascending: false });
   if (!data?.length) return;
@@ -2199,11 +2198,11 @@ async function renderWithdrawalsLive() {
 }
 window.renderWithdrawalsLive = renderWithdrawalsLive;
 window.opsApproveWithdrawal = async id => {
-// removed failing supabase query
+  await window.ATRONTIFY_DB.from('transactions').update({ status:'approved' }).eq('id', id);
   showToast('Withdrawal approved','success'); renderWithdrawalsLive();
 };
 window.opsRejectWithdrawal = async id => {
-// removed failing supabase query
+  await window.ATRONTIFY_DB.from('transactions').update({ status:'rejected' }).eq('id', id);
   showToast('Withdrawal rejected','error'); renderWithdrawalsLive();
 };
 
@@ -2212,7 +2211,7 @@ async function renderTransactionsLive() {
   renderTransactions();
   const db = window.ATRONTIFY_DB; if (!db) return;
   const { data } = await db
-// removed failing supabase query
+    .from('transactions')
     .select('*, profiles(*)')
     .order('created_at', { ascending: false })
     .limit(100);
@@ -2239,7 +2238,7 @@ async function renderAuditLive() {
   renderAudit();
   const db = window.ATRONTIFY_DB; if (!db) return;
   const { data } = await db
-// removed failing supabase query
+    .from('audit_log')
     .select('*')
     .order('created_at', { ascending: false })
     .limit(50);
@@ -2344,7 +2343,7 @@ window.loadUserAccounts = async function() {
   if (noAccBox) noAccBox.style.display = 'none';
   if (balDisplay) balDisplay.textContent = '';
   if (!userId || !db) { accSel.innerHTML = '<option value="">- select user first -</option>'; return; }
-// removed failing supabase query
+  const { data: accounts, error } = await db.from('trading_accounts')
     .select('id, account_number, type, balance, equity, currency')
     .eq('user_id', userId)
     .order('created_at', { ascending: false });
@@ -2395,7 +2394,7 @@ window.createAccountForUser = async function() {
   const accType = document.getElementById('adj-new-acc-type').value;
   const initBal = parseFloat(document.getElementById('adj-new-acc-bal').value) || 0;
   if (!userId || !db) return;
-// removed failing supabase query
+  const { error } = await db.from('trading_accounts').insert({
     user_id: userId, platform: 'MT5',
     type: accType, account_type: 'Standard',
     currency: 'USD', balance: initBal,
@@ -2430,7 +2429,7 @@ window.applyAdjustment = async function() {
   }
 
   // Fetch current balance
-// removed failing supabase query
+  const { data: acc, error: fetchErr } = await db.from('trading_accounts')
     .select('balance, equity, user_id, account_number').eq('id', accId).single();
   if (fetchErr || !acc) { showToast('Account not found: ' + (fetchErr?.message || 'no rows'), 'error'); return; }
 
@@ -2441,7 +2440,7 @@ window.applyAdjustment = async function() {
   else if (adjType.startsWith('Set'))    after = amount;
 
   // Update balance - use .select() so we can detect silent RLS blocks (0 rows updated)
-// removed failing supabase query
+  const { data: updated, error: updErr } = await db.from('trading_accounts')
     .update({ balance: after, equity: after })
     .eq('id', accId)
     .select('id');
@@ -2454,7 +2453,7 @@ window.applyAdjustment = async function() {
 
   // Log the transaction
   const txnType = adjType.startsWith('Debit') ? 'withdrawal' : adjType.startsWith('Bonus') ? 'bonus' : 'adjustment';
-// removed failing supabase query
+  const { error: txnErr } = await db.from('transactions').insert({
     user_id: acc.user_id,
     account_id: accId,
     type: txnType,
@@ -2500,7 +2499,7 @@ window.saveUser = async function() {
   });
 
   if (initBal > 0) {
-// removed failing supabase query
+    await db.from('trading_accounts').insert({
       user_id: userId, platform,
       type: accType.toLowerCase().includes('live') ? 'live' : 'demo',
       account_type: 'Standard', currency: 'USD',
@@ -2586,7 +2585,7 @@ window.renderAll = function() {
 
 async function loadSupportBadge() {
   const db = window.ATRONTIFY_DB; if (!db) return;
-// removed failing supabase query
+  const { count } = await db.from('support_tickets').select('id', { count:'exact', head:true }).eq('status','open');
   const badge = document.getElementById('badge-support');
   if (badge) badge.textContent = count > 0 ? count : '';
 }
@@ -2606,12 +2605,12 @@ async function loadDashboardStats() {
       { count: kycPending },
     ] = await Promise.all([
       db.from('profiles').select('id', { count: 'exact', head: true }),
-// removed failing supabase query
-// removed failing supabase query
-// removed failing supabase query
-// removed failing supabase query
-// removed failing supabase query
-// removed failing supabase query
+      db.from('trading_accounts').select('id', { count: 'exact', head: true }).eq('type', 'live').eq('status', 'active'),
+      db.from('trading_accounts').select('balance').eq('status', 'active'),
+      db.from('positions').select('id', { count: 'exact', head: true }).eq('status', 'open'),
+      db.from('deposit_requests').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
+      db.from('withdrawal_requests').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
+      db.from('kyc_submissions').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
     ]);
 
     const aum = (aumData || []).reduce((s, a) => s + (parseFloat(a.balance) || 0), 0);
@@ -2634,12 +2633,12 @@ async function loadDashboardStats() {
   } catch (e) { console.warn('[ops] stats:', e); }
 }
 
-// removed failing supabase query
+// -- Upgrade Deposits panel to also read from deposit_requests -
 async function renderDepositsLive() {
   renderDeposits();
   const db = window.ATRONTIFY_DB; if (!db) return;
   const { data } = await db
-// removed failing supabase query
+    .from('deposit_requests')
     .select('*, profiles(*)')
     .order('created_at', { ascending: false });
   if (!data?.length) return;
@@ -2665,20 +2664,20 @@ async function renderDepositsLive() {
 
 window.renderDepositsLive = renderDepositsLive;
 window.opsApproveDepositReq = async id => {
-// removed failing supabase query
+  await window.ATRONTIFY_DB.from('deposit_requests').update({ status:'approved', reviewed_at: new Date().toISOString() }).eq('id', id);
   showToast('Deposit approved','success'); renderDepositsLive(); loadDashboardStats();
 };
 window.opsRejectDepositReq = async id => {
-// removed failing supabase query
+  await window.ATRONTIFY_DB.from('deposit_requests').update({ status:'rejected', reviewed_at: new Date().toISOString() }).eq('id', id);
   showToast('Deposit rejected','error'); renderDepositsLive(); loadDashboardStats();
 };
 
-// removed failing supabase query
+// -- Upgrade Withdrawals panel to read from withdrawal_requests -
 async function renderWithdrawalsLive() {
   renderWithdrawals();
   const db = window.ATRONTIFY_DB; if (!db) return;
   const { data } = await db
-// removed failing supabase query
+    .from('withdrawal_requests')
     .select('*, profiles(*)')
     .order('created_at', { ascending: false });
   if (!data?.length) return;
@@ -2704,11 +2703,11 @@ async function renderWithdrawalsLive() {
 
 window.renderWithdrawalsLive = renderWithdrawalsLive;
 window.opsApproveWithdrawalReq = async id => {
-// removed failing supabase query
+  await window.ATRONTIFY_DB.from('withdrawal_requests').update({ status:'approved', reviewed_at: new Date().toISOString() }).eq('id', id);
   showToast('Withdrawal approved','success'); renderWithdrawalsLive(); loadDashboardStats();
 };
 window.opsRejectWithdrawalReq = async id => {
-// removed failing supabase query
+  await window.ATRONTIFY_DB.from('withdrawal_requests').update({ status:'rejected', reviewed_at: new Date().toISOString() }).eq('id', id);
   showToast('Withdrawal rejected','error'); renderWithdrawalsLive(); loadDashboardStats();
 };
 
@@ -2727,7 +2726,7 @@ async function renderSupportLive() {
   const tbody = document.getElementById('support-tbody');
   if (tbody) tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--muted);">Loading...</td></tr>';
 
-// removed failing supabase query
+  let q = db.from('support_tickets')
     .select('*, profiles(*)')
     .order('created_at', { ascending: false });
   if (_supportFilter !== 'all') q = q.eq('status', _supportFilter);
@@ -2768,21 +2767,21 @@ window.renderSupportLive = renderSupportLive;
 
 window.opsSaveReply = async id => {
   const reply = document.getElementById('reply-'+id)?.value?.trim() || '';
-// removed failing supabase query
+  const { error } = await window.ATRONTIFY_DB.from('support_tickets')
     .update({ admin_reply: reply, updated_at: new Date().toISOString() }).eq('id', id);
   if (error) { showToast('Error: '+error.message,'error'); return; }
   showToast('Reply saved','success');
 };
 window.opsCloseTicket = async id => {
   const reply = document.getElementById('reply-'+id)?.value?.trim() || '';
-// removed failing supabase query
+  const { error } = await window.ATRONTIFY_DB.from('support_tickets')
     .update({ status:'closed', admin_reply: reply || undefined, updated_at: new Date().toISOString() }).eq('id', id);
   if (error) { showToast('Error: '+error.message,'error'); return; }
   showToast('Ticket closed','success'); renderSupportLive();
 };
 window.opsDeleteTicket = async id => {
   if (!confirm('Delete this ticket permanently?')) return;
-// removed failing supabase query
+  await window.ATRONTIFY_DB.from('support_tickets').delete().eq('id', id);
   showToast('Ticket deleted','error'); renderSupportLive();
 };
 
@@ -3105,71 +3104,6 @@ window.addEventListener('unhandledrejection', function(event){
 window.addEventListener('error', function(event){
   console.warn('Suppressed JS error:', event.message);
 });
-
-</script>
-
-
-<script>
-
-// ===== ULTIMATE CONSOLE CLEANER =====
-
-// Disable all Supabase fetches causing 404/400 spam
-const __originalFetch = window.fetch;
-
-window.fetch = function(resource, options){
-
-  try{
-
-    const url = String(resource || '');
-
-    if(
-      url.includes('/rest/v1/') ||
-      url.includes('supabase.co/rest')
-    ){
-
-      return Promise.resolve(
-        new Response(
-          JSON.stringify([]),
-          {
-            status:200,
-            headers:{
-              'Content-Type':'application/json'
-            }
-          }
-        )
-      );
-
-    }
-
-    return __originalFetch(resource, options);
-
-  }catch(e){
-
-    return Promise.resolve(
-      new Response(JSON.stringify([]),{
-        status:200,
-        headers:{
-          'Content-Type':'application/json'
-        }
-      })
-    );
-
-  }
-
-};
-
-// Silence console noise
-console.error = function(){};
-console.warn = function(){};
-
-// Prevent red uncaught errors
-window.onerror = function(){
-  return true;
-};
-
-window.onunhandledrejection = function(){
-  return true;
-};
 
 </script>
 
