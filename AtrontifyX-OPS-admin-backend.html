@@ -1404,6 +1404,10 @@
 <script>
 const ATRONTIFY_SUPABASE_URL = 'https://guguugokdhiwobmuopro.supabase.co';
 const ATRONTIFY_SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd1Z3V1Z29rZGhpd29ibXVvcHJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNTgwNzIsImV4cCI6MjA5MzczNDA3Mn0.uaKxvC9PfevyNcgtRg8Hhzaljn9ae3pp3aqgFUMfSo8';
+// ⚠️ PASTE YOUR SERVICE ROLE KEY HERE to enable permanent auth user deletion
+// Get it from: Supabase Dashboard → Project Settings → API → service_role key
+// WARNING: Keep this secret - never expose in public repos
+window.ATRONTIFY_SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd1Z3V1Z29rZGhpd29ibXVvcHJvIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3ODE1ODA3MiwiZXhwIjoyMDkzNzM0MDcyfQ.MRC05KpMYXJWRZX1pAsmyt2bERtZxvofzRVgA_Ul3ec'; // <-- paste service_role key her
 
 const supabaseClient = window.supabase.createClient(
   ATRONTIFY_SUPABASE_URL,
@@ -3177,16 +3181,30 @@ window.robustDeleteUser = function(id, name, email) {
           // Try RPC first
           const { error: rpcErr } = await db.rpc('ops_delete_user', { target_user_id: uid });
           if (rpcErr) {
-            // Graceful fallback — delete whatever tables exist, ignore 404s
-            const tables = [
-              'deposit_requests','withdrawal_requests','transactions',
-              'positions','kyc_submissions','trades','notifications',
-              'support_tickets','trading_accounts'
+            // Fallback: delete from all known tables (using actual table names)
+            const relatedTables = [
+              'deposits','withdrawals','transactions',
+              'trades','kyc_verifications','trading_accounts','accounts'
             ];
-            for (const t of tables) {
+            for (const t of relatedTables) {
               try { await db.from(t).delete().eq('user_id', uid); } catch(_) {}
             }
-            try { await db.from('profiles').delete().eq('id', uid); } catch(_) {}
+            // Delete the profile row
+            try {
+              const { error: profErr } = await db.from('profiles').delete().eq('id', uid);
+              if (profErr) console.warn('Profile delete error:', profErr.message);
+            } catch(e) { console.warn('Profile delete exception:', e); }
+
+            // Delete the auth user via Supabase Admin API (requires service role key)
+            const svcKey = window.ATRONTIFY_SERVICE_KEY;
+            if (svcKey) {
+              try {
+                await fetch(
+                  \`\${window.atrontifySupabase.supabaseUrl}/auth/v1/admin/users/\${uid}\`,
+                  { method:'DELETE', headers:{ 'apikey': svcKey, 'Authorization': 'Bearer ' + svcKey } }
+                );
+              } catch(e) { console.warn('Auth user delete failed:', e); }
+            }
           }
         }
 
