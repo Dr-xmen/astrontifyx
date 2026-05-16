@@ -1544,7 +1544,7 @@ window.robustDeleteUser = function(id, name, email) {
             if (svcKey) {
               try {
                 await fetch(
-                  \`\${window.atrontifySupabase.supabaseUrl}/auth/v1/admin/users/\${uid}\`,
+                  `${window.atrontifySupabase.supabaseUrl}/auth/v1/admin/users/${uid}`,
                   { method:'DELETE', headers:{ 'apikey': svcKey, 'Authorization': 'Bearer ' + svcKey } }
                 );
               } catch(e) { console.warn('Auth user delete failed:', e); }
