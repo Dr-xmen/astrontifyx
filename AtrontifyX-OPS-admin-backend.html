@@ -1524,7 +1524,7 @@ function renderUsers() {
       <td>
         <div class="row-actions">
           <button class="btn btn--sm btn--outline" onclick="resetUserPassword('${escapeHTML(user.email || '')}')">Reset</button>
-          <button type="button" class="btn btn--sm btn--red" onclick="event.preventDefault();event.stopPropagation();simpleDeleteUser('${escapeHTML(user.id || '')}')">Delete</button>
+          <button type="button" class="btn btn--sm btn--red" onclick="event.preventDefault();event.stopPropagation();confirmDeleteUser('${escapeHTML(user.id || '')}','${escapeHTML(user.name || '')}','${escapeHTML(user.email || '')}')">Delete</button>
         </div>
       </td>
     </tr>`).join('') : '<tr><td colspan="9" style="text-align:center;padding:24px;color:var(--muted);">No users found</td></tr>';
@@ -3109,12 +3109,3 @@ window.addEventListener('error', function(event){
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
