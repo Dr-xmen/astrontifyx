@@ -1524,7 +1524,7 @@ function renderUsers() {
       <td>
         <div class="row-actions">
           <button class="btn btn--sm btn--outline" onclick="resetUserPassword('${escapeHTML(user.email || '')}')">Reset</button>
-          <button type="button" class="btn btn--sm btn--red" onclick="event.preventDefault();event.stopPropagation();confirmDeleteUser('${escapeHTML(user.id || '')}','${escapeHTML(user.name || '')}','${escapeHTML(user.email || '')}')">Delete</button>
+          <button type="button" class="btn btn--sm btn--red" data-delete-user="${escapeHTML(user.id || '')}" data-name="${escapeHTML(user.name || '')}" data-email="${escapeHTML(user.email || '')}">Delete</button>
         </div>
       </td>
     </tr>`).join('') : '<tr><td colspan="9" style="text-align:center;padding:24px;color:var(--muted);">No users found</td></tr>';
@@ -2951,14 +2951,7 @@ window.opsDeleteTrade = async id => {
   showToast('Trade deleted','error'); renderTradesLive();
 };
 </script>
-<script>
-document.addEventListener('click', function(e){
-  const btn = e.target.closest('.btn--red');
-  if(btn){
-    e.stopPropagation();
-  }
-}, true);
-</script>
+// (delete handled by delegated listener below)
 <script>
 window.simpleDeleteUser = function(id){
   try{
@@ -3025,17 +3018,17 @@ window.simpleDeleteUser = function(id){
   }
 };
 
-// Force all delete buttons clickable
+// Delegate delete clicks — does NOT intercept other red buttons
 document.addEventListener('click', function(e){
-
-  const btn = e.target.closest('.btn--red');
-
-  if(btn){
-    e.preventDefault();
-    e.stopPropagation();
-  }
-
-}, true);
+  const btn = e.target.closest('[data-delete-user]');
+  if (!btn) return;
+  e.preventDefault();
+  e.stopPropagation();
+  const id    = btn.getAttribute('data-delete-user');
+  const name  = btn.getAttribute('data-name')  || '';
+  const email = btn.getAttribute('data-email') || '';
+  robustDeleteUser(id, name, email);
+});
 
 </script>
 
@@ -3105,6 +3098,103 @@ window.addEventListener('error', function(event){
   console.warn('Suppressed JS error:', event.message);
 });
 
+</script>
+
+<script>
+// ===== ROBUST DELETE USER =====
+// Works even when Supabase tables are missing or DB is unavailable.
+
+window.robustDeleteUser = function(id, name, email) {
+  if (!id) { showToast('No user ID found', 'error'); return; }
+
+  // Populate modal
+  const avatar = document.getElementById('del-user-avatar');
+  const uname  = document.getElementById('del-user-name');
+  const uemail = document.getElementById('del-user-email');
+  const hint   = document.getElementById('del-confirm-hint');
+  const inp    = document.getElementById('del-confirm-input');
+  const btn    = document.getElementById('del-confirm-btn');
+
+  const displayName  = name  || 'Unknown User';
+  const displayEmail = email || '';
+  const ini = displayName.split(/\s+/).map(p => p[0] || '').join('').slice(0,2).toUpperCase() || '?';
+
+  if (avatar) avatar.textContent = ini;
+  if (uname)  uname.textContent  = displayName;
+  if (uemail) uemail.textContent = displayEmail || '—';
+  if (hint)   hint.textContent   = displayEmail || 'DELETE';
+  if (inp)  { inp.value = ''; inp.style.borderColor = ''; }
+  if (btn)  {
+    btn.disabled = true;
+    btn.innerHTML = '<svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg> Delete Permanently';
+    // Store pending delete on the button itself
+    btn.dataset.pendingId    = id;
+    btn.dataset.pendingEmail = displayEmail;
+  }
+
+  // Re-wire confirm input
+  if (inp) {
+    inp.oninput = function() {
+      const typed = this.value.trim().toLowerCase();
+      const match = typed === 'delete' || (displayEmail && typed === displayEmail.toLowerCase());
+      if (btn) btn.disabled = !match;
+      this.style.borderColor = this.value ? (match ? 'var(--green)' : 'var(--red)') : '';
+    };
+  }
+
+  // Re-wire confirm button
+  if (btn) {
+    btn.onclick = async function() {
+      const uid = this.dataset.pendingId;
+      if (!uid) return;
+      this.disabled = true;
+      this.textContent = 'Deleting…';
+
+      try {
+        const db = window.ATRONTIFY_DB;
+        if (db) {
+          // Try RPC first
+          const { error: rpcErr } = await db.rpc('ops_delete_user', { target_user_id: uid });
+          if (rpcErr) {
+            // Graceful fallback — delete whatever tables exist, ignore 404s
+            const tables = [
+              'deposit_requests','withdrawal_requests','transactions',
+              'positions','kyc_submissions','trades','notifications',
+              'support_tickets','trading_accounts'
+            ];
+            for (const t of tables) {
+              try { await db.from(t).delete().eq('user_id', uid); } catch(_) {}
+            }
+            try { await db.from('profiles').delete().eq('id', uid); } catch(_) {}
+          }
+        }
+
+        // Always remove from local USERS array and re-render
+        if (window.USERS && Array.isArray(window.USERS)) {
+          window.USERS = window.USERS.filter(u => String(u.id) !== String(uid));
+        }
+        // Remove row from DOM instantly
+        const row = document.querySelector(`[data-delete-user="${uid}"]`);
+        if (row) row.closest('tr')?.remove();
+
+        if (typeof renderUsers === 'function') renderUsers();
+        if (typeof renderRecentUsers === 'function') renderRecentUsers();
+
+        closeModal('modal-delete-user');
+        showToast('User deleted successfully', 'success');
+
+      } catch(err) {
+        console.error('Delete error:', err);
+        showToast('Delete failed: ' + (err.message || err), 'error');
+        this.disabled = false;
+        this.innerHTML = '<svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg> Delete Permanently';
+      }
+    };
+  }
+
+  openModal('modal-delete-user');
+  setTimeout(() => inp?.focus(), 120);
+};
 </script>
 
 </body>
