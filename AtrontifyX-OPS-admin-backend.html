@@ -1401,22 +1401,9 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
 <script>
-const ATRONTIFY_SUPABASE_URL = 'https://guguugokdhiwobmuopro.supabase.co';
-const ATRONTIFY_SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd1Z3V1Z29rZGhpd29ibXVvcHJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNTgwNzIsImV4cCI6MjA5MzczNDA3Mn0.uaKxvC9PfevyNcgtRg8Hhzaljn9ae3pp3aqgFUMfSo8';
-// ⚠️ PASTE YOUR SERVICE ROLE KEY HERE to enable permanent auth user deletion
-// Get it from: Supabase Dashboard → Project Settings → API → service_role key
-// WARNING: Keep this secret - never expose in public repos
-window.ATRONTIFY_SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd1Z3V1Z29rZGhpd29ibXVvcHJvIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3ODE1ODA3MiwiZXhwIjoyMDkzNzM0MDcyfQ.MRC05KpMYXJWRZX1pAsmyt2bERtZxvofzRVgA_Ul3ec'; // <-- paste service_role key here
-
-const supabaseClient = window.supabase.createClient(
-  ATRONTIFY_SUPABASE_URL,
-  ATRONTIFY_SUPABASE_ANON_KEY,
-  { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } }
-);
-window.atrontifySupabase = supabaseClient;
-window.ATRONTIFY_DB = supabaseClient;
-window.supabaseClient = supabaseClient;
+window.ATRONTIFY_SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd1Z3V1Z29rZGhpd29ibXVvcHJvIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3ODE1ODA3MiwiZXhwIjoyMDkzNzM0MDcyfQ.MRC05KpMYXJWRZX1pAsmyt2bERtZxvofzRVgA_Ul3ec';
 
 const USERS = window.USERS || [];
 window.USERS = USERS;

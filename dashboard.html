@@ -1667,52 +1667,7 @@ function loadMarketWidget(){
 
 <!-- SUPABASE CONNECTION -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<script>
-
-/*
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-REPLACE THESE 2 VALUES WITH YOUR OWN
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-1. SUPABASE PROJECT URL
-2. SUPABASE ANON PUBLIC KEY
-
-GET THEM FROM:
-Supabase Dashboard
-→ Settings
-→ API
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-*/
-
-const SUPABASE_URL = 'https://guguugokdhiwobmuopro.supabase.co';
-
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd1Z3V1Z29rZGhpd29ibXVvcHJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNTgwNzIsImV4cCI6MjA5MzczNDA3Mn0.uaKxvC9PfevyNcgtRg8Hhzaljn9ae3pp3aqgFUMfSo8';
-
-/*
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-CREATE SUPABASE CLIENT
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-*/
-
-const supabaseClient = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_ANON_KEY
-);
-
-/*
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-MAKE CLIENT GLOBAL
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-*/
-
-window.supabaseClient = supabaseClient;
-
-console.log('Supabase Connected');
-
-</script>
-
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
 
 
 
@@ -1726,18 +1681,7 @@ console.log('Supabase Connected');
 
 <script type="module">
 
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-
-const SUPABASE_URL = 'https://guguugokdhiwobmuopro.supabase.co';
-
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd1Z3V1Z29rZGhpd29ibXVvcHJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNTgwNzIsImV4cCI6MjA5MzczNDA3Mn0.uaKxvC9PfevyNcgtRg8Hhzaljn9ae3pp3aqgFUMfSo8';
-
-const supabase = createClient(
-  SUPABASE_URL,
-  SUPABASE_ANON_KEY
-);
-
-window.supabase = supabase;
+const supabase = window.ATRONTIFY_DB;
 
 window.userData = {
   fullName: 'New User',
@@ -1849,7 +1793,7 @@ async function loadDeposits() {
     if (!authData?.user) return;
 
     const { data, error } = await supabase
-      .from('deposits')
+      .from('deposit_requests')
       .select('*')
       .eq('user_id', authData.user.id)
       .order('created_at', { ascending: false });
@@ -1880,7 +1824,7 @@ async function loadWithdrawals() {
     if (!authData?.user) return;
 
     const { data, error } = await supabase
-      .from('withdrawals')
+      .from('withdrawal_requests')
       .select('*')
       .eq('user_id', authData.user.id)
       .order('created_at', { ascending: false });
@@ -1944,15 +1888,13 @@ async function submitBankWithdrawal() {
     }
 
     const { error } = await supabase
-      .from('withdrawals')
+      .from('withdrawal_requests')
       .insert({
         user_id: authData.user.id,
-        asset: 'BANK',
         amount: amount,
-        wallet_address:
-          bankName + ' | ' +
-          accountName + ' | ' +
-          accountNumber,
+        destination_type: 'bank',
+        destination_name: bankName,
+        destination_ref: accountName + ' | ' + accountNumber,
         status: 'pending'
       });
 
@@ -2065,13 +2007,13 @@ async function submitWithdrawal() {
     }
 
     const { error } = await supabase
-      .from('withdrawals')
+      .from('withdrawal_requests')
       .insert({
         user_id: user.id,
         amount: amount,
-        asset: 'BTC',
-        wallet_address: wallet,
-        method: 'crypto',
+        destination_type: 'crypto',
+        destination_name: 'BTC',
+        destination_ref: wallet,
         status: 'pending'
       });
 
