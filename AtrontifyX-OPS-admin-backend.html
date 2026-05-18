@@ -2898,6 +2898,9 @@ window.applyAdjustment = async function() {
   });
   if (txnErr) console.warn('Transaction log failed:', txnErr.message);
 
+  // Sync profiles.balance so the user dashboard reflects the change immediately
+  await db.from('profiles').update({ balance: after, equity: after }).eq('id', acc.user_id);
+
   showToast(`Balance updated: $${before.toFixed(2)} -> $${after.toFixed(2)}`, 'success');
   // Clear input fields
   document.getElementById('adj-amount').value = '';
@@ -3098,8 +3101,25 @@ async function renderDepositsLive() {
 
 window.renderDepositsLive = renderDepositsLive;
 window.opsApproveDepositReq = async id => {
-  await window.ATRONTIFY_DB.from('deposit_requests').update({ status:'approved', reviewed_at: new Date().toISOString() }).eq('id', id);
-  showToast('Deposit approved','success'); renderDepositsLive(); loadDashboardStats();
+  const db = window.ATRONTIFY_DB;
+  // Fetch the deposit row to get user_id and amount
+  const { data: dep } = await db.from('deposit_requests').select('user_id, amount').eq('id', id).single();
+  await db.from('deposit_requests').update({ status:'approved', reviewed_at: new Date().toISOString() }).eq('id', id);
+  if (dep?.user_id && dep?.amount) {
+    // Credit the user's profile balance
+    const { data: prof } = await db.from('profiles').select('balance').eq('id', dep.user_id).single();
+    const newBal = parseFloat(prof?.balance || 0) + parseFloat(dep.amount);
+    await db.from('profiles').update({ balance: newBal, equity: newBal }).eq('id', dep.user_id);
+    // Credit the user's primary trading account
+    const { data: accs } = await db.from('trading_accounts').select('id, balance').eq('user_id', dep.user_id).eq('status','active').limit(1);
+    if (accs?.length) {
+      const accBal = parseFloat(accs[0].balance || 0) + parseFloat(dep.amount);
+      await db.from('trading_accounts').update({ balance: accBal, equity: accBal }).eq('id', accs[0].id);
+    }
+    // Log transaction
+    await db.from('transactions').insert({ user_id: dep.user_id, type:'deposit', amount: dep.amount, status:'completed', description:'Deposit approved by admin' });
+  }
+  showToast('Deposit approved — balance credited','success'); renderDepositsLive(); loadDashboardStats();
 };
 window.opsRejectDepositReq = async id => {
   await window.ATRONTIFY_DB.from('deposit_requests').update({ status:'rejected', reviewed_at: new Date().toISOString() }).eq('id', id);
@@ -3137,8 +3157,25 @@ async function renderWithdrawalsLive() {
 
 window.renderWithdrawalsLive = renderWithdrawalsLive;
 window.opsApproveWithdrawalReq = async id => {
-  await window.ATRONTIFY_DB.from('withdrawal_requests').update({ status:'approved', reviewed_at: new Date().toISOString() }).eq('id', id);
-  showToast('Withdrawal approved','success'); renderWithdrawalsLive(); loadDashboardStats();
+  const db = window.ATRONTIFY_DB;
+  // Fetch the withdrawal row to get user_id and amount
+  const { data: wd } = await db.from('withdrawal_requests').select('user_id, amount').eq('id', id).single();
+  await db.from('withdrawal_requests').update({ status:'approved', reviewed_at: new Date().toISOString() }).eq('id', id);
+  if (wd?.user_id && wd?.amount) {
+    // Debit the user's profile balance
+    const { data: prof } = await db.from('profiles').select('balance').eq('id', wd.user_id).single();
+    const newBal = Math.max(0, parseFloat(prof?.balance || 0) - parseFloat(wd.amount));
+    await db.from('profiles').update({ balance: newBal, equity: newBal }).eq('id', wd.user_id);
+    // Debit the user's primary trading account
+    const { data: accs } = await db.from('trading_accounts').select('id, balance').eq('user_id', wd.user_id).eq('status','active').limit(1);
+    if (accs?.length) {
+      const accBal = Math.max(0, parseFloat(accs[0].balance || 0) - parseFloat(wd.amount));
+      await db.from('trading_accounts').update({ balance: accBal, equity: accBal }).eq('id', accs[0].id);
+    }
+    // Log transaction
+    await db.from('transactions').insert({ user_id: wd.user_id, type:'withdrawal', amount: wd.amount, status:'completed', description:'Withdrawal approved by admin' });
+  }
+  showToast('Withdrawal approved — balance debited','success'); renderWithdrawalsLive(); loadDashboardStats();
 };
 window.opsRejectWithdrawalReq = async id => {
   await window.ATRONTIFY_DB.from('withdrawal_requests').update({ status:'rejected', reviewed_at: new Date().toISOString() }).eq('id', id);
