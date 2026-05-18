@@ -562,7 +562,7 @@ left:0 !important;
       </div>
     </nav>
     <div class="sidebar-bottom">
-      <div class="nav-item" style="color:var(--red)">
+      <div class="nav-item" style="color:var(--red)" onclick="signOut()">
         <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
         <span class="nav-label">Sign Out</span>
       </div>
@@ -1725,15 +1725,20 @@ async function loadUserProfile() {
       return;
     }
 
-    const firstName = profile.first_name || '';
-    const lastName = profile.last_name || '';
+    const firstName = profile.first_name || user.user_metadata?.first_name || '';
+    const lastName  = profile.last_name  || user.user_metadata?.last_name  || '';
+    const emailName = (user.email || '').split('@')[0];
 
     const fullName =
-      `${firstName} ${lastName}`.trim() || 'New User';
+      `${firstName} ${lastName}`.trim() ||
+      user.user_metadata?.full_name ||
+      user.user_metadata?.name ||
+      emailName ||
+      'User';
 
-    const initials =
-      `${firstName.charAt(0)}${lastName.charAt(0)}`
-        .toUpperCase() || 'NU';
+    const initials = (firstName && lastName)
+      ? `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase()
+      : fullName.charAt(0).toUpperCase();
 
     window.userData = {
       fullName,
@@ -2056,7 +2061,18 @@ async function submitWithdrawal() {
 window.submitBankWithdrawal = submitBankWithdrawal;
 window.submitWithdrawal = submitWithdrawal;
 
+async function signOut() {
+  await supabase.auth.signOut();
+  window.location.href = 'login.html';
+}
+window.signOut = signOut;
+
 window.addEventListener('load', async () => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    window.location.href = 'login.html';
+    return;
+  }
   await loadUserProfile();
   await loadDeposits();
   await loadWithdrawals();
