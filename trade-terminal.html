@@ -109,11 +109,7 @@
               <button id="btnBuy" onclick="setDir('buy')" style="flex:1;padding:10px;border:none;background:var(--green);color:#fff;cursor:pointer;font-family:inherit;font-size:14px;font-weight:700;transition:all .2s">BUY</button>
               <button id="btnSell" onclick="setDir('sell')" style="flex:1;padding:10px;border:none;background:transparent;color:var(--text2);cursor:pointer;font-family:inherit;font-size:14px;font-weight:700;transition:all .2s">SELL</button>
             </div>
-            <div class="grid g3" style="gap:7px;margin-bottom:13px;text-align:center">
-              <div class="card-sm" style="padding:10px"><div style="font-size:9.5px;color:var(--text3)">BID</div><div class="mono dn" style="font-size:13.5px;font-weight:700">67,188</div></div>
-              <div class="card-sm" style="padding:10px"><div style="font-size:9.5px;color:var(--text3)">SPREAD</div><div class="mono" style="font-size:13.5px;font-weight:600">46</div></div>
-              <div class="card-sm" style="padding:10px"><div style="font-size:9.5px;color:var(--text3)">ASK</div><div class="mono up" style="font-size:13.5px;font-weight:700">67,234</div></div>
-            </div>
+            <div id="tvQuoteWrap" style="height:70px;overflow:hidden;margin-bottom:13px"></div>
             <div style="display:flex;border:1px solid var(--border2);border-radius:10px;overflow:hidden;margin-bottom:13px">
               <button id="btnMkt" onclick="setOrder('market')" style="flex:1;padding:7px;border:none;background:var(--bg4);color:var(--text1);cursor:pointer;font-family:inherit;font-size:12px;font-weight:600;transition:all .2s">Market</button>
               <button id="btnLmt" onclick="setOrder('limit')" style="flex:1;padding:7px;border:none;background:transparent;color:var(--text3);cursor:pointer;font-family:inherit;font-size:12px;font-weight:600;transition:all .2s">Limit</button>
@@ -161,12 +157,12 @@
             <div class="section-hdr">
               <span class="section-title"><span class="live-dot"></span><span id="chartTitle">BTC/USD</span></span>
               <div style="display:flex;gap:4px">
-                <button class="btn btn-outline btn-sm" style="padding:4px 8px;font-size:11px">1M</button>
-                <button class="btn btn-outline btn-sm" style="padding:4px 8px;font-size:11px">5M</button>
-                <button class="btn btn-outline btn-sm" style="padding:4px 8px;font-size:11px">15M</button>
-                <button class="btn btn-outline btn-sm" style="padding:4px 8px;font-size:11px">1H</button>
-                <button class="btn btn-outline btn-sm" style="padding:4px 8px;font-size:11px">4H</button>
-                <button class="btn btn-outline btn-sm" style="padding:4px 8px;font-size:11px">1D</button>
+                <button class="btn btn-outline btn-sm" style="padding:4px 8px;font-size:11px" onclick="setChartInterval('1M')">1M</button>
+                <button class="btn btn-outline btn-sm" style="padding:4px 8px;font-size:11px" onclick="setChartInterval('5M')">5M</button>
+                <button class="btn btn-outline btn-sm" style="padding:4px 8px;font-size:11px;background:var(--accent2);color:#fff;border-color:var(--accent2)" id="ivBtn15M" onclick="setChartInterval('15M')">15M</button>
+                <button class="btn btn-outline btn-sm" style="padding:4px 8px;font-size:11px" onclick="setChartInterval('1H')">1H</button>
+                <button class="btn btn-outline btn-sm" style="padding:4px 8px;font-size:11px" onclick="setChartInterval('4H')">4H</button>
+                <button class="btn btn-outline btn-sm" style="padding:4px 8px;font-size:11px" onclick="setChartInterval('1D')">1D</button>
               </div>
             </div>
             <div style="flex:1;min-height:500px">
@@ -190,7 +186,69 @@
 <script src="https://s3.tradingview.com/tv.js"></script>
 <script src="shared.js"></script>
 <script>
-let tradeDir = 'buy', orderType = 'market';
+var tradeDir = 'buy', orderType = 'market';
+
+var TV_SYMBOLS = {
+  'BTC/USD': 'BINANCE:BTCUSDT',
+  'ETH/USD': 'BINANCE:ETHUSDT',
+  'EUR/USD': 'FX:EURUSD',
+  'GBP/USD': 'FX:GBPUSD',
+  'XAU/USD': 'OANDA:XAUUSD',
+  'AAPL':    'NASDAQ:AAPL'
+};
+
+var TV_INTERVALS = {
+  '1M': '1', '5M': '5', '15M': '15', '1H': '60', '4H': '240', '1D': 'D'
+};
+
+var _currentInterval = '15M';
+
+function loadQuoteWidget(tvSym) {
+  var wrap = document.getElementById('tvQuoteWrap');
+  if (!wrap) return;
+  wrap.innerHTML = '';
+  var container = document.createElement('div');
+  container.className = 'tradingview-widget-container';
+  container.style.cssText = 'height:100%;width:100%';
+  var inner = document.createElement('div');
+  inner.className = 'tradingview-widget-container__widget';
+  inner.style.cssText = 'height:100%;width:100%';
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js';
+  script.async = true;
+  script.textContent = JSON.stringify({
+    symbol: tvSym,
+    width: '100%',
+    height: '100%',
+    locale: 'en',
+    colorTheme: 'dark',
+    isTransparent: true
+  });
+  container.appendChild(inner);
+  container.appendChild(script);
+  wrap.appendChild(container);
+}
+
+function setChartInterval(iv) {
+  _currentInterval = iv;
+  var ivLabels = ['1M','5M','15M','1H','4H','1D'];
+  document.querySelectorAll('.section-hdr .btn-outline.btn-sm').forEach(function(btn, i) {
+    var label = btn.textContent.trim();
+    if (ivLabels.indexOf(label) !== -1) {
+      if (label === iv) {
+        btn.style.background = 'var(--accent2)';
+        btn.style.color = '#fff';
+        btn.style.borderColor = 'var(--accent2)';
+      } else {
+        btn.style.background = '';
+        btn.style.color = '';
+        btn.style.borderColor = '';
+      }
+    }
+  });
+  loadTradingView(null, TV_INTERVALS[iv]);
+}
 
 function setDir(d) {
   tradeDir = d;
@@ -198,28 +256,38 @@ function setDir(d) {
   document.getElementById('btnBuy').style.color       = d==='buy'  ? '#fff' : 'var(--text2)';
   document.getElementById('btnSell').style.background = d==='sell' ? 'var(--red)'   : 'transparent';
   document.getElementById('btnSell').style.color      = d==='sell' ? '#fff' : 'var(--text2)';
-  const btn = document.getElementById('tradeBtn');
-  const sym = document.getElementById('symbolSelect')?.value || 'BTC/USD';
+  var btn = document.getElementById('tradeBtn');
+  var sym = document.getElementById('symbolSelect')?.value || 'BTC/USD';
   btn.className = 'btn ' + (d==='buy' ? 'btn-green' : 'btn-red');
-  btn.innerHTML = `<svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> ${d.toUpperCase()} ${sym}`;
+  btn.innerHTML = '<svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> ' + d.toUpperCase() + ' ' + sym;
 }
+
 function setOrder(t) {
   orderType = t;
-  ['Mkt','Lmt','Stp'].forEach((s, i) => {
-    const id = 'btn'+s;
-    const match = ['market','limit','stop'][i] === t;
+  ['Mkt','Lmt','Stp'].forEach(function(s, i) {
+    var id = 'btn'+s;
+    var match = ['market','limit','stop'][i] === t;
     document.getElementById(id).style.background = match ? 'var(--bg4)' : 'transparent';
     document.getElementById(id).style.color = match ? 'var(--text1)' : 'var(--text3)';
   });
   document.getElementById('limitPriceRow').style.display = t !== 'market' ? '' : 'none';
 }
+
 function updateSymbol() {
-  const sym = document.getElementById('symbolSelect')?.value || 'BTC/USD';
+  var sym = document.getElementById('symbolSelect')?.value || 'BTC/USD';
+  var tvSym = TV_SYMBOLS[sym] || 'BINANCE:BTCUSDT';
   document.getElementById('chartTitle').textContent = sym;
-  document.getElementById('tradeBtn').innerHTML = `<svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> ${tradeDir.toUpperCase()} ${sym}`;
+  document.getElementById('tradeBtn').innerHTML = '<svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> ' + tradeDir.toUpperCase() + ' ' + sym;
+  loadTradingView(tvSym, null);
+  loadQuoteWidget(tvSym);
 }
 
-window.addEventListener('load', () => { setTimeout(loadTradingView, 300); });
+window.addEventListener('load', function() {
+  setTimeout(function() {
+    loadTradingView('BINANCE:BTCUSDT', '15');
+    loadQuoteWidget('BINANCE:BTCUSDT');
+  }, 300);
+});
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>

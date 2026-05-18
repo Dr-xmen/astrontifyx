@@ -146,24 +146,18 @@
         <div class="card">
           <div class="section-hdr">
             <span class="section-title">Portfolio Performance</span>
-            <div class="tabs" style="margin-bottom:0">
-              <div class="tab active" style="padding:5px 11px;font-size:11.5px">1D</div>
-              <div class="tab" style="padding:5px 11px;font-size:11.5px">1W</div>
-              <div class="tab" style="padding:5px 11px;font-size:11.5px">1M</div>
-              <div class="tab" style="padding:5px 11px;font-size:11.5px">1Y</div>
+            <div class="tabs" style="margin-bottom:0" id="portfolioRangeTabs">
+              <div class="tab active" style="padding:5px 11px;font-size:11.5px" onclick="setPortfolioRange('1D')">1D</div>
+              <div class="tab" style="padding:5px 11px;font-size:11.5px" onclick="setPortfolioRange('1W')">1W</div>
+              <div class="tab" style="padding:5px 11px;font-size:11.5px" onclick="setPortfolioRange('1M')">1M</div>
+              <div class="tab" style="padding:5px 11px;font-size:11.5px" onclick="setPortfolioRange('1Y')">1Y</div>
             </div>
           </div>
-          <div class="chart-wrap" style="height:175px;margin-top:12px"><canvas id="cPortfolio"></canvas></div>
+          <div id="portfolioChartWrap" style="height:175px;margin-top:12px;overflow:hidden;border-radius:8px"></div>
         </div>
         <div class="card">
-          <div class="section-hdr"><span class="section-title">Asset Allocation</span></div>
-          <div style="height:155px;position:relative"><canvas id="cAlloc"></canvas></div>
-          <div class="grid g2" style="margin-top:12px;gap:6px;font-size:12px">
-            <div style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:2px;background:#4f6ef7;display:inline-block;flex-shrink:0"></span><span style="color:var(--text2)">Crypto</span><span style="margin-left:auto;font-weight:600">45%</span></div>
-            <div style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:2px;background:#22c55e;display:inline-block;flex-shrink:0"></span><span style="color:var(--text2)">Forex</span><span style="margin-left:auto;font-weight:600">25%</span></div>
-            <div style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:2px;background:#f59e0b;display:inline-block;flex-shrink:0"></span><span style="color:var(--text2)">Stocks</span><span style="margin-left:auto;font-weight:600">20%</span></div>
-            <div style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:2px;background:#14b8a6;display:inline-block;flex-shrink:0"></span><span style="color:var(--text2)">Metals</span><span style="margin-left:auto;font-weight:600">10%</span></div>
-          </div>
+          <div class="section-hdr"><span class="section-title">Market Performance</span></div>
+          <div id="marketPerfData" style="display:grid;gap:9px;padding:2px 0;min-height:155px"><div style="text-align:center;color:var(--text3);font-size:12px;padding:30px 0">Loading…</div></div>
         </div>
       </div>
 
@@ -181,7 +175,7 @@
         </div>
         <div class="card">
           <div class="section-hdr"><span class="section-title">Market Watch</span></div>
-          <div id="marketWatchList"></div>
+          <div id="mwContainer" style="height:280px;overflow:hidden"></div>
         </div>
       </div>
 
@@ -206,36 +200,76 @@
 
 <script src="shared.js"></script>
 <script>
-// Populate Market Watch
+// Portfolio range tabs
+function setPortfolioRange(range) {
+  document.querySelectorAll('#portfolioRangeTabs .tab').forEach(function(el) {
+    el.classList.toggle('active', el.textContent === range);
+  });
+  loadPortfolioChart(range);
+}
+
+// Market Watch widget
 (function() {
-  const items = [...COINS.slice(0,3), ...FOREX.slice(0,3)];
-  document.getElementById('marketWatchList').innerHTML = items.map(item => {
-    const sym = item.pair || item.sym, price = item.bid || item.price, chg = item.chg;
-    return `<div class="mrow">
-      <div class="a-icon" style="background:rgba(79,110,247,0.1);color:var(--accent2);font-size:11px">${item.icon||sym.slice(0,3)}</div>
-      <span style="flex:1;font-size:13px;font-weight:500">${sym}</span>
-      <span class="mono" style="font-size:12.5px">${typeof price==='number'&&price>10?price.toLocaleString():price}</span>
-      <span class="mono" style="font-size:11.5px;margin-left:8px;color:${chg>=0?'var(--green)':'var(--red)'}">${chg>=0?'+':''}${chg}%</span>
-    </div>`;
-  }).join('');
+  var wrap = document.getElementById('mwContainer');
+  if (!wrap) return;
+  var container = document.createElement('div');
+  container.className = 'tradingview-widget-container';
+  container.style.cssText = 'height:100%;width:100%';
+  var inner = document.createElement('div');
+  inner.className = 'tradingview-widget-container__widget';
+  inner.style.cssText = 'height:100%;width:100%';
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js';
+  script.async = true;
+  script.textContent = JSON.stringify({
+    colorTheme: 'dark',
+    dateRange: '1D',
+    showChart: true,
+    locale: 'en',
+    isTransparent: true,
+    showSymbolLogo: true,
+    showFloatingTooltip: false,
+    width: '100%',
+    height: '100%',
+    plotLineColorGrowing: 'rgba(41, 98, 255, 1)',
+    plotLineColorFalling: 'rgba(41, 98, 255, 1)',
+    gridLineColor: 'rgba(42, 46, 57, 0)',
+    scaleFontColor: 'rgba(120, 123, 134, 1)',
+    belowLineFillColorGrowing: 'rgba(41, 98, 255, 0.12)',
+    belowLineFillColorFalling: 'rgba(41, 98, 255, 0.02)',
+    symbolActiveColor: 'rgba(41, 98, 255, 0.12)',
+    tabs: [
+      { title: 'Forex', symbols: [{s:'FX:EURUSD'},{s:'FX:GBPUSD'},{s:'FX:USDJPY'},{s:'FX:AUDUSD'},{s:'FX:USDCAD'}], originalTitle: 'Forex' },
+      { title: 'Crypto', symbols: [{s:'BINANCE:BTCUSDT'},{s:'BINANCE:ETHUSDT'},{s:'BINANCE:SOLUSDT'},{s:'BINANCE:BNBUSDT'}], originalTitle: 'Crypto' },
+      { title: 'Metals', symbols: [{s:'OANDA:XAUUSD'},{s:'OANDA:XAGUSD'},{s:'TVC:PLATINUM'}], originalTitle: 'Metals' }
+    ]
+  });
+  container.appendChild(inner);
+  container.appendChild(script);
+  wrap.appendChild(container);
 })();
 
-// Populate Calendar
+// Calendar
 (function() {
-  const events = [
+  var events = [
     {t:'08:30',e:'US CPI MoM',i:'high',p:'0.3%',f:'0.4%'},
     {t:'10:00',e:'Fed Chair Speech',i:'high',p:'—',f:'—'},
     {t:'14:00',e:'EUR Retail Sales',i:'medium',p:'-0.8%',f:'0.3%'},
     {t:'16:30',e:'Crude Oil Stocks',i:'medium',p:'-1.2M',f:'-0.8M'},
   ];
-  document.getElementById('calendarList').innerHTML = events.map(ev => `
-    <div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)">
-      <span class="mono" style="font-size:11px;color:var(--text3);width:38px;flex-shrink:0">${ev.t}</span>
-      <span style="flex:1;font-size:12.5px">${ev.e}</span>
-      ${badge(ev.i, ev.i==='high'?'br':'ba')}
-      <div style="font-size:11px;text-align:right;color:var(--text3);flex-shrink:0"><div>Prev: ${ev.p}</div><div>Fore: ${ev.f}</div></div>
-    </div>`).join('');
+  document.getElementById('calendarList').innerHTML = events.map(function(ev) { return (
+    '<div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)">' +
+    '<span class="mono" style="font-size:11px;color:var(--text3);width:38px;flex-shrink:0">' + ev.t + '</span>' +
+    '<span style="flex:1;font-size:12.5px">' + ev.e + '</span>' +
+    badge(ev.i, ev.i==='high'?'br':'ba') +
+    '<div style="font-size:11px;text-align:right;color:var(--text3);flex-shrink:0"><div>Prev: ' + ev.p + '</div><div>Fore: ' + ev.f + '</div></div>' +
+    '</div>'
+  ); }).join('');
 })();
+
+// Load portfolio chart on startup
+loadPortfolioChart('1D');
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -249,6 +283,62 @@ function setMoney(id, value) {
   const el = document.getElementById(id);
   if (!el) return;
   el.textContent = '$' + Number(value||0).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
+}
+
+function loadMarketPerf(userId) {
+  const wrap = document.getElementById('marketPerfData');
+  if (!wrap) return;
+
+  supabase.from('trades').select('symbol,pnl').eq('user_id', userId).then(function({ data: trades }) {
+    if (!trades || !trades.length) {
+      wrap.innerHTML = '<div style="text-align:center;color:var(--text3);font-size:12px;padding:30px 0">No trade data yet</div>';
+      return;
+    }
+
+    const catColors = {
+      Crypto: '#4f6ef7', Forex: '#22c55e', Stocks: '#f59e0b',
+      Metals: '#14b8a6', Indices: '#8b5cf6', Energy: '#ef4444'
+    };
+
+    function categorizeSym(sym) {
+      const s = (sym || '').toUpperCase();
+      if (/BTC|ETH|BNB|SOL|XRP|DOGE|ADA|DOT|MATIC|AVAX/.test(s)) return 'Crypto';
+      if (/XAU|XAG|GOLD|SILVER/.test(s)) return 'Metals';
+      if (/SPX|NDX|DJI|DAX|FTSE|US30|US100|US500/.test(s)) return 'Indices';
+      if (/OIL|GAS|WTI|BRENT/.test(s)) return 'Energy';
+      if (s.length === 6 && /^[A-Z]{6}$/.test(s)) return 'Forex';
+      if (s.includes('/')) return 'Forex';
+      return 'Stocks';
+    }
+
+    const cats = {};
+    trades.forEach(function(t) {
+      const cat = categorizeSym(t.symbol);
+      if (!cats[cat]) cats[cat] = { total: 0, wins: 0 };
+      cats[cat].total++;
+      if ((t.pnl || 0) > 0) cats[cat].wins++;
+    });
+
+    const sorted = Object.keys(cats).sort(function(a, b) { return cats[b].total - cats[a].total; });
+
+    wrap.innerHTML = sorted.map(function(cat) {
+      const d = cats[cat];
+      const pct = Math.round((d.wins / d.total) * 100);
+      const color = catColors[cat] || '#4f6ef7';
+      return '<div>' +
+        '<div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;margin-bottom:5px">' +
+        '<span style="font-weight:500">' + cat + '</span>' +
+        '<span style="color:var(--text3)">' + d.total + ' trades</span>' +
+        '<span style="font-weight:600;color:' + color + '">' + pct + '% win</span>' +
+        '</div>' +
+        '<div class="progress-bar"><div class="progress-fill" style="width:' + pct + '%;background:' + color + '"></div></div>' +
+        '</div>';
+    }).join('');
+  }).catch(function(err) {
+    console.error(err);
+    const wrap2 = document.getElementById('marketPerfData');
+    if (wrap2) wrap2.innerHTML = '<div style="text-align:center;color:var(--text3);font-size:12px;padding:30px 0">No trade data yet</div>';
+  });
 }
 
 async function loadUserProfile() {
@@ -287,6 +377,8 @@ async function loadUserProfile() {
         <td style="color:var(--text3);font-size:11px">${t.opened_at ? new Date(t.opened_at).toLocaleDateString() : '—'}</td>
       </tr>`).join('');
     }
+
+    loadMarketPerf(user.id);
   } catch(err) { console.error(err); }
 }
 

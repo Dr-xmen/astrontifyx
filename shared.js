@@ -119,14 +119,19 @@ document.addEventListener('click', function(e) {
 });
 
 // ── TRADINGVIEW ────────────────────────────────────────────────────────
-function loadTradingView() {
+let _tvSymbol = 'BINANCE:BTCUSDT';
+let _tvInterval = '15';
+
+function loadTradingView(symbol, interval) {
+  if (symbol !== null && symbol !== undefined) _tvSymbol = symbol;
+  if (interval !== null && interval !== undefined) _tvInterval = interval;
   const chart = document.getElementById('tvchart');
   if (chart && window.TradingView) {
     chart.innerHTML = '';
     new TradingView.widget({
       autosize: true,
-      symbol: 'BINANCE:BTCUSDT',
-      interval: '15',
+      symbol: _tvSymbol,
+      interval: _tvInterval,
       timezone: 'Etc/UTC',
       theme: document.body.classList.contains('light') ? 'light' : 'dark',
       style: '1',
@@ -134,11 +139,103 @@ function loadTradingView() {
       toolbar_bg: 'transparent',
       enable_publishing: false,
       hide_top_toolbar: false,
-      allow_symbol_change: true,
+      allow_symbol_change: false,
       container_id: 'tvchart'
     });
   }
 }
+
+function loadPortfolioChart(range) {
+  const wrap = document.getElementById('portfolioChartWrap');
+  if (!wrap) return;
+  wrap.innerHTML = '';
+  const rangeMap = { '1D': '1D', '1W': '1W', '1M': '1M', '1Y': '12M' };
+  const tvRange = rangeMap[range] || '1D';
+  const container = document.createElement('div');
+  container.className = 'tradingview-widget-container';
+  container.style.cssText = 'height:100%;width:100%';
+  const inner = document.createElement('div');
+  inner.className = 'tradingview-widget-container__widget';
+  inner.style.cssText = 'height:100%;width:100%';
+  const script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-symbol-overview.js';
+  script.async = true;
+  script.textContent = JSON.stringify({
+    symbols: [['FOREXCOM:SPXUSD|' + tvRange]],
+    chartOnly: true,
+    width: '100%',
+    height: '100%',
+    locale: 'en',
+    colorTheme: 'dark',
+    autosize: true,
+    showVolume: false,
+    hideDateRanges: true,
+    hideMarketStatus: true,
+    hideSymbolLogo: true,
+    scalePosition: 'no',
+    scaleMode: 'Normal',
+    fontFamily: 'Space Grotesk, sans-serif',
+    fontSize: '10',
+    noTimeScale: false,
+    valuesTracking: '0',
+    changeMode: 'price-and-percent',
+    chartType: 'area',
+    lineWidth: 2,
+    lineType: 0,
+    isTransparent: true,
+    color: 'rgba(79, 110, 247, 1)',
+    lineColor: 'rgba(79, 110, 247, 1)',
+    topColor: 'rgba(79, 110, 247, 0.3)',
+    bottomColor: 'rgba(79, 110, 247, 0)'
+  });
+  container.appendChild(inner);
+  container.appendChild(script);
+  wrap.appendChild(container);
+}
+
+function loadMktOverview(containerId, symbols) {
+  const wrap = document.getElementById(containerId);
+  if (!wrap) return;
+  wrap.innerHTML = '';
+  const container = document.createElement('div');
+  container.className = 'tradingview-widget-container';
+  container.style.cssText = 'height:100%;width:100%';
+  const inner = document.createElement('div');
+  inner.className = 'tradingview-widget-container__widget';
+  inner.style.cssText = 'height:100%;width:100%';
+  const script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js';
+  script.async = true;
+  script.textContent = JSON.stringify({
+    colorTheme: 'dark',
+    dateRange: '1D',
+    showChart: false,
+    locale: 'en',
+    isTransparent: true,
+    showSymbolLogo: true,
+    showFloatingTooltip: false,
+    width: '100%',
+    height: '100%',
+    plotLineColorGrowing: 'rgba(41, 98, 255, 1)',
+    plotLineColorFalling: 'rgba(41, 98, 255, 1)',
+    gridLineColor: 'rgba(42, 46, 57, 0)',
+    scaleFontColor: 'rgba(120, 123, 134, 1)',
+    belowLineFillColorGrowing: 'rgba(41, 98, 255, 0.12)',
+    belowLineFillColorFalling: 'rgba(41, 98, 255, 0.02)',
+    symbolActiveColor: 'rgba(41, 98, 255, 0.12)',
+    tabs: [{
+      title: 'Assets',
+      symbols: symbols,
+      originalTitle: 'Assets'
+    }]
+  });
+  container.appendChild(inner);
+  container.appendChild(script);
+  wrap.appendChild(container);
+}
+
 function loadMarketWidget() {
   const market = document.getElementById('tradingview_market');
   if (market) {

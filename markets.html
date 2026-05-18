@@ -105,11 +105,8 @@
           <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px">
             <div class="a-icon" style="width:46px;height:46px;background:rgba(247,147,26,0.15);color:#f7931a;font-size:20px">₿</div>
             <div><div style="font-size:17px;font-weight:700">BTC/USD</div><div style="font-size:12px;color:var(--text3)">Bitcoin · Crypto</div></div>
-            <div style="margin-left:auto;text-align:right"><div style="font-size:26px;font-weight:700;font-family:'JetBrains Mono',monospace">67,234.50</div><div class="up" style="font-size:14px;font-weight:600">+2.14% ▲</div></div>
           </div>
-          <div class="tradingview-widget-container" style="height:140px;width:100%">
-            <div id="tradingview_market" style="height:140px"></div>
-          </div>
+          <div id="tvTopMover" style="height:200px;overflow:hidden;border-radius:8px"></div>
         </div>
         <div class="card">
           <div class="section-hdr"><span class="section-title">Market Sentiment</span></div>
@@ -130,23 +127,12 @@
         </div>
       </div>
 
-      <!-- Markets Table -->
+      <!-- Markets Table / Screener -->
       <div class="card">
         <div class="section-hdr">
           <span class="section-title" id="mktTableTitle">Forex Markets</span>
-          <div style="display:flex;gap:8px">
-            <div class="search-wrap" style="max-width:200px">
-              <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-              <input id="mktSearch" placeholder="Search..." style="height:32px;font-size:12.5px" oninput="renderTable()">
-            </div>
-          </div>
         </div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>#</th><th>Asset</th><th>Price/Bid</th><th>Ask</th><th>Change</th><th>Volume</th><th>Spread</th><th>Action</th></tr></thead>
-            <tbody id="mktTableBody"></tbody>
-          </table>
-        </div>
+        <div id="tvScreenerWrap" style="height:500px;overflow:hidden;border-radius:8px"></div>
       </div>
 
     </div>
@@ -155,52 +141,110 @@
 
 <script src="shared.js"></script>
 <script>
-let mktCat = 'forex';
+var mktCat = 'forex';
 
-const cats = ['forex','crypto','stocks','indices','metals','energy'];
-document.getElementById('mktTabs').innerHTML = cats.map(c =>
-  `<div class="tab ${c===mktCat?'active':''}" onclick="setMktCat('${c}')">${c[0].toUpperCase()+c.slice(1)}</div>`
-).join('');
+var cats = ['forex','crypto','stocks','indices','metals','energy'];
+document.getElementById('mktTabs').innerHTML = cats.map(function(c) {
+  return '<div class="tab ' + (c===mktCat?'active':'') + '" onclick="setMktCat(\'' + c + '\')">' + c[0].toUpperCase()+c.slice(1) + '</div>';
+}).join('');
+
+// Inject Top Mover symbol overview widget
+(function() {
+  var wrap = document.getElementById('tvTopMover');
+  if (!wrap) return;
+  var container = document.createElement('div');
+  container.className = 'tradingview-widget-container';
+  container.style.cssText = 'height:100%;width:100%';
+  var inner = document.createElement('div');
+  inner.className = 'tradingview-widget-container__widget';
+  inner.style.cssText = 'height:100%;width:100%';
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-symbol-overview.js';
+  script.async = true;
+  script.textContent = JSON.stringify({
+    symbols: [['BINANCE:BTCUSDT|1D']],
+    chartOnly: false,
+    width: '100%',
+    height: '100%',
+    locale: 'en',
+    colorTheme: 'dark',
+    autosize: true,
+    showVolume: false,
+    hideDateRanges: false,
+    hideMarketStatus: false,
+    hideSymbolLogo: false,
+    scalePosition: 'right',
+    scaleMode: 'Normal',
+    fontFamily: 'Space Grotesk, sans-serif',
+    fontSize: '10',
+    noTimeScale: false,
+    valuesTracking: '1',
+    changeMode: 'price-and-percent',
+    chartType: 'area',
+    lineWidth: 2,
+    lineType: 0,
+    isTransparent: true,
+    color: 'rgba(247, 147, 26, 1)',
+    lineColor: 'rgba(247, 147, 26, 1)',
+    topColor: 'rgba(247, 147, 26, 0.3)',
+    bottomColor: 'rgba(247, 147, 26, 0)'
+  });
+  container.appendChild(inner);
+  container.appendChild(script);
+  wrap.appendChild(container);
+})();
+
+function loadMktScreener(cat) {
+  var wrap = document.getElementById('tvScreenerWrap');
+  if (!wrap) return;
+  wrap.innerHTML = '';
+
+  var indicesSymbols = [{s:'FOREXCOM:SPXUSD'},{s:'FOREXCOM:NSXUSD'},{s:'TVC:DJI'},{s:'TVC:DAX'},{s:'TVC:FTSE'},{s:'TVC:NI225'}];
+  var metalsSymbols  = [{s:'OANDA:XAUUSD'},{s:'OANDA:XAGUSD'},{s:'TVC:PLATINUM'},{s:'TVC:COPPER'}];
+  var energySymbols  = [{s:'TVC:USOIL'},{s:'TVC:UKOIL'},{s:'TVC:NATURALGAS'}];
+
+  if (cat === 'indices') { loadMktOverview('tvScreenerWrap', indicesSymbols); return; }
+  if (cat === 'metals')  { loadMktOverview('tvScreenerWrap', metalsSymbols);  return; }
+  if (cat === 'energy')  { loadMktOverview('tvScreenerWrap', energySymbols);  return; }
+
+  var marketMap = { forex: 'forex', crypto: 'crypto', stocks: 'america' };
+  var market = marketMap[cat] || 'forex';
+
+  var container = document.createElement('div');
+  container.className = 'tradingview-widget-container';
+  container.style.cssText = 'height:100%;width:100%';
+  var inner = document.createElement('div');
+  inner.className = 'tradingview-widget-container__widget';
+  inner.style.cssText = 'height:100%;width:100%';
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-screener.js';
+  script.async = true;
+  script.textContent = JSON.stringify({
+    width: '100%',
+    height: '100%',
+    defaultColumn: 'overview',
+    defaultScreen: 'general',
+    market: market,
+    showToolbar: true,
+    colorTheme: 'dark',
+    locale: 'en',
+    isTransparent: true
+  });
+  container.appendChild(inner);
+  container.appendChild(script);
+  wrap.appendChild(container);
+}
 
 function setMktCat(c) {
   mktCat = c;
-  document.querySelectorAll('#mktTabs .tab').forEach((el, i) => el.classList.toggle('active', cats[i]===c));
+  document.querySelectorAll('#mktTabs .tab').forEach(function(el, i) { el.classList.toggle('active', cats[i]===c); });
   document.getElementById('mktTableTitle').textContent = c[0].toUpperCase()+c.slice(1)+' Markets';
-  renderTable();
-  setTimeout(loadMarketWidget, 100);
+  loadMktScreener(c);
 }
 
-function renderTable() {
-  const data = mktCat==='crypto' ? COINS : mktCat==='stocks' ? STOCKS : FOREX;
-  const q = (document.getElementById('mktSearch')?.value || '').toLowerCase();
-  const filtered = data.filter(item => {
-    const sym = (item.pair||item.sym||'').toLowerCase();
-    const name = (item.name||'').toLowerCase();
-    return !q || sym.includes(q) || name.includes(q);
-  });
-  document.getElementById('mktTableBody').innerHTML = filtered.slice(0,12).map((item, i) => {
-    const sym   = item.pair || item.sym;
-    const price = item.bid || (item.price > 10 ? item.price.toFixed(2) : item.price?.toFixed(4)) || '—';
-    const ask   = item.ask || (item.price ? (item.price*1.001).toFixed(item.price>10?2:4) : '—');
-    return `<tr>
-      <td style="color:var(--text3)">${i+1}</td>
-      <td><div style="display:flex;align-items:center;gap:8px">
-        <div class="a-icon" style="width:26px;height:26px;font-size:11px;background:rgba(79,110,247,0.1);color:var(--accent2)">${item.icon||sym.slice(0,2)}</div>
-        <span>${sym}</span></div></td>
-      <td class="mono">${price}</td>
-      <td class="mono">${ask}</td>
-      <td>${badge((item.chg>=0?'+':'')+item.chg+'%', item.chg>=0?'bg':'br')}</td>
-      <td class="mono">${item.vol||'—'}</td>
-      <td class="mono">${item.spread||'2.0'}</td>
-      <td><button class="btn btn-primary btn-sm" onclick="location.href='trade-terminal.html'">
-        <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Trade
-      </button></td>
-    </tr>`;
-  }).join('');
-}
-
-renderTable();
-setTimeout(loadMarketWidget, 500);
+loadMktScreener('forex');
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
