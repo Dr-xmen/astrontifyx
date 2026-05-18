@@ -1352,7 +1352,7 @@ function pgHistory() {
     </table></div>
   </div>`}`;
 }
-function setHistTab(t){histTab=t;if(t==='trades')loadTrades();render();}
+function setHistTab(t){histTab=t;if(t==='trades'&&window.loadTrades)window.loadTrades();render();}
 
 
 
@@ -1885,7 +1885,7 @@ async function loadWithdrawals() {
 
 }
 
-async function loadTrades() {
+window.loadTrades = async function loadTrades() {
   try {
     const { data: authData } = await supabase.auth.getUser();
     if (!authData?.user) return;
