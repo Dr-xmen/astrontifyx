@@ -3328,15 +3328,15 @@ async function renderTradesLive() {
 
   // Load users for select dropdown + settings table
   const { data: users } = await db.from('profiles')
-    .select('id, first_name, last_name, email, trades_active, trade_percent')
+    .select('id, first_name, last_name, full_name, email, trades_active, trade_percent')
     .order('created_at', { ascending: false });
 
   // Populate user dropdown
   const sel = document.getElementById('trade-user-sel');
   if (sel && users?.length) {
     sel.innerHTML = '<option value="">- choose user -</option>' + users.map(u => {
-      const name = u.full_name || u.name || `${u.first_name||''} ${u.last_name||''}`.trim() || u.username || u.id;
-      return `<option value="${u.id}">${name} (${u.email || u.username || u.id})</option>`;
+      const name = u.full_name || `${u.first_name||''} ${u.last_name||''}`.trim() || u.email || u.id;
+      return `<option value="${u.id}">${name} (${u.email || u.id})</option>`;
     }).join('');
   }
 
@@ -3345,12 +3345,12 @@ async function renderTradesLive() {
   const COLORS = ['#1a5cff','#22a06b','#7c3aed','#f5a623','#e60023'];
   if (settTbody && users?.length) {
     settTbody.innerHTML = users.map((u, i) => {
-      const name = u.full_name || u.name || `${u.first_name||''} ${u.last_name||''}`.trim() || u.username || u.id;
+      const name = u.full_name || `${u.first_name||''} ${u.last_name||''}`.trim() || u.email || u.id;
       const init = name.split(' ').map(w=>w[0]||'').join('').toUpperCase().slice(0,2)||'?';
       const col  = COLORS[i % COLORS.length];
       return `<tr>
         <td><div class="user-cell"><div class="user-avatar" style="background:${col};">${init}</div>
-          <div><div class="user-name">${name}</div><div class="user-email">${u.email || u.username || u.id}</div></div></div></td>
+          <div><div class="user-name">${name}</div><div class="user-email">${u.email || u.id}</div></div></div></td>
         <td><input type="number" id="tpct-${u.id}" value="${u.trade_percent||0}" step="0.1" min="0" max="100"
           style="width:90px;height:34px;border:1.5px solid var(--border);border-radius:6px;padding:0 10px;font-size:13px;"></td>
         <td><label class="toggle-switch"><input type="checkbox" id="ton-${u.id}" ${u.trades_active?'checked':''}><span class="toggle-slider"></span></label></td>
@@ -3359,30 +3359,36 @@ async function renderTradesLive() {
     }).join('');
   }
 
-  // Load trade records
-  const { data: trades } = await db.from('trades')
-    .select('*, profiles(*)')
-    .order('created_at', { ascending: false })
-    .limit(100);
+  // Build user id→name map for trades table
+  const userMap = {};
+  (users || []).forEach(u => {
+    userMap[u.id] = u.full_name || `${u.first_name||''} ${u.last_name||''}`.trim() || u.email || u.id;
+  });
+
+  // Load trade records (no FK to profiles — join manually)
+  const { data: trades, error: trErr } = await db.from('trades')
+    .select('*')
+    .order('opened_at', { ascending: false })
+    .limit(200);
 
   const tbody = document.getElementById('trades-tbody');
-  if (!trades?.length) {
+  if (trErr || !trades?.length) {
     if (tbody) tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--muted);">No trade records yet</td></tr>';
     return;
   }
   if (tbody) tbody.innerHTML = trades.map(t => {
-    const p    = t.profiles || {};
-    const name = p.full_name || p.name || `${p.first_name||''} ${p.last_name||''}`.trim() || p.username || p.id || '-';
+    const name = userMap[t.user_id] || t.user_id?.slice(0,8) || '-';
     const pnl  = parseFloat(t.pnl || 0);
     const up   = pnl >= 0;
+    const side = (t.side || '').toUpperCase();
     return `<tr>
       <td>${name}</td>
-      <td><span class="badge-pill pill-blue">${t.market||'-'}</span></td>
-      <td style="font-weight:700;">${t.pair||'-'}</td>
-      <td><span class="badge-pill ${t.direction==='buy'?'pill-green':'pill-red'}">${(t.direction||'').toUpperCase()}</span></td>
-      <td>${t.size||'-'}</td>
+      <td><span class="badge-pill pill-blue">${t.symbol||'-'}</span></td>
+      <td style="font-weight:700;">${t.symbol||'-'}</td>
+      <td><span class="badge-pill ${side==='BUY'?'pill-green':'pill-red'}">${side||'-'}</span></td>
+      <td>${t.lot_size||'-'}</td>
       <td style="font-weight:700;color:${up?'var(--green)':'var(--red)'};">${up?'+':''}$${Math.abs(pnl).toFixed(2)}</td>
-      <td style="font-size:12px;">${fmtDate(t.created_at)}</td>
+      <td style="font-size:12px;">${fmtDate(t.opened_at || t.closed_at)}</td>
       <td><button class="btn btn--sm btn--red" onclick="opsDeleteTrade('${t.id}')">Delete</button></td>
     </tr>`;
   }).join('');
@@ -3401,14 +3407,32 @@ window.opsSaveTradeSetting = async userId => {
 window.addTradeRecord = async () => {
   const db     = window.ATRONTIFY_DB; if (!db) return;
   const userId = document.getElementById('trade-user-sel')?.value;
-  const market = document.getElementById('trade-market')?.value;
-  const pair   = document.getElementById('trade-pair')?.value?.trim();
-  const dir    = document.getElementById('trade-direction')?.value;
-  const size   = parseFloat(document.getElementById('trade-size')?.value) || 0;
+  const symbol = document.getElementById('trade-pair')?.value?.trim();
+  const side   = document.getElementById('trade-direction')?.value;
+  const lotSz  = parseFloat(document.getElementById('trade-size')?.value) || 0;
   const pnl    = parseFloat(document.getElementById('trade-pnl')?.value) || 0;
-  if (!userId || !pair) { showToast('Select a user and enter a pair','error'); return; }
-  const { error } = await db.from('trades').insert({ user_id: userId, market, pair, direction: dir, size, pnl });
+  if (!userId || !symbol) { showToast('Select a user and enter a symbol','error'); return; }
+  // Look up the user's trading account
+  const { data: accs } = await db.from('trading_accounts').select('id').eq('user_id', userId).limit(1);
+  const accountId = accs?.[0]?.id || null;
+  const { error } = await db.from('trades').insert({
+    user_id:    userId,
+    account_id: accountId,
+    symbol,
+    side,
+    lot_size:   lotSz,
+    open_price: 0,
+    pnl,
+    status:     'closed',
+    opened_at:  new Date().toISOString(),
+    closed_at:  new Date().toISOString(),
+  });
   if (error) { showToast('Error: '+error.message,'error'); return; }
+  // Update user's total_pnl and winning_trades in profiles
+  const { data: prof } = await db.from('profiles').select('total_pnl, winning_trades').eq('id', userId).single();
+  const newPnl = parseFloat(prof?.total_pnl || 0) + pnl;
+  const newWins = parseInt(prof?.winning_trades || 0) + (pnl > 0 ? 1 : 0);
+  await db.from('profiles').update({ total_pnl: newPnl, winning_trades: newWins }).eq('id', userId);
   showToast('Trade added','success');
   document.getElementById('trade-pair').value = '';
   document.getElementById('trade-size').value = '';
