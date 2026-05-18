@@ -74,7 +74,7 @@
             <div class="tradingview-widget-container ticker-tv-wrap">
               <div class="tradingview-widget-container__widget"></div>
               <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
-              {"symbols":[{"proName":"FOREXCOM:SPXUSD","title":"S&P 500"},{"proName":"BINANCE:BTCUSDT","title":"Bitcoin"},{"proName":"BINANCE:ETHUSDT","title":"Ethereum"},{"proName":"OANDA:XAUUSD","title":"Gold"},{"proName":"FX:EURUSD","title":"EUR/USD"}],"showSymbolLogo":true,"isTransparent":true,"displayMode":"regular","colorTheme":"dark","locale":"en"}
+              {"symbols":[{"proName":"FOREXCOM:SPXUSD","title":"S&P 500"},{"proName":"BINANCE:BTCUSDT","title":"Bitcoin"},{"proName":"BINANCE:ETHUSDT","title":"Ethereum"},{"proName":"OANDA:XAUUSD","title":"Gold"},{"proName":"FX:EURUSD","title":"EUR/USD"},{"proName":"FX:GBPUSD","title":"GBP/USD"}],"showSymbolLogo":true,"isTransparent":true,"displayMode":"regular","colorTheme":"dark","locale":"en"}
               </script>
             </div>
           </div>
@@ -95,44 +95,175 @@
 
     <div class="content fade-in">
 
-      <!-- Category Tabs -->
-      <div class="tabs" id="mktTabs"></div>
-
-      <!-- Top Mover + Sentiment -->
+      <!-- Top row: BTC mini chart + featured pairs -->
       <div class="grid g12" style="margin-bottom:14px">
-        <div class="card">
-          <div class="section-hdr"><span class="section-title">Top Mover</span><span class="badge bg">● Live</span></div>
-          <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px">
-            <div class="a-icon" style="width:46px;height:46px;background:rgba(247,147,26,0.15);color:#f7931a;font-size:20px">₿</div>
-            <div><div style="font-size:17px;font-weight:700">BTC/USD</div><div style="font-size:12px;color:var(--text3)">Bitcoin · Crypto</div></div>
+
+        <!-- BTC Live Chart -->
+        <div class="card" style="padding:0;overflow:hidden;min-height:240px">
+          <div class="tradingview-widget-container" style="height:240px">
+            <div class="tradingview-widget-container__widget" style="height:240px;width:100%"></div>
+            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+            {
+              "symbol": "BINANCE:BTCUSDT",
+              "width": "100%",
+              "height": 240,
+              "locale": "en",
+              "dateRange": "1D",
+              "colorTheme": "dark",
+              "trendLineColor": "rgba(247,147,26,1)",
+              "underLineColor": "rgba(247,147,26,0.15)",
+              "underLineBottomColor": "rgba(247,147,26,0)",
+              "isTransparent": true,
+              "autosize": false,
+              "largeChartUrl": ""
+            }
+            </script>
           </div>
-          <div id="tvTopMover" style="height:220px;overflow:hidden;border-radius:8px"></div>
         </div>
-        <div class="card">
-          <div class="section-hdr"><span class="section-title">Market Sentiment</span></div>
-          <div style="margin-bottom:14px">
-            <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:7px"><span>Bullish</span><span class="up" style="font-weight:600">63%</span></div>
-            <div class="progress-bar"><div class="progress-fill" style="width:63%;background:var(--green)"></div></div>
+
+        <!-- Featured pairs: 3 mini charts -->
+        <div style="display:grid;grid-template-rows:1fr 1fr;gap:14px">
+          <div class="grid g2" style="gap:14px">
+            <div class="card" style="padding:0;overflow:hidden">
+              <div class="tradingview-widget-container" style="height:108px">
+                <div class="tradingview-widget-container__widget" style="height:108px;width:100%"></div>
+                <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+                {"symbol":"FX:EURUSD","width":"100%","height":108,"locale":"en","dateRange":"1D","colorTheme":"dark","trendLineColor":"rgba(34,197,94,1)","underLineColor":"rgba(34,197,94,0.12)","underLineBottomColor":"rgba(34,197,94,0)","isTransparent":true,"autosize":false,"largeChartUrl":""}
+                </script>
+              </div>
+            </div>
+            <div class="card" style="padding:0;overflow:hidden">
+              <div class="tradingview-widget-container" style="height:108px">
+                <div class="tradingview-widget-container__widget" style="height:108px;width:100%"></div>
+                <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+                {"symbol":"BINANCE:ETHUSDT","width":"100%","height":108,"locale":"en","dateRange":"1D","colorTheme":"dark","trendLineColor":"rgba(79,110,247,1)","underLineColor":"rgba(79,110,247,0.12)","underLineBottomColor":"rgba(79,110,247,0)","isTransparent":true,"autosize":false,"largeChartUrl":""}
+                </script>
+              </div>
+            </div>
           </div>
-          <div style="margin-bottom:14px">
-            <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:7px"><span>Bearish</span><span class="dn" style="font-weight:600">37%</span></div>
-            <div class="progress-bar"><div class="progress-fill" style="width:37%;background:var(--red)"></div></div>
-          </div>
-          <div class="divider"></div>
-          <div class="grid g3" style="text-align:center">
-            <div><div style="font-size:11px;color:var(--text3);margin-bottom:4px">Volume</div><div style="font-weight:600;font-size:14px;color:var(--green)">$2.4B</div></div>
-            <div><div style="font-size:11px;color:var(--text3);margin-bottom:4px">24h High</div><div style="font-weight:600;font-size:14px;color:var(--green)">67,842</div></div>
-            <div><div style="font-size:11px;color:var(--text3);margin-bottom:4px">24h Low</div><div style="font-weight:600;font-size:14px;color:var(--red)">64,120</div></div>
+          <div class="grid g2" style="gap:14px">
+            <div class="card" style="padding:0;overflow:hidden">
+              <div class="tradingview-widget-container" style="height:108px">
+                <div class="tradingview-widget-container__widget" style="height:108px;width:100%"></div>
+                <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+                {"symbol":"OANDA:XAUUSD","width":"100%","height":108,"locale":"en","dateRange":"1D","colorTheme":"dark","trendLineColor":"rgba(245,158,11,1)","underLineColor":"rgba(245,158,11,0.12)","underLineBottomColor":"rgba(245,158,11,0)","isTransparent":true,"autosize":false,"largeChartUrl":""}
+                </script>
+              </div>
+            </div>
+            <div class="card" style="padding:0;overflow:hidden">
+              <div class="tradingview-widget-container" style="height:108px">
+                <div class="tradingview-widget-container__widget" style="height:108px;width:100%"></div>
+                <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+                {"symbol":"FOREXCOM:SPXUSD","width":"100%","height":108,"locale":"en","dateRange":"1D","colorTheme":"dark","trendLineColor":"rgba(20,184,166,1)","underLineColor":"rgba(20,184,166,0.12)","underLineBottomColor":"rgba(20,184,166,0)","isTransparent":true,"autosize":false,"largeChartUrl":""}
+                </script>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- Markets Table / Screener -->
-      <div class="card">
-        <div class="section-hdr">
-          <span class="section-title" id="mktTableTitle">Forex Markets</span>
+      <!-- Full Market Overview: all categories in one widget -->
+      <div class="card" style="padding:0;overflow:hidden">
+        <div class="tradingview-widget-container" style="height:700px">
+          <div class="tradingview-widget-container__widget" style="height:700px;width:100%"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js" async>
+          {
+            "colorTheme": "dark",
+            "dateRange": "1D",
+            "showChart": true,
+            "locale": "en",
+            "isTransparent": true,
+            "showSymbolLogo": true,
+            "showFloatingTooltip": true,
+            "width": "100%",
+            "height": 700,
+            "plotLineColorGrowing": "rgba(41,98,255,1)",
+            "plotLineColorFalling": "rgba(41,98,255,1)",
+            "gridLineColor": "rgba(42,46,57,0)",
+            "scaleFontColor": "rgba(120,123,134,1)",
+            "belowLineFillColorGrowing": "rgba(41,98,255,0.12)",
+            "belowLineFillColorFalling": "rgba(41,98,255,0.02)",
+            "symbolActiveColor": "rgba(41,98,255,0.12)",
+            "tabs": [
+              {
+                "title": "Forex",
+                "symbols": [
+                  {"s":"FX:EURUSD","d":"EUR/USD"},
+                  {"s":"FX:GBPUSD","d":"GBP/USD"},
+                  {"s":"FX:USDJPY","d":"USD/JPY"},
+                  {"s":"FX:AUDUSD","d":"AUD/USD"},
+                  {"s":"FX:USDCAD","d":"USD/CAD"},
+                  {"s":"FX:USDCHF","d":"USD/CHF"},
+                  {"s":"FX:NZDUSD","d":"NZD/USD"},
+                  {"s":"FX:EURGBP","d":"EUR/GBP"},
+                  {"s":"FX:EURJPY","d":"EUR/JPY"},
+                  {"s":"FX:GBPJPY","d":"GBP/JPY"}
+                ],
+                "originalTitle": "Forex"
+              },
+              {
+                "title": "Crypto",
+                "symbols": [
+                  {"s":"BINANCE:BTCUSDT","d":"Bitcoin"},
+                  {"s":"BINANCE:ETHUSDT","d":"Ethereum"},
+                  {"s":"BINANCE:BNBUSDT","d":"BNB"},
+                  {"s":"BINANCE:SOLUSDT","d":"Solana"},
+                  {"s":"BINANCE:XRPUSDT","d":"XRP"},
+                  {"s":"BINANCE:DOGEUSDT","d":"Dogecoin"},
+                  {"s":"BINANCE:ADAUSDT","d":"Cardano"},
+                  {"s":"BINANCE:AVAXUSDT","d":"Avalanche"}
+                ],
+                "originalTitle": "Crypto"
+              },
+              {
+                "title": "Stocks",
+                "symbols": [
+                  {"s":"NASDAQ:AAPL","d":"Apple"},
+                  {"s":"NASDAQ:MSFT","d":"Microsoft"},
+                  {"s":"NASDAQ:NVDA","d":"NVIDIA"},
+                  {"s":"NASDAQ:TSLA","d":"Tesla"},
+                  {"s":"NASDAQ:AMZN","d":"Amazon"},
+                  {"s":"NASDAQ:META","d":"Meta"},
+                  {"s":"NASDAQ:GOOGL","d":"Alphabet"},
+                  {"s":"NYSE:JPM","d":"JPMorgan"}
+                ],
+                "originalTitle": "Stocks"
+              },
+              {
+                "title": "Indices",
+                "symbols": [
+                  {"s":"FOREXCOM:SPXUSD","d":"S&P 500"},
+                  {"s":"FOREXCOM:NSXUSD","d":"Nasdaq 100"},
+                  {"s":"TVC:DJI","d":"Dow Jones"},
+                  {"s":"TVC:DAX","d":"DAX"},
+                  {"s":"TVC:FTSE","d":"FTSE 100"},
+                  {"s":"TVC:NI225","d":"Nikkei 225"}
+                ],
+                "originalTitle": "Indices"
+              },
+              {
+                "title": "Metals",
+                "symbols": [
+                  {"s":"OANDA:XAUUSD","d":"Gold"},
+                  {"s":"OANDA:XAGUSD","d":"Silver"},
+                  {"s":"TVC:PLATINUM","d":"Platinum"},
+                  {"s":"TVC:COPPER","d":"Copper"}
+                ],
+                "originalTitle": "Metals"
+              },
+              {
+                "title": "Energy",
+                "symbols": [
+                  {"s":"TVC:USOIL","d":"WTI Crude Oil"},
+                  {"s":"TVC:UKOIL","d":"Brent Crude"},
+                  {"s":"TVC:NATURALGAS","d":"Natural Gas"}
+                ],
+                "originalTitle": "Energy"
+              }
+            ]
+          }
+          </script>
         </div>
-        <div id="tvScreenerWrap" style="height:500px;overflow:hidden;border-radius:8px"></div>
       </div>
 
     </div>
@@ -140,112 +271,6 @@
 </div>
 
 <script src="shared.js"></script>
-<script>
-var mktCat = 'forex';
-
-var cats = ['forex','crypto','stocks','indices','metals','energy'];
-document.getElementById('mktTabs').innerHTML = cats.map(function(c) {
-  return '<div class="tab ' + (c===mktCat?'active':'') + '" onclick="setMktCat(\'' + c + '\')">' + c[0].toUpperCase()+c.slice(1) + '</div>';
-}).join('');
-
-// Inject Top Mover symbol overview widget
-(function() {
-  var wrap = document.getElementById('tvTopMover');
-  if (!wrap) return;
-  var container = document.createElement('div');
-  container.className = 'tradingview-widget-container';
-  container.style.cssText = 'height:100%;width:100%';
-  var inner = document.createElement('div');
-  inner.className = 'tradingview-widget-container__widget';
-  inner.style.cssText = 'height:100%;width:100%';
-  var script = document.createElement('script');
-  script.type = 'text/javascript';
-  script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-symbol-overview.js';
-  script.async = true;
-  script.textContent = JSON.stringify({
-    symbols: [['BINANCE:BTCUSDT|1D']],
-    chartOnly: false,
-    width: '100%',
-    height: 220,
-    locale: 'en',
-    colorTheme: 'dark',
-    showVolume: false,
-    hideDateRanges: false,
-    hideMarketStatus: false,
-    hideSymbolLogo: false,
-    scalePosition: 'right',
-    scaleMode: 'Normal',
-    fontFamily: 'Space Grotesk, sans-serif',
-    fontSize: '10',
-    noTimeScale: false,
-    valuesTracking: '1',
-    changeMode: 'price-and-percent',
-    chartType: 'area',
-    lineWidth: 2,
-    lineType: 0,
-    isTransparent: true,
-    color: 'rgba(247, 147, 26, 1)',
-    lineColor: 'rgba(247, 147, 26, 1)',
-    topColor: 'rgba(247, 147, 26, 0.3)',
-    bottomColor: 'rgba(247, 147, 26, 0)'
-  });
-  container.appendChild(inner);
-  container.appendChild(script);
-  wrap.appendChild(container);
-})();
-
-function loadMktScreener(cat) {
-  var wrap = document.getElementById('tvScreenerWrap');
-  if (!wrap) return;
-  wrap.innerHTML = '';
-
-  var indicesSymbols = [{s:'FOREXCOM:SPXUSD'},{s:'FOREXCOM:NSXUSD'},{s:'TVC:DJI'},{s:'TVC:DAX'},{s:'TVC:FTSE'},{s:'TVC:NI225'}];
-  var metalsSymbols  = [{s:'OANDA:XAUUSD'},{s:'OANDA:XAGUSD'},{s:'TVC:PLATINUM'},{s:'TVC:COPPER'}];
-  var energySymbols  = [{s:'TVC:USOIL'},{s:'TVC:UKOIL'},{s:'TVC:NATURALGAS'}];
-
-  if (cat === 'indices') { loadMktOverview('tvScreenerWrap', indicesSymbols); return; }
-  if (cat === 'metals')  { loadMktOverview('tvScreenerWrap', metalsSymbols);  return; }
-  if (cat === 'energy')  { loadMktOverview('tvScreenerWrap', energySymbols);  return; }
-
-  var marketMap = { forex: 'forex', crypto: 'crypto', stocks: 'america' };
-  var market = marketMap[cat] || 'forex';
-
-  var container = document.createElement('div');
-  container.className = 'tradingview-widget-container';
-  container.style.cssText = 'height:100%;width:100%';
-  var inner = document.createElement('div');
-  inner.className = 'tradingview-widget-container__widget';
-  inner.style.cssText = 'height:100%;width:100%';
-  var script = document.createElement('script');
-  script.type = 'text/javascript';
-  script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-screener.js';
-  script.async = true;
-  script.textContent = JSON.stringify({
-    width: '100%',
-    height: 490,
-    defaultColumn: 'overview',
-    defaultScreen: 'general',
-    market: market,
-    showToolbar: true,
-    colorTheme: 'dark',
-    locale: 'en',
-    isTransparent: true
-  });
-  container.appendChild(inner);
-  container.appendChild(script);
-  wrap.appendChild(container);
-}
-
-function setMktCat(c) {
-  mktCat = c;
-  document.querySelectorAll('#mktTabs .tab').forEach(function(el, i) { el.classList.toggle('active', cats[i]===c); });
-  document.getElementById('mktTableTitle').textContent = c[0].toUpperCase()+c.slice(1)+' Markets';
-  loadMktScreener(c);
-}
-
-loadMktScreener('forex');
-</script>
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase.js"></script>
 <script type="module">
