@@ -1,5 +1,261 @@
 <!DOCTYPE html>
-<html><head><meta charset="UTF-8">
-<meta http-equiv="refresh" content="0;url=dashboard.html#settings">
-<script>window.location.replace('dashboard.html#settings');</script>
-</head><body></body></html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AtrontifyX — Settings</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar" id="sidebar">
+    <div class="logo">
+      <img src="assets/logo.png" alt="AtrontifyX" style="width:180px;height:100px;object-fit:contain;border-radius:12px;flex-shrink:0">
+    </div>
+    <nav class="nav">
+      <div class="nav-section">Main</div>
+      <div class="nav-item" data-page="dashboard" onclick="location.href='dashboard.html'">
+        <svg viewBox="0 0 24 24"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
+        <span class="nav-label">Dashboard</span>
+      </div>
+      <div class="nav-item" data-page="markets" onclick="location.href='markets.html'">
+        <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        <span class="nav-label">Markets</span>
+      </div>
+      <div class="nav-item" data-page="terminal" onclick="location.href='trade-terminal.html'">
+        <svg viewBox="0 0 24 24"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+        <span class="nav-label">Trade Terminal</span>
+      </div>
+      <div class="nav-section">Finance</div>
+      <div class="nav-item" data-page="deposit" onclick="location.href='deposit.html'">
+        <svg viewBox="0 0 24 24"><path d="M12 17V3"/><path d="m6 11 6 6 6-6"/><path d="M19 21H5"/></svg>
+        <span class="nav-label">Deposit</span>
+      </div>
+      <div class="nav-item" data-page="withdraw" onclick="location.href='withdrawal.html'">
+        <svg viewBox="0 0 24 24"><path d="M12 7v14"/><path d="m6 13 6-6 6 6"/><path d="M19 3H5"/></svg>
+        <span class="nav-label">Withdraw</span>
+      </div>
+      <div class="nav-section">Account</div>
+      <div class="nav-item" data-page="history" onclick="location.href='history.html'">
+        <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg>
+        <span class="nav-label">History</span>
+      </div>
+      <div class="nav-item" data-page="settings" onclick="location.href='settings.html'">
+        <svg viewBox="0 0 24 24"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+        <span class="nav-label">Settings</span>
+      </div>
+      <div class="nav-item" data-navaction="verification" onclick="location.href='settings.html#verification'">
+        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+        <span class="nav-label">Verification</span>
+      </div>
+    </nav>
+    <div class="sidebar-bottom">
+      <div class="nav-item" style="color:var(--red)" onclick="window.signOut && window.signOut()">
+        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        <span class="nav-label">Sign Out</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <div class="tb-left">
+        <div class="tb-btn" onclick="toggleSidebar()">
+          <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </div>
+        <span class="page-title" id="pageTitle">Settings</span>
+      </div>
+      <div class="tb-right">
+        <div class="tb-btn"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+        <div class="tb-btn notif-wrap">
+          <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span class="notif-dot"></span>
+        </div>
+        <div class="tb-btn" onclick="toggleTheme()">
+          <svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18V3z" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+        </div>
+        <div class="avatar" id="userAvatar">--</div>
+      </div>
+    </div>
+
+    <div class="content fade-in">
+      <div class="settings-layout">
+
+        <!-- Settings Nav -->
+        <div class="card settings-nav">
+          <div class="nav-item" id="snavProfile" onclick="setTab('profile')"><span class="nav-label">Profile</span></div>
+          <div class="nav-item" id="snavSecurity" onclick="setTab('security')"><span class="nav-label">Security</span></div>
+          <div class="nav-item" id="snavNotifications" onclick="setTab('notifications')"><span class="nav-label">Notifications</span></div>
+          <div class="nav-item" id="snavPreferences" onclick="setTab('preferences')"><span class="nav-label">Preferences</span></div>
+          <div class="nav-item" id="snavVerification" onclick="setTab('verification')"><span class="nav-label">Verification</span></div>
+        </div>
+
+        <!-- Settings Content -->
+        <div class="card" id="settingsContent"></div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="shared.js"></script>
+<script>
+let settTab = 'profile';
+
+const tabTitles = {profile:'Profile Settings',security:'Security',notifications:'Notifications',preferences:'Preferences',verification:'Verification'};
+
+function setTab(t) {
+  settTab = t;
+  ['profile','security','notifications','preferences','verification'].forEach(name => {
+    document.getElementById('snav'+name[0].toUpperCase()+name.slice(1)).classList.toggle('active', name===t);
+  });
+  document.getElementById('pageTitle').textContent = tabTitles[t] || 'Settings';
+  renderTabContent();
+}
+
+function renderTabContent() {
+  const el = document.getElementById('settingsContent');
+
+  if (settTab === 'security') {
+    el.innerHTML = `
+      <div class="section-hdr"><span class="section-title">Security Settings</span></div>
+      <div class="grid g2">
+        <div class="fg"><label>Current Password</label><input type="password" placeholder="••••••••"></div>
+        <div class="fg"><label>New Password</label><input type="password" placeholder="••••••••"></div>
+        <div class="fg"><label>Two-Factor Authentication</label><select><option>Enabled</option><option>Disabled</option></select></div>
+        <div class="fg"><label>Login Alerts</label><select><option>Enabled</option><option>Disabled</option></select></div>
+      </div>
+      <button class="btn btn-primary">Update Security</button>`;
+    return;
+  }
+
+  if (settTab === 'notifications') {
+    el.innerHTML = `
+      <div class="section-hdr"><span class="section-title">Notification Settings</span></div>
+      <div style="display:grid;gap:14px">
+        <div class="card-sm"><div style="display:flex;justify-content:space-between;align-items:center">
+          <div><div style="font-weight:600">Email Notifications</div><div style="font-size:12px;color:var(--text3)">Receive updates by email</div></div>
+          <div class="toggle on"></div>
+        </div></div>
+        <div class="card-sm"><div style="display:flex;justify-content:space-between;align-items:center">
+          <div><div style="font-weight:600">Trade Alerts</div><div style="font-size:12px;color:var(--text3)">Trading execution alerts</div></div>
+          <div class="toggle on"></div>
+        </div></div>
+        <div class="card-sm"><div style="display:flex;justify-content:space-between;align-items:center">
+          <div><div style="font-weight:600">Push Notifications</div><div style="font-size:12px;color:var(--text3)">Mobile/browser alerts</div></div>
+          <div class="toggle"></div>
+        </div></div>
+      </div>`;
+    return;
+  }
+
+  if (settTab === 'preferences') {
+    el.innerHTML = `
+      <div class="section-hdr"><span class="section-title">Platform Preferences</span></div>
+      <div class="grid g2">
+        <div class="fg"><label>Theme</label><select><option>Dark</option><option>Light</option></select></div>
+        <div class="fg"><label>Language</label><select><option>English</option><option>French</option></select></div>
+        <div class="fg"><label>Chart Type</label><select><option>Candlestick</option><option>Line Chart</option></select></div>
+        <div class="fg"><label>Default Pair</label><select><option>BTC/USD</option><option>EUR/USD</option></select></div>
+      </div>
+      <button class="btn btn-primary">Save Preferences</button>`;
+    return;
+  }
+
+  if (settTab === 'verification') {
+    el.innerHTML = `
+      <div class="section-hdr">
+        <span class="section-title">Identity Verification (KYC)</span>
+        <span class="badge ba">Pending Review</span>
+      </div>
+      <div class="grid g2">
+        <div class="card-sm">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+            <div><div style="font-weight:600">Government ID</div><div style="font-size:12px;color:var(--text3)">Passport or National ID</div></div>
+            <span class="badge bg">Uploaded</span>
+          </div>
+          <input type="file" accept="image/*,.pdf">
+        </div>
+        <div class="card-sm">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+            <div><div style="font-weight:600">Selfie Verification</div><div style="font-size:12px;color:var(--text3)">Upload your selfie</div></div>
+            <span class="badge ba">Awaiting</span>
+          </div>
+          <input type="file" accept="image/*">
+        </div>
+      </div>
+      <div class="card-sm" style="margin-top:14px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+          <div><div style="font-weight:600">Verification Status</div><div style="font-size:12px;color:var(--text3)">Compliance review progress</div></div>
+          <span class="badge ba">Under Review</span>
+        </div>
+        <div class="progress-bar" style="margin-bottom:8px">
+          <div class="progress-fill" style="width:70%;background:var(--amber)"></div>
+        </div>
+        <div style="font-size:12px;color:var(--text3)">Your submitted documents are currently under review.</div>
+      </div>
+      <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn btn-primary">Submit Verification</button>
+        <button class="btn btn-outline">View Documents</button>
+      </div>`;
+    return;
+  }
+
+  // Default: profile
+  const userData = window._userData || {};
+  el.innerHTML = `
+    <div class="section-hdr"><span class="section-title">Profile Settings</span></div>
+    <div class="grid g2">
+      <div class="fg"><label>Full Name</label><input id="profileName" value="${userData.fullName||''}"></div>
+      <div class="fg"><label>Email Address</label><input id="profileEmail" value="${userData.email||''}" readonly></div>
+      <div class="fg"><label>Country</label><select><option>Nigeria</option><option>United States</option></select></div>
+      <div class="fg"><label>Base Currency</label><select><option>USD</option><option>EUR</option></select></div>
+    </div>
+    <button class="btn btn-primary">Save Changes</button>`;
+}
+
+// Read hash on load to open the correct tab
+document.addEventListener('DOMContentLoaded', function() {
+  const hash = window.location.hash.replace('#','');
+  const validTabs = ['profile','security','notifications','preferences','verification'];
+  const initial = validTabs.includes(hash) ? hash : 'profile';
+  setTab(initial);
+});
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+<script type="module">
+const supabase = window.ATRONTIFY_DB;
+
+async function signOut() { await supabase.auth.signOut(); location.href = 'login.html'; }
+window.signOut = signOut;
+
+window.addEventListener('load', async () => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) { location.href = 'login.html'; return; }
+
+  const { data: profile } = await supabase.from('profiles').select('*').eq('id', user.id).single();
+  const firstName = profile?.first_name || user.user_metadata?.first_name || '';
+  const lastName  = profile?.last_name  || user.user_metadata?.last_name  || '';
+  const fullName  = `${firstName} ${lastName}`.trim() || user.email?.split('@')[0] || 'User';
+  const initials  = (firstName && lastName) ? `${firstName[0]}${lastName[0]}`.toUpperCase() : fullName[0].toUpperCase();
+
+  window._userData = { fullName, email: user.email || '' };
+
+  const avatar = document.getElementById('userAvatar');
+  if (avatar) avatar.textContent = initials;
+
+  // Re-render profile tab with user data if it's currently shown
+  if (window.settTab === 'profile') {
+    window.renderTabContent && window.renderTabContent();
+  }
+});
+</script>
+</body>
+</html>

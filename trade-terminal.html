@@ -1,5 +1,243 @@
 <!DOCTYPE html>
-<html><head><meta charset="UTF-8">
-<meta http-equiv="refresh" content="0;url=dashboard.html#terminal">
-<script>window.location.replace('dashboard.html#terminal');</script>
-</head><body></body></html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AtrontifyX — Trade Terminal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar" id="sidebar">
+    <div class="logo">
+      <img src="assets/logo.png" alt="AtrontifyX" style="width:180px;height:100px;object-fit:contain;border-radius:12px;flex-shrink:0">
+    </div>
+    <nav class="nav">
+      <div class="nav-section">Main</div>
+      <div class="nav-item" data-page="dashboard" onclick="location.href='dashboard.html'">
+        <svg viewBox="0 0 24 24"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
+        <span class="nav-label">Dashboard</span>
+      </div>
+      <div class="nav-item" data-page="markets" onclick="location.href='markets.html'">
+        <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        <span class="nav-label">Markets</span>
+      </div>
+      <div class="nav-item" data-page="terminal" onclick="location.href='trade-terminal.html'">
+        <svg viewBox="0 0 24 24"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+        <span class="nav-label">Trade Terminal</span>
+      </div>
+      <div class="nav-section">Finance</div>
+      <div class="nav-item" data-page="deposit" onclick="location.href='deposit.html'">
+        <svg viewBox="0 0 24 24"><path d="M12 17V3"/><path d="m6 11 6 6 6-6"/><path d="M19 21H5"/></svg>
+        <span class="nav-label">Deposit</span>
+      </div>
+      <div class="nav-item" data-page="withdraw" onclick="location.href='withdrawal.html'">
+        <svg viewBox="0 0 24 24"><path d="M12 7v14"/><path d="m6 13 6-6 6 6"/><path d="M19 3H5"/></svg>
+        <span class="nav-label">Withdraw</span>
+      </div>
+      <div class="nav-section">Account</div>
+      <div class="nav-item" data-page="history" onclick="location.href='history.html'">
+        <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg>
+        <span class="nav-label">History</span>
+      </div>
+      <div class="nav-item" data-page="settings" onclick="location.href='settings.html'">
+        <svg viewBox="0 0 24 24"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+        <span class="nav-label">Settings</span>
+      </div>
+      <div class="nav-item" data-navaction="verification" onclick="location.href='settings.html#verification'">
+        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+        <span class="nav-label">Verification</span>
+      </div>
+    </nav>
+    <div class="sidebar-bottom">
+      <div class="nav-item" style="color:var(--red)" onclick="window.signOut && window.signOut()">
+        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        <span class="nav-label">Sign Out</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <div class="tb-left">
+        <div class="tb-btn" onclick="toggleSidebar()">
+          <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </div>
+        <span class="page-title">Trade Terminal</span>
+        <div class="ticker-shell">
+          <div class="ticker-bar tv-clean-ticker">
+            <div class="tradingview-widget-container ticker-tv-wrap">
+              <div class="tradingview-widget-container__widget"></div>
+              <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+              {"symbols":[{"proName":"BINANCE:BTCUSDT","title":"Bitcoin"},{"proName":"BINANCE:ETHUSDT","title":"Ethereum"},{"proName":"FX:EURUSD","title":"EUR/USD"},{"proName":"OANDA:XAUUSD","title":"Gold"}],"showSymbolLogo":true,"isTransparent":true,"displayMode":"regular","colorTheme":"dark","locale":"en"}
+              </script>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tb-right">
+        <div class="tb-btn"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+        <div class="tb-btn notif-wrap">
+          <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span class="notif-dot"></span>
+        </div>
+        <div class="tb-btn" onclick="toggleTheme()">
+          <svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18V3z" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+        </div>
+        <div class="avatar" id="userAvatar">--</div>
+      </div>
+    </div>
+
+    <div class="content fade-in" style="padding:14px">
+      <div style="display:grid;grid-template-columns:290px 1fr;gap:14px;height:calc(100vh - 118px)">
+
+        <!-- Trade Panel -->
+        <div style="display:flex;flex-direction:column;gap:12px;overflow-y:auto">
+          <div class="trade-panel">
+            <div class="fg">
+              <select id="symbolSelect" style="height:36px" onchange="updateSymbol()">
+                <option>BTC/USD</option><option>ETH/USD</option><option>EUR/USD</option>
+                <option>GBP/USD</option><option>XAU/USD</option><option>AAPL</option>
+              </select>
+            </div>
+            <div style="display:flex;border:1px solid var(--border2);border-radius:10px;overflow:hidden;margin-bottom:13px">
+              <button id="btnBuy" onclick="setDir('buy')" style="flex:1;padding:10px;border:none;background:var(--green);color:#fff;cursor:pointer;font-family:inherit;font-size:14px;font-weight:700;transition:all .2s">BUY</button>
+              <button id="btnSell" onclick="setDir('sell')" style="flex:1;padding:10px;border:none;background:transparent;color:var(--text2);cursor:pointer;font-family:inherit;font-size:14px;font-weight:700;transition:all .2s">SELL</button>
+            </div>
+            <div class="grid g3" style="gap:7px;margin-bottom:13px;text-align:center">
+              <div class="card-sm" style="padding:10px"><div style="font-size:9.5px;color:var(--text3)">BID</div><div class="mono dn" style="font-size:13.5px;font-weight:700">67,188</div></div>
+              <div class="card-sm" style="padding:10px"><div style="font-size:9.5px;color:var(--text3)">SPREAD</div><div class="mono" style="font-size:13.5px;font-weight:600">46</div></div>
+              <div class="card-sm" style="padding:10px"><div style="font-size:9.5px;color:var(--text3)">ASK</div><div class="mono up" style="font-size:13.5px;font-weight:700">67,234</div></div>
+            </div>
+            <div style="display:flex;border:1px solid var(--border2);border-radius:10px;overflow:hidden;margin-bottom:13px">
+              <button id="btnMkt" onclick="setOrder('market')" style="flex:1;padding:7px;border:none;background:var(--bg4);color:var(--text1);cursor:pointer;font-family:inherit;font-size:12px;font-weight:600;transition:all .2s">Market</button>
+              <button id="btnLmt" onclick="setOrder('limit')" style="flex:1;padding:7px;border:none;background:transparent;color:var(--text3);cursor:pointer;font-family:inherit;font-size:12px;font-weight:600;transition:all .2s">Limit</button>
+              <button id="btnStp" onclick="setOrder('stop')" style="flex:1;padding:7px;border:none;background:transparent;color:var(--text3);cursor:pointer;font-family:inherit;font-size:12px;font-weight:600;transition:all .2s">Stop</button>
+            </div>
+            <div id="limitPriceRow" style="display:none" class="fg"><label>Limit Price</label><input type="number" value="67200"></div>
+            <div class="fg">
+              <label>Lot Size</label>
+              <div class="qty-ctrl">
+                <button class="qty-btn" onclick="let i=this.nextElementSibling;i.value=Math.max(0.01,(parseFloat(i.value)-0.01)).toFixed(2)">−</button>
+                <input class="qty-input" id="lotSize" type="number" value="0.10" step="0.01" min="0.01">
+                <button class="qty-btn" onclick="let i=this.previousElementSibling;i.value=(parseFloat(i.value)+0.01).toFixed(2)">+</button>
+              </div>
+            </div>
+            <div class="grid g2" style="gap:10px;margin-bottom:14px">
+              <div><label>Stop Loss</label><input id="stopLoss" placeholder="66,500"></div>
+              <div><label>Take Profit</label><input id="takeProfit" placeholder="68,500"></div>
+            </div>
+            <div class="divider"></div>
+            <div style="font-size:12px;color:var(--text3);margin-bottom:12px;display:grid;gap:5px">
+              <div style="display:flex;justify-content:space-between"><span>Leverage</span><span style="color:var(--text1);font-weight:600" id="leverageDisplay">1:20</span></div>
+              <div style="display:flex;justify-content:space-between"><span>Margin Required</span><span style="color:var(--text1);font-weight:600">$336.17</span></div>
+              <div style="display:flex;justify-content:space-between"><span>Pip Value</span><span style="color:var(--text1);font-weight:600">$6.72</span></div>
+            </div>
+            <button id="tradeBtn" class="btn btn-green" style="width:100%;justify-content:center;font-size:14px;padding:12px">
+              <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+              BUY BTC/USD
+            </button>
+          </div>
+
+          <!-- Leverage -->
+          <div class="card-sm">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+              <span style="font-size:13px;font-weight:600">Leverage</span>
+              <span class="mono" style="color:var(--accent2);font-weight:700" id="levLbl">1:20</span>
+            </div>
+            <input type="range" min="1" max="100" value="20" style="width:100%" oninput="document.getElementById('levLbl').textContent='1:'+this.value;document.getElementById('leverageDisplay').textContent='1:'+this.value">
+            <div style="display:flex;justify-content:space-between;font-size:10.5px;color:var(--text3);margin-top:4px"><span>1:1</span><span>1:50</span><span>1:100</span></div>
+          </div>
+        </div>
+
+        <!-- Chart + Positions -->
+        <div style="display:flex;flex-direction:column;gap:12px;overflow:hidden;min-width:0">
+          <div class="card" style="flex:1;min-height:260px;display:flex;flex-direction:column">
+            <div class="section-hdr">
+              <span class="section-title"><span class="live-dot"></span><span id="chartTitle">BTC/USD</span></span>
+              <div style="display:flex;gap:4px">
+                <button class="btn btn-outline btn-sm" style="padding:4px 8px;font-size:11px">1M</button>
+                <button class="btn btn-outline btn-sm" style="padding:4px 8px;font-size:11px">5M</button>
+                <button class="btn btn-outline btn-sm" style="padding:4px 8px;font-size:11px">15M</button>
+                <button class="btn btn-outline btn-sm" style="padding:4px 8px;font-size:11px">1H</button>
+                <button class="btn btn-outline btn-sm" style="padding:4px 8px;font-size:11px">4H</button>
+                <button class="btn btn-outline btn-sm" style="padding:4px 8px;font-size:11px">1D</button>
+              </div>
+            </div>
+            <div style="flex:1;min-height:500px">
+              <div id="tvchart" style="height:100%;width:100%"></div>
+            </div>
+          </div>
+          <div class="card" style="max-height:200px;overflow-y:auto">
+            <div class="section-hdr"><span class="section-title">Open Positions</span></div>
+            <div class="table-wrap"><table>
+              <thead><tr><th>Pair</th><th>Type</th><th>Size</th><th>Entry</th><th>P&L</th><th></th></tr></thead>
+              <tbody><tr><td colspan="6" style="text-align:center;color:var(--text3);padding:16px">No open positions</td></tr></tbody>
+            </table></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://s3.tradingview.com/tv.js"></script>
+<script src="shared.js"></script>
+<script>
+let tradeDir = 'buy', orderType = 'market';
+
+function setDir(d) {
+  tradeDir = d;
+  document.getElementById('btnBuy').style.background  = d==='buy'  ? 'var(--green)' : 'transparent';
+  document.getElementById('btnBuy').style.color       = d==='buy'  ? '#fff' : 'var(--text2)';
+  document.getElementById('btnSell').style.background = d==='sell' ? 'var(--red)'   : 'transparent';
+  document.getElementById('btnSell').style.color      = d==='sell' ? '#fff' : 'var(--text2)';
+  const btn = document.getElementById('tradeBtn');
+  const sym = document.getElementById('symbolSelect')?.value || 'BTC/USD';
+  btn.className = 'btn ' + (d==='buy' ? 'btn-green' : 'btn-red');
+  btn.innerHTML = `<svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> ${d.toUpperCase()} ${sym}`;
+}
+function setOrder(t) {
+  orderType = t;
+  ['Mkt','Lmt','Stp'].forEach((s, i) => {
+    const id = 'btn'+s;
+    const match = ['market','limit','stop'][i] === t;
+    document.getElementById(id).style.background = match ? 'var(--bg4)' : 'transparent';
+    document.getElementById(id).style.color = match ? 'var(--text1)' : 'var(--text3)';
+  });
+  document.getElementById('limitPriceRow').style.display = t !== 'market' ? '' : 'none';
+}
+function updateSymbol() {
+  const sym = document.getElementById('symbolSelect')?.value || 'BTC/USD';
+  document.getElementById('chartTitle').textContent = sym;
+  document.getElementById('tradeBtn').innerHTML = `<svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> ${tradeDir.toUpperCase()} ${sym}`;
+}
+
+window.addEventListener('load', () => { setTimeout(loadTradingView, 300); });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+<script type="module">
+const supabase = window.ATRONTIFY_DB;
+async function signOut() { await supabase.auth.signOut(); location.href = 'login.html'; }
+window.signOut = signOut;
+window.addEventListener('load', async () => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) { location.href = 'login.html'; return; }
+  const { data: profile } = await supabase.from('profiles').select('first_name,last_name').eq('id', user.id).single();
+  const firstName = profile?.first_name || '';
+  const lastName  = profile?.last_name  || '';
+  const initials  = (firstName && lastName) ? `${firstName[0]}${lastName[0]}`.toUpperCase() : (user.email||'U')[0].toUpperCase();
+  const avatar = document.getElementById('userAvatar');
+  if (avatar) avatar.textContent = initials;
+});
+</script>
+</body>
+</html>

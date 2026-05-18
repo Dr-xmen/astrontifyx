@@ -1,5 +1,268 @@
 <!DOCTYPE html>
-<html><head><meta charset="UTF-8">
-<meta http-equiv="refresh" content="0;url=dashboard.html#deposit">
-<script>window.location.replace('dashboard.html#deposit');</script>
-</head><body></body></html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AtrontifyX — Deposit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar" id="sidebar">
+    <div class="logo">
+      <img src="assets/logo.png" alt="AtrontifyX" style="width:180px;height:100px;object-fit:contain;border-radius:12px;flex-shrink:0">
+    </div>
+    <nav class="nav">
+      <div class="nav-section">Main</div>
+      <div class="nav-item" data-page="dashboard" onclick="location.href='dashboard.html'">
+        <svg viewBox="0 0 24 24"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
+        <span class="nav-label">Dashboard</span>
+      </div>
+      <div class="nav-item" data-page="markets" onclick="location.href='markets.html'">
+        <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        <span class="nav-label">Markets</span>
+      </div>
+      <div class="nav-item" data-page="terminal" onclick="location.href='trade-terminal.html'">
+        <svg viewBox="0 0 24 24"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+        <span class="nav-label">Trade Terminal</span>
+      </div>
+      <div class="nav-section">Finance</div>
+      <div class="nav-item" data-page="deposit" onclick="location.href='deposit.html'">
+        <svg viewBox="0 0 24 24"><path d="M12 17V3"/><path d="m6 11 6 6 6-6"/><path d="M19 21H5"/></svg>
+        <span class="nav-label">Deposit</span>
+      </div>
+      <div class="nav-item" data-page="withdraw" onclick="location.href='withdrawal.html'">
+        <svg viewBox="0 0 24 24"><path d="M12 7v14"/><path d="m6 13 6-6 6 6"/><path d="M19 3H5"/></svg>
+        <span class="nav-label">Withdraw</span>
+      </div>
+      <div class="nav-section">Account</div>
+      <div class="nav-item" data-page="history" onclick="location.href='history.html'">
+        <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg>
+        <span class="nav-label">History</span>
+      </div>
+      <div class="nav-item" data-page="settings" onclick="location.href='settings.html'">
+        <svg viewBox="0 0 24 24"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+        <span class="nav-label">Settings</span>
+      </div>
+      <div class="nav-item" data-navaction="verification" onclick="location.href='settings.html#verification'">
+        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+        <span class="nav-label">Verification</span>
+      </div>
+    </nav>
+    <div class="sidebar-bottom">
+      <div class="nav-item" style="color:var(--red)" onclick="window.signOut && window.signOut()">
+        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        <span class="nav-label">Sign Out</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <div class="tb-left">
+        <div class="tb-btn" onclick="toggleSidebar()">
+          <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </div>
+        <span class="page-title">Deposit</span>
+      </div>
+      <div class="tb-right">
+        <div class="tb-btn"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+        <div class="tb-btn notif-wrap">
+          <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span class="notif-dot"></span>
+        </div>
+        <div class="tb-btn" onclick="toggleTheme()">
+          <svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18V3z" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+        </div>
+        <div class="avatar" id="userAvatar">--</div>
+      </div>
+    </div>
+
+    <div class="content fade-in">
+
+      <div class="grid g12" style="margin-bottom:14px">
+        <!-- Left: coin selector + network -->
+        <div>
+          <div class="card" style="margin-bottom:12px">
+            <div class="section-hdr"><span class="section-title">Select Currency</span></div>
+            <div class="grid g2" style="gap:8px" id="coinGrid"></div>
+          </div>
+          <div class="card-sm">
+            <label style="margin-bottom:8px">Network</label>
+            <select><option>Native / Mainnet</option><option>ERC-20</option><option>TRC-20</option><option>BEP-20</option></select>
+          </div>
+        </div>
+
+        <!-- Right: deposit address -->
+        <div class="card">
+          <div style="text-align:center;margin-bottom:18px">
+            <div id="coinIcon" class="a-icon" style="width:50px;height:50px;font-size:22px;background:rgba(247,147,26,0.15);color:#f7931a;margin:0 auto 8px">₿</div>
+            <div id="coinTitle" style="font-size:17px;font-weight:700">Deposit BTC</div>
+            <div id="coinSub" style="color:var(--text3);font-size:12.5px;margin-top:3px">Send only BTC to this address</div>
+          </div>
+          <div class="qr-box">
+            <svg viewBox="0 0 100 100" width="130" height="130" id="qrSvg"></svg>
+          </div>
+          <div class="fg">
+            <label>Wallet Address</label>
+            <div class="copy-row">
+              <input id="walletAddr" readonly value="" placeholder="Address not set — configure in admin panel" style="font-size:11.5px">
+              <button class="btn btn-outline btn-sm" onclick="copyAddr()">
+                <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="divider"></div>
+          <div style="background:rgba(245,158,11,0.07);border:1px solid rgba(245,158,11,0.2);border-radius:10px;padding:11px;font-size:12px;color:var(--amber);display:flex;gap:8px;align-items:flex-start">
+            <svg viewBox="0 0 24 24" style="width:16px;height:16px;flex-shrink:0;margin-top:1px;stroke:currentColor;fill:none;stroke-width:2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            <span>Send only <strong id="warnCoin">BTC</strong> to this address. Other assets will be permanently lost.</span>
+          </div>
+          <div class="grid g3" style="gap:8px;margin-top:14px;text-align:center">
+            <div class="stat-card" style="padding:10px"><div class="stat-label">Min Deposit</div><div style="font-size:13.5px;font-weight:600">$50</div></div>
+            <div class="stat-card" style="padding:10px"><div class="stat-label">Confirmations</div><div style="font-size:13.5px;font-weight:600">3</div></div>
+            <div class="stat-card" style="padding:10px"><div class="stat-label">Arrival</div><div style="font-size:13.5px;font-weight:600">~15 min</div></div>
+          </div>
+          <div class="divider"></div>
+          <div class="section-hdr" style="margin-bottom:10px"><span class="section-title">Confirm Your Deposit</span></div>
+          <div class="fg"><label>Amount Sent (USD)</label><input type="number" id="depositAmount" placeholder="0.00"></div>
+          <div class="fg"><label>Transaction Hash (optional)</label><input id="depositTxHash" placeholder="Paste transaction ID / hash"></div>
+          <button class="btn btn-green" style="width:100%;justify-content:center;margin-top:4px" onclick="window.submitDepositRequest && window.submitDepositRequest()">
+            <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2"><polyline points="20 6 9 17 4 12"/></svg>
+            I've Sent This Deposit
+          </button>
+        </div>
+      </div>
+
+      <!-- Deposit History -->
+      <div class="card">
+        <div class="section-hdr">
+          <span class="section-title">Deposit History</span>
+          <button class="btn btn-outline btn-sm">
+            <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Export
+          </button>
+        </div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>ID</th><th>Asset</th><th>Amount</th><th>TxID</th><th>Date</th><th>Status</th></tr></thead>
+          <tbody id="depositHistoryBody"><tr><td colspan="6" style="text-align:center;color:var(--text3);padding:20px">No deposits yet</td></tr></tbody>
+        </table></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="shared.js"></script>
+<script>
+let selCoin = 'BTC';
+window.selCoin = selCoin;
+window.walletAddresses = {};
+
+function buildCoinGrid() {
+  document.getElementById('coinGrid').innerHTML = COINS.map(c => `
+    <div class="cc ${c.sym===selCoin?'sel':''}" onclick="setSelCoin('${c.sym}')">
+      <div style="display:flex;align-items:center;gap:8px">
+        <div class="a-icon" style="width:29px;height:29px;font-size:12px;background:${c.col}22;color:${c.col}">${c.icon}</div>
+        <div><div style="font-size:12px;font-weight:600">${c.sym}</div><div style="font-size:10px;color:var(--text3)">${c.name}</div></div>
+      </div>
+    </div>`).join('');
+}
+
+function setSelCoin(sym) {
+  selCoin = sym;
+  window.selCoin = sym;
+  buildCoinGrid();
+  updateDepositUI();
+}
+
+function updateDepositUI() {
+  const coin = COINS.find(c => c.sym === selCoin) || COINS[0];
+  document.getElementById('coinIcon').style.background = coin.col + '22';
+  document.getElementById('coinIcon').style.color = coin.col;
+  document.getElementById('coinIcon').textContent = coin.icon;
+  document.getElementById('coinTitle').textContent = 'Deposit ' + coin.sym;
+  document.getElementById('coinSub').textContent = 'Send only ' + coin.sym + ' to this address';
+  document.getElementById('warnCoin').textContent = coin.sym;
+  const addr = window.walletAddresses[coin.sym] || '';
+  document.getElementById('walletAddr').value = addr;
+  document.getElementById('qrSvg').innerHTML = generateQR();
+}
+
+buildCoinGrid();
+updateDepositUI();
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+<script type="module">
+const supabase = window.ATRONTIFY_DB;
+
+async function signOut() { await supabase.auth.signOut(); location.href = 'login.html'; }
+window.signOut = signOut;
+
+async function loadWalletAddresses() {
+  try {
+    const { data } = await supabase.from('platform_settings').select('key,value')
+      .in('key',['crypto_address_BTC','crypto_address_ETH','crypto_address_USDT','crypto_address_USDT_TRC20']);
+    if (!data) return;
+    window.walletAddresses = {
+      BTC:  data.find(r=>r.key==='crypto_address_BTC')?.value || '',
+      ETH:  data.find(r=>r.key==='crypto_address_ETH')?.value || '',
+      USDT: data.find(r=>r.key==='crypto_address_USDT')?.value || '',
+      USDT_TRC20: data.find(r=>r.key==='crypto_address_USDT_TRC20')?.value || '',
+    };
+    const addr = document.getElementById('walletAddr');
+    if (addr) addr.value = window.walletAddresses[window.selCoin] || '';
+  } catch(err) { console.error(err); }
+}
+
+async function loadDeposits(userId) {
+  const { data } = await supabase.from('deposit_requests').select('*').eq('user_id', userId).order('created_at',{ascending:false});
+  const tbody = document.getElementById('depositHistoryBody');
+  if (!data || !data.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:20px">No deposits yet</td></tr>'; return; }
+  const statusCls = s => s==='approved'?'bg':s==='pending'?'ba':'br';
+  tbody.innerHTML = data.map(d => `<tr>
+    <td style="font-size:11px;color:var(--text3)">${d.id?.slice(0,8)||'—'}…</td>
+    <td>${d.coin||'—'}</td>
+    <td class="mono">$${Number(d.amount||0).toFixed(2)}</td>
+    <td class="mono" style="font-size:11px;color:var(--text3)">${d.tx_hash?d.tx_hash.slice(0,12)+'…':'—'}</td>
+    <td style="font-size:11.5px;color:var(--text3)">${d.created_at?new Date(d.created_at).toLocaleDateString():'—'}</td>
+    <td><span class="badge ${statusCls(d.status)}">${d.status||'—'}</span></td>
+  </tr>`).join('');
+}
+
+window.submitDepositRequest = async function() {
+  const amount = parseFloat(document.getElementById('depositAmount')?.value || 0);
+  const txHash = (document.getElementById('depositTxHash')?.value || '').trim();
+  if (!amount || amount <= 0) { alert('Enter the amount you sent'); return; }
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) { alert('Authentication required'); return; }
+  const { error } = await supabase.from('deposit_requests').insert({
+    user_id: user.id, amount, coin: window.selCoin || 'BTC', tx_hash: txHash || null, status: 'pending'
+  });
+  if (error) { alert(error.message); return; }
+  alert('Deposit submitted! It will be reviewed and credited within 24 hours.');
+  document.getElementById('depositAmount').value = '';
+  document.getElementById('depositTxHash').value = '';
+  await loadDeposits(user.id);
+};
+
+window.addEventListener('load', async () => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) { location.href = 'login.html'; return; }
+  const { data: profile } = await supabase.from('profiles').select('first_name,last_name').eq('id', user.id).single();
+  const firstName = profile?.first_name || '';
+  const lastName  = profile?.last_name  || '';
+  const initials  = (firstName && lastName) ? `${firstName[0]}${lastName[0]}`.toUpperCase() : (user.email||'U')[0].toUpperCase();
+  const avatar = document.getElementById('userAvatar');
+  if (avatar) avatar.textContent = initials;
+  await loadWalletAddresses();
+  await loadDeposits(user.id);
+});
+</script>
+</body>
+</html>

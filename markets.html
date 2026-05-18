@@ -1,1 +1,224 @@
-hi
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AtrontifyX — Markets</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar" id="sidebar">
+    <div class="logo">
+      <img src="assets/logo.png" alt="AtrontifyX" style="width:180px;height:100px;object-fit:contain;border-radius:12px;flex-shrink:0">
+    </div>
+    <nav class="nav">
+      <div class="nav-section">Main</div>
+      <div class="nav-item" data-page="dashboard" onclick="location.href='dashboard.html'">
+        <svg viewBox="0 0 24 24"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
+        <span class="nav-label">Dashboard</span>
+      </div>
+      <div class="nav-item" data-page="markets" onclick="location.href='markets.html'">
+        <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        <span class="nav-label">Markets</span>
+      </div>
+      <div class="nav-item" data-page="terminal" onclick="location.href='trade-terminal.html'">
+        <svg viewBox="0 0 24 24"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+        <span class="nav-label">Trade Terminal</span>
+      </div>
+      <div class="nav-section">Finance</div>
+      <div class="nav-item" data-page="deposit" onclick="location.href='deposit.html'">
+        <svg viewBox="0 0 24 24"><path d="M12 17V3"/><path d="m6 11 6 6 6-6"/><path d="M19 21H5"/></svg>
+        <span class="nav-label">Deposit</span>
+      </div>
+      <div class="nav-item" data-page="withdraw" onclick="location.href='withdrawal.html'">
+        <svg viewBox="0 0 24 24"><path d="M12 7v14"/><path d="m6 13 6-6 6 6"/><path d="M19 3H5"/></svg>
+        <span class="nav-label">Withdraw</span>
+      </div>
+      <div class="nav-section">Account</div>
+      <div class="nav-item" data-page="history" onclick="location.href='history.html'">
+        <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg>
+        <span class="nav-label">History</span>
+      </div>
+      <div class="nav-item" data-page="settings" onclick="location.href='settings.html'">
+        <svg viewBox="0 0 24 24"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+        <span class="nav-label">Settings</span>
+      </div>
+      <div class="nav-item" data-navaction="verification" onclick="location.href='settings.html#verification'">
+        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+        <span class="nav-label">Verification</span>
+      </div>
+    </nav>
+    <div class="sidebar-bottom">
+      <div class="nav-item" style="color:var(--red)" onclick="window.signOut && window.signOut()">
+        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        <span class="nav-label">Sign Out</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <div class="tb-left">
+        <div class="tb-btn" onclick="toggleSidebar()">
+          <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </div>
+        <span class="page-title">Markets</span>
+        <div class="ticker-shell">
+          <div class="ticker-bar tv-clean-ticker">
+            <div class="tradingview-widget-container ticker-tv-wrap">
+              <div class="tradingview-widget-container__widget"></div>
+              <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+              {"symbols":[{"proName":"FOREXCOM:SPXUSD","title":"S&P 500"},{"proName":"BINANCE:BTCUSDT","title":"Bitcoin"},{"proName":"BINANCE:ETHUSDT","title":"Ethereum"},{"proName":"OANDA:XAUUSD","title":"Gold"},{"proName":"FX:EURUSD","title":"EUR/USD"}],"showSymbolLogo":true,"isTransparent":true,"displayMode":"regular","colorTheme":"dark","locale":"en"}
+              </script>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tb-right">
+        <div class="tb-btn"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+        <div class="tb-btn notif-wrap">
+          <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span class="notif-dot"></span>
+        </div>
+        <div class="tb-btn" onclick="toggleTheme()">
+          <svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18V3z" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+        </div>
+        <div class="avatar" id="userAvatar">--</div>
+      </div>
+    </div>
+
+    <div class="content fade-in">
+
+      <!-- Category Tabs -->
+      <div class="tabs" id="mktTabs"></div>
+
+      <!-- Top Mover + Sentiment -->
+      <div class="grid g12" style="margin-bottom:14px">
+        <div class="card">
+          <div class="section-hdr"><span class="section-title">Top Mover</span><span class="badge bg">● Live</span></div>
+          <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px">
+            <div class="a-icon" style="width:46px;height:46px;background:rgba(247,147,26,0.15);color:#f7931a;font-size:20px">₿</div>
+            <div><div style="font-size:17px;font-weight:700">BTC/USD</div><div style="font-size:12px;color:var(--text3)">Bitcoin · Crypto</div></div>
+            <div style="margin-left:auto;text-align:right"><div style="font-size:26px;font-weight:700;font-family:'JetBrains Mono',monospace">67,234.50</div><div class="up" style="font-size:14px;font-weight:600">+2.14% ▲</div></div>
+          </div>
+          <div class="tradingview-widget-container" style="height:140px;width:100%">
+            <div id="tradingview_market" style="height:140px"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="section-hdr"><span class="section-title">Market Sentiment</span></div>
+          <div style="margin-bottom:14px">
+            <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:7px"><span>Bullish</span><span class="up" style="font-weight:600">63%</span></div>
+            <div class="progress-bar"><div class="progress-fill" style="width:63%;background:var(--green)"></div></div>
+          </div>
+          <div style="margin-bottom:14px">
+            <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:7px"><span>Bearish</span><span class="dn" style="font-weight:600">37%</span></div>
+            <div class="progress-bar"><div class="progress-fill" style="width:37%;background:var(--red)"></div></div>
+          </div>
+          <div class="divider"></div>
+          <div class="grid g3" style="text-align:center">
+            <div><div style="font-size:11px;color:var(--text3);margin-bottom:4px">Volume</div><div style="font-weight:600;font-size:14px;color:var(--green)">$2.4B</div></div>
+            <div><div style="font-size:11px;color:var(--text3);margin-bottom:4px">24h High</div><div style="font-weight:600;font-size:14px;color:var(--green)">67,842</div></div>
+            <div><div style="font-size:11px;color:var(--text3);margin-bottom:4px">24h Low</div><div style="font-weight:600;font-size:14px;color:var(--red)">64,120</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Markets Table -->
+      <div class="card">
+        <div class="section-hdr">
+          <span class="section-title" id="mktTableTitle">Forex Markets</span>
+          <div style="display:flex;gap:8px">
+            <div class="search-wrap" style="max-width:200px">
+              <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input id="mktSearch" placeholder="Search..." style="height:32px;font-size:12.5px" oninput="renderTable()">
+            </div>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>#</th><th>Asset</th><th>Price/Bid</th><th>Ask</th><th>Change</th><th>Volume</th><th>Spread</th><th>Action</th></tr></thead>
+            <tbody id="mktTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="shared.js"></script>
+<script>
+let mktCat = 'forex';
+
+const cats = ['forex','crypto','stocks','indices','metals','energy'];
+document.getElementById('mktTabs').innerHTML = cats.map(c =>
+  `<div class="tab ${c===mktCat?'active':''}" onclick="setMktCat('${c}')">${c[0].toUpperCase()+c.slice(1)}</div>`
+).join('');
+
+function setMktCat(c) {
+  mktCat = c;
+  document.querySelectorAll('#mktTabs .tab').forEach((el, i) => el.classList.toggle('active', cats[i]===c));
+  document.getElementById('mktTableTitle').textContent = c[0].toUpperCase()+c.slice(1)+' Markets';
+  renderTable();
+  setTimeout(loadMarketWidget, 100);
+}
+
+function renderTable() {
+  const data = mktCat==='crypto' ? COINS : mktCat==='stocks' ? STOCKS : FOREX;
+  const q = (document.getElementById('mktSearch')?.value || '').toLowerCase();
+  const filtered = data.filter(item => {
+    const sym = (item.pair||item.sym||'').toLowerCase();
+    const name = (item.name||'').toLowerCase();
+    return !q || sym.includes(q) || name.includes(q);
+  });
+  document.getElementById('mktTableBody').innerHTML = filtered.slice(0,12).map((item, i) => {
+    const sym   = item.pair || item.sym;
+    const price = item.bid || (item.price > 10 ? item.price.toFixed(2) : item.price?.toFixed(4)) || '—';
+    const ask   = item.ask || (item.price ? (item.price*1.001).toFixed(item.price>10?2:4) : '—');
+    return `<tr>
+      <td style="color:var(--text3)">${i+1}</td>
+      <td><div style="display:flex;align-items:center;gap:8px">
+        <div class="a-icon" style="width:26px;height:26px;font-size:11px;background:rgba(79,110,247,0.1);color:var(--accent2)">${item.icon||sym.slice(0,2)}</div>
+        <span>${sym}</span></div></td>
+      <td class="mono">${price}</td>
+      <td class="mono">${ask}</td>
+      <td>${badge((item.chg>=0?'+':'')+item.chg+'%', item.chg>=0?'bg':'br')}</td>
+      <td class="mono">${item.vol||'—'}</td>
+      <td class="mono">${item.spread||'2.0'}</td>
+      <td><button class="btn btn-primary btn-sm" onclick="location.href='trade-terminal.html'">
+        <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Trade
+      </button></td>
+    </tr>`;
+  }).join('');
+}
+
+renderTable();
+setTimeout(loadMarketWidget, 500);
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+<script type="module">
+const supabase = window.ATRONTIFY_DB;
+async function signOut() { await supabase.auth.signOut(); location.href = 'login.html'; }
+window.signOut = signOut;
+window.addEventListener('load', async () => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) { location.href = 'login.html'; return; }
+  const { data: profile } = await supabase.from('profiles').select('first_name,last_name').eq('id', user.id).single();
+  const firstName = profile?.first_name || '';
+  const lastName  = profile?.last_name  || '';
+  const initials  = (firstName && lastName) ? `${firstName[0]}${lastName[0]}`.toUpperCase() : (user.email||'U')[0].toUpperCase();
+  const avatar = document.getElementById('userAvatar');
+  if (avatar) avatar.textContent = initials;
+});
+</script>
+</body>
+</html>
