@@ -277,122 +277,103 @@ loadPortfolioChart('1D');
 <script type="module">
 const supabase = window.ATRONTIFY_DB;
 
-window.userData = { fullName: 'New User', email: '', balance: 0 };
+const CACHE_KEY = 'atx_dash_profile';
+const catColors = { Crypto:'#4f6ef7', Forex:'#22c55e', Stocks:'#f59e0b', Metals:'#14b8a6', Indices:'#8b5cf6', Energy:'#ef4444' };
 
 function setMoney(id, value) {
   const el = document.getElementById(id);
-  if (!el) return;
-  el.textContent = '$' + Number(value||0).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
+  if (el) el.textContent = '$' + Number(value||0).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
 }
 
-function loadMarketPerf(userId) {
+function applyProfile(profile) {
+  setMoney('portfolioBalance', profile.balance);
+  setMoney('equityValue',      profile.equity);
+  setMoney('freeMargin',       profile.free_margin);
+  setMoney('totalPnl',         profile.total_pnl);
+  const winEl = document.getElementById('winningTrades');
+  if (winEl) winEl.textContent = `${Number(profile.winning_trades||0)} winning trades`;
+}
+
+function categorizeSym(sym) {
+  const s = (sym||'').toUpperCase();
+  if (/BTC|ETH|BNB|SOL|XRP|DOGE|ADA|DOT|MATIC|AVAX/.test(s)) return 'Crypto';
+  if (/XAU|XAG|GOLD|SILVER/.test(s)) return 'Metals';
+  if (/SPX|NDX|DJI|DAX|FTSE|US30|US100|US500/.test(s)) return 'Indices';
+  if (/OIL|GAS|WTI|BRENT/.test(s)) return 'Energy';
+  if (s.length===6 && /^[A-Z]{6}$/.test(s)) return 'Forex';
+  if (s.includes('/')) return 'Forex';
+  return 'Stocks';
+}
+
+function renderMarketPerf(trades) {
   const wrap = document.getElementById('marketPerfData');
   if (!wrap) return;
-
-  supabase.from('trades').select('symbol,pnl').eq('user_id', userId).then(function({ data: trades }) {
-    if (!trades || !trades.length) {
-      wrap.innerHTML = '<div style="text-align:center;color:var(--text3);font-size:12px;padding:30px 0">No trade data yet</div>';
-      return;
-    }
-
-    const catColors = {
-      Crypto: '#4f6ef7', Forex: '#22c55e', Stocks: '#f59e0b',
-      Metals: '#14b8a6', Indices: '#8b5cf6', Energy: '#ef4444'
-    };
-
-    function categorizeSym(sym) {
-      const s = (sym || '').toUpperCase();
-      if (/BTC|ETH|BNB|SOL|XRP|DOGE|ADA|DOT|MATIC|AVAX/.test(s)) return 'Crypto';
-      if (/XAU|XAG|GOLD|SILVER/.test(s)) return 'Metals';
-      if (/SPX|NDX|DJI|DAX|FTSE|US30|US100|US500/.test(s)) return 'Indices';
-      if (/OIL|GAS|WTI|BRENT/.test(s)) return 'Energy';
-      if (s.length === 6 && /^[A-Z]{6}$/.test(s)) return 'Forex';
-      if (s.includes('/')) return 'Forex';
-      return 'Stocks';
-    }
-
-    const cats = {};
-    trades.forEach(function(t) {
-      const cat = categorizeSym(t.symbol);
-      if (!cats[cat]) cats[cat] = { total: 0, wins: 0 };
-      cats[cat].total++;
-      if ((t.pnl || 0) > 0) cats[cat].wins++;
-    });
-
-    const sorted = Object.keys(cats).sort(function(a, b) { return cats[b].total - cats[a].total; });
-
-    wrap.innerHTML = sorted.map(function(cat) {
-      const d = cats[cat];
-      const pct = Math.round((d.wins / d.total) * 100);
-      const color = catColors[cat] || '#4f6ef7';
-      return '<div>' +
-        '<div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;margin-bottom:5px">' +
-        '<span style="font-weight:500">' + cat + '</span>' +
-        '<span style="color:var(--text3)">' + d.total + ' trades</span>' +
-        '<span style="font-weight:600;color:' + color + '">' + pct + '% win</span>' +
-        '</div>' +
-        '<div class="progress-bar"><div class="progress-fill" style="width:' + pct + '%;background:' + color + '"></div></div>' +
-        '</div>';
-    }).join('');
-  }).catch(function(err) {
-    console.error(err);
-    const wrap2 = document.getElementById('marketPerfData');
-    if (wrap2) wrap2.innerHTML = '<div style="text-align:center;color:var(--text3);font-size:12px;padding:30px 0">No trade data yet</div>';
+  if (!trades || !trades.length) { wrap.innerHTML = '<div style="text-align:center;color:var(--text3);font-size:12px;padding:30px 0">No trade data yet</div>'; return; }
+  const cats = {};
+  trades.forEach(t => {
+    const cat = categorizeSym(t.symbol);
+    if (!cats[cat]) cats[cat] = { total:0, wins:0 };
+    cats[cat].total++;
+    if ((t.pnl||0) > 0) cats[cat].wins++;
   });
+  const sorted = Object.keys(cats).sort((a,b) => cats[b].total - cats[a].total);
+  wrap.innerHTML = sorted.map(cat => {
+    const d = cats[cat], pct = Math.round((d.wins/d.total)*100), color = catColors[cat]||'#4f6ef7';
+    return `<div><div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;margin-bottom:5px">
+      <span style="font-weight:500">${cat}</span><span style="color:var(--text3)">${d.total} trades</span>
+      <span style="font-weight:600;color:${color}">${pct}% win</span></div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${pct}%;background:${color}"></div></div></div>`;
+  }).join('');
 }
 
-async function loadUserProfile() {
-  try {
-    const { data: authData } = await supabase.auth.getUser();
-    if (!authData?.user) return;
-    const user = authData.user;
-    const { data: profile } = await supabase.from('profiles').select('*').eq('id', user.id).single();
-    if (!profile) return;
-
-    const firstName = profile.first_name || user.user_metadata?.first_name || '';
-    const lastName  = profile.last_name  || user.user_metadata?.last_name  || '';
-    const fullName  = `${firstName} ${lastName}`.trim() || user.user_metadata?.full_name || user.email?.split('@')[0] || 'User';
-    const initials  = (firstName && lastName) ? `${firstName[0]}${lastName[0]}`.toUpperCase() : fullName[0].toUpperCase();
-
-    window.userData = { fullName, email: user.email || '', balance: profile.balance || 0 };
-
-    const avatar = document.getElementById('userAvatar');
-    if (avatar) avatar.textContent = initials;
-
-    setMoney('portfolioBalance', profile.balance);
-    setMoney('equityValue', profile.equity);
-    setMoney('freeMargin', profile.free_margin);
-    setMoney('totalPnl', profile.total_pnl);
-
-    const winEl = document.getElementById('winningTrades');
-    if (winEl) winEl.textContent = `${Number(profile.winning_trades||0)} winning trades`;
-
-    // Populate recent trades
-    const { data: trades } = await supabase.from('trades').select('*').eq('user_id', user.id).order('opened_at', {ascending:false}).limit(5);
-    if (trades && trades.length) {
-      document.getElementById('recentTradesBody').innerHTML = trades.map(t => `<tr>
-        <td style="color:var(--text3);font-size:11px">${String(t.id||'').slice(0,8)||'—'}</td>
-        <td>${t.symbol||'—'}</td>
-        <td class="mono ${(t.pnl||0)>=0?'up':'dn'}">${(t.pnl||0)>=0?'+':''}$${Math.abs(t.pnl||0).toFixed(2)}</td>
-        <td style="color:var(--text3);font-size:11px">${t.opened_at ? new Date(t.opened_at).toLocaleDateString() : '—'}</td>
-      </tr>`).join('');
-    }
-
-    loadMarketPerf(user.id);
-  } catch(err) { console.error(err); }
-}
-
-async function signOut() {
-  await supabase.auth.signOut();
-  location.href = 'login.html';
-}
+async function signOut() { await supabase.auth.signOut(); location.href = 'login.html'; }
 window.signOut = signOut;
 
-window.addEventListener('load', async () => {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) { location.href = 'login.html'; return; }
-  await loadUserProfile();
-});
+// getSession() reads localStorage — no network round-trip, fires immediately
+const { data: { session } } = await supabase.auth.getSession();
+if (!session) { location.href = 'login.html'; }
+else {
+  const user = session.user;
+
+  // Show avatar from JWT claims immediately (no DB needed)
+  const meta = user.user_metadata || {};
+  const fn = meta.first_name || '', ln = meta.last_name || '';
+  const fullName = `${fn} ${ln}`.trim() || meta.full_name || user.email?.split('@')[0] || 'U';
+  const initials = (fn && ln) ? `${fn[0]}${ln[0]}`.toUpperCase() : fullName[0].toUpperCase();
+  const avatar = document.getElementById('userAvatar');
+  if (avatar) avatar.textContent = initials;
+
+  // Flash cached values instantly on repeat visits
+  try {
+    const cached = sessionStorage.getItem(CACHE_KEY);
+    if (cached) applyProfile(JSON.parse(cached));
+  } catch(e) {}
+
+  // Fetch profile + all trades in parallel (one round-trip instead of three)
+  const [{ data: profile }, { data: trades }] = await Promise.all([
+    supabase.from('profiles').select('balance,equity,free_margin,total_pnl,winning_trades,first_name,last_name').eq('id', user.id).single(),
+    supabase.from('trades').select('id,symbol,pnl,opened_at,side').eq('user_id', user.id).order('opened_at', {ascending:false})
+  ]);
+
+  if (profile) {
+    const pfn = profile.first_name || fn, pln = profile.last_name || ln;
+    if (avatar) avatar.textContent = (pfn && pln) ? `${pfn[0]}${pln[0]}`.toUpperCase() : initials;
+    applyProfile(profile);
+    try { sessionStorage.setItem(CACHE_KEY, JSON.stringify(profile)); } catch(e) {}
+  }
+
+  if (trades && trades.length) {
+    document.getElementById('recentTradesBody').innerHTML = trades.slice(0,5).map(t => `<tr>
+      <td style="color:var(--text3);font-size:11px">${String(t.id||'').slice(0,8)||'—'}</td>
+      <td>${t.symbol||'—'}</td>
+      <td class="mono ${(t.pnl||0)>=0?'up':'dn'}">${(t.pnl||0)>=0?'+':''}$${Math.abs(t.pnl||0).toFixed(2)}</td>
+      <td style="color:var(--text3);font-size:11px">${t.opened_at ? new Date(t.opened_at).toLocaleDateString() : '—'}</td>
+    </tr>`).join('');
+    renderMarketPerf(trades);
+  } else {
+    renderMarketPerf([]);
+  }
+}
 </script>
 </body>
 </html>
