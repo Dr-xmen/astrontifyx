@@ -3426,13 +3426,7 @@ window.addTradeRecord = async () => {
     closed_at:  new Date().toISOString(),
   });
   if (error) { showToast('Error: '+error.message,'error'); return; }
-  // Update user's balance, total_pnl and winning_trades in profiles
-  const { data: prof } = await db.from('profiles').select('balance, equity, total_pnl, winning_trades').eq('id', userId).single();
-  const newBal  = parseFloat(prof?.balance  || 0) + pnl;
-  const newPnl  = parseFloat(prof?.total_pnl || 0) + pnl;
-  const newWins = parseInt(prof?.winning_trades || 0) + (pnl > 0 ? 1 : 0);
-  await db.from('profiles').update({ balance: newBal, equity: newBal, total_pnl: newPnl, winning_trades: newWins }).eq('id', userId);
-  showToast('Trade added','success');
+  showToast('Trade added — balance updated via trigger','success');
   document.getElementById('trade-pair').value = '';
   document.getElementById('trade-size').value = '';
   document.getElementById('trade-pnl').value  = '';
