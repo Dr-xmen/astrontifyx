@@ -679,7 +679,7 @@ const STOCKS = [
   {sym:'META',name:'Meta',price:504.80,chg:2.14,vol:'18.3M'},
 ];
 const POSITIONS = [];
-const TRADES = [];
+let TRADES = [];
 let DEPOSITS = [];
 let WITHDRAWALS = [];
 
@@ -1352,7 +1352,7 @@ function pgHistory() {
     </table></div>
   </div>`}`;
 }
-function setHistTab(t){histTab=t;render();}
+function setHistTab(t){histTab=t;if(t==='trades')loadTrades();render();}
 
 
 
@@ -1885,6 +1885,34 @@ async function loadWithdrawals() {
 
 }
 
+async function loadTrades() {
+  try {
+    const { data: authData } = await supabase.auth.getUser();
+    if (!authData?.user) return;
+
+    const { data, error } = await supabase
+      .from('trades')
+      .select('*')
+      .eq('user_id', authData.user.id)
+      .order('opened_at', { ascending: false });
+
+    if (error) { console.error(error); return; }
+
+    // Map DB column names to what the renderer expects
+    TRADES = (data || []).map(t => ({
+      ...t,
+      pair:       t.symbol,
+      direction:  (t.side || '').toUpperCase(),
+      created_at: t.opened_at || t.closed_at,
+    }));
+
+    if (page === 'history') render();
+
+  } catch (err) {
+    console.error(err);
+  }
+}
+
 
 async function submitBankWithdrawal() {
 
@@ -2113,6 +2141,7 @@ window.addEventListener('load', async () => {
   await loadUserProfile();
   await loadDeposits();
   await loadWithdrawals();
+  await loadTrades();
   await loadWalletAddresses();
 });
 
