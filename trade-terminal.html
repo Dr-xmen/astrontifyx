@@ -109,7 +109,7 @@
               <button id="btnBuy" onclick="setDir('buy')" style="flex:1;padding:10px;border:none;background:var(--green);color:#fff;cursor:pointer;font-family:inherit;font-size:14px;font-weight:700;transition:all .2s">BUY</button>
               <button id="btnSell" onclick="setDir('sell')" style="flex:1;padding:10px;border:none;background:transparent;color:var(--text2);cursor:pointer;font-family:inherit;font-size:14px;font-weight:700;transition:all .2s">SELL</button>
             </div>
-            <div id="tvQuoteWrap" style="height:70px;overflow:hidden;margin-bottom:13px"></div>
+            <div id="tvQuoteWrap" style="height:130px;overflow:hidden;margin-bottom:13px"></div>
             <div style="display:flex;border:1px solid var(--border2);border-radius:10px;overflow:hidden;margin-bottom:13px">
               <button id="btnMkt" onclick="setOrder('market')" style="flex:1;padding:7px;border:none;background:var(--bg4);color:var(--text1);cursor:pointer;font-family:inherit;font-size:12px;font-weight:600;transition:all .2s">Market</button>
               <button id="btnLmt" onclick="setOrder('limit')" style="flex:1;padding:7px;border:none;background:transparent;color:var(--text3);cursor:pointer;font-family:inherit;font-size:12px;font-weight:600;transition:all .2s">Limit</button>
@@ -220,7 +220,7 @@ function loadQuoteWidget(tvSym) {
   script.textContent = JSON.stringify({
     symbol: tvSym,
     width: '100%',
-    height: '100%',
+    height: 130,
     locale: 'en',
     colorTheme: 'dark',
     isTransparent: true

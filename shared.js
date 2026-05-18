@@ -165,10 +165,9 @@ function loadPortfolioChart(range) {
     symbols: [['FOREXCOM:SPXUSD|' + tvRange]],
     chartOnly: true,
     width: '100%',
-    height: '100%',
+    height: 175,
     locale: 'en',
     colorTheme: 'dark',
-    autosize: true,
     showVolume: false,
     hideDateRanges: true,
     hideMarketStatus: true,
@@ -194,9 +193,10 @@ function loadPortfolioChart(range) {
   wrap.appendChild(container);
 }
 
-function loadMktOverview(containerId, symbols) {
+function loadMktOverview(containerId, symbols, height) {
   const wrap = document.getElementById(containerId);
   if (!wrap) return;
+  const h = height || 490;
   wrap.innerHTML = '';
   const container = document.createElement('div');
   container.className = 'tradingview-widget-container';
@@ -217,7 +217,7 @@ function loadMktOverview(containerId, symbols) {
     showSymbolLogo: true,
     showFloatingTooltip: false,
     width: '100%',
-    height: '100%',
+    height: h,
     plotLineColorGrowing: 'rgba(41, 98, 255, 1)',
     plotLineColorFalling: 'rgba(41, 98, 255, 1)',
     gridLineColor: 'rgba(42, 46, 57, 0)',
