@@ -1342,7 +1342,7 @@ function pgHistory() {
     <div class="table-wrap"><table>
       <thead><tr><th>ID</th><th>Pair</th><th>Type</th><th>P&amp;L</th><th>Date</th></tr></thead>
       <tbody>${TRADES.length ? TRADES.map(t=>`<tr>
-        <td style="font-size:11px;color:var(--text3)">${t.id?.slice(0,8)}…</td>
+        <td style="font-size:11px;color:var(--text3)">${String(t.id||'').slice(0,8)||'—'}</td>
         <td>${t.pair||'—'}</td>
         <td>${badge(t.direction||t.type||'—', (t.direction||t.type)==='BUY'?'bg':'br')}</td>
         <td class="mono ${(t.pnl||0)>=0?'up':'dn'}">${(t.pnl||0)>=0?'+':''}$${Math.abs(t.pnl||0).toFixed(2)}</td>
