@@ -235,6 +235,19 @@
     .pill-purple { background: var(--purple-lt); color: var(--purple); }
     .pill-grey   { background: var(--bg);        color: var(--muted); }
 
+    /* Plan upgrade option rows */
+    .plan-option {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 14px; border-radius: 8px;
+      border: 1.5px solid var(--border); cursor: pointer; transition: .15s;
+    }
+    .plan-option:hover { border-color: var(--blue); background: var(--blue-lt); }
+    .plan-option input[type=radio] { accent-color: var(--blue); flex-shrink: 0; }
+    .plan-option:has(input:checked) { border-color: var(--blue); background: var(--blue-lt); }
+    .plan-option__content { flex: 1; }
+    .plan-option__name { display: block; font-size: 13px; font-weight: 600; }
+    .plan-option__desc { display: block; font-size: 11px; color: var(--muted); margin-top: 1px; }
+
     /* User avatar in table */
     .user-cell { display: flex; align-items: center; gap: 10px; }
     .user-avatar { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #fff; flex-shrink: 0; }
@@ -485,6 +498,10 @@
       <button class="nav-item" onclick="showPage('trades',this)">
         <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
         Trades History
+      </button>
+      <button class="nav-item" onclick="showPage('emails',this)">
+        <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,12 2,6"/></svg>
+        Email Users
       </button>
 
       <div class="sidebar__section-label">System</div>
@@ -794,6 +811,69 @@
               <thead><tr><th>Time</th><th>Account</th><th>User</th><th>Type</th><th>Amount</th><th>Before</th><th>After</th><th>Admin</th><th>Reason</th></tr></thead>
               <tbody id="adj-log-tbody"></tbody>
             </table>
+          </div>
+        </div>
+
+        <!-- Profit Target Manager -->
+        <div class="card" style="margin-top:20px;">
+          <div class="card__head">
+            <div>
+              <div class="card__title">Profit Target Manager</div>
+              <div style="font-size:12px;color:var(--muted);margin-top:2px;">Set and track per-user profit targets with incremental trade entries</div>
+            </div>
+            <button class="btn btn--primary" onclick="ptOpenSetModal()">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Set Target
+            </button>
+          </div>
+          <div class="card__body">
+            <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;margin-bottom:18px;">
+              <div class="field" style="flex:1;min-width:200px;margin:0;">
+                <label>Select User</label>
+                <select id="pt-user-sel" onchange="ptLoadUser(this.value)">
+                  <option value="">— Select a user —</option>
+                </select>
+              </div>
+              <button class="btn btn--outline" id="pt-add-trade-btn" onclick="ptOpenAddTrade()" style="display:none;">+ Add Trade Entry</button>
+              <button class="btn" id="pt-deactivate-btn" onclick="ptDeactivate()" style="display:none;background:#fff1f2;color:#e60023;border:1.5px solid #fecdd3;">Deactivate</button>
+            </div>
+            <div id="pt-empty-msg" style="color:var(--muted);font-size:13px;">Select a user to view their active profit target.</div>
+            <div id="pt-display" style="display:none;">
+              <div style="display:flex;gap:28px;align-items:flex-start;flex-wrap:wrap;margin-bottom:24px;padding:20px;background:var(--bg);border-radius:12px;border:1.5px solid var(--border);">
+                <div style="text-align:center;flex-shrink:0;">
+                  <svg width="120" height="120" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="40" fill="none" stroke="var(--border)" stroke-width="8"/>
+                    <circle id="pt-ring" cx="50" cy="50" r="40" fill="none" stroke="#22a06b" stroke-width="8"
+                      stroke-linecap="round" stroke-dasharray="251.33" stroke-dashoffset="251.33"
+                      transform="rotate(-90 50 50)" style="transition:stroke-dashoffset .8s cubic-bezier(.22,1,.36,1),stroke .4s;"/>
+                    <text id="pt-ring-pct" x="50" y="54" text-anchor="middle" font-size="18" font-weight="700" fill="currentColor" style="font-family:inherit;">0%</text>
+                  </svg>
+                  <div style="font-size:11px;color:var(--muted);margin-top:4px;">of target reached</div>
+                </div>
+                <div style="flex:1;min-width:140px;display:grid;gap:12px;align-content:start;">
+                  <div>
+                    <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px;">Label</div>
+                    <div id="pt-info-label" style="font-size:15px;font-weight:600;">—</div>
+                  </div>
+                  <div>
+                    <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px;">Target Amount</div>
+                    <div id="pt-info-amount" style="font-size:15px;font-weight:600;color:var(--blue);">—</div>
+                  </div>
+                  <div>
+                    <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px;">Progress</div>
+                    <div id="pt-info-progress" style="font-size:15px;font-weight:600;">—</div>
+                  </div>
+                  <div>
+                    <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px;">Created</div>
+                    <div id="pt-info-date" style="font-size:13px;color:var(--muted);">—</div>
+                  </div>
+                </div>
+              </div>
+              <div style="font-size:13px;font-weight:600;margin-bottom:10px;">Trade Entries</div>
+              <div id="pt-trades-wrap">
+                <p style="color:var(--muted);font-size:13px;">No entries yet.</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -1250,6 +1330,76 @@
         </div>
       </div>
 
+      <!-- ==================== EMAIL USERS ==================== -->
+      <div class="page" id="page-emails">
+        <div class="page-header">
+          <div>
+            <div class="page-header__title">Email Users</div>
+            <div class="page-header__sub">Send branded emails directly to clients</div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <button class="btn btn--outline" title="Refresh" onclick="emailPopulateUsers(); loadEmailHistory()">
+              <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:400px 1fr;gap:20px;align-items:start;">
+
+          <!-- Compose panel -->
+          <div class="card" style="position:sticky;top:24px;">
+            <div class="card__head">
+              <div class="card__title" style="display:flex;align-items:center;gap:8px;">
+                <svg viewBox="0 0 24 24" style="width:15px;height:15px;fill:none;stroke:var(--blue);stroke-width:2;flex-shrink:0;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,12 2,6"/></svg>
+                New Email
+              </div>
+            </div>
+            <div class="card__body" style="display:flex;flex-direction:column;gap:16px;">
+              <div class="field">
+                <label>To</label>
+                <select id="email-recipient-sel">
+                  <option value="">&#8212; Select recipient &#8212;</option>
+                </select>
+              </div>
+              <div>
+                <label style="display:block;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:6px;">Subject</label>
+                <input id="email-subject" type="text" placeholder="e.g. Important account update"
+                  style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-size:13px;color:var(--text);outline:none;box-sizing:border-box;">
+              </div>
+              <div>
+                <label style="display:block;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:6px;">Message</label>
+                <textarea id="email-body" rows="10" placeholder="Type your message here&#8230;"
+                  style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-size:13px;color:var(--text);outline:none;resize:vertical;box-sizing:border-box;font-family:inherit;line-height:1.6;"></textarea>
+              </div>
+              <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 14px;display:flex;align-items:flex-start;gap:8px;">
+                <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:none;stroke:var(--blue);stroke-width:2;flex-shrink:0;margin-top:1px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                <p style="margin:0;font-size:12px;color:var(--muted);line-height:1.5;">Logged using the AtrontifyX admin email system. Message is saved to sent history.</p>
+              </div>
+              <button id="email-send-btn" onclick="opsSendEmail()" class="btn btn--primary" style="width:100%;justify-content:center;padding:12px;">
+                Send Email
+              </button>
+            </div>
+          </div>
+
+          <!-- History panel -->
+          <div class="card">
+            <div class="card__head" style="display:flex;align-items:center;justify-content:space-between;">
+              <div class="card__title">Sent History</div>
+              <button class="btn btn--outline btn--sm" onclick="loadEmailHistory()">Refresh</button>
+            </div>
+            <div class="card__body--p0 table-wrap">
+              <table class="data-table">
+                <thead><tr><th>Recipient</th><th>Subject</th><th>Sent</th><th></th></tr></thead>
+                <tbody id="email-history-body">
+                  <tr><td colspan="4" style="text-align:center;color:var(--muted);padding:32px;">Loading&hellip;</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
     </div><!-- /content -->
   </div><!-- /main -->
 </div><!-- /layout -->
@@ -1390,6 +1540,162 @@
         <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
         Delete Permanently
       </button>
+    </div>
+  </div>
+</div>
+
+<!-- Upgrade Plan -->
+<div class="modal-overlay" id="modal-upgrade-plan">
+  <div class="modal" style="max-width:420px;">
+    <div class="modal__head">
+      <div class="modal__title">Upgrade Account Plan</div>
+      <button class="modal__close" onclick="closeModal('modal-upgrade-plan')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal__body">
+      <p style="font-size:13px;color:var(--muted);margin-bottom:18px;">
+        Changing plan for <strong id="upgrade-user-name" style="color:var(--text);"></strong>
+      </p>
+      <div style="display:flex;flex-direction:column;gap:10px;" id="plan-option-list">
+        <label class="plan-option" data-plan="Standard">
+          <input type="radio" name="plan-select" value="Standard">
+          <div class="plan-option__content">
+            <span class="plan-option__name">Standard</span>
+            <span class="plan-option__desc">Default tier — no upgrade fee</span>
+          </div>
+          <span class="badge-pill pill-blue">Standard</span>
+        </label>
+        <label class="plan-option" data-plan="RAW+">
+          <input type="radio" name="plan-select" value="RAW+">
+          <div class="plan-option__content">
+            <span class="plan-option__name">RAW+</span>
+            <span class="plan-option__desc">Balance limit $50,000 — $500 fee</span>
+          </div>
+          <span class="badge-pill pill-blue">RAW+</span>
+        </label>
+        <label class="plan-option" data-plan="ELITE">
+          <input type="radio" name="plan-select" value="ELITE">
+          <div class="plan-option__content">
+            <span class="plan-option__name">ELITE</span>
+            <span class="plan-option__desc">Balance limit $100,000 — $1,000 fee</span>
+          </div>
+          <span class="badge-pill pill-purple">ELITE</span>
+        </label>
+        <label class="plan-option" data-plan="MASTER">
+          <input type="radio" name="plan-select" value="MASTER">
+          <div class="plan-option__content">
+            <span class="plan-option__name">MASTER</span>
+            <span class="plan-option__desc">Balance limit $1,000,000 — $5,000 fee</span>
+          </div>
+          <span class="badge-pill pill-orange">MASTER</span>
+        </label>
+      </div>
+      <input type="hidden" id="upgrade-user-id">
+    </div>
+    <div class="modal__foot">
+      <button class="btn btn--outline" onclick="closeModal('modal-upgrade-plan')">Cancel</button>
+      <button class="btn btn--primary" onclick="saveUpgradePlan()">Save Plan</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Set Profit Target -->
+<div class="modal-overlay" id="modal-pt-set">
+  <div class="modal">
+    <div class="modal__head">
+      <div class="modal__title">Set Profit Target</div>
+      <button class="modal__close" onclick="closeModal('modal-pt-set')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal__body">
+      <div class="form-grid">
+        <div class="field field--full">
+          <label>User</label>
+          <select id="pt-set-user">
+            <option value="">— Select a user —</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Target Amount (USD)</label>
+          <div style="position:relative;">
+            <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-weight:700;color:var(--muted);font-size:14px;">$</span>
+            <input type="number" id="pt-set-amount" placeholder="e.g. 10000" min="1" step="0.01" style="padding-left:28px;">
+          </div>
+        </div>
+        <div class="field">
+          <label>Label <span style="font-weight:400;color:var(--muted);">(optional)</span></label>
+          <input type="text" id="pt-set-label" placeholder="e.g. Q2 2026 Goal">
+        </div>
+      </div>
+      <div style="margin-top:12px;padding:10px 12px;background:var(--blue-lt);border-radius:8px;font-size:12px;color:var(--blue);">
+        Setting a new target will deactivate any existing active target for this user.
+      </div>
+    </div>
+    <div class="modal__foot">
+      <button class="btn btn--outline" onclick="closeModal('modal-pt-set')">Cancel</button>
+      <button class="btn btn--primary" onclick="ptSaveTarget()">Set Target</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Add Trade Entry -->
+<div class="modal-overlay" id="modal-pt-trade">
+  <div class="modal">
+    <div class="modal__head">
+      <div class="modal__title">Add Trade Entry</div>
+      <button class="modal__close" onclick="closeModal('modal-pt-trade')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal__body">
+      <div id="pt-trade-target-info" style="padding:10px 12px;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;font-size:13px;margin-bottom:14px;"></div>
+      <div class="form-grid">
+        <div class="field field--full">
+          <label>Entry Type</label>
+          <div style="display:flex;gap:8px;margin-top:4px;">
+            <button id="pt-mode-dollar" onclick="ptSetTradeMode('dollar')"
+              style="flex:1;height:40px;border-radius:8px;border:2px solid var(--blue);background:var(--blue);color:#fff;font-weight:600;font-size:13px;cursor:pointer;transition:.15s;">
+              $ Dollar Amount
+            </button>
+            <button id="pt-mode-pct" onclick="ptSetTradeMode('pct')"
+              style="flex:1;height:40px;border-radius:8px;border:2px solid var(--border);background:transparent;color:var(--text);font-weight:600;font-size:13px;cursor:pointer;transition:.15s;">
+              % Manual %
+            </button>
+          </div>
+        </div>
+        <div class="field field--full" id="pt-trade-dollar-field">
+          <label>Dollar Amount (USD)</label>
+          <div style="position:relative;">
+            <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-weight:700;color:var(--muted);font-size:14px;">$</span>
+            <input type="number" id="pt-trade-amount" placeholder="e.g. 2500" min="0" step="0.01" style="padding-left:28px;">
+          </div>
+          <div style="font-size:11px;color:var(--muted);margin-top:4px;">Percentage will be auto-calculated from the target amount.</div>
+        </div>
+        <div class="field field--full" id="pt-trade-pct-field" style="display:none;">
+          <label>Percentage Delta (%)</label>
+          <div style="position:relative;">
+            <input type="number" id="pt-trade-pct" placeholder="e.g. 25.5" step="0.01" style="padding-right:32px;">
+            <span style="position:absolute;right:12px;top:50%;transform:translateY(-50%);font-weight:700;color:var(--muted);font-size:14px;">%</span>
+          </div>
+        </div>
+        <div class="field field--full">
+          <label>Note <span style="font-weight:400;color:var(--muted);">(optional)</span></label>
+          <input type="text" id="pt-trade-note" placeholder="e.g. EUR/USD breakout, session gain…">
+        </div>
+      </div>
+    </div>
+    <div class="modal__foot">
+      <button class="btn btn--outline" onclick="closeModal('modal-pt-trade')">Cancel</button>
+      <button class="btn btn--primary" onclick="ptSaveTrade()">Add Entry</button>
+    </div>
+  </div>
+</div>
+
+<!-- View Email Modal -->
+<div class="modal-overlay" id="modal-view-email">
+  <div class="modal" style="max-width:680px;">
+    <div class="modal__head">
+      <div class="modal__title" id="view-email-subject">Email Preview</div>
+      <button class="modal__close" onclick="closeModal('modal-view-email')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal__body" style="padding:0;">
+      <iframe id="view-email-frame" srcdoc="" sandbox="allow-same-origin" style="width:100%;height:520px;border:none;border-radius:0 0 12px 12px;display:block;"></iframe>
     </div>
   </div>
 </div>
@@ -1649,6 +1955,7 @@ function renderUsers() {
       <td>
         <div class="row-actions">
           <button class="btn btn--sm btn--outline" onclick="resetUserPassword('${escapeHTML(user.email || '')}')">Reset</button>
+          <button class="btn btn--sm btn--outline" onclick="openUpgradePlanModal('${escapeHTML(user.id || '')}','${escapeHTML(user.name || '')}')">Plan</button>
           <button type="button" class="btn btn--sm btn--red" data-delete-user="${escapeHTML(user.id || '')}" data-name="${escapeHTML(user.name || '')}" data-email="${escapeHTML(user.email || '')}">Delete</button>
         </div>
       </td>
@@ -3274,6 +3581,400 @@ window.addEventListener('unhandledrejection', function(event){
 window.addEventListener('error', function(event){
   console.warn('Suppressed JS error:', event.message);
 });
+
+/* ============================================================
+   UTILITIES
+============================================================ */
+function fmtMoney(value) {
+  const n = Number(value);
+  if (isNaN(n)) return '$0.00';
+  return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+/* ============================================================
+   PLAN UPGRADE
+============================================================ */
+window.openUpgradePlanModal = function(userId, userName) {
+  document.getElementById('upgrade-user-id').value = userId || '';
+  document.getElementById('upgrade-user-name').textContent = userName || 'User';
+  const radios = document.querySelectorAll('input[name=plan-select]');
+  radios.forEach(r => r.checked = false);
+  openModal('modal-upgrade-plan');
+};
+
+window.saveUpgradePlan = async function() {
+  const db = window.ATRONTIFY_DB; if (!db) return;
+  const userId = document.getElementById('upgrade-user-id').value;
+  const plan   = document.querySelector('input[name=plan-select]:checked')?.value;
+  if (!plan) { showToast('Please select a plan', 'error'); return; }
+  const { error } = await db.from('profiles').update({ plan }).eq('id', userId);
+  if (error) { showToast('Error: ' + error.message, 'error'); return; }
+  showToast('Plan updated to ' + plan, 'success');
+  closeModal('modal-upgrade-plan');
+  if (typeof renderUsersLive === 'function') renderUsersLive();
+};
+
+/* ============================================================
+   PROFIT TARGET MANAGER
+============================================================ */
+let _ptCurrentTarget = null;
+let _ptTradeMode = 'dollar';
+const PT_CIRC = 251.33; // 2π × r40
+
+function ptRingColor(pct) {
+  if (pct >= 100) return '#22a06b';
+  if (pct >= 75)  return '#1a5cff';
+  if (pct >= 50)  return '#f5a623';
+  return '#e60023';
+}
+
+function ptUpdateRing(pct) {
+  const ring = document.getElementById('pt-ring');
+  const pctText = document.getElementById('pt-ring-pct');
+  if (!ring || !pctText) return;
+  const clamped = Math.min(100, Math.max(0, pct));
+  ring.setAttribute('stroke-dashoffset', (PT_CIRC * (1 - clamped / 100)).toFixed(2));
+  ring.setAttribute('stroke', ptRingColor(pct));
+  pctText.textContent = pct.toFixed(1) + '%';
+  pctText.setAttribute('fill', ptRingColor(pct));
+}
+
+window.ptPopulateUsers = async function() {
+  const db = window.ATRONTIFY_DB;
+  if (!db) return;
+  const { data: users, error } = await db
+    .from('profiles')
+    .select('id, email, first_name, last_name')
+    .order('created_at', { ascending: false });
+  if (error || !users?.length) return;
+  const opts = '<option value="">— Select a user —</option>' +
+    users.map(u => {
+      const name = [u.first_name, u.last_name].filter(Boolean).join(' ') || u.email;
+      return '<option value="' + u.id + '">' + name + ' (' + u.email + ')</option>';
+    }).join('');
+  ['pt-user-sel', 'pt-set-user'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = opts;
+  });
+};
+
+window.ptLoadUser = async function(userId) {
+  const display  = document.getElementById('pt-display');
+  const emptyMsg = document.getElementById('pt-empty-msg');
+  const addBtn   = document.getElementById('pt-add-trade-btn');
+  const deactBtn = document.getElementById('pt-deactivate-btn');
+  _ptCurrentTarget = null;
+
+  if (!userId) {
+    if (display) display.style.display  = 'none';
+    if (emptyMsg) emptyMsg.style.display = 'block';
+    if (addBtn) addBtn.style.display   = 'none';
+    if (deactBtn) deactBtn.style.display = 'none';
+    return;
+  }
+
+  if (emptyMsg) { emptyMsg.textContent = 'Loading…'; emptyMsg.style.display = 'block'; }
+  if (display) display.style.display  = 'none';
+
+  const db = window.ATRONTIFY_DB;
+  if (!db) return;
+
+  const { data: rows, error } = await db
+    .from('profit_targets')
+    .select('*')
+    .eq('user_id', userId)
+    .eq('is_active', true)
+    .order('created_at', { ascending: false })
+    .limit(1);
+
+  if (error) {
+    if (emptyMsg) emptyMsg.textContent = 'Error: ' + error.message;
+    return;
+  }
+
+  if (!rows?.length) {
+    if (emptyMsg) emptyMsg.textContent = 'No active profit target for this user. Use "Set Target" to create one.';
+    if (addBtn) addBtn.style.display   = 'none';
+    if (deactBtn) deactBtn.style.display = 'none';
+    return;
+  }
+
+  const target = rows[0];
+
+  const { data: trades } = await db
+    .from('profit_target_trades')
+    .select('percentage_delta')
+    .eq('target_id', target.id);
+
+  const pct = Math.round(
+    (trades || []).reduce((s, tr) => s + Number(tr.percentage_delta), 0) * 100
+  ) / 100;
+  target.current_percentage = pct;
+  _ptCurrentTarget = target;
+
+  document.getElementById('pt-info-label').textContent    = target.label || '(no label)';
+  document.getElementById('pt-info-amount').textContent   = fmtMoney(target.target_amount);
+  document.getElementById('pt-info-progress').textContent = pct.toFixed(2) + '%';
+  document.getElementById('pt-info-date').textContent     = fmtDate(target.created_at);
+
+  if (display) display.style.display  = 'block';
+  if (emptyMsg) emptyMsg.style.display = 'none';
+  if (addBtn) addBtn.style.display   = 'inline-flex';
+  if (deactBtn) deactBtn.style.display = 'inline-flex';
+
+  requestAnimationFrame(() => requestAnimationFrame(() => ptUpdateRing(pct)));
+  ptRenderTrades(target.id);
+};
+
+async function ptRenderTrades(targetId) {
+  const wrap = document.getElementById('pt-trades-wrap');
+  if (!wrap) return;
+  wrap.innerHTML = '<p style="color:var(--muted);font-size:13px;">Loading entries…</p>';
+  const db = window.ATRONTIFY_DB;
+  if (!db) return;
+  const { data: trades, error } = await db
+    .from('profit_target_trades')
+    .select('*')
+    .eq('target_id', targetId)
+    .order('created_at', { ascending: false });
+  if (error) { wrap.innerHTML = '<p style="color:var(--muted);font-size:13px;">Error: ' + error.message + '</p>'; return; }
+  if (!trades?.length) { wrap.innerHTML = '<p style="color:var(--muted);font-size:13px;">No trade entries yet.</p>'; return; }
+  wrap.innerHTML = '<div style="overflow-x:auto;"><table class="data-table"><thead><tr><th>Date</th><th>Delta %</th><th>Amount</th><th>Note</th><th>Actions</th></tr></thead><tbody>' +
+    trades.map(tr =>
+      '<tr>' +
+      '<td>' + fmtDate(tr.created_at) + '</td>' +
+      '<td><span style="color:' + (Number(tr.percentage_delta) >= 0 ? 'var(--green)' : 'var(--red)') + ';font-weight:600;">' + (Number(tr.percentage_delta) >= 0 ? '+' : '') + Number(tr.percentage_delta).toFixed(2) + '%</span></td>' +
+      '<td>' + (tr.amount != null ? fmtMoney(tr.amount) : '—') + '</td>' +
+      '<td style="color:var(--muted);">' + (tr.note || '—') + '</td>' +
+      '<td><button class="btn btn--red" style="font-size:11px;padding:4px 10px;" onclick="ptDeleteTrade(\'' + tr.id + '\',\'' + targetId + '\')">Delete</button></td>' +
+      '</tr>'
+    ).join('') +
+    '</tbody></table></div>';
+}
+
+window.ptOpenSetModal = function() {
+  const userSel = document.getElementById('pt-user-sel');
+  const setSel  = document.getElementById('pt-set-user');
+  if (userSel && setSel && userSel.value) setSel.value = userSel.value;
+  document.getElementById('pt-set-amount').value = '';
+  document.getElementById('pt-set-label').value  = '';
+  openModal('modal-pt-set');
+};
+
+window.ptSaveTarget = async function() {
+  const db = window.ATRONTIFY_DB; if (!db) return;
+  const userId = document.getElementById('pt-set-user')?.value;
+  const amount = document.getElementById('pt-set-amount')?.value;
+  const label  = document.getElementById('pt-set-label')?.value?.trim();
+  if (!userId) { showToast('Select a user', 'error'); return; }
+  if (!amount || Number(amount) <= 0) { showToast('Enter a valid target amount', 'error'); return; }
+  await db.from('profit_targets').update({ is_active: false }).eq('user_id', userId).eq('is_active', true);
+  const { data: target, error } = await db.from('profit_targets').insert({
+    user_id: userId,
+    target_amount: Number(amount),
+    label: label || null,
+    is_active: true,
+  }).select().single();
+  if (error || !target) { showToast('Error setting target: ' + (error?.message || 'unknown'), 'error'); return; }
+  closeModal('modal-pt-set');
+  showToast('Profit target set', 'success');
+  const userSel = document.getElementById('pt-user-sel');
+  if (userSel) userSel.value = userId;
+  ptLoadUser(userId);
+};
+
+window.ptOpenAddTrade = function() {
+  if (!_ptCurrentTarget) return;
+  const info = document.getElementById('pt-trade-target-info');
+  if (info) {
+    info.innerHTML = '<strong>' + (_ptCurrentTarget.label || '(no label)') + '</strong> &middot; Target: <strong>' + fmtMoney(_ptCurrentTarget.target_amount) + '</strong> &middot; Progress: <strong>' + ((_ptCurrentTarget.current_percentage || 0).toFixed(2)) + '%</strong>';
+  }
+  document.getElementById('pt-trade-amount').value = '';
+  document.getElementById('pt-trade-pct').value    = '';
+  document.getElementById('pt-trade-note').value   = '';
+  ptSetTradeMode('dollar');
+  openModal('modal-pt-trade');
+};
+
+window.ptSetTradeMode = function(mode) {
+  _ptTradeMode = mode;
+  const dollarBtn = document.getElementById('pt-mode-dollar');
+  const pctBtn    = document.getElementById('pt-mode-pct');
+  const dollarF   = document.getElementById('pt-trade-dollar-field');
+  const pctF      = document.getElementById('pt-trade-pct-field');
+  const active    = 'flex:1;height:40px;border-radius:8px;border:2px solid var(--blue);background:var(--blue);color:#fff;font-weight:600;font-size:13px;cursor:pointer;transition:.15s;';
+  const inactive  = 'flex:1;height:40px;border-radius:8px;border:2px solid var(--border);background:transparent;color:var(--text);font-weight:600;font-size:13px;cursor:pointer;transition:.15s;';
+  if (mode === 'dollar') {
+    if (dollarBtn) dollarBtn.style.cssText = active;
+    if (pctBtn)    pctBtn.style.cssText    = inactive;
+    if (dollarF)   dollarF.style.display   = 'block';
+    if (pctF)      pctF.style.display      = 'none';
+  } else {
+    if (dollarBtn) dollarBtn.style.cssText = inactive;
+    if (pctBtn)    pctBtn.style.cssText    = active;
+    if (dollarF)   dollarF.style.display   = 'none';
+    if (pctF)      pctF.style.display      = 'block';
+  }
+};
+
+window.ptSaveTrade = async function() {
+  if (!_ptCurrentTarget) return;
+  const db = window.ATRONTIFY_DB; if (!db) return;
+  const note = document.getElementById('pt-trade-note')?.value?.trim();
+  let pctDelta, dollarAmt = null;
+  if (_ptTradeMode === 'dollar') {
+    const amt = parseFloat(document.getElementById('pt-trade-amount')?.value);
+    if (!amt || amt === 0) { showToast('Enter a dollar amount', 'error'); return; }
+    dollarAmt = amt;
+    pctDelta  = (amt / Number(_ptCurrentTarget.target_amount)) * 100;
+  } else {
+    const pct = parseFloat(document.getElementById('pt-trade-pct')?.value);
+    if (!pct || pct === 0) { showToast('Enter a percentage', 'error'); return; }
+    pctDelta = pct;
+  }
+  const { data: inserted, error } = await db.from('profit_target_trades').insert({
+    target_id:        _ptCurrentTarget.id,
+    user_id:          _ptCurrentTarget.user_id,
+    amount:           dollarAmt,
+    percentage_delta: pctDelta,
+    note:             note || null,
+  }).select();
+  if (error) { showToast('Error saving trade: ' + error.message, 'error'); return; }
+  if (!inserted?.length) { showToast('Trade not saved — check permissions', 'error'); return; }
+  closeModal('modal-pt-trade');
+  showToast('Trade entry added', 'success');
+  ptLoadUser(_ptCurrentTarget.user_id);
+};
+
+window.ptDeleteTrade = async function(tradeId) {
+  if (!confirm('Delete this trade entry? The percentage will be subtracted from progress.')) return;
+  const db = window.ATRONTIFY_DB; if (!db) return;
+  const { error } = await db.from('profit_target_trades').delete().eq('id', tradeId);
+  if (error) { showToast('Error: ' + error.message, 'error'); return; }
+  showToast('Entry deleted', 'success');
+  if (_ptCurrentTarget) ptLoadUser(_ptCurrentTarget.user_id);
+};
+
+window.ptDeactivate = async function() {
+  if (!_ptCurrentTarget) return;
+  if (!confirm('Deactivate this profit target? The user will no longer see it in their dashboard.')) return;
+  const db = window.ATRONTIFY_DB; if (!db) return;
+  const { error } = await db.from('profit_targets').update({ is_active: false }).eq('id', _ptCurrentTarget.id);
+  if (error) { showToast('Error deactivating target: ' + error.message, 'error'); return; }
+  showToast('Target deactivated', 'success');
+  _ptCurrentTarget = null;
+  const userSel = document.getElementById('pt-user-sel');
+  ptLoadUser(userSel?.value || '');
+};
+
+/* ============================================================
+   EMAIL USERS
+============================================================ */
+let _emailHistory = [];
+let _emailUsers = [];
+
+window.loadEmailHistory = async function() {
+  const db = window.ATRONTIFY_DB; if (!db) return;
+  const tbody = document.getElementById('email-history-body');
+  if (!tbody) return;
+  tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:28px;">Loading&hellip;</td></tr>';
+  const { data: emails, error } = await db
+    .from('admin_sent_emails')
+    .select('*')
+    .order('sent_at', { ascending: false })
+    .limit(100);
+  _emailHistory = emails ?? [];
+  if (error || !_emailHistory.length) {
+    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:32px;">No emails sent yet</td></tr>';
+    return;
+  }
+  tbody.innerHTML = _emailHistory.map(e =>
+    '<tr>' +
+    '<td><div style="font-size:13px;color:var(--text);">' + escapeHTML(e.recipient_email) + '</div>' +
+    (e.recipient_name ? '<div style="font-size:11px;color:var(--muted);">' + escapeHTML(e.recipient_name) + '</div>' : '') +
+    '</td>' +
+    '<td>' + escapeHTML(e.subject) + '</td>' +
+    '<td style="white-space:nowrap;">' + fmtDate(e.sent_at) + '</td>' +
+    '<td><button class="btn btn--sm btn--outline" onclick="viewEmailModal(\'' + e.id + '\')">View</button></td>' +
+    '</tr>'
+  ).join('');
+};
+
+window.emailPopulateUsers = async function() {
+  const db = window.ATRONTIFY_DB; if (!db) return;
+  const sel = document.getElementById('email-recipient-sel');
+  if (!sel) return;
+  const { data: profiles } = await db.from('profiles').select('id,email,first_name,last_name').order('email');
+  _emailUsers = (profiles ?? []).map(p => {
+    const name = [p.first_name, p.last_name].filter(Boolean).join(' ') || '';
+    return { id: p.id, email: p.email, name, label: name ? p.email + ' (' + name + ')' : p.email };
+  });
+  sel.innerHTML = '<option value="">&#8212; Select recipient &#8212;</option>';
+  _emailUsers.forEach(u => {
+    const opt = document.createElement('option');
+    opt.value = JSON.stringify(u);
+    opt.textContent = u.label;
+    sel.appendChild(opt);
+  });
+};
+
+window.opsSendEmail = async function() {
+  const db = window.ATRONTIFY_DB; if (!db) return;
+  const sel = document.getElementById('email-recipient-sel');
+  const subject = document.getElementById('email-subject').value.trim();
+  const bodyText = document.getElementById('email-body').value.trim();
+  const btn = document.getElementById('email-send-btn');
+  if (!sel?.value) { showToast('Please select a recipient', 'error'); return; }
+  if (!subject) { showToast('Subject is required', 'error'); return; }
+  if (!bodyText) { showToast('Message body is required', 'error'); return; }
+
+  let parsed;
+  try { parsed = JSON.parse(sel.value); } catch(e) { showToast('Invalid recipient', 'error'); return; }
+
+  btn.disabled = true; btn.textContent = 'Sending…';
+  const bodyHtml = '<div style="font-family:sans-serif;max-width:600px;margin:auto;padding:32px;line-height:1.7;">' + bodyText.replace(/\n/g, '<br>') + '</div>';
+  const { error } = await db.from('admin_sent_emails').insert({
+    recipient_user_id: parsed.id || null,
+    recipient_email: parsed.email,
+    recipient_name: parsed.name || null,
+    subject,
+    body_text: bodyText,
+    body_html: bodyHtml,
+    sent_at: new Date().toISOString(),
+  });
+  btn.disabled = false; btn.textContent = 'Send Email';
+
+  if (error) { showToast('Error: ' + error.message, 'error'); return; }
+  showToast('Email logged successfully', 'success');
+  document.getElementById('email-subject').value = '';
+  document.getElementById('email-body').value = '';
+  document.getElementById('email-recipient-sel').value = '';
+  window.loadEmailHistory();
+};
+
+window.viewEmailModal = function(id) {
+  const email = _emailHistory.find(e => e.id === id);
+  if (!email) return;
+  document.getElementById('view-email-subject').textContent = email.subject;
+  document.getElementById('view-email-frame').srcdoc = email.body_html ||
+    '<div style="padding:20px;font-family:sans-serif;">' + (email.body_text || '').replace(/\n/g, '<br>') + '</div>';
+  openModal('modal-view-email');
+};
+
+// Hook into showPage to auto-load email/PT data
+(function() {
+  const _origShowPage = window.showPage;
+  window.showPage = function(page, btn) {
+    if (typeof _origShowPage === 'function') _origShowPage(page, btn);
+    if (page === 'emails') {
+      window.emailPopulateUsers();
+      window.loadEmailHistory();
+    }
+    if (page === 'balances') {
+      window.ptPopulateUsers();
+    }
+  };
+})();
 
 </script>
 
