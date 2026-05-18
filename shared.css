@@ -170,12 +170,11 @@ label{font-size:11.5px;color:var(--text3);margin-bottom:6px;display:block;font-w
 .tradingview-widget-container,.tradingview-widget-container iframe{height:38px !important;min-height:38px !important;}
 .tradingview-widget-container iframe{width:100% !important;}
 .ticker-bar{align-items:center !important;}
-.tradingview-widget-container__widget{height:38px !important;}
 .tradingview-widget-container iframe{opacity:1 !important;visibility:visible !important;}
 .ticker-shell{background:transparent !important;flex:1;min-width:0;height:44px;display:flex;align-items:center;}
 .tv-clean-ticker{width:100%;height:44px !important;border-radius:10px;overflow:hidden;background:transparent !important;border:none !important;}
-.ticker-tv-wrap,.ticker-tv-wrap iframe,.tradingview-widget-container__widget{width:100% !important;height:44px !important;min-height:44px !important;}
-.tradingview-widget-container iframe{margin-top:-2px !important;}
+.ticker-tv-wrap,.ticker-tv-wrap iframe,.ticker-tv-wrap .tradingview-widget-container__widget{width:100% !important;height:44px !important;min-height:44px !important;}
+.ticker-tv-wrap iframe{margin-top:-2px !important;}
 
 body.sidebar-overlay-active{overflow:hidden;}
 
