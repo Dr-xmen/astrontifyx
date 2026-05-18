@@ -7,6 +7,28 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="shared.css">
+<style>
+.tx-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);backdrop-filter:blur(5px);z-index:9000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .22s ease}
+.tx-modal-overlay.open{opacity:1;pointer-events:all}
+.tx-modal{background:var(--card);border:1px solid var(--border);border-radius:20px;width:min(520px,94vw);max-height:88vh;overflow-y:auto;transform:scale(0.05) translateY(100px);opacity:0;transition:transform .4s cubic-bezier(.34,1.56,.64,1),opacity .22s ease;box-shadow:0 32px 80px rgba(0,0,0,.6)}
+.tx-modal-overlay.open .tx-modal{transform:scale(1) translateY(0);opacity:1}
+.tx-modal-head{display:flex;align-items:center;justify-content:space-between;padding:20px 22px 16px;border-bottom:1px solid var(--border)}
+.tx-modal-head h3{font-size:15px;font-weight:600;margin:0}
+.tx-modal-close{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:var(--bg2);border:1px solid var(--border);color:var(--text2);cursor:pointer;font-size:18px;line-height:1;flex-shrink:0}
+.tx-modal-close:hover{background:var(--border);color:var(--text1)}
+.tx-modal-body{padding:20px 22px 24px}
+.tx-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px 24px}
+.tx-detail-item{display:flex;flex-direction:column;gap:4px}
+.tx-detail-item.full{grid-column:1/-1}
+.tx-detail-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3)}
+.tx-detail-val{font-size:13px;color:var(--text1);word-break:break-all;font-family:'JetBrains Mono',monospace}
+.tx-detail-val.plain{font-family:'Space Grotesk',sans-serif;font-size:14px}
+.tx-divider{grid-column:1/-1;height:1px;background:var(--border);margin:4px 0}
+.tx-type-icon{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.tx-type-icon svg{width:17px;height:17px}
+.btn-details{background:transparent;border:1px solid var(--border);color:var(--text2);font-size:11px;padding:4px 11px;cursor:pointer;border-radius:6px;font-family:inherit;white-space:nowrap;transition:border-color .15s,color .15s}
+.btn-details:hover{border-color:var(--accent);color:var(--accent)}
+</style>
 </head>
 <body>
 <div class="app">
@@ -96,8 +118,8 @@
       <div id="panelDeposits" class="card">
         <div class="section-hdr"><span class="section-title">Deposit History</span></div>
         <div class="table-wrap"><table>
-          <thead><tr><th>ID</th><th>Asset</th><th>Amount</th><th>TxHash</th><th>Date</th><th>Status</th></tr></thead>
-          <tbody id="depositBody"><tr><td colspan="6" style="text-align:center;color:var(--text3);padding:20px">Loading…</td></tr></tbody>
+          <thead><tr><th>ID</th><th>Asset</th><th>Amount</th><th>TxHash</th><th>Date</th><th>Status</th><th></th></tr></thead>
+          <tbody id="depositBody"><tr><td colspan="7" style="text-align:center;color:var(--text3);padding:20px">Loading…</td></tr></tbody>
         </table></div>
       </div>
 
@@ -123,6 +145,20 @@
   </div>
 </div>
 
+<!-- Transaction Detail Modal -->
+<div class="tx-modal-overlay" id="txModalOverlay" onclick="closeTxModal(event)">
+  <div class="tx-modal" id="txModal">
+    <div class="tx-modal-head">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div class="tx-type-icon" id="txModalIcon"></div>
+        <h3 id="txModalTitle">Transaction Details</h3>
+      </div>
+      <button class="tx-modal-close" onclick="closeTxModal()">&#x2715;</button>
+    </div>
+    <div class="tx-modal-body" id="txModalBody"></div>
+  </div>
+</div>
+
 <script src="shared.js"></script>
 <script>
 let histTab = 'deposits';
@@ -145,10 +181,74 @@ async function signOut() { await supabase.auth.signOut(); location.href = 'login
 window.signOut = signOut;
 
 const statusCls = s => s==='approved'?'bg':s==='pending'?'ba':'br';
+const _txRecords = { deposit: {}, withdrawal: {} };
+
+window.showTxDetails = function(type, id) {
+  const rec = _txRecords[type][id];
+  if (!rec) return;
+  const overlay = document.getElementById('txModalOverlay');
+  const icon    = document.getElementById('txModalIcon');
+  const titleEl = document.getElementById('txModalTitle');
+  const body    = document.getElementById('txModalBody');
+  const fmt     = v => v ? new Date(v).toLocaleString('en-US',{dateStyle:'medium',timeStyle:'short'}) : '—';
+  const sc      = s => s==='approved'?'bg':s==='pending'?'ba':'br';
+
+  if (type === 'deposit') {
+    icon.style.cssText = 'background:rgba(34,197,94,.15);color:#22c55e';
+    icon.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 17V3"/><path d="m6 11 6 6 6-6"/><path d="M19 21H5"/></svg>`;
+    titleEl.textContent = 'Deposit Details';
+    body.innerHTML = `<div class="tx-detail-grid">
+      <div class="tx-detail-item full"><span class="tx-detail-label">Transaction ID</span><span class="tx-detail-val">${rec.id||'—'}</span></div>
+      <div class="tx-divider"></div>
+      <div class="tx-detail-item"><span class="tx-detail-label">Asset</span><span class="tx-detail-val plain">${rec.coin||'—'}</span></div>
+      <div class="tx-detail-item"><span class="tx-detail-label">Amount</span><span class="tx-detail-val plain" style="color:var(--green);font-weight:600">$${Number(rec.amount||0).toFixed(2)}</span></div>
+      ${rec.network?`<div class="tx-detail-item"><span class="tx-detail-label">Network</span><span class="tx-detail-val plain">${rec.network}</span></div>`:''}
+      <div class="tx-detail-item"><span class="tx-detail-label">Status</span><span class="tx-detail-val plain"><span class="badge ${sc(rec.status)}">${rec.status||'—'}</span></span></div>
+      ${rec.wallet_address?`<div class="tx-detail-item full"><span class="tx-detail-label">Wallet Address</span><span class="tx-detail-val">${rec.wallet_address}</span></div>`:''}
+      <div class="tx-detail-item full"><span class="tx-detail-label">Transaction Hash</span><span class="tx-detail-val">${rec.tx_hash||'—'}</span></div>
+      <div class="tx-divider"></div>
+      <div class="tx-detail-item"><span class="tx-detail-label">Submitted</span><span class="tx-detail-val plain" style="font-size:12.5px;color:var(--text2)">${fmt(rec.created_at)}</span></div>
+      ${rec.updated_at&&rec.updated_at!==rec.created_at?`<div class="tx-detail-item"><span class="tx-detail-label">Last Updated</span><span class="tx-detail-val plain" style="font-size:12.5px;color:var(--text2)">${fmt(rec.updated_at)}</span></div>`:''}
+      ${rec.notes?`<div class="tx-detail-item full"><span class="tx-detail-label">Notes</span><span class="tx-detail-val plain">${rec.notes}</span></div>`:''}
+    </div>`;
+  } else {
+    icon.style.cssText = 'background:rgba(239,68,68,.15);color:#ef4444';
+    icon.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 7v14"/><path d="m6 13 6-6 6 6"/><path d="M19 3H5"/></svg>`;
+    titleEl.textContent = 'Withdrawal Details';
+    body.innerHTML = `<div class="tx-detail-grid">
+      <div class="tx-detail-item full"><span class="tx-detail-label">Transaction ID</span><span class="tx-detail-val">${rec.id||'—'}</span></div>
+      <div class="tx-divider"></div>
+      <div class="tx-detail-item"><span class="tx-detail-label">Method</span><span class="tx-detail-val plain">${rec.destination_type||'—'}</span></div>
+      <div class="tx-detail-item"><span class="tx-detail-label">Amount</span><span class="tx-detail-val plain" style="color:var(--red);font-weight:600">$${Number(rec.amount||0).toFixed(2)}</span></div>
+      ${rec.coin?`<div class="tx-detail-item"><span class="tx-detail-label">Asset</span><span class="tx-detail-val plain">${rec.coin}</span></div>`:''}
+      ${rec.network?`<div class="tx-detail-item"><span class="tx-detail-label">Network</span><span class="tx-detail-val plain">${rec.network}</span></div>`:''}
+      <div class="tx-detail-item"><span class="tx-detail-label">Status</span><span class="tx-detail-val plain"><span class="badge ${sc(rec.status)}">${rec.status||'—'}</span></span></div>
+      ${rec.destination_address?`<div class="tx-detail-item full"><span class="tx-detail-label">Destination Address</span><span class="tx-detail-val">${rec.destination_address}</span></div>`:''}
+      <div class="tx-divider"></div>
+      <div class="tx-detail-item"><span class="tx-detail-label">Submitted</span><span class="tx-detail-val plain" style="font-size:12.5px;color:var(--text2)">${fmt(rec.created_at)}</span></div>
+      ${rec.updated_at&&rec.updated_at!==rec.created_at?`<div class="tx-detail-item"><span class="tx-detail-label">Last Updated</span><span class="tx-detail-val plain" style="font-size:12.5px;color:var(--text2)">${fmt(rec.updated_at)}</span></div>`:''}
+      ${rec.rejection_reason?`<div class="tx-detail-item full"><span class="tx-detail-label">Rejection Reason</span><span class="tx-detail-val plain" style="color:var(--red)">${rec.rejection_reason}</span></div>`:''}
+      ${rec.notes?`<div class="tx-detail-item full"><span class="tx-detail-label">Notes</span><span class="tx-detail-val plain">${rec.notes}</span></div>`:''}
+    </div>`;
+  }
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+};
+
+window.closeTxModal = function(e) {
+  if (e && e.target !== document.getElementById('txModalOverlay')) return;
+  document.getElementById('txModalOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+};
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') { document.getElementById('txModalOverlay')?.classList.remove('open'); document.body.style.overflow = ''; }
+});
 
 async function loadAll(userId) {
   // Deposits
   const { data: deps } = await supabase.from('deposit_requests').select('*').eq('user_id', userId).order('created_at',{ascending:false});
+  if (deps) deps.forEach(d => { _txRecords.deposit[d.id] = d; });
   document.getElementById('depositBody').innerHTML = deps && deps.length
     ? deps.map(d=>`<tr>
         <td style="font-size:11px;color:var(--text3)">${d.id?.slice(0,8)||'—'}…</td>
@@ -157,11 +257,13 @@ async function loadAll(userId) {
         <td class="mono" style="font-size:11px;color:var(--text3)">${d.tx_hash?d.tx_hash.slice(0,12)+'…':'—'}</td>
         <td style="font-size:11.5px;color:var(--text3)">${d.created_at?new Date(d.created_at).toLocaleDateString():'—'}</td>
         <td><span class="badge ${statusCls(d.status)}">${d.status||'—'}</span></td>
+        <td><button class="btn-details" onclick="showTxDetails('deposit','${d.id}')">View Details</button></td>
       </tr>`).join('')
-    : '<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:20px">No deposits yet</td></tr>';
+    : '<tr><td colspan="7" style="text-align:center;color:var(--text3);padding:20px">No deposits yet</td></tr>';
 
   // Withdrawals
   const { data: wds } = await supabase.from('withdrawal_requests').select('*').eq('user_id', userId).order('created_at',{ascending:false});
+  if (wds) wds.forEach(w => { _txRecords.withdrawal[w.id] = w; });
   document.getElementById('withdrawBody').innerHTML = wds && wds.length
     ? wds.map(w=>`<tr>
         <td style="font-size:11px;color:var(--text3)">${w.id?.slice(0,8)||'—'}…</td>
@@ -169,7 +271,7 @@ async function loadAll(userId) {
         <td class="mono">$${Number(w.amount||0).toFixed(2)}</td>
         <td style="font-size:11.5px;color:var(--text3)">${w.created_at?new Date(w.created_at).toLocaleDateString():'—'}</td>
         <td><span class="badge ${statusCls(w.status)}">${w.status||'—'}</span></td>
-        <td>${w.status==='pending'?`<button class="btn btn-red btn-sm" onclick="cancelWithdrawal('${w.id}',${w.amount})">Cancel</button>`:'—'}</td>
+        <td style="display:flex;gap:6px;align-items:center">${w.status==='pending'?`<button class="btn btn-red btn-sm" onclick="cancelWithdrawal('${w.id}',${w.amount})">Cancel</button>`:''}<button class="btn-details" onclick="showTxDetails('withdrawal','${w.id}')">View Details</button></td>
       </tr>`).join('')
     : '<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:20px">No withdrawals yet</td></tr>';
 
