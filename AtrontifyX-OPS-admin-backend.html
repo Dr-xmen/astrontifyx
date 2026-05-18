@@ -3158,28 +3158,26 @@ async function renderWithdrawalsLive() {
 window.renderWithdrawalsLive = renderWithdrawalsLive;
 window.opsApproveWithdrawalReq = async id => {
   const db = window.ATRONTIFY_DB;
-  // Fetch the withdrawal row to get user_id and amount
+  // Balance was already deducted when user submitted — just mark approved and log
   const { data: wd } = await db.from('withdrawal_requests').select('user_id, amount').eq('id', id).single();
   await db.from('withdrawal_requests').update({ status:'approved', reviewed_at: new Date().toISOString() }).eq('id', id);
   if (wd?.user_id && wd?.amount) {
-    // Debit the user's profile balance
-    const { data: prof } = await db.from('profiles').select('balance').eq('id', wd.user_id).single();
-    const newBal = Math.max(0, parseFloat(prof?.balance || 0) - parseFloat(wd.amount));
-    await db.from('profiles').update({ balance: newBal, equity: newBal }).eq('id', wd.user_id);
-    // Debit the user's primary trading account
-    const { data: accs } = await db.from('trading_accounts').select('id, balance').eq('user_id', wd.user_id).eq('status','active').limit(1);
-    if (accs?.length) {
-      const accBal = Math.max(0, parseFloat(accs[0].balance || 0) - parseFloat(wd.amount));
-      await db.from('trading_accounts').update({ balance: accBal, equity: accBal }).eq('id', accs[0].id);
-    }
-    // Log transaction
     await db.from('transactions').insert({ user_id: wd.user_id, type:'withdrawal', amount: wd.amount, status:'completed', description:'Withdrawal approved by admin' });
   }
-  showToast('Withdrawal approved — balance debited','success'); renderWithdrawalsLive(); loadDashboardStats();
+  showToast('Withdrawal approved','success'); renderWithdrawalsLive(); loadDashboardStats();
 };
 window.opsRejectWithdrawalReq = async id => {
-  await window.ATRONTIFY_DB.from('withdrawal_requests').update({ status:'rejected', reviewed_at: new Date().toISOString() }).eq('id', id);
-  showToast('Withdrawal rejected','error'); renderWithdrawalsLive(); loadDashboardStats();
+  const db = window.ATRONTIFY_DB;
+  // Balance was deducted on submission — refund it on rejection
+  const { data: wd } = await db.from('withdrawal_requests').select('user_id, amount').eq('id', id).single();
+  await db.from('withdrawal_requests').update({ status:'rejected', reviewed_at: new Date().toISOString() }).eq('id', id);
+  if (wd?.user_id && wd?.amount) {
+    const { data: prof } = await db.from('profiles').select('balance').eq('id', wd.user_id).single();
+    const refunded = parseFloat(prof?.balance || 0) + parseFloat(wd.amount);
+    await db.from('profiles').update({ balance: refunded, equity: refunded }).eq('id', wd.user_id);
+    await db.from('transactions').insert({ user_id: wd.user_id, type:'withdrawal_refund', amount: wd.amount, status:'completed', description:'Withdrawal rejected — balance refunded' });
+  }
+  showToast('Withdrawal rejected — balance refunded','error'); renderWithdrawalsLive(); loadDashboardStats();
 };
 
 // -- Support Tickets -------------------------------------------
@@ -3428,11 +3426,12 @@ window.addTradeRecord = async () => {
     closed_at:  new Date().toISOString(),
   });
   if (error) { showToast('Error: '+error.message,'error'); return; }
-  // Update user's total_pnl and winning_trades in profiles
-  const { data: prof } = await db.from('profiles').select('total_pnl, winning_trades').eq('id', userId).single();
-  const newPnl = parseFloat(prof?.total_pnl || 0) + pnl;
+  // Update user's balance, total_pnl and winning_trades in profiles
+  const { data: prof } = await db.from('profiles').select('balance, equity, total_pnl, winning_trades').eq('id', userId).single();
+  const newBal  = parseFloat(prof?.balance  || 0) + pnl;
+  const newPnl  = parseFloat(prof?.total_pnl || 0) + pnl;
   const newWins = parseInt(prof?.winning_trades || 0) + (pnl > 0 ? 1 : 0);
-  await db.from('profiles').update({ total_pnl: newPnl, winning_trades: newWins }).eq('id', userId);
+  await db.from('profiles').update({ balance: newBal, equity: newBal, total_pnl: newPnl, winning_trades: newWins }).eq('id', userId);
   showToast('Trade added','success');
   document.getElementById('trade-pair').value = '';
   document.getElementById('trade-size').value = '';

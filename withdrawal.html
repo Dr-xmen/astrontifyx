@@ -130,8 +130,8 @@
       <div class="card">
         <div class="section-hdr"><span class="section-title">Withdrawal History</span></div>
         <div class="table-wrap"><table>
-          <thead><tr><th>ID</th><th>Method</th><th>Amount</th><th>Date</th><th>Status</th></tr></thead>
-          <tbody id="withdrawHistoryBody"><tr><td colspan="5" style="text-align:center;color:var(--text3);padding:20px">No withdrawals yet</td></tr></tbody>
+          <thead><tr><th>ID</th><th>Method</th><th>Amount</th><th>Date</th><th>Status</th><th></th></tr></thead>
+          <tbody id="withdrawHistoryBody"><tr><td colspan="6" style="text-align:center;color:var(--text3);padding:20px">No withdrawals yet</td></tr></tbody>
         </table></div>
       </div>
 
@@ -152,7 +152,7 @@ window.signOut = signOut;
 async function loadWithdrawals(userId) {
   const { data } = await supabase.from('withdrawal_requests').select('*').eq('user_id', userId).order('created_at',{ascending:false});
   const tbody = document.getElementById('withdrawHistoryBody');
-  if (!data || !data.length) { tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text3);padding:20px">No withdrawals yet</td></tr>'; return; }
+  if (!data || !data.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:20px">No withdrawals yet</td></tr>'; return; }
   const statusCls = s => s==='approved'?'bg':s==='pending'?'ba':'br';
   tbody.innerHTML = data.map(w => `<tr>
     <td style="font-size:11px;color:var(--text3)">${w.id?.slice(0,8)||'—'}…</td>
@@ -160,8 +160,24 @@ async function loadWithdrawals(userId) {
     <td class="mono">$${Number(w.amount||0).toFixed(2)}</td>
     <td style="font-size:11.5px;color:var(--text3)">${w.created_at?new Date(w.created_at).toLocaleDateString():'—'}</td>
     <td><span class="badge ${statusCls(w.status)}">${w.status||'—'}</span></td>
+    <td>${w.status==='pending'?`<button class="btn btn-red btn-sm" onclick="cancelWithdrawal('${w.id}',${w.amount})">Cancel</button>`:'—'}</td>
   </tr>`).join('');
 }
+
+async function cancelWithdrawal(id, amount) {
+  if (!confirm('Cancel this withdrawal? The amount will be returned to your balance.')) return;
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return;
+  await supabase.from('withdrawal_requests').update({ status: 'cancelled' }).eq('id', id);
+  // Refund the held amount back to balance
+  const { data: prof } = await supabase.from('profiles').select('balance').eq('id', user.id).single();
+  const refunded = parseFloat(prof?.balance || 0) + parseFloat(amount);
+  await supabase.from('profiles').update({ balance: refunded, equity: refunded }).eq('id', user.id);
+  window.userData.balance = refunded;
+  alert('Withdrawal cancelled. $' + Number(amount).toFixed(2) + ' has been returned to your balance.');
+  await loadWithdrawals(user.id);
+}
+window.cancelWithdrawal = cancelWithdrawal;
 
 window.submitWithdrawal = async function() {
   const wallet = (document.getElementById('cryptoWithdrawWallet')?.value || '').trim();

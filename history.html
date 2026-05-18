@@ -105,8 +105,8 @@
       <div id="panelWithdrawals" class="card" style="display:none">
         <div class="section-hdr"><span class="section-title">Withdrawal History</span></div>
         <div class="table-wrap"><table>
-          <thead><tr><th>ID</th><th>Method</th><th>Amount</th><th>Date</th><th>Status</th></tr></thead>
-          <tbody id="withdrawBody"><tr><td colspan="5" style="text-align:center;color:var(--text3);padding:20px">Loading…</td></tr></tbody>
+          <thead><tr><th>ID</th><th>Method</th><th>Amount</th><th>Date</th><th>Status</th><th></th></tr></thead>
+          <tbody id="withdrawBody"><tr><td colspan="6" style="text-align:center;color:var(--text3);padding:20px">Loading…</td></tr></tbody>
         </table></div>
       </div>
 
@@ -169,8 +169,9 @@ async function loadAll(userId) {
         <td class="mono">$${Number(w.amount||0).toFixed(2)}</td>
         <td style="font-size:11.5px;color:var(--text3)">${w.created_at?new Date(w.created_at).toLocaleDateString():'—'}</td>
         <td><span class="badge ${statusCls(w.status)}">${w.status||'—'}</span></td>
+        <td>${w.status==='pending'?`<button class="btn btn-red btn-sm" onclick="cancelWithdrawal('${w.id}',${w.amount})">Cancel</button>`:'—'}</td>
       </tr>`).join('')
-    : '<tr><td colspan="5" style="text-align:center;color:var(--text3);padding:20px">No withdrawals yet</td></tr>';
+    : '<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:20px">No withdrawals yet</td></tr>';
 
   // Trades
   const { data: trades } = await supabase.from('trades').select('*').eq('user_id', userId).order('opened_at',{ascending:false});
@@ -184,6 +185,18 @@ async function loadAll(userId) {
       </tr>`).join('')
     : '<tr><td colspan="5" style="text-align:center;color:var(--text3);padding:20px">No trades yet</td></tr>';
 }
+
+window.cancelWithdrawal = async function(id, amount) {
+  if (!confirm('Cancel this withdrawal? The amount will be returned to your balance.')) return;
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return;
+  await supabase.from('withdrawal_requests').update({ status: 'cancelled' }).eq('id', id);
+  const { data: prof } = await supabase.from('profiles').select('balance').eq('id', user.id).single();
+  const refunded = parseFloat(prof?.balance || 0) + parseFloat(amount);
+  await supabase.from('profiles').update({ balance: refunded, equity: refunded }).eq('id', user.id);
+  alert('Withdrawal cancelled. $' + Number(amount).toFixed(2) + ' has been returned to your balance.');
+  await loadAll(user.id);
+};
 
 window.addEventListener('load', async () => {
   const { data: { user } } = await supabase.auth.getUser();
