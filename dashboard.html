@@ -169,23 +169,23 @@
         </div>
       </div>
 
-      <!-- Trade Progress — full width -->
-      <div class="card" style="margin-bottom:14px;overflow:hidden;position:relative">
-        <div class="section-hdr" style="border-bottom:1px solid var(--border);padding-bottom:12px">
-          <span class="section-title" style="display:flex;align-items:center;gap:8px">
-            <span class="live-dot"></span>Trade Progress
-          </span>
-          <span class="badge bb" id="tpBadge">Loading…</span>
+      <!-- Trade Progress + Market Watch -->
+      <div class="grid g12" style="margin-bottom:14px">
+        <div class="card" style="overflow:hidden;position:relative">
+          <div class="section-hdr" style="border-bottom:1px solid var(--border);padding-bottom:12px">
+            <span class="section-title" style="display:flex;align-items:center;gap:8px">
+              <span class="live-dot"></span>Trade Progress
+            </span>
+            <span class="badge bb" id="tpBadge">Loading…</span>
+          </div>
+          <div id="tradeProgressContent" style="padding:6px 0">
+            <div style="text-align:center;color:var(--text3);font-size:12.5px;padding:30px 0">Loading…</div>
+          </div>
         </div>
-        <div id="tradeProgressContent" style="padding:6px 0">
-          <div style="text-align:center;color:var(--text3);font-size:12.5px;padding:30px 0">Loading…</div>
+        <div class="card">
+          <div class="section-hdr"><span class="section-title">Market Watch</span></div>
+          <div id="mwContainer" style="height:380px;overflow:hidden"></div>
         </div>
-      </div>
-
-      <!-- Market Watch — full width below -->
-      <div class="card" style="margin-bottom:14px">
-        <div class="section-hdr"><span class="section-title">Market Watch</span></div>
-        <div id="mwContainer" style="height:380px;overflow:hidden"></div>
       </div>
 
       <!-- Recent Trades + Calendar -->
@@ -457,7 +457,7 @@ async function loadTradeProgress(userId) {
           ${trades.slice(0,8).map((t,i)=>`
             <div class="tp-entry" style="display:flex;justify-content:space-between;align-items:center;padding:7px 11px;background:var(--bg2);border-radius:8px;font-size:12px;animation-delay:${i*50}ms">
               <span style="color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:80px" title="${t.note||'Trade entry'}">${t.note||'Trade entry'}</span>
-              <span style="font-weight:700;font-family:'JetBrains Mono',monospace;color:${Number(t.percentage_delta)>=0?'var(--green)':'var(--red)';flex-shrink:0;margin-left:6px}">${Number(t.percentage_delta)>=0?'+':''}${Number(t.percentage_delta).toFixed(2)}%</span>
+              <span style="font-weight:700;font-family:'JetBrains Mono',monospace;color:${Number(t.percentage_delta)>=0?'var(--green)':'var(--red)'};flex-shrink:0;margin-left:6px">${Number(t.percentage_delta)>=0?'+':''}${Number(t.percentage_delta).toFixed(2)}%</span>
             </div>`).join('')}
         </div>` : `<div style="font-size:12.5px;color:var(--text3);padding:4px 0">No trade entries yet. Progress will appear here once entries are added.</div>`}
       </div>
