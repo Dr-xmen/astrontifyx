@@ -473,39 +473,70 @@ async function loadTradeProgress(userId) {
 }
 
 // ── Notifications ──────────────────────────────────────────────
-window.dismissNotif = function() {
+let _activeNotifId = null;
+
+window.dismissNotif = async function() {
   const overlay = document.getElementById('notifOverlay');
   const modal   = document.getElementById('notifModal');
   if (modal) { modal.style.transform = 'scale(0.08) translateY(80px)'; modal.style.opacity = '0'; }
   setTimeout(() => { if (overlay) overlay.style.display = 'none'; }, 300);
+  if (_activeNotifId) {
+    await supabase.from('notifications').update({ read: true }).eq('id', _activeNotifId);
+    _activeNotifId = null;
+  }
 };
 
-async function loadNotification(userId) {
-  // Load the latest published announcement — show as popup if not yet seen this session
-  const { data: announcements } = await supabase
-    .from('announcements')
-    .select('*')
-    .eq('published', true)
-    .order('created_at', { ascending: false })
-    .limit(5);
-  if (!announcements?.length) return;
-  const notif = announcements[0];
-  const dot = document.querySelector('.notif-dot');
-  if (dot) dot.style.opacity = '1';
-  const seenKey = `atx_notif_${notif.id}`;
-  if (sessionStorage.getItem(seenKey)) return;
-  sessionStorage.setItem(seenKey, '1');
-  const overlay  = document.getElementById('notifOverlay');
-  const modal    = document.getElementById('notifModal');
-  const titleEl  = document.getElementById('notifTitle');
-  const msgEl    = document.getElementById('notifMessage');
+function _showNotifPopup(notif) {
+  _activeNotifId = notif.id;
+  const overlay = document.getElementById('notifOverlay');
+  const modal   = document.getElementById('notifModal');
+  const titleEl = document.getElementById('notifTitle');
+  const msgEl   = document.getElementById('notifMessage');
   if (!overlay || !titleEl || !msgEl) return;
   titleEl.textContent = notif.title || 'Platform Announcement';
-  msgEl.textContent   = notif.body || notif.message || '';
+  msgEl.textContent   = notif.message || '';
   overlay.style.display = 'flex';
   requestAnimationFrame(() => requestAnimationFrame(() => {
     if (modal) { modal.style.transform = 'scale(1) translateY(0)'; modal.style.opacity = '1'; }
   }));
+}
+
+async function loadNotification(userId) {
+  const { data } = await supabase
+    .from('notifications')
+    .select('*')
+    .eq('user_id', userId)
+    .eq('enabled', true)
+    .order('created_at', { ascending: false })
+    .limit(50);
+
+  if (!data?.length) return;
+
+  const dot = document.querySelector('.notif-dot');
+  const unread = data.filter(n => !n.read);
+  if (dot) dot.style.opacity = unread.length > 0 ? '1' : '0';
+
+  // Show most recent unread as popup if not dismissed this session
+  const toShow = unread[0];
+  if (!toShow) return;
+  const seenKey = `atx_notif_seen_${toShow.id}`;
+  if (sessionStorage.getItem(seenKey)) return;
+  sessionStorage.setItem(seenKey, '1');
+  _showNotifPopup(toShow);
+
+  // Realtime: pop up new notifications as they arrive
+  supabase.channel('dash-notifications')
+    .on('postgres_changes', {
+      event: 'INSERT', schema: 'public', table: 'notifications',
+      filter: `user_id=eq.${userId}`
+    }, payload => {
+      const n = payload.new;
+      if (!n.enabled) return;
+      if (dot) dot.style.opacity = '1';
+      const sk = `atx_notif_seen_${n.id}`;
+      if (!sessionStorage.getItem(sk)) { sessionStorage.setItem(sk, '1'); _showNotifPopup(n); }
+    })
+    .subscribe();
 }
 
 // getSession() reads localStorage — no network round-trip, fires immediately

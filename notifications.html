@@ -171,15 +171,11 @@
 const supabase = window.ATRONTIFY_DB;
 
 let _allNotifs = [];
-let _readSet = new Set(JSON.parse(localStorage.getItem('atx_read_notifs') || '[]'));
 let _currentFilter = 'all';
+let _userId = null;
 
 async function signOut() { await supabase.auth.signOut(); location.href = 'login.html'; }
 window.signOut = signOut;
-
-function saveReadSet() {
-  try { localStorage.setItem('atx_read_notifs', JSON.stringify([..._readSet])); } catch(e) {}
-}
 
 const TYPE_CFG = {
   info:    { bg: 'rgba(79,110,247,.12)', color: '#4f6ef7', cls: 'bb', icon: '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>' },
@@ -191,11 +187,11 @@ const TYPE_CFG = {
 function renderNotifs() {
   const el = document.getElementById('notifList');
   let list = _allNotifs;
-  if (_currentFilter === 'unread') list = list.filter(n => !_readSet.has(n.id));
-  else if (_currentFilter !== 'all') list = list.filter(n => (n.type||'info').toLowerCase() === _currentFilter);
+  if (_currentFilter === 'unread') list = list.filter(n => !n.read);
+  else if (_currentFilter !== 'all') list = list.filter(n => (n.type || 'info').toLowerCase() === _currentFilter);
 
   const dot = document.getElementById('notifDot');
-  const unreadCount = _allNotifs.filter(n => !_readSet.has(n.id)).length;
+  const unreadCount = _allNotifs.filter(n => !n.read).length;
   if (dot) dot.style.opacity = unreadCount > 0 ? '1' : '0';
 
   if (!list.length) {
@@ -207,48 +203,49 @@ function renderNotifs() {
   }
 
   el.innerHTML = list.map(n => {
-    const isRead = _readSet.has(n.id);
-    const t = n.type?.toLowerCase() || 'info';
+    const t = (n.type || 'info').toLowerCase();
     const cfg = TYPE_CFG[t] || TYPE_CFG.info;
     const date = n.created_at ? new Date(n.created_at) : null;
-    const dateStr = date ? date.toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' }) + ' · ' + date.toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' }) : '—';
-    return `<div class="notif-card ${isRead?'':'unread'}" onclick="markRead('${n.id}',this)">
+    const dateStr = date ? date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) + ' · ' + date.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }) : '—';
+    return `<div class="notif-card ${n.read ? '' : 'unread'}" onclick="markRead('${n.id}',this)">
       <div class="notif-icon" style="background:${cfg.bg};color:${cfg.color}">
         <svg viewBox="0 0 24 24">${cfg.icon}</svg>
       </div>
       <div class="notif-body">
         <div class="notif-title">${n.title || 'Platform Announcement'}</div>
-        <div class="notif-msg">${n.body || n.message || ''}</div>
+        <div class="notif-msg">${n.message || ''}</div>
         <div class="notif-meta">
           <span>${dateStr}</span>
           <span class="notif-type-badge ${cfg.cls}">${t}</span>
-          ${!isRead ? '<span style="color:var(--accent);font-weight:600">New</span>' : ''}
+          ${!n.read ? '<span style="color:var(--accent);font-weight:600">New</span>' : ''}
         </div>
       </div>
-      ${!isRead ? '<div class="unread-dot"></div>' : ''}
+      ${!n.read ? '<div class="unread-dot"></div>' : ''}
     </div>`;
   }).join('');
 }
 
-window.markRead = function(id, el) {
-  _readSet.add(id);
-  saveReadSet();
+window.markRead = async function(id, el) {
+  const notif = _allNotifs.find(n => n.id === id);
+  if (!notif || notif.read) return;
+  notif.read = true;
   if (el) {
     el.classList.remove('unread');
-    const dot = el.querySelector('.unread-dot');
-    if (dot) dot.remove();
-    const newBadge = el.querySelector('[style*="accent"]');
-    if (newBadge) newBadge.remove();
+    el.querySelector('.unread-dot')?.remove();
+    el.querySelector('[style*="accent"]')?.remove();
   }
-  const notifDot = document.getElementById('notifDot');
-  const unread = _allNotifs.filter(n => !_readSet.has(n.id)).length;
-  if (notifDot) notifDot.style.opacity = unread > 0 ? '1' : '0';
+  const dot = document.getElementById('notifDot');
+  if (dot) dot.style.opacity = _allNotifs.filter(n => !n.read).length > 0 ? '1' : '0';
+  await supabase.from('notifications').update({ read: true }).eq('id', id);
 };
 
-window.markAllRead = function() {
-  _allNotifs.forEach(n => _readSet.add(n.id));
-  saveReadSet();
+window.markAllRead = async function() {
+  const unread = _allNotifs.filter(n => !n.read);
+  unread.forEach(n => { n.read = true; });
   renderNotifs();
+  if (unread.length && _userId) {
+    await supabase.from('notifications').update({ read: true }).eq('user_id', _userId).eq('read', false);
+  }
 };
 
 window.filterNotifs = function(f, btn) {
@@ -262,23 +259,35 @@ async function loadNotifications() {
   const { data: { session } } = await supabase.auth.getSession();
   if (!session) { location.href = 'login.html'; return; }
   const user = session.user;
+  _userId = user.id;
 
-  const meta = user.user_metadata || {};
-  const fn = meta.first_name || '', ln = meta.last_name || '';
-  const initials = (fn && ln) ? `${fn[0]}${ln[0]}`.toUpperCase() : (user.email||'U')[0].toUpperCase();
+  const { data: profile } = await supabase.from('profiles').select('first_name,last_name').eq('id', user.id).single();
+  const fn = profile?.first_name || '', ln = profile?.last_name || '';
+  const initials = (fn && ln) ? `${fn[0]}${ln[0]}`.toUpperCase() : (user.email || 'U')[0].toUpperCase();
   const avatarEl = document.getElementById('userAvatar');
   if (avatarEl) avatarEl.textContent = initials;
 
-  // Load global announcements
-  const { data: announcements } = await supabase
-    .from('announcements')
+  const { data } = await supabase
+    .from('notifications')
     .select('*')
-    .eq('published', true)
+    .eq('user_id', user.id)
+    .eq('enabled', true)
     .order('created_at', { ascending: false })
     .limit(100);
 
-  _allNotifs = announcements || [];
+  _allNotifs = data || [];
   renderNotifs();
+
+  // Realtime: new notifications pushed to this user
+  supabase.channel('user-notifications')
+    .on('postgres_changes', {
+      event: 'INSERT', schema: 'public', table: 'notifications',
+      filter: `user_id=eq.${user.id}`
+    }, payload => {
+      _allNotifs.unshift(payload.new);
+      renderNotifs();
+    })
+    .subscribe();
 }
 
 loadNotifications();

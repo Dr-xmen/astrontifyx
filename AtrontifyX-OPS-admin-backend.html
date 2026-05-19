@@ -970,62 +970,83 @@
         <div class="page-header">
           <div>
             <div class="page-header__title">Announcements</div>
-            <div class="page-header__sub">Push messages to user dashboards</div>
+            <div class="page-header__sub">Push messages to user dashboards and notification inboxes</div>
           </div>
+          <button class="btn btn--outline" onclick="renderAnnouncementsLive()">
+            <svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+            Refresh
+          </button>
         </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;flex-wrap:wrap;">
-          <div class="card">
-            <div class="card__head"><div class="card__title">New Announcement</div></div>
-            <div class="card__body">
-              <div style="display:flex;flex-direction:column;gap:14px;">
-                <div class="field">
-                  <label>Title</label>
-                  <input type="text" placeholder="Announcement title..." id="ann-title">
-                </div>
-                <div class="field">
-                  <label>Message</label>
-                  <textarea placeholder="Write your announcement..." id="ann-body" style="min-height:120px;"></textarea>
-                </div>
-                <div class="field">
-                  <label>Type</label>
-                  <select id="ann-type">
-                    <option>Info</option>
-                    <option>Warning</option>
-                    <option>Success</option>
-                    <option>Urgent</option>
-                  </select>
-                </div>
-                <div class="field">
-                  <label>Target Audience</label>
-                  <select id="ann-audience" onchange="toggleAnnUserSelect(this.value)">
-                    <option>All Users</option>
-                    <option>Live Account Users</option>
-                    <option>Demo Account Users</option>
-                    <option>Unverified Users</option>
-                    <option>Specific User (enter ID below)</option>
-                  </select>
-                </div>
-                <div class="field" id="ann-user-wrap" style="display:none;">
-                  <label>Select User</label>
-                  <select id="ann-user-sel">
-                    <option value="">— loading users… —</option>
-                  </select>
-                </div>
-                <div class="field">
-                  <label>Scheduled At (leave blank for immediate)</label>
-                  <input type="datetime-local" id="ann-schedule">
-                </div>
-                <button class="btn btn--primary" onclick="publishAnnouncement()">
-                  <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-                  Publish Announcement
-                </button>
+
+        <!-- Compose card -->
+        <div class="card" style="margin-bottom:20px;">
+          <div class="card__head"><div class="card__title" id="ann-card-title">New Announcement</div></div>
+          <div class="card__body">
+            <div class="form-grid">
+              <div class="field field--full">
+                <label>Title</label>
+                <select id="ann-title">
+                  <option value="Notice 🔔">Notice 🔔</option>
+                  <option value="Attention ⚠️">Attention ⚠️</option>
+                  <option value="Important Update 📢">Important Update 📢</option>
+                  <option value="System Alert 🚨">System Alert 🚨</option>
+                  <option value="Good News 🎉">Good News 🎉</option>
+                  <option value="Account Update 👤">Account Update 👤</option>
+                  <option value="Security Notice 🔒">Security Notice 🔒</option>
+                </select>
+              </div>
+              <div class="field field--full">
+                <label>Message</label>
+                <textarea placeholder="Write your announcement…" id="ann-body" style="min-height:100px;resize:vertical;"></textarea>
+              </div>
+              <div class="field">
+                <label>Type</label>
+                <select id="ann-type">
+                  <option value="info">Info</option>
+                  <option value="warning">Warning</option>
+                  <option value="success">Success</option>
+                  <option value="urgent">Urgent</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Target Audience</label>
+                <select id="ann-audience" onchange="onAnnAudienceChange(this.value)">
+                  <option value="all">All Users</option>
+                  <option value="live">Live Account Users</option>
+                  <option value="demo">Demo Account Users</option>
+                  <option value="unverified">Unverified Users</option>
+                  <option value="specific">Specific User</option>
+                </select>
+              </div>
+              <div class="field field--full" id="ann-specific-wrap" style="display:none;">
+                <label>Select User</label>
+                <select id="ann-specific-user"><option value="">— Select a user —</option></select>
               </div>
             </div>
+            <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+              <button class="btn btn--primary" id="ann-submit-btn" onclick="publishAnnouncement()">
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                Publish Now
+              </button>
+              <button class="btn btn--outline" onclick="resetAnnForm()">Clear</button>
+              <button class="btn btn--outline" id="ann-cancel-btn" style="display:none;color:var(--red);border-color:var(--red);" onclick="resetAnnForm()">Cancel Edit</button>
+            </div>
           </div>
+        </div>
 
-          <div class="card">
-            <div class="card__head"><div class="card__title">Published Announcements</div></div>
-            <div class="card__body" id="ann-list" style="padding:12px 20px;display:flex;flex-direction:column;gap:12px;"></div>
+        <!-- History table -->
+        <div class="card">
+          <div class="card__head">
+            <div class="card__title">Announcement History</div>
+          </div>
+          <div class="card__body--p0 table-wrap">
+            <table class="data-table">
+              <thead><tr>
+                <th>Sent</th><th>Title</th><th>Message</th><th>Type</th>
+                <th>Audience</th><th>Recipients</th><th>Popup</th><th>Actions</th>
+              </tr></thead>
+              <tbody id="ann-tbody"></tbody>
+            </table>
           </div>
         </div>
       </div>
@@ -2682,81 +2703,162 @@ async function renderAuditLive() {
 }
 window.renderAuditLive = renderAuditLive;
 
-// -- Announcements ---------------------------------------------
-window.toggleAnnUserSelect = function(val) {
-  const wrap = document.getElementById('ann-user-wrap');
-  if (wrap) wrap.style.display = val === 'Specific User (enter ID below)' ? '' : 'none';
+// -- Announcements (Xantex-style) ---------------------------------
+let _editingAnnId = null;
+
+function onAnnAudienceChange(val) {
+  const wrap = document.getElementById('ann-specific-wrap');
+  if (wrap) wrap.style.display = val === 'specific' ? '' : 'none';
+  if (val === 'specific') populateAnnUserDropdown();
+}
+window.onAnnAudienceChange = onAnnAudienceChange;
+
+async function populateAnnUserDropdown() {
+  const db = window.ATRONTIFY_DB; if (!db) return;
+  const sel = document.getElementById('ann-specific-user'); if (!sel) return;
+  const { data: users } = await db.from('profiles').select('id,first_name,last_name,email').order('created_at', { ascending: false });
+  sel.innerHTML = '<option value="">— Select a user —</option>' + (users || []).map(u => {
+    const name = `${u.first_name || ''} ${u.last_name || ''}`.trim() || u.email || u.id;
+    return `<option value="${u.id}">${name} (${u.email || u.id})</option>`;
+  }).join('');
+}
+
+function resetAnnForm() {
+  _editingAnnId = null;
+  const titleEl   = document.getElementById('ann-title');
+  const bodyEl    = document.getElementById('ann-body');
+  const typeEl    = document.getElementById('ann-type');
+  const audEl     = document.getElementById('ann-audience');
+  const specificWrap = document.getElementById('ann-specific-wrap');
+  const cardTitle = document.getElementById('ann-card-title');
+  const submitBtn = document.getElementById('ann-submit-btn');
+  const cancelBtn = document.getElementById('ann-cancel-btn');
+  if (titleEl) titleEl.selectedIndex = 0;
+  if (bodyEl) bodyEl.value = '';
+  if (typeEl) typeEl.selectedIndex = 0;
+  if (audEl) audEl.selectedIndex = 0;
+  if (specificWrap) specificWrap.style.display = 'none';
+  if (cardTitle) cardTitle.textContent = 'New Announcement';
+  if (submitBtn) submitBtn.textContent = 'Publish Now';
+  if (cancelBtn) cancelBtn.style.display = 'none';
+}
+window.resetAnnForm = resetAnnForm;
+
+async function _resolveAnnRecipients(db, audience, specificUserId) {
+  if (audience === 'specific') return specificUserId ? [specificUserId] : [];
+  let query = db.from('profiles').select('id');
+  if (audience === 'live') query = query.eq('account_type', 'live');
+  else if (audience === 'demo') query = query.eq('account_type', 'demo');
+  else if (audience === 'unverified') query = query.or('kyc_status.eq.pending,kyc_status.is.null');
+  const { data } = await query;
+  return (data || []).map(u => u.id);
+}
+
+window.publishAnnouncement = async function() {
+  const titleEl = document.getElementById('ann-title');
+  const bodyEl  = document.getElementById('ann-body');
+  const typeEl  = document.getElementById('ann-type');
+  const audEl   = document.getElementById('ann-audience');
+  const title    = titleEl?.value || '';
+  const body     = (bodyEl?.value || '').trim();
+  const type     = (typeEl?.value || 'info');
+  const audience = audEl?.value || 'all';
+  const specificUserId = audience === 'specific' ? (document.getElementById('ann-specific-user')?.value || '') : '';
+  if (!body) { showToast('Please enter a message', 'error'); return; }
+  if (audience === 'specific' && !specificUserId) { showToast('Please select a user', 'error'); return; }
+  const db = window.ATRONTIFY_DB; if (!db) return;
+  const audienceLabel = { all: 'All Users', live: 'Live Account Users', demo: 'Demo Account Users', unverified: 'Unverified Users', specific: 'Specific User' }[audience] || audience;
+  if (_editingAnnId) {
+    const { error } = await db.from('announcements').update({ title, message: body, type, audience: audienceLabel }).eq('id', _editingAnnId);
+    if (error) { showToast('Error: ' + error.message, 'error'); return; }
+    await db.from('notifications').update({ title, message: body, type }).eq('announcement_id', _editingAnnId);
+    showToast('Announcement updated', 'success');
+    resetAnnForm(); renderAnnouncementsLive(); return;
+  }
+  let recipientIds = await _resolveAnnRecipients(db, audience, specificUserId);
+  if (audience === 'all') {
+    const { data: allUsers } = await db.from('profiles').select('id');
+    recipientIds = (allUsers || []).map(u => u.id);
+  }
+  if (!recipientIds.length) { showToast('No matching users found', 'error'); return; }
+  const { data: ann, error: annErr } = await db.from('announcements').insert({
+    title, message: body, type, audience: audienceLabel,
+    user_id: audience === 'specific' ? specificUserId : null,
+    is_active: true, sent_count: recipientIds.length
+  }).select().single();
+  if (annErr) { showToast('Error: ' + annErr.message, 'error'); return; }
+  const batchSize = 100;
+  for (let i = 0; i < recipientIds.length; i += batchSize) {
+    const batch = recipientIds.slice(i, i + batchSize).map(uid => ({
+      user_id: uid, title, message: body, type,
+      announcement_id: ann.id, enabled: true, read: false
+    }));
+    await db.from('notifications').insert(batch);
+  }
+  showToast(`Announcement published to ${recipientIds.length} user(s)`, 'success');
+  resetAnnForm(); renderAnnouncementsLive();
+};
+
+window.opsEditAnnouncement = async function(id) {
+  const db = window.ATRONTIFY_DB; if (!db) return;
+  const { data: ann } = await db.from('announcements').select('*').eq('id', id).single();
+  if (!ann) return;
+  _editingAnnId = id;
+  const titleEl   = document.getElementById('ann-title');
+  const bodyEl    = document.getElementById('ann-body');
+  const typeEl    = document.getElementById('ann-type');
+  const cardTitle = document.getElementById('ann-card-title');
+  const submitBtn = document.getElementById('ann-submit-btn');
+  const cancelBtn = document.getElementById('ann-cancel-btn');
+  if (titleEl) { const opt = Array.from(titleEl.options).find(o => o.value === ann.title); if (opt) titleEl.value = ann.title; }
+  if (bodyEl) bodyEl.value = ann.message || '';
+  if (typeEl) typeEl.value = ann.type || 'info';
+  if (cardTitle) cardTitle.textContent = 'Edit Announcement';
+  if (submitBtn) submitBtn.textContent = 'Save Changes';
+  if (cancelBtn) cancelBtn.style.display = '';
+  document.getElementById('ann-card-title')?.closest('.card')?.scrollIntoView({ behavior: 'smooth' });
+};
+
+window.opsToggleAnnouncement = async function(annId, enable) {
+  const db = window.ATRONTIFY_DB; if (!db) return;
+  await db.from('announcements').update({ is_active: enable }).eq('id', annId);
+  await db.from('notifications').update({ enabled: enable }).eq('announcement_id', annId);
+  showToast(enable ? 'Announcement enabled' : 'Announcement disabled', enable ? 'success' : 'error');
+};
+
+window.opsDeleteAnnouncement = async function(id) {
+  if (!confirm('Delete this announcement? All linked notifications will also be removed.')) return;
+  const db = window.ATRONTIFY_DB; if (!db) return;
+  await db.from('notifications').delete().eq('announcement_id', id);
+  await db.from('announcements').delete().eq('id', id);
+  showToast('Announcement deleted', 'error');
+  renderAnnouncementsLive();
 };
 
 async function renderAnnouncementsLive() {
-  renderAnnouncements();
   const db = window.ATRONTIFY_DB; if (!db) return;
-  // Populate user selector for "Specific User" audience
-  const userSel = document.getElementById('ann-user-sel');
-  if (userSel) {
-    const { data: users } = await db.from('profiles').select('id,first_name,last_name,email').order('created_at', { ascending: false });
-    userSel.innerHTML = '<option value="">— select a user —</option>' + (users||[]).map(u => {
-      const name = `${u.first_name||''} ${u.last_name||''}`.trim() || u.email || u.id;
-      return `<option value="${u.id}">${name} (${u.email||u.id})</option>`;
-    }).join('');
+  const tbody = document.getElementById('ann-tbody'); if (!tbody) return;
+  const { data } = await db.from('announcements').select('*').order('created_at', { ascending: false }).limit(50);
+  if (!data?.length) {
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:20px">No announcements yet</td></tr>';
+    return;
   }
-  const { data } = await db
-    .from('announcements')
-    .select('*')
-    .order('created_at', { ascending: false })
-    .limit(20);
-  if (!data?.length) return;
-  document.getElementById('ann-list').innerHTML = data.map(a => `
-    <div style="border:1px solid var(--border);border-radius:8px;padding:12px 14px;">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
-        <div style="font-size:13px;font-weight:700;">${a.title}</div>
-        <span class="badge-pill ${a.type==='warning'?'pill-orange':a.type==='success'?'pill-green':'pill-blue'}">${a.type}</span>
-      </div>
-      <div style="font-size:12px;color:var(--muted);">${a.body || ''}</div>
-      <div style="font-size:11px;color:var(--muted);margin-top:6px;">
-        ${fmtDate(a.created_at)} -
-        <span style="color:var(--red);cursor:pointer;" onclick="opsDeleteAnnouncement('${a.id}')">Delete</span>
-      </div>
-    </div>`).join('');
+  const typeCls = t => t === 'warning' ? 'pill-orange' : t === 'success' ? 'pill-green' : t === 'urgent' ? 'pill-red' : 'pill-blue';
+  tbody.innerHTML = data.map(a => `<tr>
+    <td style="font-size:12px;white-space:nowrap;">${fmtDate(a.created_at)}</td>
+    <td style="font-weight:600;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${a.title || '—'}</td>
+    <td style="font-size:12px;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${a.message || '—'}</td>
+    <td><span class="badge-pill ${typeCls(a.type)}">${a.type || 'info'}</span></td>
+    <td style="font-size:12px;">${a.audience || 'All Users'}</td>
+    <td style="text-align:center;">${a.sent_count || 0}</td>
+    <td style="text-align:center;"><label class="toggle-switch" style="margin:0;"><input type="checkbox" ${a.is_active !== false ? 'checked' : ''} onchange="opsToggleAnnouncement(${a.id}, this.checked)"><span class="toggle-slider"></span></label></td>
+    <td style="white-space:nowrap;">
+      <button class="btn btn--outline btn--sm" onclick="opsEditAnnouncement(${a.id})">Edit</button>
+      <button class="btn btn--danger btn--sm" style="margin-left:4px;" onclick="opsDeleteAnnouncement(${a.id})">Delete</button>
+    </td>
+  </tr>`).join('');
 }
 window.renderAnnouncementsLive = renderAnnouncementsLive;
-window.opsDeleteAnnouncement = async id => {
-  await window.ATRONTIFY_DB.from('announcements').delete().eq('id', id);
-  showToast('Deleted','error'); renderAnnouncementsLive();
-};
-
-// -- Patch publishAnnouncement ---------------------------------
-const _origPublishAnnouncement = publishAnnouncement;
-window.publishAnnouncement = async function() {
-  const title    = document.getElementById('ann-title').value.trim();
-  const body     = document.getElementById('ann-body').value.trim();
-  const type     = document.getElementById('ann-type').value.toLowerCase();
-  const audience = document.getElementById('ann-audience').value;
-  const schedule = document.getElementById('ann-schedule').value;
-  if (!title) { showToast('Please enter a title','error'); return; }
-  const isSpecific = audience === 'Specific User (enter ID below)';
-  const userId = isSpecific ? document.getElementById('ann-user-sel')?.value : null;
-  if (isSpecific && !userId) { showToast('Please select a user','error'); return; }
-  const db = window.ATRONTIFY_DB;
-  if (db) {
-    const { error } = await db.from('announcements').insert({
-      title,
-      message: body,
-      type,
-      audience: isSpecific ? 'Specific User' : audience,
-      user_id: userId || null,
-      scheduled_at: schedule || null,
-      published: !schedule,
-    });
-    if (error) { showToast('Error: ' + error.message, 'error'); return; }
-  }
-  showToast('Announcement published','success');
-  document.getElementById('ann-title').value = '';
-  document.getElementById('ann-body').value  = '';
-  document.getElementById('ann-audience').value = 'All Users';
-  toggleAnnUserSelect('All Users');
-  renderAnnouncementsLive();
-};
 
 // -- Balances page: load users into dropdown -------------------
 window.loadBalanceUsers = async function() {
