@@ -2788,13 +2788,16 @@ window.publishAnnouncement = async function() {
   }).select().single();
   if (annErr) { showToast('Error: ' + annErr.message, 'error'); return; }
   const batchSize = 100;
+  let insertFailed = false;
   for (let i = 0; i < recipientIds.length; i += batchSize) {
     const batch = recipientIds.slice(i, i + batchSize).map(uid => ({
       user_id: uid, title, message: body, type,
       announcement_id: ann.id, enabled: true, read: false
     }));
-    await db.from('notifications').insert(batch);
+    const { error: notifErr } = await db.from('notifications').insert(batch);
+    if (notifErr) { showToast('Notification insert failed: ' + notifErr.message, 'error'); insertFailed = true; break; }
   }
+  if (insertFailed) return;
   showToast(`Announcement published to ${recipientIds.length} user(s)`, 'success');
   resetAnnForm(); renderAnnouncementsLive();
 };
