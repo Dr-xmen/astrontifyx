@@ -58,8 +58,11 @@ function copyAddr() {
 }
 
 // ── THEME ──────────────────────────────────────────────────────────────
+(function(){ if(localStorage.getItem('atx_theme')==='Light') document.body.classList.add('light'); })();
+
 function toggleTheme() {
   document.body.classList.toggle('light');
+  localStorage.setItem('atx_theme', document.body.classList.contains('light') ? 'Light' : 'Dark');
 }
 
 // ── SIDEBAR ────────────────────────────────────────────────────────────

@@ -155,15 +155,34 @@ function renderTabContent() {
   }
 
   if (settTab === 'preferences') {
+    const savedTheme = localStorage.getItem('atx_theme') || 'Dark';
+    const savedLang  = localStorage.getItem('atx_language') || (window._userData && window._userData.language) || 'English';
+    const langs = ['English','French','Spanish','Arabic','Portuguese','German','Italian','Chinese'];
     el.innerHTML = `
       <div class="section-hdr"><span class="section-title">Platform Preferences</span></div>
       <div class="grid g2">
-        <div class="fg"><label>Theme</label><select><option>Dark</option><option>Light</option></select></div>
-        <div class="fg"><label>Language</label><select><option>English</option><option>French</option></select></div>
-        <div class="fg"><label>Chart Type</label><select><option>Candlestick</option><option>Line Chart</option></select></div>
-        <div class="fg"><label>Default Pair</label><select><option>BTC/USD</option><option>EUR/USD</option></select></div>
+        <div class="fg">
+          <label>Theme</label>
+          <select id="prefTheme">
+            <option value="Dark" ${savedTheme==='Dark'?'selected':''}>Dark</option>
+            <option value="Light" ${savedTheme==='Light'?'selected':''}>Light</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>Language</label>
+          <select id="prefLang">${langs.map(l=>`<option value="${l}" ${savedLang===l?'selected':''}>${l}</option>`).join('')}</select>
+        </div>
+        <div class="fg">
+          <label>Chart Type</label>
+          <input value="Candlestick" readonly style="opacity:.6;cursor:not-allowed">
+        </div>
+        <div class="fg">
+          <label>Default Pair</label>
+          <input value="BTC/USD" readonly style="opacity:.6;cursor:not-allowed">
+        </div>
       </div>
-      <button class="btn btn-primary">Save Preferences</button>`;
+      <button class="btn btn-primary" onclick="window.savePreferences()">Save Preferences</button>
+      <div id="prefSaveMsg" style="margin-top:10px;font-size:12.5px;color:var(--green);display:none">Preferences saved.</div>`;
     return;
   }
 
@@ -206,17 +225,43 @@ function renderTabContent() {
     return;
   }
 
-  // Default: profile
-  const userData = window._userData || {};
+  // Default: profile (read-only — admin manages changes)
+  const ud = window._userData || {};
+  const avatarUrl  = ud.avatarUrl  || '';
+  const initials   = ud.initials   || (ud.fullName ? ud.fullName[0].toUpperCase() : '?');
+  const fullName   = ud.fullName   || '';
+  const email      = ud.email      || '';
+  const country    = ud.country    || '—';
+
   el.innerHTML = `
-    <div class="section-hdr"><span class="section-title">Profile Settings</span></div>
-    <div class="grid g2">
-      <div class="fg"><label>Full Name</label><input id="profileName" value="${userData.fullName||''}"></div>
-      <div class="fg"><label>Email Address</label><input id="profileEmail" value="${userData.email||''}" readonly></div>
-      <div class="fg"><label>Country</label><select><option>Nigeria</option><option>United States</option></select></div>
-      <div class="fg"><label>Base Currency</label><select><option>USD</option><option>EUR</option></select></div>
+    <div class="section-hdr"><span class="section-title">Profile</span></div>
+
+    <!-- Avatar upload -->
+    <div style="display:flex;align-items:center;gap:20px;padding:4px 0 22px;border-bottom:1px solid var(--border);margin-bottom:20px">
+      <div style="position:relative;cursor:pointer;flex-shrink:0" onclick="document.getElementById('avatarFileInput').click()" title="Click to change photo">
+        <div id="avatarCircle" style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#7c3aed);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700;color:#fff;overflow:hidden;border:3px solid var(--border)">
+          ${avatarUrl ? `<img src="${avatarUrl}" style="width:100%;height:100%;object-fit:cover" onerror="this.parentElement.textContent='${initials}'">` : initials}
+        </div>
+        <div style="position:absolute;bottom:2px;right:2px;width:26px;height:26px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid var(--card)">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:16px;font-weight:600;margin-bottom:3px">${fullName || 'Your Name'}</div>
+        <div style="font-size:13px;color:var(--text3);margin-bottom:6px">${email}</div>
+        <div style="font-size:11.5px;color:var(--text3)" id="avatarStatus">Click photo to upload</div>
+      </div>
+      <input type="file" id="avatarFileInput" accept="image/jpeg,image/png,image/webp" style="display:none" onchange="window.uploadAvatar(this)">
     </div>
-    <button class="btn btn-primary">Save Changes</button>`;
+
+    <!-- Read-only profile fields -->
+    <div class="grid g2">
+      <div class="fg"><label>Full Name</label><input value="${fullName||'—'}" readonly style="opacity:.65;cursor:not-allowed"></div>
+      <div class="fg"><label>Email Address</label><input value="${email||'—'}" readonly style="opacity:.65;cursor:not-allowed"></div>
+      <div class="fg"><label>Country</label><input value="${country}" readonly style="opacity:.65;cursor:not-allowed"></div>
+      <div class="fg"><label>Base Currency</label><input value="USD" readonly style="opacity:.65;cursor:not-allowed"></div>
+    </div>
+    <p style="margin-top:12px;font-size:11.5px;color:var(--text3)">Profile details are managed by an administrator. Contact support to request changes.</p>`;
 }
 
 // Read hash on load to open the correct tab
@@ -247,38 +292,90 @@ else {
   const jwtName = `${jwtFn} ${jwtLn}`.trim() || meta.full_name || user.email?.split('@')[0] || 'User';
   const jwtInitials = (jwtFn && jwtLn) ? `${jwtFn[0]}${jwtLn[0]}`.toUpperCase() : jwtName[0].toUpperCase();
 
-  // Avatar visible immediately from JWT — no DB wait
-  const avatar = document.getElementById('userAvatar');
-  if (avatar) avatar.textContent = jwtInitials;
+  function buildUD(p) {
+    const fn = p?.first_name || jwtFn, ln = p?.last_name || jwtLn;
+    const fullName = `${fn} ${ln}`.trim() || jwtName;
+    const initials = (fn && ln) ? `${fn[0]}${ln[0]}`.toUpperCase() : (fullName[0]||'?').toUpperCase();
+    return { fullName, initials, email: user.email||'', avatarUrl: p?.avatar_url||'', country: p?.country||'—', language: p?.language || localStorage.getItem('atx_language') || 'English' };
+  }
 
-  // Pre-fill profile tab from sessionStorage cache (instant on repeat visits)
+  const topAvatar = document.getElementById('userAvatar');
+
+  function applyTopAvatar(ud) {
+    if (!topAvatar) return;
+    if (ud.avatarUrl) topAvatar.innerHTML = `<img src="${ud.avatarUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+    else topAvatar.textContent = ud.initials;
+  }
+
+  // Show avatar immediately from JWT
+  if (topAvatar) topAvatar.textContent = jwtInitials;
+
+  // Flash from cache (instant on repeat visits)
   try {
     const cached = sessionStorage.getItem(CACHE_KEY);
     if (cached) {
-      const cp = JSON.parse(cached);
-      const cfn = cp.first_name || jwtFn, cln = cp.last_name || jwtLn;
-      window._userData = { fullName: `${cfn} ${cln}`.trim() || jwtName, email: user.email || '' };
+      window._userData = buildUD(JSON.parse(cached));
+      applyTopAvatar(window._userData);
       window.renderTabContent?.();
     }
   } catch(e) {}
 
-  // Fetch only needed fields
+  // Fetch full profile
   const { data: profile } = await supabase.from('profiles')
-    .select('first_name,last_name,country,phone')
+    .select('first_name,last_name,country,avatar_url,language')
     .eq('id', user.id).single();
 
   if (profile) {
-    const fn = profile.first_name || jwtFn, ln = profile.last_name || jwtLn;
-    const fullName = `${fn} ${ln}`.trim() || jwtName;
-    const initials = (fn && ln) ? `${fn[0]}${ln[0]}`.toUpperCase() : jwtInitials;
-
-    if (avatar) avatar.textContent = initials;
-    window._userData = { fullName, email: user.email || '' };
-
+    window._userData = buildUD(profile);
+    applyTopAvatar(window._userData);
+    if (profile.language) localStorage.setItem('atx_language', profile.language);
     try { sessionStorage.setItem(CACHE_KEY, JSON.stringify(profile)); } catch(e) {}
-
     window.renderTabContent?.();
   }
+
+  // ── Avatar upload ─────────────────────────────────────────────────────
+  window.uploadAvatar = async function(input) {
+    const file = input.files[0];
+    if (!file) return;
+    const statusEl = document.getElementById('avatarStatus');
+    const circleEl = document.getElementById('avatarCircle');
+    if (statusEl) statusEl.textContent = 'Uploading…';
+
+    // Instant local preview
+    const reader = new FileReader();
+    reader.onload = e => { if (circleEl) circleEl.innerHTML = `<img src="${e.target.result}" style="width:100%;height:100%;object-fit:cover">`; };
+    reader.readAsDataURL(file);
+
+    const ext = file.name.split('.').pop() || 'jpg';
+    const path = `${user.id}/avatar.${ext}`;
+    const { error: upErr } = await supabase.storage.from('avatars').upload(path, file, { upsert: true, contentType: file.type });
+    if (upErr) { if (statusEl) statusEl.textContent = 'Upload failed — try again.'; return; }
+
+    const { data: { publicUrl } } = supabase.storage.from('avatars').getPublicUrl(path);
+    const bust = publicUrl + '?t=' + Date.now();
+    await supabase.from('profiles').update({ avatar_url: publicUrl }).eq('id', user.id);
+
+    if (circleEl) circleEl.innerHTML = `<img src="${bust}" style="width:100%;height:100%;object-fit:cover">`;
+    if (topAvatar) topAvatar.innerHTML = `<img src="${bust}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+    if (statusEl) statusEl.textContent = 'Photo updated!';
+    if (window._userData) window._userData.avatarUrl = publicUrl;
+    try { const c = sessionStorage.getItem(CACHE_KEY); if (c) { const cp=JSON.parse(c); cp.avatar_url=publicUrl; sessionStorage.setItem(CACHE_KEY,JSON.stringify(cp)); } } catch(e) {}
+    input.value = '';
+  };
+
+  // ── Save preferences ──────────────────────────────────────────────────
+  window.savePreferences = async function() {
+    const theme = document.getElementById('prefTheme')?.value || 'Dark';
+    const lang  = document.getElementById('prefLang')?.value  || 'English';
+    document.body.classList.toggle('light', theme === 'Light');
+    localStorage.setItem('atx_theme', theme);
+    localStorage.setItem('atx_language', lang);
+    await supabase.from('profiles').update({ language: lang }).eq('id', user.id);
+    if (window._userData) window._userData.language = lang;
+    try { const c = sessionStorage.getItem(CACHE_KEY); if (c) { const cp=JSON.parse(c); cp.language=lang; sessionStorage.setItem(CACHE_KEY,JSON.stringify(cp)); } } catch(e) {}
+    const msg = document.getElementById('prefSaveMsg');
+    if (msg) { msg.style.display='block'; setTimeout(()=>msg.style.display='none',3000); }
+  };
 }
 </script>
 </body>
