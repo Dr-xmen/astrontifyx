@@ -3548,6 +3548,29 @@ window.addTradeRecord = async () => {
     closed_at:  new Date().toISOString(),
   });
   if (error) { showToast('Error: '+error.message,'error'); return; }
+
+  // Auto-link to active profit target if one exists
+  if (pnl !== 0) {
+    const { data: targets } = await db
+      .from('profit_targets')
+      .select('id, target_amount')
+      .eq('user_id', userId)
+      .eq('is_active', true)
+      .order('created_at', { ascending: false })
+      .limit(1);
+    const target = targets?.[0];
+    if (target && Number(target.target_amount) > 0) {
+      const percentageDelta = (pnl / Number(target.target_amount)) * 100;
+      await db.from('profit_target_trades').insert({
+        target_id:        target.id,
+        user_id:          userId,
+        amount:           pnl,
+        percentage_delta: percentageDelta,
+        note:             `${symbol} ${side} trade`,
+      });
+    }
+  }
+
   showToast('Trade added — balance updated via trigger','success');
   document.getElementById('trade-pair').value = '';
   document.getElementById('trade-size').value = '';
