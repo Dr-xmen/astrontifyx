@@ -1192,16 +1192,17 @@
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;">
               <div>
                 <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:6px;">Market</div>
-                <select id="trade-market" style="width:100%;height:40px;border:1px solid var(--border);border-radius:7px;padding:0 12px;font-size:13px;background:var(--bg);color:var(--text);">
+                <select id="trade-market" onchange="onTradeMarketChange(this.value)" style="width:100%;height:40px;border:1px solid var(--border);border-radius:7px;padding:0 12px;font-size:13px;background:var(--bg);color:var(--text);">
                   <option value="forex">Forex</option>
                   <option value="crypto">Crypto</option>
                   <option value="indices">Indices</option>
                   <option value="stocks">Stocks</option>
+                  <option value="energy">Energy &amp; Commodities</option>
                 </select>
               </div>
               <div>
                 <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:6px;">Pair / Instrument</div>
-                <input type="text" id="trade-pair" placeholder="EUR/USD" style="width:100%;height:40px;border:1px solid var(--border);border-radius:7px;padding:0 12px;font-size:13px;background:var(--bg);color:var(--text);">
+                <select id="trade-pair" style="width:100%;height:40px;border:1px solid var(--border);border-radius:7px;padding:0 12px;font-size:13px;background:var(--bg);color:var(--text);"></select>
               </div>
             </div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;">
@@ -1214,8 +1215,10 @@
                 <input type="hidden" id="trade-direction" value="buy">
               </div>
               <div>
-                <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:6px;">Lot Size</div>
-                <input type="number" id="trade-size" step="0.01" placeholder="1.00" style="width:100%;height:40px;border:1px solid var(--border);border-radius:7px;padding:0 12px;font-size:13px;background:var(--bg);color:var(--text);">
+                <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:6px;">Lot Size — <span id="trade-size-lbl" style="color:var(--text);font-weight:700;">1.00</span></div>
+                <input type="range" id="trade-size" min="0.01" max="100" step="0.01" value="1.00"
+                  oninput="document.getElementById('trade-size-lbl').textContent=parseFloat(this.value).toFixed(2)"
+                  style="width:100%;height:40px;accent-color:#4f6ef7;cursor:pointer;">
               </div>
             </div>
             <div style="margin-bottom:16px;">
@@ -1231,7 +1234,7 @@
                 <svg viewBox="0 0 24 24" width="14" height="14"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 Submit Trade
               </button>
-              <button class="btn btn--outline" onclick="document.getElementById('trade-pair').value='';document.getElementById('trade-size').value='';document.getElementById('trade-pnl').value='';setTradeDir('buy');">Reset</button>
+              <button class="btn btn--outline" onclick="onTradeMarketChange(document.getElementById('trade-market').value);document.getElementById('trade-size').value=1;document.getElementById('trade-size-lbl').textContent='1.00';document.getElementById('trade-pnl').value='';setTradeDir('buy');">Reset</button>
             </div>
           </div>
         </div>
@@ -1904,7 +1907,7 @@ function showPage(page, btn) {
     announcements: window.renderAnnouncementsLive,
     audit: window.renderAuditLive,
     support: window.renderSupportLive,
-    trades: function() { window.renderTradesLive && window.renderTradesLive(); },
+    trades: function() { window.renderTradesLive && window.renderTradesLive(); window.onTradeMarketChange && window.onTradeMarketChange('forex'); },
     settings: window.loadCryptoAddresses,
     activity: window.renderActivity,
     'markets-control': window.renderMarketsControl
@@ -3574,10 +3577,52 @@ window.opsSaveTradeSetting = async userId => {
   showToast('Trade settings saved','success');
 };
 
+const TRADE_PAIRS = {
+  forex: [
+    'EUR/USD','GBP/USD','USD/JPY','AUD/USD','USD/CHF','NZD/USD','USD/CAD',
+    'EUR/GBP','EUR/JPY','EUR/CHF','EUR/AUD','EUR/CAD','EUR/NZD',
+    'GBP/JPY','GBP/CHF','GBP/AUD','GBP/CAD','GBP/NZD',
+    'AUD/JPY','AUD/CAD','AUD/CHF','AUD/NZD',
+    'CAD/JPY','CAD/CHF','CHF/JPY','NZD/JPY','NZD/CAD','NZD/CHF',
+    'USD/ZAR','USD/MXN','USD/SEK','USD/NOK','USD/DKK','USD/SGD','USD/HKD','USD/TRY',
+  ],
+  crypto: [
+    'BTC/USDT','ETH/USDT','BNB/USDT','SOL/USDT','XRP/USDT','ADA/USDT',
+    'DOGE/USDT','AVAX/USDT','MATIC/USDT','DOT/USDT','LTC/USDT','LINK/USDT',
+    'UNI/USDT','ATOM/USDT','XLM/USDT','TRX/USDT','NEAR/USDT','ALGO/USDT',
+    'FIL/USDT','VET/USDT','ICP/USDT','APT/USDT','ARB/USDT','OP/USDT',
+    'SHIB/USDT','PEPE/USDT','SUI/USDT','SEI/USDT','INJ/USDT','FTM/USDT',
+  ],
+  indices: [
+    'SPX500','NASDAQ100','DOW30','RUSSELL2000',
+    'FTSE100','DAX40','CAC40','IBEX35','STOXX50',
+    'NIKKEI225','HANGSENG','ASX200','KOSPI','SENSEX',
+    'VIX',
+  ],
+  stocks: [
+    'AAPL','MSFT','GOOGL','AMZN','NVDA','META','TSLA','BRK.B',
+    'JPM','V','UNH','MA','HD','PG','MRK','ABBV','LLY','AVGO',
+    'ORCL','CSCO','NFLX','AMD','INTC','PYPL','BABA','TSM',
+    'BIDU','NKE','DIS','SBUX','GME','AMC','COIN','RIVN','PLTR',
+  ],
+  energy: [
+    'XAUUSD','XAGUSD','XPTUSD','XPDUSD',
+    'USOIL','UKOIL','NATGAS','HEATOIL','RBOB',
+    'COPPER','CORN','WHEAT','SOYBEANS','SUGAR','COFFEE','COTTON',
+  ],
+};
+
+window.onTradeMarketChange = function(market) {
+  const sel = document.getElementById('trade-pair');
+  if (!sel) return;
+  const pairs = TRADE_PAIRS[market] || [];
+  sel.innerHTML = pairs.map(p => `<option value="${p}">${p}</option>`).join('');
+};
+
 window.addTradeRecord = async () => {
   const db     = window.ATRONTIFY_DB; if (!db) return;
   const userId = document.getElementById('trade-user-sel')?.value;
-  const symbol = document.getElementById('trade-pair')?.value?.trim();
+  const symbol = document.getElementById('trade-pair')?.value;
   const side   = document.getElementById('trade-direction')?.value;
   const lotSz  = parseFloat(document.getElementById('trade-size')?.value) || 0;
   const pnl    = parseFloat(document.getElementById('trade-pnl')?.value) || 0;
@@ -3623,8 +3668,9 @@ window.addTradeRecord = async () => {
 
   logAudit('DIRECT_TRADE', userId, `${side.toUpperCase()} ${lotSz}L ${symbol} | P/L: ${pnl >= 0 ? '+' : ''}$${pnl}`);
   showToast('Trade added — balance updated via trigger','success');
-  document.getElementById('trade-pair').value = '';
-  document.getElementById('trade-size').value = '';
+  onTradeMarketChange(document.getElementById('trade-market').value);
+  document.getElementById('trade-size').value = 1;
+  document.getElementById('trade-size-lbl').textContent = '1.00';
   document.getElementById('trade-pnl').value  = '';
   renderTradesLive();
 };
