@@ -207,22 +207,7 @@
   </div><!-- /main -->
 </div><!-- /app -->
 
-<!-- Notification Modal -->
-<div id="notifOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(5px);z-index:9500;align-items:center;justify-content:center">
-  <div id="notifModal" style="background:var(--card);border:1px solid var(--border);border-radius:20px;width:min(440px,92vw);padding:28px 26px;box-shadow:0 32px 80px rgba(0,0,0,.55);transform:scale(0.08) translateY(80px);opacity:0;transition:transform .4s cubic-bezier(.34,1.56,.64,1),opacity .25s">
-    <div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:16px">
-      <div style="width:44px;height:44px;border-radius:50%;background:rgba(79,110,247,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0">
-        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-      </div>
-      <div style="flex:1">
-        <div id="notifTitle" style="font-size:16px;font-weight:700;margin-bottom:3px"></div>
-        <div style="font-size:11px;color:var(--text3);text-transform:uppercase;font-weight:600;letter-spacing:.06em">AtrontifyX — Admin Message</div>
-      </div>
-    </div>
-    <div id="notifMessage" style="font-size:14px;color:var(--text2);line-height:1.7;margin-bottom:22px;white-space:pre-wrap"></div>
-    <button onclick="window.dismissNotif()" style="width:100%;height:44px;background:var(--accent);color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;transition:opacity .15s" onmouseover="this.style.opacity='.88'" onmouseout="this.style.opacity='1'">Got it</button>
-  </div>
-</div>
+<!-- Notification popup injected by shared.js -->
 
 <script src="shared.js"></script>
 <script>
@@ -472,62 +457,7 @@ async function loadTradeProgress(userId) {
   }, 80);
 }
 
-// ── Notifications ──────────────────────────────────────────────
-let _activeNotifId = null;
-
-window.dismissNotif = function() {
-  const overlay = document.getElementById('notifOverlay');
-  const modal   = document.getElementById('notifModal');
-  if (modal) { modal.style.transform = 'scale(0.08) translateY(80px)'; modal.style.opacity = '0'; }
-  setTimeout(() => { if (overlay) overlay.style.display = 'none'; }, 300);
-};
-
-function _showNotifPopup(notif) {
-  _activeNotifId = notif.id;
-  const overlay = document.getElementById('notifOverlay');
-  const modal   = document.getElementById('notifModal');
-  const titleEl = document.getElementById('notifTitle');
-  const msgEl   = document.getElementById('notifMessage');
-  if (!overlay || !titleEl || !msgEl) return;
-  titleEl.textContent = notif.title || 'Platform Announcement';
-  msgEl.textContent   = notif.message || '';
-  overlay.style.display = 'flex';
-  requestAnimationFrame(() => requestAnimationFrame(() => {
-    if (modal) { modal.style.transform = 'scale(1) translateY(0)'; modal.style.opacity = '1'; }
-  }));
-}
-
-async function loadNotification(userId) {
-  const { data } = await supabase
-    .from('notifications')
-    .select('*')
-    .eq('user_id', userId)
-    .eq('enabled', true)
-    .order('created_at', { ascending: false })
-    .limit(50);
-
-  if (!data?.length) return;
-
-  const dot = document.querySelector('.notif-dot');
-  if (dot) dot.style.opacity = '1';
-
-  // Always show the most recent enabled notification on every page load
-  _showNotifPopup(data[0]);
-
-  // Realtime: pop up new notifications as they arrive
-  supabase.channel('dash-notifications')
-    .on('postgres_changes', {
-      event: 'INSERT', schema: 'public', table: 'notifications',
-      filter: `user_id=eq.${userId}`
-    }, payload => {
-      const n = payload.new;
-      if (!n.enabled) return;
-      if (dot) dot.style.opacity = '1';
-      const sk = `atx_notif_seen_${n.id}`;
-      if (!sessionStorage.getItem(sk)) { sessionStorage.setItem(sk, '1'); _showNotifPopup(n); }
-    })
-    .subscribe();
-}
+// ── Notifications handled by shared.js ────────────────────────
 
 // getSession() reads localStorage — no network round-trip, fires immediately
 const { data: { session } } = await supabase.auth.getSession();
@@ -549,9 +479,7 @@ else {
     if (cached) applyProfile(JSON.parse(cached));
   } catch(e) {}
 
-  // Fire trade progress + notification concurrently — they manage their own loading states
   loadTradeProgress(user.id);
-  loadNotification(user.id);
 
   // Fetch profile + all trades in parallel (one round-trip instead of three)
   const [{ data: profile }, { data: trades }] = await Promise.all([

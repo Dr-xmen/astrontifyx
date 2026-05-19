@@ -86,6 +86,72 @@ function toggleSidebar() {
   }
 })();
 
+// ── GLOBAL NOTIFICATIONS (popup + bell link, all pages) ──────────────
+window.addEventListener('load', function() {
+  const file = (window.location.pathname.split('/').pop() || '');
+  if (['login.html','signup.html','maintenance.html','notifications.html'].includes(file)) {
+    // On notifications page just link the bell
+    document.querySelectorAll('.notif-wrap').forEach(function(b) {
+      b.style.cursor = 'pointer';
+      b.onclick = function() { location.href = 'notifications.html'; };
+    });
+    return;
+  }
+
+  // Link bell icon to notifications page
+  document.querySelectorAll('.notif-wrap').forEach(function(b) {
+    b.style.cursor = 'pointer';
+    b.onclick = function() { location.href = 'notifications.html'; };
+  });
+
+  // Inject popup HTML if not already in the page
+  if (!document.getElementById('notifOverlay')) {
+    var el = document.createElement('div');
+    el.innerHTML = '<div id="notifOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(5px);z-index:9500;align-items:center;justify-content:center"><div id="notifModal" style="background:var(--bg3,#1a1d27);border:1px solid var(--border,rgba(255,255,255,.06));border-radius:20px;width:min(440px,92vw);padding:28px 26px;box-shadow:0 32px 80px rgba(0,0,0,.55);transform:scale(0.08) translateY(80px);opacity:0;transition:transform .4s cubic-bezier(.34,1.56,.64,1),opacity .25s"><div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:16px"><div style="width:44px;height:44px;border-radius:50%;background:rgba(79,110,247,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="var(--accent,#4f6ef7)" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div><div style="flex:1"><div id="notifTitle" style="font-size:16px;font-weight:700;margin-bottom:3px;color:var(--text1,#f0f2ff)"></div><div style="font-size:11px;color:var(--text3,#5a6380);text-transform:uppercase;font-weight:600;letter-spacing:.06em">AtrontifyX — Admin Message</div></div></div><div id="notifMessage" style="font-size:14px;color:var(--text2,#9ea8c8);line-height:1.7;margin-bottom:22px;white-space:pre-wrap"></div><button onclick="window.dismissNotif()" style="width:100%;height:44px;background:var(--accent,#4f6ef7);color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;transition:opacity .15s" onmouseover="this.style.opacity=\'.88\'" onmouseout="this.style.opacity=\'1\'">Got it</button></div></div>';
+    document.body.appendChild(el.firstChild);
+  }
+
+  window.dismissNotif = function() {
+    var overlay = document.getElementById('notifOverlay');
+    var modal   = document.getElementById('notifModal');
+    if (modal) { modal.style.transform = 'scale(0.08) translateY(80px)'; modal.style.opacity = '0'; }
+    setTimeout(function() { if (overlay) overlay.style.display = 'none'; }, 300);
+  };
+
+  function showNotifPopup(n) {
+    var overlay = document.getElementById('notifOverlay');
+    var modal   = document.getElementById('notifModal');
+    var titleEl = document.getElementById('notifTitle');
+    var msgEl   = document.getElementById('notifMessage');
+    if (!overlay || !titleEl || !msgEl) return;
+    titleEl.textContent = n.title || 'Platform Announcement';
+    msgEl.textContent   = n.message || '';
+    overlay.style.display = 'flex';
+    requestAnimationFrame(function() { requestAnimationFrame(function() {
+      if (modal) { modal.style.transform = 'scale(1) translateY(0)'; modal.style.opacity = '1'; }
+    }); });
+  }
+
+  async function loadSharedNotification() {
+    var db = window.ATRONTIFY_DB;
+    if (!db) return;
+    var sessionRes = await db.auth.getSession();
+    var session = sessionRes.data && sessionRes.data.session;
+    if (!session) return;
+    var res = await db.from('notifications')
+      .select('id,title,message,type,enabled')
+      .eq('user_id', session.user.id)
+      .eq('enabled', true)
+      .order('created_at', { ascending: false })
+      .limit(1);
+    if (!res.data || !res.data.length) return;
+    document.querySelectorAll('.notif-dot').forEach(function(d) { d.style.opacity = '1'; });
+    showNotifPopup(res.data[0]);
+  }
+
+  loadSharedNotification();
+});
+
 // Auto-set active nav item based on current filename
 (function() {
   const pageMap = {
