@@ -80,6 +80,28 @@ img{max-width:100%;display:block}
 .mob-actions a:first-child{border:1px solid var(--border2);color:#fff}
 .mob-actions .btn-cta{min-width:auto}
 
+/* ── HERO ANIMATIONS ─────────────────────────────────────────────── */
+@keyframes heroUp{
+  from{opacity:0;transform:translateY(28px)}
+  to{opacity:1;transform:translateY(0)}
+}
+@keyframes heroRight{
+  from{opacity:0;transform:translateX(36px) translateY(12px)}
+  to{opacity:1;transform:translateX(0) translateY(0)}
+}
+@keyframes heroFade{
+  from{opacity:0;transform:translateY(14px)}
+  to{opacity:1;transform:translateY(0)}
+}
+.ha{opacity:0;animation-fill-mode:both;animation-timing-function:cubic-bezier(.22,1,.36,1)}
+.ha-1{animation:heroUp .7s .05s both cubic-bezier(.22,1,.36,1)}
+.ha-2{animation:heroUp .85s .18s both cubic-bezier(.22,1,.36,1)}
+.ha-3{animation:heroUp .7s .34s both cubic-bezier(.22,1,.36,1)}
+.ha-4{animation:heroUp .7s .48s both cubic-bezier(.22,1,.36,1)}
+.ha-5{animation:heroFade .6s .62s both cubic-bezier(.22,1,.36,1)}
+.ha-6{animation:heroRight .9s .28s both cubic-bezier(.22,1,.36,1)}
+.ha-7{animation:heroFade .7s .72s both cubic-bezier(.22,1,.36,1)}
+
 /* ── HERO ────────────────────────────────────────────────────────── */
 .hero{position:relative;min-height:100svh;display:flex;flex-direction:column;overflow:hidden;background:var(--bg)}
 .hero-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.55;z-index:0}
