@@ -491,10 +491,6 @@
         Support Tickets
         <span class="nav-item__badge badge-orange" id="badge-support">-</span>
       </button>
-      <button class="nav-item" onclick="showPage('notifications',this)">
-        <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-        User Notifications
-      </button>
       <button class="nav-item" onclick="showPage('trades',this)">
         <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
         Trades History
@@ -1121,7 +1117,7 @@
               <div class="toggle-wrap"><div><div class="toggle-wrap__label">Demo Accounts</div><div class="toggle-wrap__sub">Allow demo account creation</div></div><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
               <div class="toggle-wrap"><div><div class="toggle-wrap__label">Crypto Trading</div><div class="toggle-wrap__sub">Enable crypto instruments</div></div><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
               <div class="toggle-wrap"><div><div class="toggle-wrap__label">Auto KYC Approval</div><div class="toggle-wrap__sub">Auto-approve low-risk users</div></div><label class="toggle-switch"><input type="checkbox"><span class="toggle-slider"></span></label></div>
-              <div class="toggle-wrap"><div><div class="toggle-wrap__label">Maintenance Mode</div><div class="toggle-wrap__sub">Show maintenance page to users</div></div><label class="toggle-switch"><input type="checkbox"><span class="toggle-slider"></span></label></div>
+              <div class="toggle-wrap"><div><div class="toggle-wrap__label">Maintenance Mode</div><div class="toggle-wrap__sub">Show maintenance page to users</div></div><label class="toggle-switch"><input type="checkbox" id="toggle-maintenance" onchange="opsToggleMaintenance(this.checked)"><span class="toggle-slider"></span></label></div>
               <div class="toggle-wrap"><div><div class="toggle-wrap__label">2FA Required</div><div class="toggle-wrap__sub">Force 2FA for all users</div></div><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
             </div>
           </div>
@@ -1200,34 +1196,6 @@
         </div>
       </div>
 
-      <!-- ==================== USER NOTIFICATIONS ==================== -->
-      <div class="page" id="page-notifications">
-        <div class="page-header">
-          <div>
-            <div class="page-header__title">User Notifications</div>
-            <div class="page-header__sub">Set per-user popup notifications shown on their dashboard</div>
-          </div>
-          <button class="btn btn--outline" onclick="renderNotificationsLive()">
-            <svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-            Refresh
-          </button>
-        </div>
-        <div class="card" style="margin-bottom:16px;">
-          <div class="card__body" style="padding:12px 20px;">
-            <div style="font-size:13px;color:var(--muted);">When enabled, each user sees the configured popup on their next dashboard load. Toggle off to hide it.</div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card__body--p0 table-wrap">
-            <table class="data-table">
-              <thead><tr>
-                <th>User</th><th>Title</th><th>Message</th><th>Enabled</th><th>Actions</th>
-              </tr></thead>
-              <tbody id="notif-tbody"></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
 
       <!-- ==================== TRADES HISTORY ==================== -->
       <div class="page" id="page-trades">
@@ -1913,7 +1881,6 @@ function showPage(page, btn) {
     announcements: window.renderAnnouncementsLive,
     audit: window.renderAuditLive,
     support: window.renderSupportLive,
-    notifications: window.renderNotificationsLive,
     trades: window.renderTradesLive,
     settings: window.loadCryptoAddresses,
     activity: window.renderActivity,
@@ -1958,6 +1925,7 @@ function renderUsers() {
           <div>
             <div class="user-name">${escapeHTML(user.name || 'Unnamed User')}</div>
             <div class="user-email">${escapeHTML(user.email || '-')}</div>
+            ${user.phone ? `<div class="user-email">${escapeHTML(user.phone)}</div>` : ''}
           </div>
         </div>
       </td>
@@ -1991,6 +1959,7 @@ function renderRecentUsers() {
           <div>
             <div class="user-name">${escapeHTML(user.name || 'Unnamed User')}</div>
             <div class="user-email">${escapeHTML(user.email || '-')}</div>
+            ${user.phone ? `<div class="user-email">${escapeHTML(user.phone)}</div>` : ''}
           </div>
         </div>
       </td>
@@ -2304,6 +2273,7 @@ async function _loadUsers() {
       name:    p.full_name || p.name || `${p.first_name || ''} ${p.last_name || ''}`.trim() || p.username || p.id,
       email:   p.email,
       country: p.country || '-',
+      phone:   p.phone || p.phone_number || '',
       type:    live ? 'Live' : 'Demo',
       balance: '$' + total.toLocaleString('en-US', { minimumFractionDigits: 2 }),
       joined:  new Date(p.created_at).toLocaleDateString('en-GB'),
@@ -2343,7 +2313,7 @@ async function renderKYCLive() {
     const docsJson = JSON.stringify({ front:k.front_url, back:k.back_url, selfie:k.selfie_url, addr:k.proof_address_url, name, docType:k.document_type, status:k.status, id:k.id }).replace(/'/g,"&#39;");
     return `<tr>
       <td><div class="user-name">${name}</div></td>
-      <td><div class="user-email">${p.email || p.username ||  p.username || '-'}</div></td>
+      <td><div class="user-email">${p.email || p.username || '-'}</div>${(p.phone||p.phone_number)?`<div class="user-email">${p.phone||p.phone_number}</div>`:''}</td>
       <td>${p.country||'-'}</td>
       <td>${k.document_type||'-'}</td>
       <td>${fmtDate(k.submitted_at)}</td>
@@ -2555,10 +2525,12 @@ async function renderPositionsLive() {
   document.getElementById('positions-tbody').innerHTML = data.map(p => {
     const pnl  = parseFloat(p.floating_pnl || 0);
     const up   = pnl >= 0;
-    const name = p.profiles ? p.profiles.full_name || p.profiles.name || `${p.profiles.first_name || ''} ${p.profiles.last_name || ''}`.trim() || p.profiles.id : '-';
+    const pr   = p.profiles || {};
+    const name = pr.full_name || pr.name || `${pr.first_name || ''} ${pr.last_name || ''}`.trim() || pr.id || '-';
+    const phone = pr.phone || pr.phone_number || '';
     return `<tr>
       <td style="font-weight:600;">#${p.id.slice(0,8)}</td>
-      <td>${name}</td>
+      <td><div class="user-name">${name}</div><div class="user-email">${pr.email||'-'}</div>${phone?`<div class="user-email">${phone}</div>`:''}</td>
       <td>${p.account_number || '-'}</td>
       <td style="font-weight:700;">${p.symbol}</td>
       <td><span class="badge-pill ${p.direction==='buy'?'pill-green':'pill-red'}">${(p.direction||'').toUpperCase()}</span></td>
@@ -2983,8 +2955,16 @@ async function loadCryptoAddresses() {
   let saved = {};
   if (db) {
     try {
-      const { data } = await db.from('platform_settings').select('key,value').like('key','crypto_address_%');
-      (data||[]).forEach(r => { saved[r.key.replace('crypto_address_','')] = r.value; });
+      const { data } = await db.from('platform_settings').select('key,value').in('key', ['maintenance_mode', ...CRYPTO_COINS.map(c=>'crypto_address_'+c.key)]);
+      (data||[]).forEach(r => {
+        if (r.key === 'maintenance_mode') {
+          const el = document.getElementById('toggle-maintenance');
+          if (el) el.checked = r.value === 'true' || r.value === true;
+          localStorage.setItem('atx_maintenance', r.value === 'true' ? 'true' : 'false');
+        } else {
+          saved[r.key.replace('crypto_address_','')] = r.value;
+        }
+      });
     } catch(e) {}
   }
   // Fall back to localStorage
@@ -3098,14 +3078,16 @@ async function renderDepositsLive() {
   if (error) { tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--muted);">Error: ${error.message}</td></tr>`; return; }
   if (!data?.length) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--muted);">No deposit requests yet</td></tr>'; return; }
   const uids = [...new Set(data.map(d=>d.user_id).filter(Boolean))];
-  const { data: profs } = await db.from('profiles').select('id,first_name,last_name,email').in('id', uids);
-  const nm = {}; (profs||[]).forEach(p => { nm[p.id] = `${p.first_name||''} ${p.last_name||''}`.trim() || p.email || p.id?.slice(0,8); });
+  const { data: profs } = await db.from('profiles').select('id,first_name,last_name,email,phone').in('id', uids);
+  const profMap = {}; (profs||[]).forEach(p => { profMap[p.id] = p; });
   tbody.innerHTML = data.map(d => {
-    const name = nm[d.user_id] || d.user_id?.slice(0,8) || '-';
+    const p    = profMap[d.user_id] || {};
+    const name = `${p.first_name||''} ${p.last_name||''}`.trim() || p.email || d.user_id?.slice(0,8) || '-';
+    const phone = p.phone || '';
     const amt  = parseFloat(d.amount||0).toLocaleString('en-US',{minimumFractionDigits:2});
     return `<tr>
       <td style="font-weight:600;">${d.id.slice(0,8).toUpperCase()}</td>
-      <td>${name}</td>
+      <td><div class="user-name">${name}</div><div class="user-email">${p.email||'-'}</div>${phone?`<div class="user-email">${phone}</div>`:''}</td>
       <td style="font-weight:700;">$${amt}</td>
       <td>${d.coin||d.payment_method||'-'}</td>
       <td style="font-size:12px;">${fmtDate(d.created_at)}</td>
@@ -3122,8 +3104,13 @@ async function renderDepositsLive() {
 window.renderDepositsLive = renderDepositsLive;
 window.opsApproveDepositReq = async id => {
   const db = window.ATRONTIFY_DB;
-  // Fetch the deposit row to get user_id and amount
-  const { data: dep } = await db.from('deposit_requests').select('user_id, amount').eq('id', id).single();
+  const btn = document.querySelector(`button[onclick="opsApproveDepositReq('${id}')"]`);
+  if (btn) { btn.disabled = true; btn.textContent = 'Processing…'; }
+  const { data: dep } = await db.from('deposit_requests').select('user_id, amount, status').eq('id', id).single();
+  if (!dep || dep.status === 'approved') {
+    showToast('Already approved — no changes made', 'error');
+    renderDepositsLive(); return;
+  }
   await db.from('deposit_requests').update({ status:'approved', reviewed_at: new Date().toISOString() }).eq('id', id);
   if (dep?.user_id && dep?.amount) {
     // Credit the user's profile balance
@@ -3159,17 +3146,20 @@ async function renderWithdrawalsLive() {
   if (error) { tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--muted);">Error: ${error.message}</td></tr>`; return; }
   if (!data?.length) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--muted);">No withdrawal requests yet</td></tr>'; return; }
   const uids = [...new Set(data.map(w=>w.user_id).filter(Boolean))];
-  const { data: profs } = await db.from('profiles').select('id,first_name,last_name,email').in('id', uids);
-  const nm = {}; (profs||[]).forEach(p => { nm[p.id] = `${p.first_name||''} ${p.last_name||''}`.trim() || p.email || p.id?.slice(0,8); });
+  const { data: profs } = await db.from('profiles').select('id,first_name,last_name,email,phone').in('id', uids);
+  const profMap = {}; (profs||[]).forEach(p => { profMap[p.id] = p; });
   tbody.innerHTML = data.map(w => {
-    const name = nm[w.user_id] || w.user_id?.slice(0,8) || '-';
+    const p    = profMap[w.user_id] || {};
+    const name = `${p.first_name||''} ${p.last_name||''}`.trim() || p.email || w.user_id?.slice(0,8) || '-';
+    const phone = p.phone || '';
     const amt  = parseFloat(w.amount||0).toLocaleString('en-US',{minimumFractionDigits:2});
-    const dest = [w.destination_type, w.destination_name].filter(Boolean).join(' — ') || '-';
+    const destLine1 = [w.destination_type, w.destination_name].filter(Boolean).join(' — ') || '-';
+    const destRef = w.destination_ref ? `<div style="font-size:11px;color:var(--muted);font-family:monospace;word-break:break-all;margin-top:2px;">${w.destination_ref}</div>` : '';
     return `<tr>
       <td style="font-weight:600;">${w.id.slice(0,8).toUpperCase()}</td>
-      <td>${name}</td>
+      <td><div class="user-name">${name}</div><div class="user-email">${p.email||'-'}</div>${phone?`<div class="user-email">${phone}</div>`:''}</td>
       <td style="font-weight:700;">$${amt}</td>
-      <td style="font-size:12px;">${dest}</td>
+      <td style="font-size:12px;">${destLine1}${destRef}</td>
       <td style="font-size:12px;">${fmtDate(w.created_at)}</td>
       <td><span class="badge-pill ${w.status==='approved'||w.status==='completed'?'pill-green':w.status==='pending'?'pill-orange':'pill-red'}">${w.status}</span></td>
       <td><div class="row-actions">
@@ -3280,70 +3270,19 @@ window.opsDeleteTicket = async id => {
   showToast('Ticket deleted','error'); renderSupportLive();
 };
 
-// -- User Notifications ----------------------------------------
-async function renderNotificationsLive() {
-  const db = window.ATRONTIFY_DB; if (!db) return;
-  const tbody = document.getElementById('notif-tbody');
-  if (tbody) tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--muted);">Loading...</td></tr>';
-
-  const [{ data: users }, { data: notifs }] = await Promise.all([
-    db.from('profiles').select('*').order('created_at', { ascending: false }),
-    db.from('notifications').select('*'),
-  ]);
-
-  if (!users?.length) {
-    if (tbody) tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--muted);">No users found</td></tr>';
-    return;
+// -- Maintenance Mode toggle -----------------------------------
+window.opsToggleMaintenance = async function(enabled) {
+  const db = window.ATRONTIFY_DB;
+  localStorage.setItem('atx_maintenance', enabled ? 'true' : 'false');
+  if (db) {
+    try {
+      await db.from('platform_settings').upsert(
+        { key: 'maintenance_mode', value: enabled ? 'true' : 'false' },
+        { onConflict: 'key' }
+      );
+    } catch(e) {}
   }
-
-  const notifMap = {};
-  (notifs||[]).forEach(n => { notifMap[n.user_id] = n; });
-
-  const COLORS = ['#1a5cff','#22a06b','#7c3aed','#f5a623','#e60023'];
-  if (tbody) tbody.innerHTML = users.map((u, i) => {
-    const n    = notifMap[u.id] || {};
-    const name = u.full_name || u.name || `${u.first_name||''} ${u.last_name||''}`.trim() || u.username || u.id;
-    const init = name.split(' ').map(w=>w[0]||'').join('').toUpperCase().slice(0,2)||'?';
-    const col  = COLORS[i % COLORS.length];
-    const enabled = !!n.enabled;
-    return `<tr>
-      <td><div class="user-cell"><div class="user-avatar" style="background:${col};">${init}</div>
-        <div><div class="user-name">${name}</div><div class="user-email">${u.email || u.username || u.id}</div></div></div></td>
-      <td><input type="text" id="ntitle-${u.id}" value="${(n.title||'').replace(/"/g,'&quot;')}" placeholder="Notification title..."
-        style="width:180px;height:34px;border:1.5px solid var(--border);border-radius:6px;padding:0 10px;font-size:13px;"></td>
-      <td><textarea id="nmsg-${u.id}" style="width:260px;min-height:60px;border:1.5px solid var(--border);border-radius:6px;padding:6px 10px;font-size:12px;resize:vertical;" placeholder="Write notification message...">${n.message||''}</textarea></td>
-      <td>
-        <label class="toggle-switch">
-          <input type="checkbox" id="nenabled-${u.id}" ${enabled?'checked':''}>
-          <span class="toggle-slider"></span>
-        </label>
-      </td>
-      <td><div class="row-actions">
-        <button class="btn btn--sm btn--primary" onclick="opsSaveNotif('${u.id}')">Save</button>
-        <button class="btn btn--sm btn--outline" onclick="opsClearNotif('${u.id}')">Clear</button>
-      </div></td>
-    </tr>`;
-  }).join('');
-}
-window.renderNotificationsLive = renderNotificationsLive;
-
-window.opsSaveNotif = async userId => {
-  const title   = document.getElementById('ntitle-'+userId)?.value?.trim() || '';
-  const message = document.getElementById('nmsg-'+userId)?.value?.trim() || '';
-  const enabled = document.getElementById('nenabled-'+userId)?.checked || false;
-  const { error } = await window.ATRONTIFY_DB.from('notifications').upsert(
-    { user_id: userId, title, message, enabled, updated_at: new Date().toISOString() },
-    { onConflict: 'user_id' }
-  );
-  if (error) { showToast('Error: '+error.message,'error'); return; }
-  showToast('Notification saved','success');
-};
-window.opsClearNotif = async userId => {
-  await window.ATRONTIFY_DB.from('notifications').upsert(
-    { user_id: userId, title: '', message: '', enabled: false, updated_at: new Date().toISOString() },
-    { onConflict: 'user_id' }
-  );
-  showToast('Notification cleared','success'); renderNotificationsLive();
+  showToast(enabled ? 'Maintenance mode ON — users will see the maintenance page' : 'Maintenance mode OFF — site is live', enabled ? 'error' : 'success');
 };
 
 // -- Trades History --------------------------------------------

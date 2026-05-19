@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AtrontifyX — Notifications</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar" id="sidebar">
+    <div class="logo">
+      <img src="assets/logo.png" alt="AtrontifyX" style="width:180px;height:100px;object-fit:contain;border-radius:12px;flex-shrink:0">
+    </div>
+    <nav class="nav">
+      <div class="nav-section">Main</div>
+      <div class="nav-item" data-page="dashboard" onclick="location.href='dashboard.html'">
+        <svg viewBox="0 0 24 24"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
+        <span class="nav-label">Dashboard</span>
+      </div>
+      <div class="nav-item" data-page="markets" onclick="location.href='markets.html'">
+        <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        <span class="nav-label">Markets</span>
+      </div>
+      <div class="nav-item" data-page="terminal" onclick="location.href='trade-terminal.html'">
+        <svg viewBox="0 0 24 24"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+        <span class="nav-label">Trade Terminal</span>
+      </div>
+      <div class="nav-section">Finance</div>
+      <div class="nav-item" data-page="deposit" onclick="location.href='deposit.html'">
+        <svg viewBox="0 0 24 24"><path d="M12 17V3"/><path d="m6 11 6 6 6-6"/><path d="M19 21H5"/></svg>
+        <span class="nav-label">Deposit</span>
+      </div>
+      <div class="nav-item" data-page="withdraw" onclick="location.href='withdrawal.html'">
+        <svg viewBox="0 0 24 24"><path d="M12 7v14"/><path d="m6 13 6-6 6 6"/><path d="M19 3H5"/></svg>
+        <span class="nav-label">Withdraw</span>
+      </div>
+      <div class="nav-section">Account</div>
+      <div class="nav-item" data-page="history" onclick="location.href='history.html'">
+        <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg>
+        <span class="nav-label">History</span>
+      </div>
+      <div class="nav-item" data-page="notifications" onclick="location.href='notifications.html'">
+        <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span class="nav-label">Notifications</span>
+      </div>
+      <div class="nav-item" data-page="upgrade" onclick="location.href='account-upgrade.html'">
+        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        <span class="nav-label">Account Upgrade</span>
+      </div>
+      <div class="nav-item" data-page="settings" onclick="location.href='settings.html'">
+        <svg viewBox="0 0 24 24"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+        <span class="nav-label">Settings</span>
+      </div>
+      <div class="nav-item" data-navaction="verification" onclick="location.href='settings.html#verification'">
+        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+        <span class="nav-label">Verification</span>
+      </div>
+    </nav>
+    <div class="sidebar-bottom">
+      <div class="nav-item" style="color:var(--red)" onclick="window.signOut && window.signOut()">
+        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        <span class="nav-label">Sign Out</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <div class="tb-left">
+        <div class="tb-btn" onclick="toggleSidebar()">
+          <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </div>
+        <span class="page-title">Notifications</span>
+      </div>
+      <div class="tb-right">
+        <div class="tb-btn notif-wrap">
+          <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span class="notif-dot" id="notifDot" style="opacity:0"></span>
+        </div>
+        <div class="tb-btn" onclick="toggleTheme()">
+          <svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18V3z" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+        </div>
+        <div class="avatar" id="userAvatar">--</div>
+      </div>
+    </div>
+
+    <div class="content fade-in">
+
+      <!-- Header row -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:12px">
+        <div>
+          <div style="font-size:20px;font-weight:700;letter-spacing:-.3px">Notifications</div>
+          <div style="font-size:13px;color:var(--text3);margin-top:2px">Platform announcements and alerts from admin</div>
+        </div>
+        <button onclick="markAllRead()" style="height:36px;padding:0 16px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:12.5px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:7px">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+          Mark all read
+        </button>
+      </div>
+
+      <!-- Filter tabs -->
+      <div class="tabs" style="margin-bottom:16px" id="notifTabs">
+        <div class="tab active" onclick="filterNotifs('all',this)">All</div>
+        <div class="tab" onclick="filterNotifs('unread',this)">Unread</div>
+        <div class="tab" onclick="filterNotifs('info',this)">Info</div>
+        <div class="tab" onclick="filterNotifs('warning',this)">Alerts</div>
+      </div>
+
+      <!-- Notifications list -->
+      <div id="notifList">
+        <div style="text-align:center;color:var(--text3);padding:48px 0;font-size:14px">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" style="margin:0 auto 14px;display:block;opacity:.3"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          Loading notifications…
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<style>
+.notif-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 18px 20px;
+  margin-bottom: 10px;
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  cursor: pointer;
+  transition: background .15s, border-color .15s;
+  position: relative;
+  overflow: hidden;
+}
+.notif-card:hover { background: var(--bg2); border-color: rgba(79,110,247,.25); }
+.notif-card.unread { border-left: 3px solid var(--accent); }
+.notif-card.unread::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(79,110,247,.03);
+  pointer-events: none;
+}
+.notif-icon {
+  width: 42px; height: 42px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.notif-icon svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; }
+.notif-body { flex: 1; min-width: 0; }
+.notif-title { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+.notif-msg { font-size: 13px; color: var(--text2); line-height: 1.6; }
+.notif-meta { font-size: 11px; color: var(--text3); margin-top: 8px; display: flex; gap: 10px; align-items: center; }
+.notif-type-badge { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; text-transform: uppercase; letter-spacing: .05em; }
+.unread-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); flex-shrink: 0; margin-top: 5px; }
+.empty-state { text-align: center; color: var(--text3); padding: 56px 0; font-size: 14px; }
+.empty-state svg { display: block; margin: 0 auto 16px; opacity: .25; }
+</style>
+
+<script src="shared.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+<script type="module">
+const supabase = window.ATRONTIFY_DB;
+
+let _allNotifs = [];
+let _readSet = new Set(JSON.parse(localStorage.getItem('atx_read_notifs') || '[]'));
+let _currentFilter = 'all';
+
+async function signOut() { await supabase.auth.signOut(); location.href = 'login.html'; }
+window.signOut = signOut;
+
+function saveReadSet() {
+  try { localStorage.setItem('atx_read_notifs', JSON.stringify([..._readSet])); } catch(e) {}
+}
+
+const TYPE_CFG = {
+  info:    { bg: 'rgba(79,110,247,.12)', color: '#4f6ef7', cls: 'bb', icon: '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>' },
+  warning: { bg: 'rgba(245,158,11,.12)', color: '#f59e0b', cls: 'ba', icon: '<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>' },
+  success: { bg: 'rgba(34,197,94,.12)',  color: '#22c55e', cls: 'bg', icon: '<polyline points="20 6 9 17 4 12"/>' },
+  urgent:  { bg: 'rgba(239,68,68,.12)',  color: '#ef4444', cls: 'br', icon: '<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>' },
+};
+
+function renderNotifs() {
+  const el = document.getElementById('notifList');
+  let list = _allNotifs;
+  if (_currentFilter === 'unread') list = list.filter(n => !_readSet.has(n.id));
+  else if (_currentFilter !== 'all') list = list.filter(n => (n.type||'info').toLowerCase() === _currentFilter);
+
+  const dot = document.getElementById('notifDot');
+  const unreadCount = _allNotifs.filter(n => !_readSet.has(n.id)).length;
+  if (dot) dot.style.opacity = unreadCount > 0 ? '1' : '0';
+
+  if (!list.length) {
+    el.innerHTML = `<div class="empty-state">
+      <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      ${_currentFilter === 'unread' ? 'No unread notifications' : 'No notifications yet'}
+    </div>`;
+    return;
+  }
+
+  el.innerHTML = list.map(n => {
+    const isRead = _readSet.has(n.id);
+    const t = n.type?.toLowerCase() || 'info';
+    const cfg = TYPE_CFG[t] || TYPE_CFG.info;
+    const date = n.created_at ? new Date(n.created_at) : null;
+    const dateStr = date ? date.toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' }) + ' · ' + date.toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' }) : '—';
+    return `<div class="notif-card ${isRead?'':'unread'}" onclick="markRead('${n.id}',this)">
+      <div class="notif-icon" style="background:${cfg.bg};color:${cfg.color}">
+        <svg viewBox="0 0 24 24">${cfg.icon}</svg>
+      </div>
+      <div class="notif-body">
+        <div class="notif-title">${n.title || 'Platform Announcement'}</div>
+        <div class="notif-msg">${n.body || n.message || ''}</div>
+        <div class="notif-meta">
+          <span>${dateStr}</span>
+          <span class="notif-type-badge ${cfg.cls}">${t}</span>
+          ${!isRead ? '<span style="color:var(--accent);font-weight:600">New</span>' : ''}
+        </div>
+      </div>
+      ${!isRead ? '<div class="unread-dot"></div>' : ''}
+    </div>`;
+  }).join('');
+}
+
+window.markRead = function(id, el) {
+  _readSet.add(id);
+  saveReadSet();
+  if (el) {
+    el.classList.remove('unread');
+    const dot = el.querySelector('.unread-dot');
+    if (dot) dot.remove();
+    const newBadge = el.querySelector('[style*="accent"]');
+    if (newBadge) newBadge.remove();
+  }
+  const notifDot = document.getElementById('notifDot');
+  const unread = _allNotifs.filter(n => !_readSet.has(n.id)).length;
+  if (notifDot) notifDot.style.opacity = unread > 0 ? '1' : '0';
+};
+
+window.markAllRead = function() {
+  _allNotifs.forEach(n => _readSet.add(n.id));
+  saveReadSet();
+  renderNotifs();
+};
+
+window.filterNotifs = function(f, btn) {
+  _currentFilter = f;
+  document.querySelectorAll('#notifTabs .tab').forEach(t => t.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderNotifs();
+};
+
+async function loadNotifications() {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) { location.href = 'login.html'; return; }
+  const user = session.user;
+
+  const meta = user.user_metadata || {};
+  const fn = meta.first_name || '', ln = meta.last_name || '';
+  const initials = (fn && ln) ? `${fn[0]}${ln[0]}`.toUpperCase() : (user.email||'U')[0].toUpperCase();
+  const avatarEl = document.getElementById('userAvatar');
+  if (avatarEl) avatarEl.textContent = initials;
+
+  // Load global announcements
+  const { data: announcements } = await supabase
+    .from('announcements')
+    .select('*')
+    .eq('published', true)
+    .order('created_at', { ascending: false })
+    .limit(100);
+
+  _allNotifs = announcements || [];
+  renderNotifs();
+}
+
+loadNotifications();
+</script>
+</body>
+</html>

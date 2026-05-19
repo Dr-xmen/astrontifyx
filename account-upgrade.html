@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AtrontifyX — Account Upgrade</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar" id="sidebar">
+    <div class="logo">
+      <img src="assets/logo.png" alt="AtrontifyX" style="width:180px;height:100px;object-fit:contain;border-radius:12px;flex-shrink:0">
+    </div>
+    <nav class="nav">
+      <div class="nav-section">Main</div>
+      <div class="nav-item" data-page="dashboard" onclick="location.href='dashboard.html'">
+        <svg viewBox="0 0 24 24"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
+        <span class="nav-label">Dashboard</span>
+      </div>
+      <div class="nav-item" data-page="markets" onclick="location.href='markets.html'">
+        <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        <span class="nav-label">Markets</span>
+      </div>
+      <div class="nav-item" data-page="terminal" onclick="location.href='trade-terminal.html'">
+        <svg viewBox="0 0 24 24"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+        <span class="nav-label">Trade Terminal</span>
+      </div>
+      <div class="nav-section">Finance</div>
+      <div class="nav-item" data-page="deposit" onclick="location.href='deposit.html'">
+        <svg viewBox="0 0 24 24"><path d="M12 17V3"/><path d="m6 11 6 6 6-6"/><path d="M19 21H5"/></svg>
+        <span class="nav-label">Deposit</span>
+      </div>
+      <div class="nav-item" data-page="withdraw" onclick="location.href='withdrawal.html'">
+        <svg viewBox="0 0 24 24"><path d="M12 7v14"/><path d="m6 13 6-6 6 6"/><path d="M19 3H5"/></svg>
+        <span class="nav-label">Withdraw</span>
+      </div>
+      <div class="nav-section">Account</div>
+      <div class="nav-item" data-page="history" onclick="location.href='history.html'">
+        <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg>
+        <span class="nav-label">History</span>
+      </div>
+      <div class="nav-item" data-page="notifications" onclick="location.href='notifications.html'">
+        <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span class="nav-label">Notifications</span>
+      </div>
+      <div class="nav-item" data-page="upgrade" onclick="location.href='account-upgrade.html'">
+        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        <span class="nav-label">Account Upgrade</span>
+      </div>
+      <div class="nav-item" data-page="settings" onclick="location.href='settings.html'">
+        <svg viewBox="0 0 24 24"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+        <span class="nav-label">Settings</span>
+      </div>
+      <div class="nav-item" data-navaction="verification" onclick="location.href='settings.html#verification'">
+        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+        <span class="nav-label">Verification</span>
+      </div>
+    </nav>
+    <div class="sidebar-bottom">
+      <div class="nav-item" style="color:var(--red)" onclick="window.signOut && window.signOut()">
+        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        <span class="nav-label">Sign Out</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <div class="tb-left">
+        <div class="tb-btn" onclick="toggleSidebar()">
+          <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </div>
+        <span class="page-title">Account Upgrade</span>
+      </div>
+      <div class="tb-right">
+        <div class="tb-btn notif-wrap">
+          <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span class="notif-dot"></span>
+        </div>
+        <div class="tb-btn" onclick="toggleTheme()">
+          <svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18V3z" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+        </div>
+        <div class="avatar" id="userAvatar">--</div>
+      </div>
+    </div>
+
+    <div class="content fade-in">
+
+      <!-- Header -->
+      <div style="text-align:center;padding:8px 0 28px">
+        <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(79,110,247,.1);border:1px solid rgba(79,110,247,.2);border-radius:20px;padding:5px 14px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);margin-bottom:14px">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          Tier System
+        </div>
+        <div style="font-size:26px;font-weight:700;letter-spacing:-.4px;margin-bottom:8px">Upgrade Your Account</div>
+        <div style="font-size:14px;color:var(--text3);max-width:520px;margin:0 auto;line-height:1.7">Unlock more features, higher limits and advanced trading tools as you grow with AtrontifyX.</div>
+      </div>
+
+      <!-- Current plan banner -->
+      <div id="currentPlanBanner" style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 22px;margin-bottom:24px;display:flex;align-items:center;gap:16px">
+        <div style="width:46px;height:46px;border-radius:50%;background:rgba(79,110,247,.12);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+        <div style="flex:1">
+          <div style="font-size:12px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px">Your Current Plan</div>
+          <div style="font-size:17px;font-weight:700" id="currentPlanLabel">Loading…</div>
+        </div>
+        <span id="currentPlanBadge" class="badge bb">—</span>
+      </div>
+
+      <!-- Tier cards grid -->
+      <div id="tierGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;margin-bottom:28px">
+        <!-- populated by JS -->
+      </div>
+
+      <!-- Pending request notice -->
+      <div id="pendingNotice" style="display:none;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);border-radius:12px;padding:16px 20px;margin-bottom:24px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <div>
+            <div style="font-size:13px;font-weight:600;color:#f59e0b">Upgrade Request Pending</div>
+            <div style="font-size:12px;color:var(--text3);margin-top:2px" id="pendingNoticeText">Your upgrade request is under review. Our team will process it within 24-48 hours.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Request form (hidden until user clicks upgrade) -->
+      <div id="upgradeForm" style="display:none">
+        <div class="card">
+          <div class="section-hdr">
+            <span class="section-title">Request Account Upgrade</span>
+            <button onclick="document.getElementById('upgradeForm').style.display='none'" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:13px">Cancel</button>
+          </div>
+          <div style="padding:4px 0 8px">
+            <div style="font-size:13px;color:var(--text3);margin-bottom:16px">Complete this form to request an upgrade to <strong id="requestingTierLabel" style="color:var(--text1)">—</strong>. Our team will review and process your request within 24–48 hours.</div>
+            <div class="fg" style="margin-bottom:12px">
+              <label>Additional Notes (optional)</label>
+              <textarea id="upgradeNotes" placeholder="Any additional information for your upgrade request..." style="width:100%;min-height:80px;background:var(--bg2);border:1.5px solid var(--border);border-radius:8px;padding:10px 12px;font-size:13px;color:var(--text1);resize:vertical;font-family:inherit;outline:none"></textarea>
+            </div>
+            <button id="submitUpgradeBtn" onclick="submitUpgradeRequest()" style="background:var(--accent);color:#fff;border:none;border-radius:10px;padding:12px 28px;font-size:14px;font-weight:600;cursor:pointer;transition:opacity .15s" onmouseover="this.style.opacity='.88'" onmouseout="this.style.opacity='1'">
+              Submit Upgrade Request
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Success modal -->
+<div id="upgradeSuccessOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(5px);z-index:9500;align-items:center;justify-content:center">
+  <div id="upgradeSuccessModal" style="background:var(--card);border:1px solid var(--border);border-radius:20px;width:min(420px,92vw);padding:32px 28px;text-align:center;box-shadow:0 32px 80px rgba(0,0,0,.55);transform:scale(.08) translateY(80px);opacity:0;transition:transform .4s cubic-bezier(.34,1.56,.64,1),opacity .25s">
+    <div style="width:64px;height:64px;border-radius:50%;background:rgba(34,197,94,.12);display:flex;align-items:center;justify-content:center;margin:0 auto 18px">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <div style="font-size:20px;font-weight:700;margin-bottom:8px">Request Submitted!</div>
+    <div style="font-size:14px;color:var(--text2);line-height:1.7;margin-bottom:24px">Your account upgrade request has been received. Our team will review it and get back to you within 24–48 hours.</div>
+    <button onclick="closeSuccessModal()" style="width:100%;height:44px;background:var(--accent);color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer">Got it</button>
+  </div>
+</div>
+
+<style>
+.tier-card {
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  border-radius: 16px;
+  padding: 22px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color .2s, transform .2s, box-shadow .2s;
+  cursor: default;
+}
+.tier-card:hover:not(.current):not(.locked) {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(0,0,0,.25);
+}
+.tier-card.current { border-color: var(--accent); background: rgba(79,110,247,.05); }
+.tier-card.current::before { content:'CURRENT'; position:absolute;top:14px;right:14px;font-size:9px;font-weight:800;letter-spacing:.12em;background:var(--accent);color:#fff;padding:2px 8px;border-radius:20px }
+.tier-card.locked { opacity: .55; }
+.tier-icon { width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0 }
+.tier-name { font-size:18px;font-weight:700;letter-spacing:-.2px }
+.tier-subtitle { font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;opacity:.7 }
+.tier-features { display:flex;flex-direction:column;gap:7px;flex:1 }
+.tier-feature { display:flex;align-items:center;gap:9px;font-size:12.5px;color:var(--text2) }
+.tier-feature svg { width:14px;height:14px;flex-shrink:0 }
+.tier-btn { display:block;width:100%;height:40px;border-radius:10px;border:none;font-size:13px;font-weight:600;cursor:pointer;transition:opacity .15s }
+.tier-btn:hover { opacity:.88 }
+</style>
+
+<script src="shared.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+<script type="module">
+const supabase = window.ATRONTIFY_DB;
+let _userId = null;
+let _currentPlan = 'BASIC';
+let _selectedTier = null;
+
+const TIERS = [
+  {
+    key: 'BASIC',
+    name: 'Basic',
+    subtitle: 'Starter',
+    icon: '🌱',
+    bg: 'rgba(34,197,94,.1)', color: '#22c55e',
+    btnLabel: 'Your Current Plan',
+    price: 'Free',
+    features: [
+      'Standard trading tools',
+      'Up to $10,000 balance limit',
+      'Email support',
+      'Basic market access',
+      '1:100 max leverage',
+    ]
+  },
+  {
+    key: 'SILVER',
+    name: 'Silver',
+    subtitle: 'Raw+',
+    icon: '⚡',
+    bg: 'rgba(148,163,184,.12)', color: '#94a3b8',
+    btnLabel: 'Upgrade to Silver',
+    price: 'Contact Admin',
+    features: [
+      'Raw+ spreads from 0.0 pips',
+      'Up to $50,000 balance limit',
+      'Priority support',
+      'All market access',
+      '1:200 max leverage',
+      'Advanced charting tools',
+    ]
+  },
+  {
+    key: 'GOLD',
+    name: 'Gold',
+    subtitle: 'Elite',
+    icon: '🏆',
+    bg: 'rgba(245,158,11,.1)', color: '#f59e0b',
+    btnLabel: 'Upgrade to Gold',
+    price: 'Contact Admin',
+    features: [
+      'Elite account status',
+      'Up to $100,000 balance limit',
+      'Dedicated account manager',
+      'VIP market access',
+      '1:500 max leverage',
+      'Advanced analytics dashboard',
+      'Weekly market reports',
+    ]
+  },
+  {
+    key: 'PLATINUM',
+    name: 'Platinum',
+    subtitle: 'Master',
+    icon: '💎',
+    bg: 'rgba(139,92,246,.1)', color: '#8b5cf6',
+    btnLabel: 'Upgrade to Platinum',
+    price: 'Contact Admin',
+    features: [
+      'Master account status',
+      'Unlimited balance',
+      'Personal relationship manager',
+      'Institutional-grade tools',
+      '1:1000 max leverage',
+      'Custom spread agreements',
+      'Exclusive investment strategies',
+      'Priority withdrawal processing',
+    ]
+  }
+];
+
+const TIER_ORDER = ['BASIC','SILVER','GOLD','PLATINUM'];
+
+async function signOut() { await supabase.auth.signOut(); location.href = 'login.html'; }
+window.signOut = signOut;
+
+window.closeSuccessModal = function() {
+  const overlay = document.getElementById('upgradeSuccessOverlay');
+  const modal = document.getElementById('upgradeSuccessModal');
+  if (modal) { modal.style.transform = 'scale(.08) translateY(80px)'; modal.style.opacity = '0'; }
+  setTimeout(() => { if (overlay) overlay.style.display = 'none'; }, 300);
+};
+
+window.openUpgradeForm = function(tierKey) {
+  _selectedTier = tierKey;
+  const tier = TIERS.find(t => t.key === tierKey);
+  document.getElementById('requestingTierLabel').textContent = `${tier.name} (${tier.subtitle})`;
+  document.getElementById('upgradeForm').style.display = 'block';
+  document.getElementById('upgradeForm').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+};
+
+window.submitUpgradeRequest = async function() {
+  const btn = document.getElementById('submitUpgradeBtn');
+  const notes = document.getElementById('upgradeNotes').value.trim();
+  const tier = TIERS.find(t => t.key === _selectedTier);
+  if (!tier || !_userId) return;
+  btn.disabled = true; btn.textContent = 'Submitting…';
+
+  const subject = `Account Upgrade Request — ${tier.name} (${tier.subtitle})`;
+  const message = `I would like to upgrade my account to ${tier.name} (${tier.subtitle}).\n\n${notes ? 'Additional notes: ' + notes : ''}`.trim();
+
+  const { error } = await supabase.from('support_tickets').insert({
+    user_id: _userId, subject, message, status: 'open',
+    created_at: new Date().toISOString()
+  });
+
+  if (error) {
+    btn.disabled = false; btn.textContent = 'Submit Upgrade Request';
+    alert('Error submitting request: ' + error.message);
+    return;
+  }
+
+  // Mark pending in localStorage
+  localStorage.setItem(`atx_upgrade_pending_${_userId}`, _selectedTier);
+
+  document.getElementById('upgradeForm').style.display = 'none';
+  const overlay = document.getElementById('upgradeSuccessOverlay');
+  const modal = document.getElementById('upgradeSuccessModal');
+  overlay.style.display = 'flex';
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    modal.style.transform = 'scale(1) translateY(0)'; modal.style.opacity = '1';
+  }));
+  renderTiers();
+};
+
+function renderTiers() {
+  const grid = document.getElementById('tierGrid');
+  const pendingTier = localStorage.getItem(`atx_upgrade_pending_${_userId}`);
+  const currentIdx = TIER_ORDER.indexOf(_currentPlan.toUpperCase());
+
+  grid.innerHTML = TIERS.map(tier => {
+    const tierIdx = TIER_ORDER.indexOf(tier.key);
+    const isCurrent = tier.key === _currentPlan.toUpperCase();
+    const isLower = tierIdx < currentIdx;
+    const isPending = pendingTier === tier.key && !isCurrent;
+
+    let btnHtml = '';
+    if (isCurrent) {
+      btnHtml = `<button class="tier-btn" style="background:${tier.bg};color:${tier.color};cursor:not-allowed" disabled>${tier.btnLabel}</button>`;
+    } else if (isLower) {
+      btnHtml = `<button class="tier-btn" style="background:var(--bg2);color:var(--text3);cursor:not-allowed" disabled>Current plan is higher</button>`;
+    } else if (isPending) {
+      btnHtml = `<button class="tier-btn" style="background:rgba(245,158,11,.12);color:#f59e0b;cursor:not-allowed" disabled>Request Pending</button>`;
+    } else {
+      btnHtml = `<button class="tier-btn" style="background:${tier.bg};color:${tier.color};border:1.5px solid ${tier.color}33" onclick="openUpgradeForm('${tier.key}')">${tier.btnLabel}</button>`;
+    }
+
+    const featuresHtml = tier.features.map(f => `
+      <div class="tier-feature">
+        <svg viewBox="0 0 24 24" fill="none" stroke="${isCurrent ? tier.color : 'currentColor'}" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+        ${f}
+      </div>`).join('');
+
+    return `<div class="tier-card ${isCurrent ? 'current' : ''} ${isLower ? 'locked' : ''}">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div class="tier-icon" style="background:${tier.bg}">${tier.icon}</div>
+        <div>
+          <div class="tier-name">${tier.name}</div>
+          <div class="tier-subtitle" style="color:${tier.color}">${tier.subtitle}</div>
+        </div>
+      </div>
+      <div class="tier-features">${featuresHtml}</div>
+      ${btnHtml}
+    </div>`;
+  }).join('');
+}
+
+async function init() {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) { location.href = 'login.html'; return; }
+  _userId = session.user.id;
+
+  const meta = session.user.user_metadata || {};
+  const fn = meta.first_name || '', ln = meta.last_name || '';
+  const initials = (fn && ln) ? `${fn[0]}${ln[0]}`.toUpperCase() : (session.user.email||'U')[0].toUpperCase();
+  const avatarEl = document.getElementById('userAvatar');
+  if (avatarEl) avatarEl.textContent = initials;
+
+  const { data: profile } = await supabase.from('profiles').select('plan,first_name,last_name').eq('id', _userId).single();
+  _currentPlan = (profile?.plan || 'BASIC').toUpperCase();
+
+  // Check if current plan matches a tier key (map admin names)
+  const planMap = { 'RAW+': 'SILVER', 'ELITE': 'GOLD', 'MASTER': 'PLATINUM', 'STANDARD': 'BASIC' };
+  if (planMap[_currentPlan]) _currentPlan = planMap[_currentPlan];
+
+  const tier = TIERS.find(t => t.key === _currentPlan) || TIERS[0];
+  document.getElementById('currentPlanLabel').textContent = `${tier.name} — ${tier.subtitle}`;
+  const badge = document.getElementById('currentPlanBadge');
+  if (badge) {
+    const clsMap = { BASIC:'bb', SILVER:'', GOLD:'ba', PLATINUM:'br' };
+    badge.className = `badge ${clsMap[_currentPlan]||'bb'}`;
+    badge.textContent = tier.name;
+    if (_currentPlan === 'SILVER') badge.style.cssText = 'background:rgba(148,163,184,.15);color:#94a3b8;padding:3px 12px;border-radius:20px;font-size:11px;font-weight:700';
+    if (_currentPlan === 'PLATINUM') badge.style.cssText = 'background:rgba(139,92,246,.15);color:#8b5cf6;padding:3px 12px;border-radius:20px;font-size:11px;font-weight:700';
+  }
+
+  // Check pending
+  const pendingTier = localStorage.getItem(`atx_upgrade_pending_${_userId}`);
+  if (pendingTier && pendingTier !== _currentPlan) {
+    const pendingTierObj = TIERS.find(t => t.key === pendingTier);
+    document.getElementById('pendingNotice').style.display = 'block';
+    document.getElementById('pendingNoticeText').textContent = `Your upgrade request to ${pendingTierObj?.name || pendingTier} (${pendingTierObj?.subtitle || ''}) is under review. Our team will process it within 24-48 hours.`;
+  }
+
+  renderTiers();
+}
+
+init();
+</script>
+</body>
+</html>

@@ -76,16 +76,28 @@ function toggleSidebar() {
   }
 }
 
+// ── Maintenance check ─────────────────────────────────────────
+(function() {
+  const file = window.location.pathname.split('/').pop() || '';
+  if (file === 'maintenance.html' || file.includes('login') || file.includes('signup')) return;
+  // Check localStorage first (admin sets this when toggling)
+  if (localStorage.getItem('atx_maintenance') === 'true') {
+    window.location.href = 'maintenance.html';
+  }
+})();
+
 // Auto-set active nav item based on current filename
 (function() {
   const pageMap = {
-    'dashboard.html': 'dashboard',
-    'markets.html':   'markets',
-    'trade-terminal.html': 'terminal',
-    'deposit.html':   'deposit',
-    'withdrawal.html':'withdraw',
-    'history.html':   'history',
-    'settings.html':  'settings',
+    'dashboard.html':       'dashboard',
+    'markets.html':         'markets',
+    'trade-terminal.html':  'terminal',
+    'deposit.html':         'deposit',
+    'withdrawal.html':      'withdraw',
+    'history.html':         'history',
+    'notifications.html':   'notifications',
+    'account-upgrade.html': 'upgrade',
+    'settings.html':        'settings',
   };
   const file = window.location.pathname.split('/').pop() || 'dashboard.html';
   const active = pageMap[file] || 'dashboard';
