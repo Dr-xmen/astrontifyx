@@ -475,15 +475,11 @@ async function loadTradeProgress(userId) {
 // ── Notifications ──────────────────────────────────────────────
 let _activeNotifId = null;
 
-window.dismissNotif = async function() {
+window.dismissNotif = function() {
   const overlay = document.getElementById('notifOverlay');
   const modal   = document.getElementById('notifModal');
   if (modal) { modal.style.transform = 'scale(0.08) translateY(80px)'; modal.style.opacity = '0'; }
   setTimeout(() => { if (overlay) overlay.style.display = 'none'; }, 300);
-  if (_activeNotifId) {
-    await supabase.from('notifications').update({ read: true }).eq('id', _activeNotifId);
-    _activeNotifId = null;
-  }
 };
 
 function _showNotifPopup(notif) {
@@ -513,16 +509,10 @@ async function loadNotification(userId) {
   if (!data?.length) return;
 
   const dot = document.querySelector('.notif-dot');
-  const unread = data.filter(n => !n.read);
-  if (dot) dot.style.opacity = unread.length > 0 ? '1' : '0';
+  if (dot) dot.style.opacity = '1';
 
-  // Show most recent unread as popup if not dismissed this session
-  const toShow = unread[0];
-  if (!toShow) return;
-  const seenKey = `atx_notif_seen_${toShow.id}`;
-  if (sessionStorage.getItem(seenKey)) return;
-  sessionStorage.setItem(seenKey, '1');
-  _showNotifPopup(toShow);
+  // Always show the most recent enabled notification on every page load
+  _showNotifPopup(data[0]);
 
   // Realtime: pop up new notifications as they arrive
   supabase.channel('dash-notifications')
