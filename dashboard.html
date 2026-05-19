@@ -106,7 +106,8 @@
 
       <!-- Stat Cards -->
       <div class="grid g4" style="margin-bottom:14px">
-        <div class="stat-card portfolio-gradient">
+        <div class="stat-card portfolio-gradient" style="position:relative">
+          <span id="accountTypeBadge" style="display:none;position:absolute;top:12px;right:12px;font-size:10px;font-weight:700;letter-spacing:.07em;padding:3px 9px;border-radius:20px;background:rgba(255,255,255,.15);color:#fff;backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,.2)"></span>
           <div class="stat-icon" style="background:rgba(255,255,255,0.16);color:#fff">
             <svg viewBox="0 0 24 24"><path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4"/><path d="M4 6v12c0 1.1.9 2 2 2h14v-4"/><path d="M18 12a2 2 0 0 0-2 2c0 1.1.9 2 2 2h4v-4h-4z"/></svg>
           </div>
@@ -303,6 +304,13 @@ function applyProfile(profile) {
   setMoney('totalPnl',         profile.total_pnl);
   const winEl = document.getElementById('winningTrades');
   if (winEl) winEl.textContent = `${Number(profile.winning_trades||0)} winning trades`;
+  const badge = document.getElementById('accountTypeBadge');
+  if (badge && profile.plan) {
+    const planMap = { 'STANDARD':'Basic', 'BASIC':'Basic', 'RAW+':'Silver', 'SILVER':'Silver', 'ELITE':'Gold', 'GOLD':'Gold', 'MASTER':'Platinum', 'PLATINUM':'Platinum' };
+    const label = planMap[(profile.plan||'').toUpperCase()] || profile.plan;
+    badge.textContent = label.toUpperCase();
+    badge.style.display = 'inline-block';
+  }
 }
 
 function categorizeSym(sym) {
@@ -483,7 +491,7 @@ else {
 
   // Fetch profile + all trades in parallel (one round-trip instead of three)
   const [{ data: profile }, { data: trades }] = await Promise.all([
-    supabase.from('profiles').select('balance,equity,free_margin,total_pnl,winning_trades,first_name,last_name').eq('id', user.id).single(),
+    supabase.from('profiles').select('balance,equity,free_margin,total_pnl,winning_trades,first_name,last_name,plan').eq('id', user.id).single(),
     supabase.from('trades').select('id,symbol,pnl,opened_at,side').eq('user_id', user.id).order('opened_at', {ascending:false})
   ]);
 
