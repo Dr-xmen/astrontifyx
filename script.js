@@ -21,18 +21,6 @@ mobDrawer.querySelectorAll('a').forEach(a => {
   });
 });
 
-// ── Market tabs ────────────────────────────────────────────────────
-document.getElementById('mktTabs').addEventListener('click', e => {
-  const btn = e.target.closest('.mkt-tab');
-  if (!btn) return;
-  const panel = btn.dataset.panel;
-  document.querySelectorAll('.mkt-tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.mkt-panel').forEach(p => p.classList.remove('active'));
-  btn.classList.add('active');
-  const el = document.getElementById('panel-' + panel);
-  if (el) el.classList.add('active');
-});
-
 // ── Scroll reveal ──────────────────────────────────────────────────
 const revealObs = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
