@@ -137,6 +137,7 @@ img{max-width:100%;display:block}
 .hpc-svg{width:100%;display:block;height:90px}
 .hpc-val{font-size:22px;font-weight:700;margin-top:4px}
 .hpc-up{font-size:13px;color:#22c55e;font-weight:600}
+.hpc-dn{font-size:13px;color:#ef4444;font-weight:600}
 .hpc-pairs{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border-top:1px solid var(--border)}
 .hpc-pair{display:flex;justify-content:space-between;align-items:center;padding:12px 18px;background:var(--bg2);gap:8px}
 .hpc-pair span{font-size:12px;color:var(--muted);font-weight:500;font-family:'JetBrains Mono',monospace}
@@ -157,17 +158,8 @@ img{max-width:100%;display:block}
 .hstat-sep{width:1px;height:36px;background:var(--border)}
 
 /* ── TICKER ──────────────────────────────────────────────────────── */
-.ticker-wrap{overflow:hidden;background:#0d1020;border-bottom:1px solid var(--border);padding:10px 0;position:relative}
-.ticker-wrap::before,.ticker-wrap::after{content:'';position:absolute;top:0;bottom:0;width:80px;z-index:2}
-.ticker-wrap::before{left:0;background:linear-gradient(90deg,#0d1020,transparent)}
-.ticker-wrap::after{right:0;background:linear-gradient(270deg,#0d1020,transparent)}
-.ticker-track{display:flex;gap:0;animation:ticker 40s linear infinite;width:max-content}
-@keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-.tk{display:inline-flex;align-items:center;gap:8px;padding:0 24px;font-size:13px;white-space:nowrap;border-right:1px solid var(--border)}
-.tk span,.tk b,.tk em{font-family:'JetBrains Mono',monospace}
-.tk b{font-weight:600;color:#fff}
-.tk em{font-size:12px;font-weight:600;font-style:normal}
-.tk.up em{color:#22c55e}
+.ticker-wrap{background:#0d1020;border-bottom:1px solid var(--border);overflow:hidden}
+.ticker-wrap .tradingview-widget-container{width:100%}
 .tk.dn em{color:#ef4444}
 
 /* ── SECTIONS SHARED ─────────────────────────────────────────────── */
@@ -266,29 +258,8 @@ img{max-width:100%;display:block}
 .split-feats{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .sf{display:flex;align-items:center;gap:8px;font-size:13.5px;color:rgba(232,234,240,.75);font-weight:500}
 
-/* split visual cards */
-.split-visual{position:relative;height:480px}
-.sv-card{position:absolute;border-radius:20px;background:rgba(15,19,36,.95);border:1px solid var(--border2);box-shadow:var(--shadow);backdrop-filter:blur(12px)}
-.sv-card.main-card{left:0;top:0;right:80px;padding:24px}
-.sv-card.side-card{right:0;bottom:40px;width:180px;padding:18px}
-.sv-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
-.sv-dots{display:flex;gap:5px}
-.sv-dots span{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.2)}
-.sv-title{font-size:11px;font-weight:700;letter-spacing:.07em;color:var(--muted)}
-.sv-balance{font-size:28px;font-weight:800;letter-spacing:-.02em;margin-bottom:4px}
-.sv-chg{font-size:13px;font-weight:600;margin-bottom:14px}
-.sv-chg.up{color:#22c55e}
-.sv-chart{border-radius:10px;overflow:hidden;background:rgba(79,110,247,.04);margin-bottom:16px}
-.sv-positions{display:flex;flex-direction:column;gap:8px}
-.sv-pos{display:flex;justify-content:space-between;align-items:center;padding:9px 12px;border-radius:9px;background:rgba(255,255,255,.03);border:1px solid var(--border)}
-.sv-pos span{font-size:12px;color:var(--muted);font-family:'JetBrains Mono',monospace}
-.sv-pos b{font-size:13px;font-weight:700}
-.sv-pos.up b{color:#22c55e}
-.sv-pos.dn b{color:#ef4444}
-.sv-pair-label{font-size:13px;font-weight:600;font-family:'JetBrains Mono',monospace;margin-bottom:4px}
-.sv-pair-price{font-size:20px;font-weight:800;font-family:'JetBrains Mono',monospace}
-.sv-buy{flex:1;text-align:center;padding:9px 0;border-radius:8px;background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.25);color:#22c55e;font-size:13px;font-weight:700}
-.sv-sell{flex:1;text-align:center;padding:9px 0;border-radius:8px;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.25);color:#ef4444;font-size:13px;font-weight:700}
+/* split visual — TradingView Market Overview */
+.split-visual{position:relative;height:480px;border-radius:20px;overflow:hidden;border:1px solid var(--border2)}
 
 /* ── CTA SECTION ─────────────────────────────────────────────────── */
 .cta-section{padding:90px 0;position:relative;overflow:hidden;background:linear-gradient(180deg,#0e1228 0%,#0b0e1a 100%)}
@@ -343,9 +314,7 @@ img{max-width:100%;display:block}
   .tiers-grid{grid-template-columns:1fr}
   .stats-inner{grid-template-columns:1fr 1fr}
   .split-feats{grid-template-columns:1fr}
-  .split-visual{height:auto;position:static}
-  .sv-card.main-card{position:static;width:100%;margin-bottom:16px}
-  .sv-card.side-card{position:static;width:100%}
+  .split-visual{height:380px}
   .footer-grid{grid-template-columns:1fr 1fr}
   .footer-bottom{flex-direction:column;align-items:flex-start}
 }

@@ -162,13 +162,13 @@
             <path d="M0,100 C30,95 50,80 80,72 S120,55 150,50 S200,35 230,30 S280,18 310,20 S360,12 400,8 L400,130 L0,130 Z" fill="url(#cg)"/>
             <path d="M0,100 C30,95 50,80 80,72 S120,55 150,50 S200,35 230,30 S280,18 310,20 S360,12 400,8" fill="none" stroke="#4f6ef7" stroke-width="2.5" stroke-linecap="round"/>
           </svg>
-          <div class="hpc-val">$48,250.00 <span class="hpc-up">+12.4%</span></div>
+          <div class="hpc-val" id="hpc-main-price">— <span id="hpc-main-chg" class="hpc-up">—</span></div>
         </div>
         <div class="hpc-pairs">
-          <div class="hpc-pair up"><span>EUR/USD</span><b>1.0842</b><em>+0.12%</em></div>
-          <div class="hpc-pair up"><span>XAU/USD</span><b>2,318.40</b><em>+0.38%</em></div>
-          <div class="hpc-pair dn"><span>USD/JPY</span><b>157.32</b><em>-0.07%</em></div>
-          <div class="hpc-pair up"><span>BTC/USDT</span><b>67,420</b><em>+2.1%</em></div>
+          <div class="hpc-pair" id="hp-0"><span>EUR/USD</span><b>—</b><em>—</em></div>
+          <div class="hpc-pair" id="hp-1"><span>XAU/USD</span><b>—</b><em>—</em></div>
+          <div class="hpc-pair" id="hp-2"><span>USD/JPY</span><b>—</b><em>—</em></div>
+          <div class="hpc-pair" id="hp-3"><span>BTC/USD</span><b>—</b><em>—</em></div>
         </div>
         <div class="hpc-footer">
           <a href="signup.html" class="hpc-btn">Open Live Account →</a>
@@ -195,32 +195,31 @@
 
 <!-- ── LIVE TICKER ───────────────────────────────────────────────── -->
 <div class="ticker-wrap">
-  <div class="ticker-track">
-    <span class="tk up">EUR/USD <b>1.0842</b> <em>▲0.12%</em></span>
-    <span class="tk dn">GBP/USD <b>1.2674</b> <em>▼0.08%</em></span>
-    <span class="tk up">XAU/USD <b>2318.40</b> <em>▲0.38%</em></span>
-    <span class="tk up">BTC/USDT <b>67,420</b> <em>▲2.10%</em></span>
-    <span class="tk dn">USD/JPY <b>157.32</b> <em>▼0.07%</em></span>
-    <span class="tk up">ETH/USDT <b>3,512</b> <em>▲1.44%</em></span>
-    <span class="tk up">SPX500 <b>5,302</b> <em>▲0.55%</em></span>
-    <span class="tk dn">USOIL <b>82.14</b> <em>▼0.22%</em></span>
-    <span class="tk up">NASDAQ100 <b>18,842</b> <em>▲0.71%</em></span>
-    <span class="tk dn">AUD/USD <b>0.6578</b> <em>▼0.04%</em></span>
-    <span class="tk up">NVDA <b>924.50</b> <em>▲3.20%</em></span>
-    <span class="tk up">XAG/USD <b>29.48</b> <em>▲0.62%</em></span>
-    <!-- duplicate for seamless loop -->
-    <span class="tk up">EUR/USD <b>1.0842</b> <em>▲0.12%</em></span>
-    <span class="tk dn">GBP/USD <b>1.2674</b> <em>▼0.08%</em></span>
-    <span class="tk up">XAU/USD <b>2318.40</b> <em>▲0.38%</em></span>
-    <span class="tk up">BTC/USDT <b>67,420</b> <em>▲2.10%</em></span>
-    <span class="tk dn">USD/JPY <b>157.32</b> <em>▼0.07%</em></span>
-    <span class="tk up">ETH/USDT <b>3,512</b> <em>▲1.44%</em></span>
-    <span class="tk up">SPX500 <b>5,302</b> <em>▲0.55%</em></span>
-    <span class="tk dn">USOIL <b>82.14</b> <em>▼0.22%</em></span>
-    <span class="tk up">NASDAQ100 <b>18,842</b> <em>▲0.71%</em></span>
-    <span class="tk dn">AUD/USD <b>0.6578</b> <em>▼0.04%</em></span>
-    <span class="tk up">NVDA <b>924.50</b> <em>▲3.20%</em></span>
-    <span class="tk up">XAG/USD <b>29.48</b> <em>▲0.62%</em></span>
+  <div class="tradingview-widget-container">
+    <div class="tradingview-widget-container__widget"></div>
+    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+    {
+      "symbols": [
+        {"proName": "FX_IDC:EURUSD",   "title": "EUR/USD"},
+        {"proName": "FX_IDC:GBPUSD",   "title": "GBP/USD"},
+        {"proName": "OANDA:XAUUSD",    "title": "XAU/USD"},
+        {"proName": "BITSTAMP:BTCUSD", "title": "BTC/USD"},
+        {"proName": "FX_IDC:USDJPY",   "title": "USD/JPY"},
+        {"proName": "BITSTAMP:ETHUSD", "title": "ETH/USD"},
+        {"proName": "FOREXCOM:SPXUSD", "title": "S&P 500"},
+        {"proName": "FOREXCOM:NSXUSD", "title": "NASDAQ"},
+        {"proName": "TVC:USOIL",       "title": "WTI Crude"},
+        {"proName": "FX_IDC:AUDUSD",   "title": "AUD/USD"},
+        {"proName": "NASDAQ:NVDA",     "title": "NVDA"},
+        {"proName": "OANDA:XAGUSD",    "title": "XAG/USD"}
+      ],
+      "showSymbolLogo": false,
+      "colorTheme": "dark",
+      "isTransparent": true,
+      "displayMode": "compact",
+      "locale": "en"
+    }
+    </script>
   </div>
 </div>
 
@@ -593,39 +592,78 @@
       <a href="signup.html" class="btn-hero-primary" style="margin-top:32px;display:inline-flex">Open Your Account →</a>
     </div>
     <div class="split-visual" data-reveal data-delay="120">
-      <div class="sv-card main-card">
-        <div class="sv-header">
-          <div class="sv-dots"><span></span><span></span><span></span></div>
-          <span class="sv-title">Portfolio Overview</span>
-        </div>
-        <div class="sv-balance">$48,250.00</div>
-        <div class="sv-chg up">+$5,840 &nbsp;+13.8% this month</div>
-        <div class="sv-chart">
-          <svg viewBox="0 0 280 80" preserveAspectRatio="none" width="100%" height="80">
-            <defs>
-              <linearGradient id="sg" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="#4f6ef7" stop-opacity="0.3"/>
-                <stop offset="100%" stop-color="#4f6ef7" stop-opacity="0"/>
-              </linearGradient>
-            </defs>
-            <path d="M0,70 C20,68 40,55 70,50 S110,38 140,32 S190,18 220,15 S260,10 280,8 L280,80 L0,80 Z" fill="url(#sg)"/>
-            <path d="M0,70 C20,68 40,55 70,50 S110,38 140,32 S190,18 220,15 S260,10 280,8" fill="none" stroke="#4f6ef7" stroke-width="2"/>
-          </svg>
-        </div>
-        <div class="sv-positions">
-          <div class="sv-pos up"><span>EUR/USD</span><b>+$420</b></div>
-          <div class="sv-pos up"><span>XAU/USD</span><b>+$820</b></div>
-          <div class="sv-pos dn"><span>USD/JPY</span><b>-$140</b></div>
-        </div>
-      </div>
-      <div class="sv-card side-card">
-        <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">Quick Trade</div>
-        <div class="sv-pair-label">BTC/USDT</div>
-        <div class="sv-pair-price">67,420.00</div>
-        <div style="display:flex;gap:8px;margin-top:14px">
-          <div class="sv-buy">BUY</div>
-          <div class="sv-sell">SELL</div>
-        </div>
+      <div class="tradingview-widget-container" style="height:100%">
+        <div class="tradingview-widget-container__widget" style="height:100%"></div>
+        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js" async>
+        {
+          "colorTheme": "dark",
+          "dateRange": "1D",
+          "showChart": true,
+          "locale": "en",
+          "width": "100%",
+          "height": "100%",
+          "isTransparent": true,
+          "showSymbolLogo": false,
+          "showFloatingTooltip": false,
+          "plotLineColorGrowing": "rgba(79,110,247,1)",
+          "plotLineColorFalling": "rgba(239,68,68,1)",
+          "gridLineColor": "rgba(255,255,255,0.04)",
+          "scaleFontColor": "rgba(139,147,176,1)",
+          "belowLineFillColorGrowing": "rgba(79,110,247,0.1)",
+          "belowLineFillColorFalling": "rgba(239,68,68,0.1)",
+          "belowLineFillColorGrowingBottom": "rgba(79,110,247,0)",
+          "belowLineFillColorFallingBottom": "rgba(239,68,68,0)",
+          "symbolActiveColor": "rgba(79,110,247,0.12)",
+          "tabs": [
+            {
+              "title": "Forex",
+              "symbols": [
+                {"s": "FX_IDC:EURUSD", "d": "EUR/USD"},
+                {"s": "FX_IDC:GBPUSD", "d": "GBP/USD"},
+                {"s": "FX_IDC:USDJPY", "d": "USD/JPY"},
+                {"s": "FX_IDC:AUDUSD", "d": "AUD/USD"},
+                {"s": "FX_IDC:USDCAD", "d": "USD/CAD"},
+                {"s": "FX_IDC:USDCHF", "d": "USD/CHF"}
+              ],
+              "originalTitle": "Forex"
+            },
+            {
+              "title": "Indices",
+              "symbols": [
+                {"s": "FOREXCOM:SPXUSD", "d": "S&P 500"},
+                {"s": "FOREXCOM:NSXUSD", "d": "NASDAQ"},
+                {"s": "FOREXCOM:DJI",    "d": "DOW 30"},
+                {"s": "INDEX:DEU40",     "d": "DAX 40"},
+                {"s": "FOREXCOM:UKXGBP","d": "FTSE 100"},
+                {"s": "INDEX:NII225",    "d": "NIKKEI 225"}
+              ],
+              "originalTitle": "Indices"
+            },
+            {
+              "title": "Crypto",
+              "symbols": [
+                {"s": "BITSTAMP:BTCUSD", "d": "Bitcoin"},
+                {"s": "BITSTAMP:ETHUSD", "d": "Ethereum"},
+                {"s": "BINANCE:SOLUSD",  "d": "Solana"},
+                {"s": "COINBASE:XRPUSD", "d": "XRP"},
+                {"s": "BINANCE:BNBUSD",  "d": "BNB"}
+              ],
+              "originalTitle": "Crypto"
+            },
+            {
+              "title": "Commodities",
+              "symbols": [
+                {"s": "OANDA:XAUUSD", "d": "Gold"},
+                {"s": "OANDA:XAGUSD", "d": "Silver"},
+                {"s": "TVC:USOIL",    "d": "WTI Crude"},
+                {"s": "TVC:UKOIL",    "d": "Brent"},
+                {"s": "TVC:NATURALGAS","d": "Natural Gas"}
+              ],
+              "originalTitle": "Commodities"
+            }
+          ]
+        }
+        </script>
       </div>
     </div>
   </div>
