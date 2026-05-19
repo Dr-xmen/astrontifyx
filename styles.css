@@ -237,10 +237,10 @@ img{max-width:100%;display:block}
 
 /* ── REVIEWS SECTION ─────────────────────────────────────────────── */
 .reviews-section{overflow:hidden;padding-bottom:80px}
-.reviews-track-wrap{margin-top:44px;overflow:hidden;-webkit-mask:linear-gradient(90deg,transparent,#fff 80px,#fff calc(100% - 80px),transparent);mask:linear-gradient(90deg,transparent,#fff 80px,#fff calc(100% - 80px),transparent)}
-.reviews-track{display:flex;gap:18px;width:max-content;animation:reviewScroll 55s linear infinite}
-.reviews-track:hover{animation-play-state:paused}
-@keyframes reviewScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.reviews-track-wrap{margin-top:44px;overflow-x:auto;scrollbar-width:none;-webkit-mask:linear-gradient(90deg,transparent,#fff 80px,#fff calc(100% - 80px),transparent);mask:linear-gradient(90deg,transparent,#fff 80px,#fff calc(100% - 80px),transparent);cursor:grab;user-select:none;-webkit-user-select:none}
+.reviews-track-wrap::-webkit-scrollbar{display:none}
+.reviews-track-wrap.is-grabbing{cursor:grabbing}
+.reviews-track{display:flex;gap:18px;width:max-content}
 .rev-card{width:320px;flex-shrink:0;background:var(--card);border:1px solid var(--border);border-radius:18px;padding:26px;display:flex;flex-direction:column;gap:14px;transition:border-color .2s}
 .rev-card:hover{border-color:rgba(79,110,247,.35)}
 .rev-stars{color:#f59e0b;font-size:15px;letter-spacing:2px}

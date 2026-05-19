@@ -60,3 +60,48 @@ const counterObs = new IntersectionObserver((entries) => {
 }, { threshold: 0.5 });
 
 document.querySelectorAll('.counter').forEach(el => counterObs.observe(el));
+
+// ── Reviews slider ─────────────────────────────────────────────────
+const revWrap = document.querySelector('.reviews-track-wrap');
+const revTrack = document.querySelector('.reviews-track');
+if (revWrap && revTrack) {
+  let isDragging = false, startX = 0, startScroll = 0;
+
+  // Auto-scroll via rAF — infinite loop using the duplicated card set
+  (function autoScroll() {
+    if (!isDragging) {
+      revWrap.scrollLeft += 0.6;
+      if (revWrap.scrollLeft >= revTrack.scrollWidth / 2) revWrap.scrollLeft = 0;
+    }
+    requestAnimationFrame(autoScroll);
+  })();
+
+  // Mouse drag
+  revWrap.addEventListener('mousedown', e => {
+    isDragging = true;
+    revWrap.classList.add('is-grabbing');
+    startX = e.pageX;
+    startScroll = revWrap.scrollLeft;
+    e.preventDefault();
+  });
+  window.addEventListener('mouseup', () => {
+    isDragging = false;
+    revWrap.classList.remove('is-grabbing');
+  });
+  window.addEventListener('mousemove', e => {
+    if (!isDragging) return;
+    revWrap.scrollLeft = startScroll - (e.pageX - startX);
+  });
+
+  // Touch drag
+  revWrap.addEventListener('touchstart', e => {
+    startX = e.touches[0].pageX;
+    startScroll = revWrap.scrollLeft;
+    isDragging = true;
+  }, { passive: true });
+  revWrap.addEventListener('touchmove', e => {
+    if (!isDragging) return;
+    revWrap.scrollLeft = startScroll - (e.touches[0].pageX - startX);
+  }, { passive: true });
+  revWrap.addEventListener('touchend', () => { isDragging = false; });
+}
