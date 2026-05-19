@@ -65,6 +65,17 @@
     body.dark .badge-pill     { filter: brightness(0.85); }
 
     /* ============================================================
+       SCROLLBARS
+    ============================================================ */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+    body.dark ::-webkit-scrollbar-thumb { background: #2a2d3a; }
+    body.dark ::-webkit-scrollbar-thumb:hover { background: #3d4058; }
+    * { scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
+
+    /* ============================================================
        LAYOUT
     ============================================================ */
     .layout { min-height: 100vh; }
@@ -1864,6 +1875,7 @@ window.robustDeleteUser = function(id, name, email) {
         if (typeof renderUsers === 'function') renderUsers();
         if (typeof renderRecentUsers === 'function') renderRecentUsers();
 
+        logAudit('User Deleted', uid, `User ${displayName} (${displayEmail}) permanently deleted`);
         closeModal('modal-delete-user');
         showToast('User deleted successfully', 'success');
 
@@ -2272,6 +2284,7 @@ window.adminLogin = async function() {
   document.getElementById('login-gate').style.display = 'none';
   document.getElementById('main-app').style.display = 'flex';
   document.querySelectorAll('.sidebar__user-name').forEach(el => { el.textContent = emailOrUser; });
+  logAudit('Admin Login', emailOrUser, 'Admin session started');
   renderAll();
 };
 
@@ -2486,9 +2499,9 @@ window.viewKYCDocs = function(encoded) {
 window.opsApproveKYC = async id => {
   const { error } = await window.ATRONTIFY_DB.from('kyc_submissions').update({ status:'verified' }).eq('id', id);
   if (error) { showToast('Error: '+error.message,'error'); return; }
-  // Also update the profile kyc_status
   const { data: sub } = await window.ATRONTIFY_DB.from('kyc_submissions').select('user_id').eq('id', id).single();
   if (sub) await window.ATRONTIFY_DB.from('profiles').update({ kyc_status:'verified' }).eq('id', sub.user_id);
+  logAudit('KYC Approved', sub?.user_id || id, `KYC submission ${id.slice(0,8)} approved`);
   showToast('KYC approved','success'); renderKYCLive();
 };
 window.opsRejectKYC = async id => {
@@ -2496,6 +2509,7 @@ window.opsRejectKYC = async id => {
   if (error) { showToast('Error: '+error.message,'error'); return; }
   const { data: sub } = await window.ATRONTIFY_DB.from('kyc_submissions').select('user_id').eq('id', id).single();
   if (sub) await window.ATRONTIFY_DB.from('profiles').update({ kyc_status:'rejected' }).eq('id', sub.user_id);
+  logAudit('KYC Rejected', sub?.user_id || id, `KYC submission ${id.slice(0,8)} rejected`);
   showToast('KYC rejected','error'); renderKYCLive();
 };
 
@@ -2531,6 +2545,7 @@ async function renderAccountsLive() {
 window.renderAccountsLive = renderAccountsLive;
 window.opsSuspendAccount = async id => {
   await window.ATRONTIFY_DB.from('trading_accounts').update({ status:'suspended' }).eq('id', id);
+  logAudit('Account Suspended', id, `Trading account ${id.slice(0,8)} suspended`);
   showToast('Account suspended','error'); renderAccountsLive();
 };
 
@@ -2569,6 +2584,7 @@ window.renderPositionsLive = renderPositionsLive;
 window.opsForceClose = async id => {
   if (!confirm('Force close this position?')) return;
   await window.ATRONTIFY_DB.from('positions').update({ status:'closed' }).eq('id', id);
+  logAudit('Position Force Closed', id, `Position ${id.slice(0,8)} force closed`);
   showToast('Position closed','success'); renderPositionsLive();
 };
 
@@ -2603,10 +2619,12 @@ async function renderDepositsLive() {
 window.renderDepositsLive = renderDepositsLive;
 window.opsApproveDeposit = async id => {
   await window.ATRONTIFY_DB.from('transactions').update({ status:'approved' }).eq('id', id);
+  logAudit('Deposit Approved', id, `Transaction ${id.slice(0,8)} deposit approved`);
   showToast('Deposit approved','success'); renderDepositsLive();
 };
 window.opsRejectDeposit = async id => {
   await window.ATRONTIFY_DB.from('transactions').update({ status:'rejected' }).eq('id', id);
+  logAudit('Deposit Rejected', id, `Transaction ${id.slice(0,8)} deposit rejected`);
   showToast('Deposit rejected','error'); renderDepositsLive();
 };
 
@@ -2641,10 +2659,12 @@ async function renderWithdrawalsLive() {
 window.renderWithdrawalsLive = renderWithdrawalsLive;
 window.opsApproveWithdrawal = async id => {
   await window.ATRONTIFY_DB.from('transactions').update({ status:'approved' }).eq('id', id);
+  logAudit('Withdrawal Approved', id, `Transaction ${id.slice(0,8)} withdrawal approved`);
   showToast('Withdrawal approved','success'); renderWithdrawalsLive();
 };
 window.opsRejectWithdrawal = async id => {
   await window.ATRONTIFY_DB.from('transactions').update({ status:'rejected' }).eq('id', id);
+  logAudit('Withdrawal Rejected', id, `Transaction ${id.slice(0,8)} withdrawal rejected`);
   showToast('Withdrawal rejected','error'); renderWithdrawalsLive();
 };
 
@@ -2792,6 +2812,7 @@ window.publishAnnouncement = async function() {
     if (notifErr) { showToast('Notification insert failed: ' + notifErr.message, 'error'); insertFailed = true; break; }
   }
   if (insertFailed) return;
+  logAudit('Announcement Published', null, `"${title||body.slice(0,40)}" → ${audienceLabel} (${recipientIds.length} user(s))`);
   showToast(`Announcement published to ${recipientIds.length} user(s)`, 'success');
   resetAnnForm(); renderAnnouncementsLive();
 };
@@ -2820,6 +2841,7 @@ window.opsToggleAnnouncement = async function(annId, enable) {
   const db = window.ATRONTIFY_DB; if (!db) return;
   await db.from('announcements').update({ is_active: enable }).eq('id', annId);
   await db.from('notifications').update({ enabled: enable }).eq('announcement_id', annId);
+  logAudit(enable ? 'Announcement Enabled' : 'Announcement Disabled', annId, `Announcement ${annId.slice(0,8)} ${enable ? 'enabled' : 'disabled'}`);
   showToast(enable ? 'Announcement enabled' : 'Announcement disabled', enable ? 'success' : 'error');
 };
 
@@ -2828,6 +2850,7 @@ window.opsDeleteAnnouncement = async function(id) {
   const db = window.ATRONTIFY_DB; if (!db) return;
   await db.from('notifications').delete().eq('announcement_id', id);
   await db.from('announcements').delete().eq('id', id);
+  logAudit('Announcement Deleted', id, `Announcement ${id.slice(0,8)} and all linked notifications deleted`);
   showToast('Announcement deleted', 'error');
   renderAnnouncementsLive();
 };
@@ -2953,6 +2976,7 @@ window.createAccountForUser = async function() {
     equity: initBal, leverage: '1:200',
   });
   if (error) { showToast('Error: ' + error.message, 'error'); return; }
+  logAudit('Trading Account Created', userId, `${accType} account created with $${initBal} balance`);
   showToast('Account created', 'success');
   window.loadUserAccounts();
 };
@@ -3019,6 +3043,7 @@ window.applyAdjustment = async function() {
   // Sync profiles.balance so the user dashboard reflects the change immediately
   await db.from('profiles').update({ balance: after, equity: after }).eq('id', acc.user_id);
 
+  logAudit('Balance Adjusted', acc.user_id, `${adjType} $${amount} on account #${acc.account_number||accId.slice(0,8)}: $${before.toFixed(2)} → $${after.toFixed(2)}. Reason: ${reason}`);
   showToast(`Balance updated: $${before.toFixed(2)} -> $${after.toFixed(2)}`, 'success');
   // Clear input fields
   document.getElementById('adj-amount').value = '';
@@ -3062,6 +3087,7 @@ window.saveUser = async function() {
     });
   }
 
+  logAudit('User Created', userId, `${firstName} ${lastName} (${email}) added with ${accType} account`);
   showToast('User created successfully','success');
   closeModal('modal-add-user');
   renderUsersLive();
@@ -3124,6 +3150,7 @@ window.saveCryptoAddresses = async function() {
       await db.from('platform_settings').upsert(rows, { onConflict: 'key' });
     } catch(e) {}
   }
+  logAudit('Crypto Addresses Updated', null, `${rows.length} wallet address(es) saved`);
   showToast('Crypto addresses saved', 'success');
 };
 
@@ -3257,10 +3284,12 @@ window.opsApproveDepositReq = async id => {
     // Log transaction
     await db.from('transactions').insert({ user_id: dep.user_id, type:'deposit', amount: dep.amount, status:'completed', description:'Deposit approved by admin' });
   }
+  logAudit('Deposit Request Approved', dep?.user_id || id, `Deposit $${dep?.amount||''} approved for user`);
   showToast('Deposit approved — balance credited','success'); renderDepositsLive(); loadDashboardStats();
 };
 window.opsRejectDepositReq = async id => {
   await window.ATRONTIFY_DB.from('deposit_requests').update({ status:'rejected', reviewed_at: new Date().toISOString() }).eq('id', id);
+  logAudit('Deposit Request Rejected', id, `Deposit request ${id.slice(0,8)} rejected`);
   showToast('Deposit rejected','error'); renderDepositsLive(); loadDashboardStats();
 };
 
@@ -3311,11 +3340,11 @@ window.opsApproveWithdrawalReq = async id => {
   if (wd?.user_id && wd?.amount) {
     await db.from('transactions').insert({ user_id: wd.user_id, type:'withdrawal', amount: wd.amount, status:'completed', description:'Withdrawal approved by admin' });
   }
+  logAudit('Withdrawal Request Approved', wd?.user_id || id, `Withdrawal $${wd?.amount||''} approved for user`);
   showToast('Withdrawal approved','success'); renderWithdrawalsLive(); loadDashboardStats();
 };
 window.opsRejectWithdrawalReq = async id => {
   const db = window.ATRONTIFY_DB;
-  // Balance was deducted on submission — refund it on rejection
   const { data: wd } = await db.from('withdrawal_requests').select('user_id, amount').eq('id', id).single();
   await db.from('withdrawal_requests').update({ status:'rejected', reviewed_at: new Date().toISOString() }).eq('id', id);
   if (wd?.user_id && wd?.amount) {
@@ -3324,6 +3353,7 @@ window.opsRejectWithdrawalReq = async id => {
     await db.from('profiles').update({ balance: refunded, equity: refunded }).eq('id', wd.user_id);
     await db.from('transactions').insert({ user_id: wd.user_id, type:'withdrawal_refund', amount: wd.amount, status:'completed', description:'Withdrawal rejected — balance refunded' });
   }
+  logAudit('Withdrawal Request Rejected', wd?.user_id || id, `Withdrawal $${wd?.amount||''} rejected — balance refunded`);
   showToast('Withdrawal rejected — balance refunded','error'); renderWithdrawalsLive(); loadDashboardStats();
 };
 
@@ -3386,6 +3416,7 @@ window.opsSaveReply = async id => {
   const { error } = await window.ATRONTIFY_DB.from('support_tickets')
     .update({ admin_reply: reply, updated_at: new Date().toISOString() }).eq('id', id);
   if (error) { showToast('Error: '+error.message,'error'); return; }
+  logAudit('Support Reply Sent', id, `Reply sent on ticket ${id.slice(0,8)}`);
   showToast('Reply saved','success');
 };
 window.opsCloseTicket = async id => {
@@ -3393,11 +3424,13 @@ window.opsCloseTicket = async id => {
   const { error } = await window.ATRONTIFY_DB.from('support_tickets')
     .update({ status:'closed', admin_reply: reply || undefined, updated_at: new Date().toISOString() }).eq('id', id);
   if (error) { showToast('Error: '+error.message,'error'); return; }
+  logAudit('Support Ticket Closed', id, `Ticket ${id.slice(0,8)} closed`);
   showToast('Ticket closed','success'); renderSupportLive();
 };
 window.opsDeleteTicket = async id => {
   if (!confirm('Delete this ticket permanently?')) return;
   await window.ATRONTIFY_DB.from('support_tickets').delete().eq('id', id);
+  logAudit('Support Ticket Deleted', id, `Ticket ${id.slice(0,8)} permanently deleted`);
   showToast('Ticket deleted','error'); renderSupportLive();
 };
 
@@ -3413,6 +3446,7 @@ window.opsToggleMaintenance = async function(enabled) {
       );
     } catch(e) {}
   }
+  logAudit(enabled ? 'Maintenance Mode ON' : 'Maintenance Mode OFF', null, enabled ? 'Site set to maintenance — users redirected' : 'Site restored to live');
   showToast(enabled ? 'Maintenance mode ON — users will see the maintenance page' : 'Maintenance mode OFF — site is live', enabled ? 'error' : 'success');
 };
 
@@ -3567,6 +3601,7 @@ window.addTradeRecord = async () => {
     }
   }
 
+  logAudit('Trade Added', userId, `${symbol} ${side} — lot size: ${lotSz}, PNL: $${pnl}`);
   showToast('Trade added — balance updated via trigger','success');
   document.getElementById('trade-pair').value = '';
   document.getElementById('trade-size').value = '';
@@ -3577,6 +3612,7 @@ window.addTradeRecord = async () => {
 window.opsDeleteTrade = async id => {
   if (!confirm('Delete this trade record?')) return;
   await window.ATRONTIFY_DB.from('trades').delete().eq('id', id);
+  logAudit('Trade Deleted', id, `Trade record ${id.slice(0,8)} deleted`);
   showToast('Trade deleted','error'); renderTradesLive();
 };
 </script>
@@ -3972,6 +4008,7 @@ window.ptSaveTarget = async function() {
     is_active: true,
   }).select().single();
   if (error || !target) { showToast('Error setting target: ' + (error?.message || 'unknown'), 'error'); return; }
+  logAudit('Profit Target Set', userId, `Target: $${amount}${label ? ' — ' + label : ''}`);
   closeModal('modal-pt-set');
   showToast('Profit target set', 'success');
   const userSel = document.getElementById('pt-user-sel');
@@ -4037,6 +4074,7 @@ window.ptSaveTrade = async function() {
   }).select();
   if (error) { showToast('Error saving trade: ' + error.message, 'error'); return; }
   if (!inserted?.length) { showToast('Trade not saved — check permissions', 'error'); return; }
+  logAudit('Profit Target Trade Added', _ptCurrentTarget.user_id, `+${pctDelta.toFixed(2)}% (${dollarAmt != null ? '$'+dollarAmt : 'manual'}). Target: ${_ptCurrentTarget.label||_ptCurrentTarget.id.slice(0,8)}`);
   closeModal('modal-pt-trade');
   showToast('Trade entry added', 'success');
   ptLoadUser(_ptCurrentTarget.user_id);
@@ -4177,6 +4215,22 @@ window.viewEmailModal = function(id) {
 
 </script>
 
+<script>
+// ===== AUDIT LOGGING HELPER =====
+window.logAudit = async function(action, target, details) {
+  const db = window.ATRONTIFY_DB; if (!db) return;
+  const adminEmail = document.querySelector('.sidebar__user-name')?.textContent?.trim() || 'Admin';
+  try {
+    let adminId = null;
+    const { data: { session } } = await db.auth.getSession();
+    if (session) adminId = session.user.id;
+    await db.from('audit_log').insert({
+      action, target: target || null, details: details || null,
+      admin_email: adminEmail, admin_id: adminId || null,
+    });
+  } catch(e) {}
+};
+</script>
 
 </body>
 </html>
