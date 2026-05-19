@@ -417,13 +417,13 @@ async function init() {
 
 init();
 
-function showUpgradeContactModal(tierName) {
+window.showUpgradeContactModal = function(tierName) {
   document.getElementById('upgradeContactTier').textContent = tierName;
   document.getElementById('upgradeContactOverlay').style.display = 'flex';
-}
-function closeUpgradeContactModal() {
+};
+window.closeUpgradeContactModal = function() {
   document.getElementById('upgradeContactOverlay').style.display = 'none';
-}
+};
 </script>
 
 <!-- Contact Support Modal -->

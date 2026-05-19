@@ -394,30 +394,6 @@
 </head>
 <body>
 
-<!-- LOGIN GATE -->
-<div id="login-gate" style="position:fixed;inset:0;background:#0d1120;display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px;">
-  <div style="background:#1a1d27;border:1px solid #2a2d3a;border-radius:14px;padding:40px;width:100%;max-width:380px;text-align:center;">
-    <div style="font-size:11px;font-weight:800;letter-spacing:0.12em;background:var(--red);color:#fff;padding:3px 10px;border-radius:4px;display:inline-block;margin-bottom:16px;">OPS ADMIN</div>
-    <div style="font-size:22px;font-weight:700;color:#fff;margin-bottom:6px;">AtrontifyX Admin Backend</div>
-    <div style="font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:28px;">Restricted access - authorised personnel only</div>
-    <div style="display:flex;flex-direction:column;gap:12px;text-align:left;">
-      <div style="display:flex;flex-direction:column;gap:4px;">
-        <label style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.07em;">Admin Email</label>
-        <input id="admin-user" type="text" placeholder="admin@astrontifyx.com" style="height:42px;background:#0f1117;border:1.5px solid #2a2d3a;border-radius:8px;padding:0 14px;font-size:14px;color:#fff;outline:none;" onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='#2a2d3a'">
-      </div>
-      <div style="display:flex;flex-direction:column;gap:4px;">
-        <label style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.07em;">Password</label>
-        <input id="admin-pass" type="password" placeholder="********" style="height:42px;background:#0f1117;border:1.5px solid #2a2d3a;border-radius:8px;padding:0 14px;font-size:14px;color:#fff;outline:none;" onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='#2a2d3a'" onkeydown="if(event.key==='Enter')adminLogin()">
-      </div>
-      <div id="login-err" style="font-size:12px;color:var(--red);display:none;">Incorrect credentials. Try again.</div>
-      <button onclick="adminLogin()" style="height:44px;background:var(--blue);color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;margin-top:4px;">Sign In to OPS</button>
-      <button onclick="resetAdminPassword()" type="button" style="height:38px;background:transparent;color:rgba(255,255,255,0.72);border:1px solid #2a2d3a;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;">Send Password Reset</button>
-      <button id="admin-set-password-btn" onclick="setNewAdminPassword()" type="button" style="display:none;height:38px;background:var(--green);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;">Set New Password</button>
-    </div>
-    <div style="margin-top:20px;font-size:11px;color:rgba(255,255,255,0.25);">Secure admin authentication required</div>
-  </div>
-</div>
-
 <div class="layout" id="main-app" style="display:none;">
 
   <!-- ============================================================
@@ -2084,107 +2060,35 @@ function exportCSV(type) {
 
 async function logoutAdmin() {
   await supabaseClient.auth.signOut();
-  location.reload();
+  window.location.href = 'AtrontifyX-OPS-login.html';
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
-  const recoveryLink = window.location.hash.includes('type=recovery') ||
-    window.location.search.includes('type=recovery');
+  const db = window.ATRONTIFY_DB || supabaseClient;
+  const { data } = await db.auth.getSession();
 
-  if (recoveryLink) {
-    const loginErr = document.getElementById('login-err');
-    const setBtn = document.getElementById('admin-set-password-btn');
-    if (setBtn) setBtn.style.display = 'block';
-    if (loginErr) {
-      loginErr.style.color = 'var(--green)';
-      loginErr.innerText = 'Enter a new password, then click Set New Password.';
-      loginErr.style.display = 'block';
-    }
+  if (!data.session) {
+    window.location.href = 'AtrontifyX-OPS-login.html';
     return;
   }
-
-  const { data } = await supabaseClient.auth.getSession();
-  if (!data.session) return;
 
   const user = data.session.user;
   const isAdmin = typeof atrontifyAdminAllowed === 'function'
-    ? await atrontifyAdminAllowed(supabaseClient, user, user.email)
+    ? await atrontifyAdminAllowed(db, user, user.email)
     : false;
 
   if (!isAdmin) {
-    await supabaseClient.auth.signOut();
+    await db.auth.signOut();
+    window.location.href = 'AtrontifyX-OPS-login.html';
     return;
   }
 
-  document.getElementById('login-gate').style.display = 'none';
   document.getElementById('main-app').style.display = 'flex';
   document.querySelectorAll('.sidebar__user-name').forEach(el => { el.textContent = user.email || 'Admin'; });
   if (typeof renderAll === 'function') renderAll();
 });
 </script>
 <script>
-  /* ============================================================
-     AUTH
-  ============================================================ */
-  
-async function adminLogin(){
-
-  const username =
-    document.getElementById('admin-user').value.trim();
-
-  const password =
-    document.getElementById('admin-pass').value.trim();
-
-  const loginErr =
-    document.getElementById('login-err');
-
-  loginErr.style.display = 'none';
-
-  try{
-
-    const { data, error } = await supabaseClient
-      .from('admins')
-      .select('*')
-      .eq('username', username)
-      .eq('password', password)
-      .single();
-
-    if(error || !data){
-
-      loginErr.innerText =
-        'Invalid admin credentials';
-
-      loginErr.style.display = 'block';
-
-      return;
-
-    }
-
-    document.getElementById('login-gate')
-      .style.display = 'none';
-
-    document.getElementById('main-app')
-      .style.display = 'block';
-
-    console.log('ADMIN AUTH SUCCESS');
-
-  }catch(err){
-
-    console.error(err);
-
-    loginErr.innerText =
-      'Connection error';
-
-    loginErr.style.display = 'block';
-
-  }
-
-}
-
-
-// -- Upgrade adminLogin to use Supabase Auth ------------------
-const _origAdminLogin = adminLogin;
-
 async function atrontifyAdminAllowed(db, user, email) {
   const checks = [
     ['admin_users', 'user_id', user?.id],
@@ -2210,105 +2114,6 @@ async function atrontifyAdminAllowed(db, user, email) {
   return false;
 }
 
-window.resetAdminPassword = async function() {
-  const email = document.getElementById('admin-user').value.trim();
-  const loginErr = document.getElementById('login-err');
-
-  if (!email || !email.includes('@')) {
-    loginErr.innerText = 'Enter your admin email first, then click reset.';
-    loginErr.style.display = 'block';
-    return;
-  }
-
-  const db = window.ATRONTIFY_DB;
-  const { error } = await db.auth.resetPasswordForEmail(email, {
-    redirectTo: window.location.href.split('#')[0]
-  });
-
-  if (error) {
-    loginErr.innerText = error.message;
-    loginErr.style.display = 'block';
-    return;
-  }
-
-  loginErr.style.color = 'var(--green)';
-  loginErr.innerText = 'Password reset email sent. Check your inbox.';
-  loginErr.style.display = 'block';
-};
-window.setNewAdminPassword = async function() {
-  const password = document.getElementById('admin-pass').value;
-  const loginErr = document.getElementById('login-err');
-
-  loginErr.style.color = 'var(--red)';
-
-  if (!password || password.length < 6) {
-    loginErr.innerText = 'Enter a new password with at least 6 characters.';
-    loginErr.style.display = 'block';
-    return;
-  }
-
-  const { error } = await window.ATRONTIFY_DB.auth.updateUser({ password });
-  if (error) {
-    loginErr.innerText = error.message;
-    loginErr.style.display = 'block';
-    return;
-  }
-
-  await window.ATRONTIFY_DB.auth.signOut();
-  history.replaceState(null, '', window.location.pathname);
-  document.getElementById('admin-pass').value = '';
-  const setBtn = document.getElementById('admin-set-password-btn');
-  if (setBtn) setBtn.style.display = 'none';
-  loginErr.style.color = 'var(--green)';
-  loginErr.innerText = 'Password updated. Sign in with your new password.';
-  loginErr.style.display = 'block';
-};
-
-window.adminLogin = async function() {
-  const emailOrUser = document.getElementById('admin-user').value.trim();
-  const pass = document.getElementById('admin-pass').value;
-  const loginErr = document.getElementById('login-err');
-  const db = window.ATRONTIFY_DB;
-
-  loginErr.style.color = 'var(--red)';
-  loginErr.style.display = 'none';
-
-  if (!db) {
-    loginErr.innerText = 'Supabase connection is not ready. Refresh and try again.';
-    loginErr.style.display = 'block';
-    return;
-  }
-
-  if (!emailOrUser.includes('@')) {
-    _origAdminLogin();
-    return;
-  }
-
-  const { data, error } = await db.auth.signInWithPassword({
-    email: emailOrUser,
-    password: pass
-  });
-
-  if (error) {
-    loginErr.innerText = error.message;
-    loginErr.style.display = 'block';
-    return;
-  }
-
-  const isAdmin = await atrontifyAdminAllowed(db, data.user, emailOrUser);
-  if (!isAdmin) {
-    await db.auth.signOut();
-    loginErr.innerText = 'Signed in, but this email is not in admins/admin_users.';
-    loginErr.style.display = 'block';
-    return;
-  }
-
-  document.getElementById('login-gate').style.display = 'none';
-  document.getElementById('main-app').style.display = 'flex';
-  document.querySelectorAll('.sidebar__user-name').forEach(el => { el.textContent = emailOrUser; });
-  logAudit('ADMIN_LOGIN', emailOrUser, 'Admin session started');
-  renderAll();
-};
 
 // -- Users -----------------------------------------------------
 async function _loadUsers() {

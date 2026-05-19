@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AtrontifyX — Admin Login</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{font-family:'Space Grotesk',sans-serif;background:#0b0e1a;color:#e8eaf0;min-height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden}
+
+/* grid + glow */
+.bg-grid{position:fixed;inset:0;background-image:linear-gradient(rgba(79,110,247,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(79,110,247,.04) 1px,transparent 1px);background-size:44px 44px;pointer-events:none}
+.bg-glow{position:fixed;inset:0;background:radial-gradient(ellipse 55% 50% at 50% 50%,rgba(230,0,35,.08),transparent);pointer-events:none}
+
+/* particles */
+.particles{position:fixed;inset:0;pointer-events:none;overflow:hidden}
+.particle{position:absolute;width:2px;height:2px;background:rgba(79,110,247,.45);border-radius:50%;animation:float linear infinite}
+@keyframes float{0%{transform:translateY(100vh);opacity:0}10%{opacity:1}90%{opacity:1}100%{transform:translateY(-20px);opacity:0}}
+
+/* card */
+.card{position:relative;z-index:10;background:rgba(255,255,255,.04);border:1px solid rgba(230,0,35,.18);border-radius:20px;padding:44px 40px;width:min(420px,94vw);backdrop-filter:blur(16px);animation:cardIn .5s cubic-bezier(.34,1.56,.64,1) both}
+@keyframes cardIn{from{transform:scale(.88) translateY(24px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
+
+/* header */
+.ops-badge{display:inline-flex;align-items:center;gap:6px;background:#e60023;color:#fff;font-size:10px;font-weight:800;letter-spacing:.14em;padding:3px 10px;border-radius:4px;margin-bottom:20px}
+.ops-badge svg{width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:2.5}
+h1{font-size:22px;font-weight:700;color:#fff;margin-bottom:5px;letter-spacing:-.3px}
+.sub{font-size:13px;color:rgba(232,234,240,.4);margin-bottom:32px}
+
+/* divider */
+.divider{height:1px;background:linear-gradient(90deg,transparent,rgba(79,110,247,.2),transparent);margin-bottom:28px}
+
+/* form */
+.field{display:flex;flex-direction:column;gap:5px;margin-bottom:16px}
+.field label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(232,234,240,.4)}
+.field input{height:44px;background:#0f1117;border:1.5px solid #2a2d3a;border-radius:9px;padding:0 14px;font-size:14px;color:#fff;outline:none;font-family:inherit;transition:border-color .2s}
+.field input:focus{border-color:#4f6ef7}
+.field input::placeholder{color:rgba(255,255,255,.2)}
+
+/* password wrapper */
+.pw-wrap{position:relative}
+.pw-wrap input{width:100%;padding-right:42px}
+.pw-toggle{position:absolute;right:13px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:rgba(255,255,255,.3);padding:4px;display:flex;align-items:center;transition:color .2s}
+.pw-toggle:hover{color:rgba(255,255,255,.6)}
+.pw-toggle svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2}
+
+/* error / info */
+.msg{font-size:12px;margin-bottom:14px;display:none;padding:9px 12px;border-radius:7px;line-height:1.5}
+.msg.err{background:rgba(230,0,35,.08);border:1px solid rgba(230,0,35,.2);color:#ff4d6d}
+.msg.ok{background:rgba(34,160,107,.08);border:1px solid rgba(34,160,107,.2);color:#22a06b}
+
+/* buttons */
+.btn-primary{width:100%;height:46px;background:linear-gradient(135deg,#1a5cff,#7c3aed);color:#fff;border:none;border-radius:9px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;letter-spacing:.02em;transition:opacity .2s,transform .1s;margin-top:4px}
+.btn-primary:hover{opacity:.92}
+.btn-primary:active{transform:scale(.98)}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed}
+
+.btn-ghost{width:100%;height:40px;background:transparent;color:rgba(255,255,255,.55);border:1.5px solid #2a2d3a;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:border-color .2s,color .2s;margin-top:8px}
+.btn-ghost:hover{border-color:#4a4f6a;color:rgba(255,255,255,.8)}
+
+.btn-set{width:100%;height:40px;background:#22a06b;color:#fff;border:none;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:8px;display:none}
+
+/* footer */
+.foot{margin-top:24px;text-align:center;font-size:11px;color:rgba(232,234,240,.22);font-family:'JetBrains Mono',monospace}
+.foot span{color:rgba(79,110,247,.5)}
+</style>
+</head>
+<body>
+<div class="bg-grid"></div>
+<div class="bg-glow"></div>
+<div class="particles" id="particles"></div>
+
+<div class="card">
+  <div class="ops-badge">
+    <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    OPS ADMIN
+  </div>
+  <h1>AtrontifyX Admin</h1>
+  <p class="sub">Restricted access — authorised personnel only</p>
+  <div class="divider"></div>
+
+  <div class="field">
+    <label>Admin Email</label>
+    <input id="admin-user" type="text" placeholder="admin@atrontifyx.com" autocomplete="username" onkeydown="if(event.key==='Enter')document.getElementById('admin-pass').focus()">
+  </div>
+
+  <div class="field">
+    <label>Password</label>
+    <div class="pw-wrap">
+      <input id="admin-pass" type="password" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+      <button class="pw-toggle" type="button" onclick="togglePw()" title="Show/hide password" tabindex="-1">
+        <svg id="pw-eye" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="msg err" id="msg-err"></div>
+  <div class="msg ok"  id="msg-ok"></div>
+
+  <button class="btn-primary" id="btn-login" onclick="doLogin()">Sign In to OPS</button>
+  <button class="btn-ghost"   id="btn-reset" onclick="doReset()">Send Password Reset</button>
+  <button class="btn-set"     id="btn-set"   onclick="doSetPassword()">Set New Password</button>
+
+  <div class="foot">Secure admin session &nbsp;<span>///</span>&nbsp; AtrontifyX OPS v2.1</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+<script>
+// Particles
+(function(){
+  const p = document.getElementById('particles');
+  for (let i = 0; i < 14; i++) {
+    const el = document.createElement('div');
+    el.className = 'particle';
+    el.style.cssText = `left:${Math.random()*100}%;animation-duration:${10+Math.random()*14}s;animation-delay:${Math.random()*10}s`;
+    p.appendChild(el);
+  }
+})();
+
+// Password toggle
+function togglePw() {
+  const inp = document.getElementById('admin-pass');
+  const eye = document.getElementById('pw-eye');
+  const show = inp.type === 'password';
+  inp.type = show ? 'text' : 'password';
+  eye.innerHTML = show
+    ? '<line x1="1" y1="1" x2="23" y2="23"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 11 7 11 7a16.69 16.69 0 0 1-1.67 2.68M6.61 6.61A13.526 13.526 0 0 0 1 12s4 7 11 7a9.74 9.74 0 0 0 5.39-1.61"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>'
+    : '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+}
+
+function showErr(msg) {
+  const el = document.getElementById('msg-err');
+  const ok = document.getElementById('msg-ok');
+  ok.style.display = 'none';
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+function showOk(msg) {
+  const el = document.getElementById('msg-ok');
+  const err = document.getElementById('msg-err');
+  err.style.display = 'none';
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+function clearMsgs() {
+  document.getElementById('msg-err').style.display = 'none';
+  document.getElementById('msg-ok').style.display = 'none';
+}
+
+async function atrontifyAdminAllowed(db, user, email) {
+  const checks = [
+    ['admin_users', 'user_id', user?.id],
+    ['admin_users', 'id',      user?.id],
+    ['admin_users', 'email',   email],
+    ['admins',      'user_id', user?.id],
+    ['admins',      'id',      user?.id],
+    ['admins',      'email',   email],
+    ['admins',      'username',email],
+  ];
+  for (const [table, column, value] of checks) {
+    if (!value) continue;
+    const { data, error } = await db.from(table).select(column).eq(column, value).limit(1);
+    if (!error && data && data.length > 0) return true;
+  }
+  return false;
+}
+
+async function doLogin() {
+  const email = document.getElementById('admin-user').value.trim();
+  const pass  = document.getElementById('admin-pass').value;
+  const btn   = document.getElementById('btn-login');
+  const db    = window.ATRONTIFY_DB;
+  clearMsgs();
+
+  if (!db)    { showErr('Supabase not ready. Refresh and try again.'); return; }
+  if (!email) { showErr('Enter your admin email.'); return; }
+  if (!pass)  { showErr('Enter your password.'); return; }
+
+  btn.disabled = true;
+  btn.textContent = 'Signing in…';
+
+  try {
+    const { data, error } = await db.auth.signInWithPassword({ email, password: pass });
+
+    if (error) {
+      showErr(error.message || 'Invalid credentials.');
+      btn.disabled = false; btn.textContent = 'Sign In to OPS';
+      return;
+    }
+
+    const isAdmin = await atrontifyAdminAllowed(db, data.user, email);
+    if (!isAdmin) {
+      await db.auth.signOut();
+      showErr('Signed in, but this account is not in the admin list.');
+      btn.disabled = false; btn.textContent = 'Sign In to OPS';
+      return;
+    }
+
+    btn.textContent = 'Redirecting…';
+    window.location.href = 'AtrontifyX-OPS-admin-backend.html';
+  } catch (e) {
+    showErr('Connection error. Try again.');
+    btn.disabled = false; btn.textContent = 'Sign In to OPS';
+  }
+}
+
+async function doReset() {
+  const email = document.getElementById('admin-user').value.trim();
+  const db    = window.ATRONTIFY_DB;
+  clearMsgs();
+
+  if (!email || !email.includes('@')) {
+    showErr('Enter your admin email first, then click reset.');
+    return;
+  }
+
+  const loginUrl = window.location.href.split('#')[0];
+  const { error } = await db.auth.resetPasswordForEmail(email, { redirectTo: loginUrl });
+
+  if (error) { showErr(error.message); return; }
+  showOk('Password reset email sent. Check your inbox.');
+}
+
+async function doSetPassword() {
+  const pass = document.getElementById('admin-pass').value;
+  const db   = window.ATRONTIFY_DB;
+  clearMsgs();
+
+  if (!pass || pass.length < 6) {
+    showErr('Enter a new password with at least 6 characters.');
+    return;
+  }
+
+  const { error } = await db.auth.updateUser({ password: pass });
+  if (error) { showErr(error.message); return; }
+
+  await db.auth.signOut();
+  history.replaceState(null, '', window.location.pathname);
+  document.getElementById('admin-pass').value = '';
+  document.getElementById('btn-set').style.display = 'none';
+  showOk('Password updated successfully. Sign in with your new password.');
+}
+
+// On load: check for existing session or recovery link
+document.addEventListener('DOMContentLoaded', async () => {
+  const db = window.ATRONTIFY_DB;
+  if (!db) return;
+
+  // Recovery link (password reset redirect)
+  const isRecovery = window.location.hash.includes('type=recovery') ||
+                     window.location.search.includes('type=recovery');
+  if (isRecovery) {
+    document.getElementById('btn-set').style.display = 'block';
+    showOk('Enter a new password below, then click Set New Password.');
+    return;
+  }
+
+  // Already authenticated admin → skip straight to panel
+  const { data } = await db.auth.getSession();
+  if (!data.session) return;
+
+  const isAdmin = await atrontifyAdminAllowed(db, data.session.user, data.session.user.email);
+  if (isAdmin) {
+    window.location.href = 'AtrontifyX-OPS-admin-backend.html';
+  }
+});
+</script>
+</body>
+</html>
