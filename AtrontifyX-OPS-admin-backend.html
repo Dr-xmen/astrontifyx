@@ -997,12 +997,18 @@
                 </div>
                 <div class="field">
                   <label>Target Audience</label>
-                  <select id="ann-audience">
+                  <select id="ann-audience" onchange="toggleAnnUserSelect(this.value)">
                     <option>All Users</option>
                     <option>Live Account Users</option>
                     <option>Demo Account Users</option>
                     <option>Unverified Users</option>
                     <option>Specific User (enter ID below)</option>
+                  </select>
+                </div>
+                <div class="field" id="ann-user-wrap" style="display:none;">
+                  <label>Select User</label>
+                  <select id="ann-user-sel">
+                    <option value="">— loading users… —</option>
                   </select>
                 </div>
                 <div class="field">
@@ -2677,9 +2683,23 @@ async function renderAuditLive() {
 window.renderAuditLive = renderAuditLive;
 
 // -- Announcements ---------------------------------------------
+window.toggleAnnUserSelect = function(val) {
+  const wrap = document.getElementById('ann-user-wrap');
+  if (wrap) wrap.style.display = val === 'Specific User (enter ID below)' ? '' : 'none';
+};
+
 async function renderAnnouncementsLive() {
   renderAnnouncements();
   const db = window.ATRONTIFY_DB; if (!db) return;
+  // Populate user selector for "Specific User" audience
+  const userSel = document.getElementById('ann-user-sel');
+  if (userSel) {
+    const { data: users } = await db.from('profiles').select('id,first_name,last_name,email').order('created_at', { ascending: false });
+    userSel.innerHTML = '<option value="">— select a user —</option>' + (users||[]).map(u => {
+      const name = `${u.first_name||''} ${u.last_name||''}`.trim() || u.email || u.id;
+      return `<option value="${u.id}">${name} (${u.email||u.id})</option>`;
+    }).join('');
+  }
   const { data } = await db
     .from('announcements')
     .select('*')
@@ -2714,15 +2734,24 @@ window.publishAnnouncement = async function() {
   const audience = document.getElementById('ann-audience').value;
   const schedule = document.getElementById('ann-schedule').value;
   if (!title) { showToast('Please enter a title','error'); return; }
+  const isSpecific = audience === 'Specific User (enter ID below)';
+  const userId = isSpecific ? document.getElementById('ann-user-sel')?.value : null;
+  if (isSpecific && !userId) { showToast('Please select a user','error'); return; }
   const db = window.ATRONTIFY_DB;
   if (db) {
     await db.from('announcements').insert({
-      title, body, type, audience,
+      title, body, type,
+      audience: isSpecific ? 'Specific User' : audience,
+      user_id: userId || null,
       scheduled_at: schedule || null,
       published: !schedule,
     });
   }
   showToast('Announcement published','success');
+  document.getElementById('ann-title').value = '';
+  document.getElementById('ann-body').value  = '';
+  document.getElementById('ann-audience').value = 'All Users';
+  toggleAnnUserSelect('All Users');
   renderAnnouncementsLive();
 };
 
