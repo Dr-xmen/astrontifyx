@@ -180,6 +180,21 @@ img{max-width:100%;display:block}
 [data-reveal]{opacity:0;transform:translateY(24px);transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1)}
 [data-reveal].revealed{opacity:1;transform:none}
 
+/* ── BUILT FOR SERIOUS TRADERS ───────────────────────────────────── */
+.bst-section{background:var(--bg2)}
+.bst-grid{display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center}
+.bst-img-wrap{display:flex;justify-content:center;align-items:center}
+.bst-img-wrap img{width:100%;max-width:480px;height:auto;border-radius:24px;filter:drop-shadow(0 32px 64px rgba(0,0,0,.55))}
+.bst-copy{}
+.bst-lead{font-size:16px;color:var(--muted);line-height:1.75;margin-bottom:36px}
+.bst-list{display:flex;flex-direction:column;gap:0}
+.bst-item{display:flex;gap:20px;padding:22px 0;border-bottom:1px solid var(--border)}
+.bst-item:last-child{border-bottom:none;padding-bottom:0}
+.bst-line{width:3px;border-radius:3px;background:linear-gradient(180deg,var(--blue),var(--blue2));flex-shrink:0;min-height:52px;opacity:.7}
+.bst-body{}
+.bst-title{font-size:15px;font-weight:700;color:#fff;margin-bottom:6px}
+.bst-text{font-size:14px;color:var(--muted);line-height:1.7}
+
 /* ── WHY SECTION ─────────────────────────────────────────────────── */
 .why-section{background:linear-gradient(180deg,var(--bg) 0%,#0d1022 100%)}
 .why-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:52px}
@@ -306,6 +321,8 @@ img{max-width:100%;display:block}
   .hero-inner{grid-template-columns:1fr;padding:80px 0 60px}
   .hero-card-wrap{justify-content:center}
   .hero-platform-card{max-width:480px;width:100%}
+  .bst-grid{grid-template-columns:1fr;gap:40px}
+  .bst-img-wrap{order:-1}
   .why-grid{grid-template-columns:repeat(2,1fr)}
   .mkt-panel{grid-template-columns:1fr}
   .tiers-grid{grid-template-columns:1fr}
