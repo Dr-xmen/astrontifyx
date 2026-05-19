@@ -1201,7 +1201,7 @@
               <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:6px;">Profit / Loss (USD)</div>
               <div style="display:flex;align-items:center;border:1px solid var(--border);border-radius:7px;overflow:hidden;background:var(--bg);">
                 <span style="padding:0 12px;font-size:15px;font-weight:600;color:var(--muted);border-right:1px solid var(--border);height:40px;display:flex;align-items:center;">$</span>
-                <input type="number" id="trade-pnl" step="0.01" placeholder="e.g. 250 or -120" style="flex:1;height:40px;border:none;padding:0 12px;font-size:13px;background:transparent;color:var(--text);outline:none;">
+                <input type="number" id="trade-pnl" step="0.01" placeholder="e.g. 250 or -120" oninput="pnlColorize(this)" style="flex:1;height:40px;border:none;padding:0 12px;font-size:13px;background:transparent;color:var(--text);outline:none;transition:color .15s">
               </div>
               <div style="font-size:11px;color:var(--muted);margin-top:4px;">Positive = profit credited · Negative = loss debited</div>
             </div>
@@ -1210,7 +1210,7 @@
                 <svg viewBox="0 0 24 24" width="14" height="14"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 Submit Trade
               </button>
-              <button class="btn btn--outline" onclick="onTradeMarketChange(document.getElementById('trade-market').value);document.getElementById('trade-size').value=1;document.getElementById('trade-size-lbl').textContent='1.00';document.getElementById('trade-pnl').value='';setTradeDir('buy');">Reset</button>
+              <button class="btn btn--outline" onclick="onTradeMarketChange(document.getElementById('trade-market').value);document.getElementById('trade-size').value=1;document.getElementById('trade-size-lbl').textContent='1.00';document.getElementById('trade-pnl').value='';document.getElementById('trade-pnl').style.color='var(--text)';setTradeDir('buy');">Reset</button>
             </div>
           </div>
         </div>
@@ -3477,6 +3477,7 @@ window.addTradeRecord = async () => {
   document.getElementById('trade-size').value = 1;
   document.getElementById('trade-size-lbl').textContent = '1.00';
   document.getElementById('trade-pnl').value  = '';
+  document.getElementById('trade-pnl').style.color = 'var(--text)';
   renderTradesLive();
 };
 
@@ -4087,6 +4088,15 @@ window.viewEmailModal = function(id) {
 </script>
 
 <script>
+// ===== P/L INPUT COLORIZER =====
+window.pnlColorize = function(el) {
+  const v   = el.value;
+  const bad = el.validity?.badInput; // true when user has typed just '-'
+  if (v === '' && !bad) { el.style.color = 'var(--text)'; return; }
+  const isNeg = bad || parseFloat(v) < 0;
+  el.style.color = isNeg ? 'var(--red)' : 'var(--green)';
+};
+
 // ===== TRADE DIRECTION TOGGLE =====
 window.setTradeDir = function(dir) {
   document.getElementById('trade-direction').value = dir;
