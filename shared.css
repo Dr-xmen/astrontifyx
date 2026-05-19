@@ -124,7 +124,7 @@ label{font-size:11.5px;color:var(--text3);margin-bottom:6px;display:block;font-w
 .progress-bar{height:6px;background:var(--bg4);border-radius:3px;overflow:hidden}
 .progress-fill{height:100%;border-radius:3px;transition:width .5s}
 .toggle{width:42px;height:23px;background:var(--bg4);border-radius:12px;cursor:pointer;position:relative;border:1px solid var(--border2);transition:background .3s;flex-shrink:0}
-.toggle.on{background:var(--accent)}
+.toggle.on{background:#2563eb}
 .toggle::after{content:'';position:absolute;top:2px;left:2px;width:17px;height:17px;background:#fff;border-radius:50%;transition:transform .3s}
 .toggle.on::after{transform:translateX(19px)}
 .live-dot{width:7px;height:7px;border-radius:50%;background:var(--green);display:inline-block;margin-right:5px;animation:pulse 2s infinite}
