@@ -251,14 +251,14 @@ else {
   const avatar = document.getElementById('userAvatar');
   if (avatar) avatar.textContent = jwtInitials;
 
-  // Pre-fill profile tab from sessionStorage cache
+  // Pre-fill profile tab from sessionStorage cache (instant on repeat visits)
   try {
     const cached = sessionStorage.getItem(CACHE_KEY);
     if (cached) {
       const cp = JSON.parse(cached);
       const cfn = cp.first_name || jwtFn, cln = cp.last_name || jwtLn;
       window._userData = { fullName: `${cfn} ${cln}`.trim() || jwtName, email: user.email || '' };
-      if (window.settTab === 'profile') window.renderTabContent?.();
+      window.renderTabContent?.();
     }
   } catch(e) {}
 
@@ -277,7 +277,7 @@ else {
 
     try { sessionStorage.setItem(CACHE_KEY, JSON.stringify(profile)); } catch(e) {}
 
-    if (window.settTab === 'profile') window.renderTabContent?.();
+    window.renderTabContent?.();
   }
 }
 </script>
