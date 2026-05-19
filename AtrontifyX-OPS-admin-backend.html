@@ -493,7 +493,7 @@
       </button>
       <button class="nav-item" onclick="showPage('trades',this)">
         <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-        Trades History
+        Trades
       </button>
       <button class="nav-item" onclick="showPage('emails',this)">
         <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,12 2,6"/></svg>
@@ -810,68 +810,6 @@
           </div>
         </div>
 
-        <!-- Profit Target Manager -->
-        <div class="card" style="margin-top:20px;">
-          <div class="card__head">
-            <div>
-              <div class="card__title">Profit Target Manager</div>
-              <div style="font-size:12px;color:var(--muted);margin-top:2px;">Set and track per-user profit targets with incremental trade entries</div>
-            </div>
-            <button class="btn btn--primary" onclick="ptOpenSetModal()">
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-              Set Target
-            </button>
-          </div>
-          <div class="card__body">
-            <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;margin-bottom:18px;">
-              <div class="field" style="flex:1;min-width:200px;margin:0;">
-                <label>Select User</label>
-                <select id="pt-user-sel" onchange="ptLoadUser(this.value)">
-                  <option value="">— Select a user —</option>
-                </select>
-              </div>
-              <button class="btn btn--outline" id="pt-add-trade-btn" onclick="ptOpenAddTrade()" style="display:none;">+ Add Trade Entry</button>
-              <button class="btn" id="pt-deactivate-btn" onclick="ptDeactivate()" style="display:none;background:#fff1f2;color:#e60023;border:1.5px solid #fecdd3;">Deactivate</button>
-            </div>
-            <div id="pt-empty-msg" style="color:var(--muted);font-size:13px;">Select a user to view their active profit target.</div>
-            <div id="pt-display" style="display:none;">
-              <div style="display:flex;gap:28px;align-items:flex-start;flex-wrap:wrap;margin-bottom:24px;padding:20px;background:var(--bg);border-radius:12px;border:1.5px solid var(--border);">
-                <div style="text-align:center;flex-shrink:0;">
-                  <svg width="120" height="120" viewBox="0 0 100 100">
-                    <circle cx="50" cy="50" r="40" fill="none" stroke="var(--border)" stroke-width="8"/>
-                    <circle id="pt-ring" cx="50" cy="50" r="40" fill="none" stroke="#22a06b" stroke-width="8"
-                      stroke-linecap="round" stroke-dasharray="251.33" stroke-dashoffset="251.33"
-                      transform="rotate(-90 50 50)" style="transition:stroke-dashoffset .8s cubic-bezier(.22,1,.36,1),stroke .4s;"/>
-                    <text id="pt-ring-pct" x="50" y="54" text-anchor="middle" font-size="18" font-weight="700" fill="currentColor" style="font-family:inherit;">0%</text>
-                  </svg>
-                  <div style="font-size:11px;color:var(--muted);margin-top:4px;">of target reached</div>
-                </div>
-                <div style="flex:1;min-width:140px;display:grid;gap:12px;align-content:start;">
-                  <div>
-                    <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px;">Label</div>
-                    <div id="pt-info-label" style="font-size:15px;font-weight:600;">—</div>
-                  </div>
-                  <div>
-                    <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px;">Target Amount</div>
-                    <div id="pt-info-amount" style="font-size:15px;font-weight:600;color:var(--blue);">—</div>
-                  </div>
-                  <div>
-                    <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px;">Progress</div>
-                    <div id="pt-info-progress" style="font-size:15px;font-weight:600;">—</div>
-                  </div>
-                  <div>
-                    <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px;">Created</div>
-                    <div id="pt-info-date" style="font-size:13px;color:var(--muted);">—</div>
-                  </div>
-                </div>
-              </div>
-              <div style="font-size:13px;font-weight:600;margin-bottom:10px;">Trade Entries</div>
-              <div id="pt-trades-wrap">
-                <p style="color:var(--muted);font-size:13px;">No entries yet.</p>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
 
       <!-- ==================== POSITIONS ==================== -->
@@ -1228,89 +1166,149 @@
       <div class="page" id="page-trades">
         <div class="page-header">
           <div>
-            <div class="page-header__title">Trades History</div>
-            <div class="page-header__sub">Assign trade history to users and configure trade settings</div>
-          </div>
-          <button class="btn btn--outline" onclick="renderTradesLive()">
-            <svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-            Refresh
-          </button>
-        </div>
-
-        <!-- User trade settings -->
-        <div class="card" style="margin-bottom:18px;">
-          <div class="card__head">
-            <div class="card__title">User Trade Settings</div>
-            <div style="font-size:12px;color:var(--muted);">Controls trade enabled toggle and trade % on user dashboard</div>
-          </div>
-          <div class="card__body--p0 table-wrap">
-            <table class="data-table">
-              <thead><tr>
-                <th>User</th><th>Trade %</th><th>Enable Trades</th><th>Action</th>
-              </tr></thead>
-              <tbody id="trade-settings-tbody"></tbody>
-            </table>
+            <div class="page-header__title">Trades</div>
+            <div class="page-header__sub">Direct trade input, history, and profit target management</div>
           </div>
         </div>
 
-        <!-- Add trade record -->
-        <div class="card" style="margin-bottom:18px;">
-          <div class="card__head"><div class="card__title">Add Trade Record</div></div>
-          <div class="card__body">
-            <div class="form-grid form-grid--3" style="gap:12px;">
-              <div class="field">
-                <label>User</label>
-                <select id="trade-user-sel"><option value="">- choose user -</option></select>
+        <!-- Sub-tabs -->
+        <div style="display:flex;gap:4px;margin-bottom:20px;background:var(--bg);border-radius:10px;padding:4px;width:fit-content;">
+          <button class="tab-btn active" id="trades-tab-input" onclick="showTradesTab('input',this)">Direct Trade Input</button>
+          <button class="tab-btn" id="trades-tab-history" onclick="showTradesTab('history',this)">User Trade History</button>
+          <button class="tab-btn" id="trades-tab-targets" onclick="showTradesTab('targets',this)">Profit Target Manager</button>
+        </div>
+
+        <!-- ── Tab: Direct Trade Input ── -->
+        <div id="trades-sub-input">
+          <div class="card" style="margin-bottom:18px;">
+            <div class="card__head">
+              <div class="card__title">User Trade Settings</div>
+              <div style="font-size:12px;color:var(--muted);">Enable/disable trades and set trade % per user</div>
+            </div>
+            <div class="card__body--p0 table-wrap">
+              <table class="data-table">
+                <thead><tr><th>User</th><th>Trade %</th><th>Enable Trades</th><th>Action</th></tr></thead>
+                <tbody id="trade-settings-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card__head"><div class="card__title">Add Trade Record</div></div>
+            <div class="card__body">
+              <div class="form-grid form-grid--3" style="gap:12px;">
+                <div class="field">
+                  <label>User</label>
+                  <select id="trade-user-sel"><option value="">— choose user —</option></select>
+                </div>
+                <div class="field">
+                  <label>Market</label>
+                  <select id="trade-market">
+                    <option value="crypto">Crypto</option>
+                    <option value="forex">Forex</option>
+                    <option value="indices">Indices</option>
+                    <option value="stocks">Stocks</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label>Pair / Symbol</label>
+                  <input type="text" id="trade-pair" placeholder="e.g. BTC/USDT">
+                </div>
+                <div class="field">
+                  <label>Direction</label>
+                  <select id="trade-direction">
+                    <option value="buy">BUY</option>
+                    <option value="sell">SELL</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label>Size / Lots</label>
+                  <input type="number" id="trade-size" step="0.0001" placeholder="0.10">
+                </div>
+                <div class="field">
+                  <label>Profit / Loss (USD)</label>
+                  <input type="number" id="trade-pnl" step="0.01" placeholder="250.00">
+                </div>
               </div>
-              <div class="field">
-                <label>Market</label>
-                <select id="trade-market">
-                  <option value="crypto">Crypto</option>
-                  <option value="forex">Forex</option>
-                  <option value="indices">Indices</option>
-                  <option value="stocks">Stocks</option>
-                </select>
-              </div>
-              <div class="field">
-                <label>Pair</label>
-                <input type="text" id="trade-pair" placeholder="BTC/USDT">
-              </div>
-              <div class="field">
-                <label>Direction</label>
-                <select id="trade-direction">
-                  <option value="buy">BUY</option>
-                  <option value="sell">SELL</option>
-                </select>
-              </div>
-              <div class="field">
-                <label>Size / Lots</label>
-                <input type="number" id="trade-size" step="0.0001" placeholder="0.10">
-              </div>
-              <div class="field">
-                <label>Profit / Loss (USD)</label>
-                <input type="number" id="trade-pnl" step="0.01" placeholder="250.00">
+              <div style="margin-top:14px;">
+                <button class="btn btn--green" onclick="addTradeRecord()">
+                  <svg viewBox="0 0 24 24" width="15" height="15"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  Add Trade
+                </button>
               </div>
             </div>
-            <div style="margin-top:14px;">
-              <button class="btn btn--green" onclick="addTradeRecord()">
-                <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                Add Trade
+          </div>
+        </div>
+
+        <!-- ── Tab: User Trade History ── -->
+        <div id="trades-sub-history" style="display:none;">
+          <div class="card">
+            <div class="card__head">
+              <div class="card__title">User Trade History</div>
+              <button class="btn btn--outline btn--sm" onclick="renderTradesLive()">
+                <svg viewBox="0 0 24 24" width="13" height="13"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                Refresh
               </button>
             </div>
+            <div class="card__body--p0 table-wrap">
+              <table class="data-table">
+                <thead><tr>
+                  <th>User</th><th>Market</th><th>Pair</th><th>Direction</th>
+                  <th>Size</th><th>P&amp;L</th><th>Date</th><th>Actions</th>
+                </tr></thead>
+                <tbody id="trades-tbody"></tbody>
+              </table>
+            </div>
           </div>
         </div>
 
-        <!-- Trade records table -->
-        <div class="card">
-          <div class="card__head"><div class="card__title">Trade Records</div></div>
-          <div class="card__body--p0 table-wrap">
-            <table class="data-table">
-              <thead><tr>
-                <th>User</th><th>Market</th><th>Pair</th><th>Direction</th>
-                <th>Size</th><th>P&amp;L</th><th>Date</th><th>Actions</th>
-              </tr></thead>
-              <tbody id="trades-tbody"></tbody>
-            </table>
+        <!-- ── Tab: Profit Target Manager ── -->
+        <div id="trades-sub-targets" style="display:none;">
+          <div class="card">
+            <div class="card__head">
+              <div>
+                <div class="card__title">Profit Target Manager</div>
+                <div style="font-size:12px;color:var(--muted);margin-top:2px;">Set and track per-user profit targets with incremental trade entries</div>
+              </div>
+              <button class="btn btn--primary" onclick="ptOpenSetModal()">
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Set Target
+              </button>
+            </div>
+            <div class="card__body">
+              <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;margin-bottom:18px;">
+                <div class="field" style="flex:1;min-width:200px;margin:0;">
+                  <label>Select User</label>
+                  <select id="pt-user-sel" onchange="ptLoadUser(this.value)">
+                    <option value="">— Select a user —</option>
+                  </select>
+                </div>
+                <button class="btn btn--outline" id="pt-add-trade-btn" onclick="ptOpenAddTrade()" style="display:none;">+ Add Trade Entry</button>
+                <button class="btn" id="pt-deactivate-btn" onclick="ptDeactivate()" style="display:none;background:#fff1f2;color:#e60023;border:1.5px solid #fecdd3;">Deactivate</button>
+              </div>
+              <div id="pt-empty-msg" style="color:var(--muted);font-size:13px;">Select a user to view their active profit target.</div>
+              <div id="pt-display" style="display:none;">
+                <div style="display:flex;gap:28px;align-items:flex-start;flex-wrap:wrap;margin-bottom:24px;padding:20px;background:var(--bg);border-radius:12px;border:1.5px solid var(--border);">
+                  <div style="text-align:center;flex-shrink:0;">
+                    <svg width="120" height="120" viewBox="0 0 100 100">
+                      <circle cx="50" cy="50" r="40" fill="none" stroke="var(--border)" stroke-width="8"/>
+                      <circle id="pt-ring" cx="50" cy="50" r="40" fill="none" stroke="#22a06b" stroke-width="8"
+                        stroke-linecap="round" stroke-dasharray="251.33" stroke-dashoffset="251.33"
+                        transform="rotate(-90 50 50)" style="transition:stroke-dashoffset .8s cubic-bezier(.22,1,.36,1),stroke .4s;"/>
+                      <text id="pt-ring-pct" x="50" y="54" text-anchor="middle" font-size="18" font-weight="700" fill="currentColor" style="font-family:inherit;">0%</text>
+                    </svg>
+                    <div style="font-size:11px;color:var(--muted);margin-top:4px;">of target reached</div>
+                  </div>
+                  <div style="flex:1;min-width:140px;display:grid;gap:12px;align-content:start;">
+                    <div><div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px;">Label</div><div id="pt-info-label" style="font-size:15px;font-weight:600;">—</div></div>
+                    <div><div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px;">Target Amount</div><div id="pt-info-amount" style="font-size:15px;font-weight:600;color:var(--blue);">—</div></div>
+                    <div><div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px;">Progress</div><div id="pt-info-progress" style="font-size:15px;font-weight:600;">—</div></div>
+                    <div><div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px;">Created</div><div id="pt-info-date" style="font-size:13px;color:var(--muted);">—</div></div>
+                  </div>
+                </div>
+                <div style="font-size:13px;font-weight:600;margin-bottom:10px;">Trade Entries</div>
+                <div id="pt-trades-wrap"><p style="color:var(--muted);font-size:13px;">No entries yet.</p></div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -1908,7 +1906,7 @@ function showPage(page, btn) {
     announcements: window.renderAnnouncementsLive,
     audit: window.renderAuditLive,
     support: window.renderSupportLive,
-    trades: window.renderTradesLive,
+    trades: function() { window.showTradesTab && window.showTradesTab('input', document.getElementById('trades-tab-input')); window.renderTradesLive && window.renderTradesLive(); },
     settings: window.loadCryptoAddresses,
     activity: window.renderActivity,
     'markets-control': window.renderMarketsControl
@@ -3494,6 +3492,28 @@ async function renderTradesLive() {
   }).join('');
 }
 window.renderTradesLive = renderTradesLive;
+
+window.showTradesTab = function(tab, btn) {
+  ['input','history','targets'].forEach(function(t) {
+    var sub = document.getElementById('trades-sub-' + t);
+    var tabBtn = document.getElementById('trades-tab-' + t);
+    if (sub) sub.style.display = t === tab ? '' : 'none';
+    if (tabBtn) tabBtn.classList.toggle('active', t === tab);
+  });
+  if (tab === 'history') renderTradesLive();
+  if (tab === 'targets') {
+    const db = window.ATRONTIFY_DB; if (!db) return;
+    db.from('profiles').select('id,first_name,last_name,email').order('created_at',{ascending:false}).then(({data}) => {
+      const sel = document.getElementById('pt-user-sel'); if (!sel) return;
+      const cur = sel.value;
+      sel.innerHTML = '<option value="">— Select a user —</option>' + (data||[]).map(u => {
+        const name = `${u.first_name||''} ${u.last_name||''}`.trim() || u.email || u.id;
+        return `<option value="${u.id}" ${u.id===cur?'selected':''}>${name} (${u.email||u.id})</option>`;
+      }).join('');
+      if (cur) document.getElementById('pt-user-sel').value = cur;
+    });
+  }
+};
 
 window.opsSaveTradeSetting = async userId => {
   const pct    = parseFloat(document.getElementById('tpct-'+userId)?.value) || 0;
