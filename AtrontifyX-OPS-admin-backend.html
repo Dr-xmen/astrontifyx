@@ -1709,6 +1709,21 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase.js"></script>
 <script>
+// ── Theme (default dark) ──────────────────────────────────────────────
+(function(){
+  const t = localStorage.getItem('atx_admin_theme');
+  if (t === 'light') { /* stay light */ } else { document.body.classList.add('dark'); }
+})();
+function toggleDark() {
+  document.body.classList.toggle('dark');
+  const isDark = document.body.classList.contains('dark');
+  localStorage.setItem('atx_admin_theme', isDark ? 'dark' : 'light');
+  const icon = document.getElementById('dark-icon');
+  if (icon) icon.innerHTML = isDark
+    ? '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>'
+    : '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';
+}
+
 window.ATRONTIFY_SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd1Z3V1Z29rZGhpd29ibXVvcHJvIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3ODE1ODA3MiwiZXhwIjoyMDkzNzM0MDcyfQ.MRC05KpMYXJWRZX1pAsmyt2bERtZxvofzRVgA_Ul3ec';
 
 const USERS = window.USERS || [];
@@ -3070,23 +3085,29 @@ async function loadDashboardStats() {
   } catch (e) { console.warn('[ops] stats:', e); }
 }
 
-// -- Upgrade Deposits panel to also read from deposit_requests -
+// -- Deposits panel reads from deposit_requests --
 async function renderDepositsLive() {
-  renderDeposits();
+  const tbody = document.getElementById('deposits-tbody');
+  if (tbody) tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--muted);">Loading…</td></tr>';
   const db = window.ATRONTIFY_DB; if (!db) return;
-  const { data } = await db
+  const { data, error } = await db
     .from('deposit_requests')
-    .select('*, profiles(*)')
+    .select('*')
     .order('created_at', { ascending: false });
-  if (!data?.length) return;
-  document.getElementById('deposits-tbody').innerHTML = data.map(d => {
-    const name = d.profiles ? d.profiles.full_name || d.profiles.name || `${d.profiles.first_name || ''} ${d.profiles.last_name || ''}`.trim() || d.profiles.id : '-';
-    const amt  = parseFloat(d.amount || 0).toLocaleString('en-US', { minimumFractionDigits: 2 });
+  if (!tbody) return;
+  if (error) { tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--muted);">Error: ${error.message}</td></tr>`; return; }
+  if (!data?.length) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--muted);">No deposit requests yet</td></tr>'; return; }
+  const uids = [...new Set(data.map(d=>d.user_id).filter(Boolean))];
+  const { data: profs } = await db.from('profiles').select('id,first_name,last_name,email').in('id', uids);
+  const nm = {}; (profs||[]).forEach(p => { nm[p.id] = `${p.first_name||''} ${p.last_name||''}`.trim() || p.email || p.id?.slice(0,8); });
+  tbody.innerHTML = data.map(d => {
+    const name = nm[d.user_id] || d.user_id?.slice(0,8) || '-';
+    const amt  = parseFloat(d.amount||0).toLocaleString('en-US',{minimumFractionDigits:2});
     return `<tr>
       <td style="font-weight:600;">${d.id.slice(0,8).toUpperCase()}</td>
       <td>${name}</td>
       <td style="font-weight:700;">$${amt}</td>
-      <td>${d.payment_method || '-'}</td>
+      <td>${d.coin||d.payment_method||'-'}</td>
       <td style="font-size:12px;">${fmtDate(d.created_at)}</td>
       <td><span class="badge-pill ${d.status==='approved'?'pill-green':d.status==='pending'?'pill-orange':'pill-red'}">${d.status}</span></td>
       <td><div class="row-actions">
@@ -3098,7 +3119,6 @@ async function renderDepositsLive() {
     </tr>`;
   }).join('');
 }
-
 window.renderDepositsLive = renderDepositsLive;
 window.opsApproveDepositReq = async id => {
   const db = window.ATRONTIFY_DB;
@@ -3126,23 +3146,30 @@ window.opsRejectDepositReq = async id => {
   showToast('Deposit rejected','error'); renderDepositsLive(); loadDashboardStats();
 };
 
-// -- Upgrade Withdrawals panel to read from withdrawal_requests -
+// -- Withdrawals panel reads from withdrawal_requests --
 async function renderWithdrawalsLive() {
-  renderWithdrawals();
+  const tbody = document.getElementById('withdrawals-tbody');
+  if (tbody) tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--muted);">Loading…</td></tr>';
   const db = window.ATRONTIFY_DB; if (!db) return;
-  const { data } = await db
+  const { data, error } = await db
     .from('withdrawal_requests')
-    .select('*, profiles(*)')
+    .select('*')
     .order('created_at', { ascending: false });
-  if (!data?.length) return;
-  document.getElementById('withdrawals-tbody').innerHTML = data.map(w => {
-    const name = w.profiles ? w.profiles.full_name || w.profiles.name || `${w.profiles.first_name || ''} ${w.profiles.last_name || ''}`.trim() || w.profiles.id : '-';
-    const amt  = parseFloat(w.amount || 0).toLocaleString('en-US', { minimumFractionDigits: 2 });
+  if (!tbody) return;
+  if (error) { tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--muted);">Error: ${error.message}</td></tr>`; return; }
+  if (!data?.length) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--muted);">No withdrawal requests yet</td></tr>'; return; }
+  const uids = [...new Set(data.map(w=>w.user_id).filter(Boolean))];
+  const { data: profs } = await db.from('profiles').select('id,first_name,last_name,email').in('id', uids);
+  const nm = {}; (profs||[]).forEach(p => { nm[p.id] = `${p.first_name||''} ${p.last_name||''}`.trim() || p.email || p.id?.slice(0,8); });
+  tbody.innerHTML = data.map(w => {
+    const name = nm[w.user_id] || w.user_id?.slice(0,8) || '-';
+    const amt  = parseFloat(w.amount||0).toLocaleString('en-US',{minimumFractionDigits:2});
+    const dest = [w.destination_type, w.destination_name].filter(Boolean).join(' — ') || '-';
     return `<tr>
       <td style="font-weight:600;">${w.id.slice(0,8).toUpperCase()}</td>
       <td>${name}</td>
       <td style="font-weight:700;">$${amt}</td>
-      <td style="font-size:12px;">${w.destination_type || '-'} ${w.destination_name ? '- ' + w.destination_name : ''}</td>
+      <td style="font-size:12px;">${dest}</td>
       <td style="font-size:12px;">${fmtDate(w.created_at)}</td>
       <td><span class="badge-pill ${w.status==='approved'||w.status==='completed'?'pill-green':w.status==='pending'?'pill-orange':'pill-red'}">${w.status}</span></td>
       <td><div class="row-actions">
@@ -3154,7 +3181,6 @@ async function renderWithdrawalsLive() {
     </tr>`;
   }).join('');
 }
-
 window.renderWithdrawalsLive = renderWithdrawalsLive;
 window.opsApproveWithdrawalReq = async id => {
   const db = window.ATRONTIFY_DB;
