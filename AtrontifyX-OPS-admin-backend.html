@@ -3929,6 +3929,7 @@ async function ptRenderTrades(targetId) {
 }
 
 window.ptOpenSetModal = function() {
+  window.ptPopulateUsers();
   const userSel = document.getElementById('pt-user-sel');
   const setSel  = document.getElementById('pt-set-user');
   if (userSel && setSel && userSel.value) setSel.value = userSel.value;
@@ -4147,6 +4148,9 @@ window.viewEmailModal = function(id) {
       window.loadEmailHistory();
     }
     if (page === 'balances') {
+      window.ptPopulateUsers();
+    }
+    if (page === 'trades') {
       window.ptPopulateUsers();
     }
   };
