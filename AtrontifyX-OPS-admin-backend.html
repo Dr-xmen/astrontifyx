@@ -2739,13 +2739,16 @@ window.publishAnnouncement = async function() {
   if (isSpecific && !userId) { showToast('Please select a user','error'); return; }
   const db = window.ATRONTIFY_DB;
   if (db) {
-    await db.from('announcements').insert({
-      title, body, type,
+    const { error } = await db.from('announcements').insert({
+      title,
+      message: body,
+      type,
       audience: isSpecific ? 'Specific User' : audience,
       user_id: userId || null,
       scheduled_at: schedule || null,
       published: !schedule,
     });
+    if (error) { showToast('Error: ' + error.message, 'error'); return; }
   }
   showToast('Announcement published','success');
   document.getElementById('ann-title').value = '';
