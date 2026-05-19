@@ -1,430 +1,631 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AstrontifyX Markets</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css" />
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AtrontifyX — Institutional-Grade Trading Platform</title>
+<meta name="description" content="Trade forex, indices, crypto, commodities and shares on AtrontifyX — a fast, secure multi-asset trading platform built for serious traders.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css"/>
 </head>
 <body>
-  <div class="announcement">
-    <div class="container announcement-inner">
-      <span>Multi-asset trading access for modern traders.</span>
-      <a href="signup.html">Open an Account</a>
+
+<!-- ── ANNOUNCEMENT BAR ─────────────────────────────────────────── -->
+<div class="ann-bar">
+  <div class="ann-inner">
+    <span class="ann-dot"></span>
+    <span>Institutional execution speed with zero commission on major pairs —</span>
+    <a href="signup.html">Open a free account</a>
+  </div>
+</div>
+
+<!-- ── NAV ──────────────────────────────────────────────────────── -->
+<header class="site-header" id="site-header">
+  <div class="container nav-wrap">
+    <a class="brand" href="index.html">
+      <img src="assets/logo.png" alt="AtrontifyX" class="brand-logo" onerror="this.style.display='none';document.querySelector('.brand-wordmark').style.display='flex'">
+      <span class="brand-wordmark" style="display:none">
+        <span class="brand-mark">ATX</span>
+        <span class="brand-text">AtrontifyX</span>
+      </span>
+    </a>
+
+    <nav class="main-nav">
+      <div class="nav-item has-mega">
+        <button class="nav-btn">Markets <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></button>
+        <div class="mega-menu">
+          <div class="mega-grid">
+            <a href="markets.html" class="mega-card">
+              <span class="mega-icon" style="background:rgba(79,110,247,.12);color:#4f6ef7"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></span>
+              <strong>Forex</strong><span>70+ major, minor & exotic pairs</span>
+            </a>
+            <a href="markets.html" class="mega-card">
+              <span class="mega-icon" style="background:rgba(245,158,11,.12);color:#f59e0b"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/></svg></span>
+              <strong>Indices</strong><span>SPX500, DAX40, NASDAQ & more</span>
+            </a>
+            <a href="markets.html" class="mega-card">
+              <span class="mega-icon" style="background:rgba(251,191,36,.12);color:#fbbf24"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg></span>
+              <strong>Gold & Silver</strong><span>Precious metals with deep liquidity</span>
+            </a>
+            <a href="markets.html" class="mega-card">
+              <span class="mega-icon" style="background:rgba(239,68,68,.12);color:#ef4444"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/></svg></span>
+              <strong>Energy</strong><span>Crude oil, Brent & natural gas</span>
+            </a>
+            <a href="markets.html" class="mega-card">
+              <span class="mega-icon" style="background:rgba(34,197,94,.12);color:#22c55e"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></span>
+              <strong>Shares</strong><span>AAPL, TSLA, NVDA & 50+ CFDs</span>
+            </a>
+            <a href="markets.html" class="mega-card">
+              <span class="mega-icon" style="background:rgba(139,92,246,.12);color:#8b5cf6"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg></span>
+              <strong>Crypto</strong><span>BTC, ETH, SOL & 30+ pairs vs USDT</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-item has-mega">
+        <button class="nav-btn">Platforms <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></button>
+        <div class="mega-menu narrow">
+          <div class="mega-grid">
+            <a href="trade-terminal.html" class="mega-card">
+              <span class="mega-icon" style="background:rgba(79,110,247,.12);color:#4f6ef7"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></span>
+              <strong>Web Platform</strong><span>Trade from any browser, instantly</span>
+            </a>
+            <a href="dashboard.html" class="mega-card">
+              <span class="mega-icon" style="background:rgba(34,197,94,.12);color:#22c55e"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M9 22v-4h6v4M8 6h.01M12 6h.01M16 6h.01M8 10h.01M12 10h.01M16 10h.01"/></svg></span>
+              <strong>Mobile App</strong><span>Monitor positions from anywhere</span>
+            </a>
+            <a href="dashboard.html" class="mega-card">
+              <span class="mega-icon" style="background:rgba(245,158,11,.12);color:#f59e0b"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg></span>
+              <strong>Client Dashboard</strong><span>Manage your account & portfolio</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <a class="nav-btn" href="#accounts">Accounts</a>
+      <a class="nav-btn" href="#why">Why Us</a>
+      <a class="nav-btn" href="#about">About</a>
+    </nav>
+
+    <div class="nav-actions">
+      <a class="nav-login" href="login.html">Log in</a>
+      <a class="btn-cta" href="signup.html">Open Account</a>
+    </div>
+
+    <button class="mob-toggle" id="mobToggle" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+
+  <!-- mobile drawer -->
+  <div class="mob-drawer" id="mobDrawer">
+    <a href="markets.html">Markets</a>
+    <a href="trade-terminal.html">Platform</a>
+    <a href="#accounts">Accounts</a>
+    <a href="#why">Why Us</a>
+    <a href="#about">About</a>
+    <div class="mob-actions">
+      <a href="login.html">Log in</a>
+      <a href="signup.html" class="btn-cta">Open Account</a>
+    </div>
+  </div>
+</header>
+
+<!-- ── HERO ─────────────────────────────────────────────────────── -->
+<section class="hero" id="hero">
+  <video class="hero-video" autoplay muted loop playsinline preload="auto">
+    <source src="assets/hero.mp4" type="video/mp4"/>
+  </video>
+  <div class="hero-overlay"></div>
+  <div class="hero-grid-bg"></div>
+
+  <div class="container hero-inner">
+    <div class="hero-copy" data-reveal>
+      <div class="hero-eyebrow">
+        <span class="pulse-dot"></span>
+        Markets open · 24/5 trading available
+      </div>
+      <h1>Trade the World's<br><span class="grad-text">Financial Markets</span><br>With Confidence</h1>
+      <p class="hero-sub">Multi-asset CFD trading across forex, indices, commodities, crypto and shares — with institutional execution speed and zero platform fees.</p>
+      <div class="hero-btns">
+        <a href="signup.html" class="btn-hero-primary">Start Trading Free</a>
+        <a href="#why" class="btn-hero-ghost">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+          See how it works
+        </a>
+      </div>
+      <div class="hero-trust">
+        <div class="trust-item"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Segregated client funds</div>
+        <div class="trust-item"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> SSL encrypted</div>
+        <div class="trust-item"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> No hidden fees</div>
+      </div>
+    </div>
+
+    <div class="hero-card-wrap" data-reveal data-delay="150">
+      <div class="hero-platform-card">
+        <div class="hpc-header">
+          <div class="hpc-dots"><span></span><span></span><span></span></div>
+          <div class="hpc-label"><span class="hpc-live">●</span> LIVE PORTFOLIO</div>
+        </div>
+        <div class="hpc-chart-area">
+          <svg viewBox="0 0 400 130" preserveAspectRatio="none" class="hpc-svg">
+            <defs>
+              <linearGradient id="cg" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#4f6ef7" stop-opacity="0.35"/>
+                <stop offset="100%" stop-color="#4f6ef7" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <path d="M0,100 C30,95 50,80 80,72 S120,55 150,50 S200,35 230,30 S280,18 310,20 S360,12 400,8 L400,130 L0,130 Z" fill="url(#cg)"/>
+            <path d="M0,100 C30,95 50,80 80,72 S120,55 150,50 S200,35 230,30 S280,18 310,20 S360,12 400,8" fill="none" stroke="#4f6ef7" stroke-width="2.5" stroke-linecap="round"/>
+          </svg>
+          <div class="hpc-val">$48,250.00 <span class="hpc-up">+12.4%</span></div>
+        </div>
+        <div class="hpc-pairs">
+          <div class="hpc-pair up"><span>EUR/USD</span><b>1.0842</b><em>+0.12%</em></div>
+          <div class="hpc-pair up"><span>XAU/USD</span><b>2,318.40</b><em>+0.38%</em></div>
+          <div class="hpc-pair dn"><span>USD/JPY</span><b>157.32</b><em>-0.07%</em></div>
+          <div class="hpc-pair up"><span>BTC/USDT</span><b>67,420</b><em>+2.1%</em></div>
+        </div>
+        <div class="hpc-footer">
+          <a href="signup.html" class="hpc-btn">Open Live Account →</a>
+        </div>
+      </div>
     </div>
   </div>
 
-  <header class="site-header">
-    <div class="container nav-wrap">
-      <a class="brand" href="#">
-        <span class="brand-mark">A</span>
-        <span class="brand-text">AstrontifyX</span>
+  <!-- hero stats bar -->
+  <div class="hero-stats-bar" data-reveal data-delay="300">
+    <div class="container hero-stats-inner">
+      <div class="hstat"><strong>$2.4B+</strong><span>Monthly volume</span></div>
+      <div class="hstat-sep"></div>
+      <div class="hstat"><strong>180+</strong><span>Countries served</span></div>
+      <div class="hstat-sep"></div>
+      <div class="hstat"><strong>1,000+</strong><span>Tradeable instruments</span></div>
+      <div class="hstat-sep"></div>
+      <div class="hstat"><strong>&lt;12ms</strong><span>Avg execution speed</span></div>
+      <div class="hstat-sep"></div>
+      <div class="hstat"><strong>24/7</strong><span>Client support</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── LIVE TICKER ───────────────────────────────────────────────── -->
+<div class="ticker-wrap">
+  <div class="ticker-track">
+    <span class="tk up">EUR/USD <b>1.0842</b> <em>▲0.12%</em></span>
+    <span class="tk dn">GBP/USD <b>1.2674</b> <em>▼0.08%</em></span>
+    <span class="tk up">XAU/USD <b>2318.40</b> <em>▲0.38%</em></span>
+    <span class="tk up">BTC/USDT <b>67,420</b> <em>▲2.10%</em></span>
+    <span class="tk dn">USD/JPY <b>157.32</b> <em>▼0.07%</em></span>
+    <span class="tk up">ETH/USDT <b>3,512</b> <em>▲1.44%</em></span>
+    <span class="tk up">SPX500 <b>5,302</b> <em>▲0.55%</em></span>
+    <span class="tk dn">USOIL <b>82.14</b> <em>▼0.22%</em></span>
+    <span class="tk up">NASDAQ100 <b>18,842</b> <em>▲0.71%</em></span>
+    <span class="tk dn">AUD/USD <b>0.6578</b> <em>▼0.04%</em></span>
+    <span class="tk up">NVDA <b>924.50</b> <em>▲3.20%</em></span>
+    <span class="tk up">XAG/USD <b>29.48</b> <em>▲0.62%</em></span>
+    <!-- duplicate for seamless loop -->
+    <span class="tk up">EUR/USD <b>1.0842</b> <em>▲0.12%</em></span>
+    <span class="tk dn">GBP/USD <b>1.2674</b> <em>▼0.08%</em></span>
+    <span class="tk up">XAU/USD <b>2318.40</b> <em>▲0.38%</em></span>
+    <span class="tk up">BTC/USDT <b>67,420</b> <em>▲2.10%</em></span>
+    <span class="tk dn">USD/JPY <b>157.32</b> <em>▼0.07%</em></span>
+    <span class="tk up">ETH/USDT <b>3,512</b> <em>▲1.44%</em></span>
+    <span class="tk up">SPX500 <b>5,302</b> <em>▲0.55%</em></span>
+    <span class="tk dn">USOIL <b>82.14</b> <em>▼0.22%</em></span>
+    <span class="tk up">NASDAQ100 <b>18,842</b> <em>▲0.71%</em></span>
+    <span class="tk dn">AUD/USD <b>0.6578</b> <em>▼0.04%</em></span>
+    <span class="tk up">NVDA <b>924.50</b> <em>▲3.20%</em></span>
+    <span class="tk up">XAG/USD <b>29.48</b> <em>▲0.62%</em></span>
+  </div>
+</div>
+
+<!-- ── WHY ATRONTIFYX ────────────────────────────────────────────── -->
+<section class="section why-section" id="why">
+  <div class="container">
+    <div class="section-label" data-reveal>Why traders choose AtrontifyX</div>
+    <h2 class="section-h2" data-reveal>Built different. <span class="grad-text">Built better.</span></h2>
+    <p class="section-sub" data-reveal>Everything you need to trade seriously — in one platform, with no compromise.</p>
+
+    <div class="why-grid">
+      <div class="why-card" data-reveal>
+        <div class="why-icon" style="--ic:#4f6ef7">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        </div>
+        <h3>Lightning Execution</h3>
+        <p>Sub-12ms average order execution with direct market access and no dealing desk intervention.</p>
+      </div>
+      <div class="why-card" data-reveal data-delay="80">
+        <div class="why-icon" style="--ic:#22c55e">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <h3>Segregated Funds</h3>
+        <p>Client funds are held in segregated accounts at tier-1 banking institutions, fully separate from operating capital.</p>
+      </div>
+      <div class="why-card" data-reveal data-delay="160">
+        <div class="why-icon" style="--ic:#f59e0b">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+        </div>
+        <h3>24/5 Market Access</h3>
+        <p>Trade around the clock across global sessions with real-time pricing and deep liquidity from major providers.</p>
+      </div>
+      <div class="why-card" data-reveal data-delay="240">
+        <div class="why-icon" style="--ic:#8b5cf6">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </div>
+        <h3>Advanced Charting</h3>
+        <p>Professional-grade charts with 50+ indicators, multiple timeframes, and drawing tools built into the platform.</p>
+      </div>
+      <div class="why-card" data-reveal data-delay="320">
+        <div class="why-icon" style="--ic:#ef4444">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4"/><path d="M4 6v12c0 1.1.9 2 2 2h14v-4"/><path d="M18 12a2 2 0 0 0-2 2c0 1.1.9 2 2 2h4v-4h-4z"/></svg>
+        </div>
+        <h3>Zero Commission</h3>
+        <p>Trade major forex pairs with zero commission and tight raw spreads from 0.0 pips on premium account tiers.</p>
+      </div>
+      <div class="why-card" data-reveal data-delay="400">
+        <div class="why-icon" style="--ic:#06b6d4">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <h3>Dedicated Support</h3>
+        <p>Personal account managers and round-the-clock live chat support for all account tiers.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── MARKETS ───────────────────────────────────────────────────── -->
+<section class="section markets-section" id="markets-section">
+  <div class="container">
+    <div class="section-label" data-reveal>Asset classes</div>
+    <h2 class="section-h2" data-reveal>Trade <span class="grad-text">1,000+ instruments</span><br>across every major market</h2>
+
+    <div class="mkt-tabs" id="mktTabs" data-reveal>
+      <button class="mkt-tab active" data-panel="forex">Forex</button>
+      <button class="mkt-tab" data-panel="indices">Indices</button>
+      <button class="mkt-tab" data-panel="crypto">Crypto</button>
+      <button class="mkt-tab" data-panel="metals">Metals</button>
+      <button class="mkt-tab" data-panel="energy">Energy</button>
+      <button class="mkt-tab" data-panel="shares">Shares</button>
+    </div>
+
+    <div class="mkt-panels">
+      <div class="mkt-panel active" id="panel-forex">
+        <div class="mkt-copy">
+          <h3>Forex</h3>
+          <p>Access 70+ currency pairs with institutional-grade spreads, flexible leverage up to 1:500, and deep interbank liquidity available around the clock.</p>
+          <ul class="mkt-list">
+            <li>Major, minor & exotic pairs</li>
+            <li>Spreads from 0.0 pips</li>
+            <li>Leverage up to 1:500</li>
+            <li>24/5 market access</li>
+          </ul>
+          <a href="signup.html" class="btn-mkt">Trade Forex →</a>
+        </div>
+        <div class="mkt-instrument-grid">
+          <div class="inst-card up"><span>EUR/USD</span><b>1.0842</b><em>▲ 0.12%</em></div>
+          <div class="inst-card dn"><span>GBP/USD</span><b>1.2674</b><em>▼ 0.08%</em></div>
+          <div class="inst-card dn"><span>USD/JPY</span><b>157.32</b><em>▼ 0.07%</em></div>
+          <div class="inst-card up"><span>AUD/USD</span><b>0.6578</b><em>▲ 0.04%</em></div>
+          <div class="inst-card up"><span>EUR/GBP</span><b>0.8553</b><em>▲ 0.05%</em></div>
+          <div class="inst-card dn"><span>USD/CHF</span><b>0.9012</b><em>▼ 0.03%</em></div>
+        </div>
+      </div>
+
+      <div class="mkt-panel" id="panel-indices">
+        <div class="mkt-copy">
+          <h3>Indices</h3>
+          <p>Trade the world's most followed equity indices with competitive spreads and extended hours — from Wall Street to Tokyo in a single account.</p>
+          <ul class="mkt-list">
+            <li>SPX500, NASDAQ100, DOW30</li>
+            <li>FTSE100, DAX40, CAC40</li>
+            <li>NIKKEI225, HSI & more</li>
+            <li>Extended session trading</li>
+          </ul>
+          <a href="signup.html" class="btn-mkt">Trade Indices →</a>
+        </div>
+        <div class="mkt-instrument-grid">
+          <div class="inst-card up"><span>SPX500</span><b>5,302</b><em>▲ 0.55%</em></div>
+          <div class="inst-card up"><span>NASDAQ100</span><b>18,842</b><em>▲ 0.71%</em></div>
+          <div class="inst-card up"><span>DOW30</span><b>39,510</b><em>▲ 0.32%</em></div>
+          <div class="inst-card dn"><span>FTSE100</span><b>8,214</b><em>▼ 0.15%</em></div>
+          <div class="inst-card up"><span>DAX40</span><b>18,720</b><em>▲ 0.44%</em></div>
+          <div class="inst-card dn"><span>NIKKEI225</span><b>38,405</b><em>▼ 0.22%</em></div>
+        </div>
+      </div>
+
+      <div class="mkt-panel" id="panel-crypto">
+        <div class="mkt-copy">
+          <h3>Crypto</h3>
+          <p>Trade 30+ cryptocurrency pairs against USDT with tight spreads, no wallet required, and exposure to the world's leading digital assets as CFDs.</p>
+          <ul class="mkt-list">
+            <li>BTC, ETH, SOL, XRP & more</li>
+            <li>All pairs vs USDT</li>
+            <li>No wallet or custody needed</li>
+            <li>7-day market coverage</li>
+          </ul>
+          <a href="signup.html" class="btn-mkt">Trade Crypto →</a>
+        </div>
+        <div class="mkt-instrument-grid">
+          <div class="inst-card up"><span>BTC/USDT</span><b>67,420</b><em>▲ 2.10%</em></div>
+          <div class="inst-card up"><span>ETH/USDT</span><b>3,512</b><em>▲ 1.44%</em></div>
+          <div class="inst-card up"><span>SOL/USDT</span><b>172.40</b><em>▲ 3.22%</em></div>
+          <div class="inst-card dn"><span>XRP/USDT</span><b>0.5842</b><em>▼ 0.58%</em></div>
+          <div class="inst-card up"><span>BNB/USDT</span><b>594.10</b><em>▲ 0.87%</em></div>
+          <div class="inst-card dn"><span>ADA/USDT</span><b>0.4520</b><em>▼ 1.10%</em></div>
+        </div>
+      </div>
+
+      <div class="mkt-panel" id="panel-metals">
+        <div class="mkt-copy">
+          <h3>Precious Metals</h3>
+          <p>Gold and silver are among the world's most traded safe-haven assets. Access both with real-time pricing and flexible position sizing.</p>
+          <ul class="mkt-list">
+            <li>Gold (XAU/USD) & Silver (XAG/USD)</li>
+            <li>Platinum & Palladium</li>
+            <li>Competitive spot pricing</li>
+            <li>Hedge against market volatility</li>
+          </ul>
+          <a href="signup.html" class="btn-mkt">Trade Metals →</a>
+        </div>
+        <div class="mkt-instrument-grid">
+          <div class="inst-card up"><span>XAU/USD</span><b>2,318.40</b><em>▲ 0.38%</em></div>
+          <div class="inst-card up"><span>XAG/USD</span><b>29.48</b><em>▲ 0.62%</em></div>
+          <div class="inst-card dn"><span>XPT/USD</span><b>982.60</b><em>▼ 0.24%</em></div>
+          <div class="inst-card up"><span>XPD/USD</span><b>1,024.00</b><em>▲ 0.18%</em></div>
+          <div class="inst-card up"><span>COPPER</span><b>4.512</b><em>▲ 0.95%</em></div>
+          <div class="inst-card dn"><span>IRON ORE</span><b>112.40</b><em>▼ 0.41%</em></div>
+        </div>
+      </div>
+
+      <div class="mkt-panel" id="panel-energy">
+        <div class="mkt-copy">
+          <h3>Energy</h3>
+          <p>Crude oil, Brent, natural gas and beyond — trade energy markets that move on geopolitical events, supply data and macro demand shifts.</p>
+          <ul class="mkt-list">
+            <li>WTI Crude & Brent Oil</li>
+            <li>Natural Gas & Heating Oil</li>
+            <li>Macro-driven opportunities</li>
+            <li>News & event-reactive pricing</li>
+          </ul>
+          <a href="signup.html" class="btn-mkt">Trade Energy →</a>
+        </div>
+        <div class="mkt-instrument-grid">
+          <div class="inst-card dn"><span>USOIL</span><b>82.14</b><em>▼ 0.22%</em></div>
+          <div class="inst-card dn"><span>UKOIL</span><b>85.72</b><em>▼ 0.18%</em></div>
+          <div class="inst-card up"><span>NATGAS</span><b>2.284</b><em>▲ 1.04%</em></div>
+          <div class="inst-card dn"><span>HEATOIL</span><b>2.612</b><em>▼ 0.35%</em></div>
+          <div class="inst-card up"><span>RBOB GAS</span><b>2.778</b><em>▲ 0.42%</em></div>
+          <div class="inst-card up"><span>NAT GAS EU</span><b>34.82</b><em>▲ 0.88%</em></div>
+        </div>
+      </div>
+
+      <div class="mkt-panel" id="panel-shares">
+        <div class="mkt-copy">
+          <h3>Shares</h3>
+          <p>Trade share CFDs on the world's most recognised companies without owning the underlying stock — long or short, no stamp duty.</p>
+          <ul class="mkt-list">
+            <li>50+ global stock CFDs</li>
+            <li>Long & short positions</li>
+            <li>Tech, finance, consumer & more</li>
+            <li>No ownership of underlying stock</li>
+          </ul>
+          <a href="signup.html" class="btn-mkt">Trade Shares →</a>
+        </div>
+        <div class="mkt-instrument-grid">
+          <div class="inst-card up"><span>NVDA</span><b>924.50</b><em>▲ 3.20%</em></div>
+          <div class="inst-card up"><span>AAPL</span><b>189.30</b><em>▲ 0.82%</em></div>
+          <div class="inst-card up"><span>MSFT</span><b>420.14</b><em>▲ 0.55%</em></div>
+          <div class="inst-card dn"><span>TSLA</span><b>176.80</b><em>▼ 1.42%</em></div>
+          <div class="inst-card up"><span>META</span><b>514.22</b><em>▲ 0.94%</em></div>
+          <div class="inst-card up"><span>AMZN</span><b>182.90</b><em>▲ 0.38%</em></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── ACCOUNT TIERS ─────────────────────────────────────────────── -->
+<section class="section tiers-section" id="accounts">
+  <div class="container">
+    <div class="section-label" data-reveal>Account types</div>
+    <h2 class="section-h2" data-reveal>Find the account<br><span class="grad-text">built for your level</span></h2>
+    <p class="section-sub" data-reveal>From first-time traders to high-volume professionals — every account tier is designed to scale with you.</p>
+
+    <div class="tiers-grid">
+      <div class="tier-card" data-reveal>
+        <div class="tier-badge">BASIC</div>
+        <div class="tier-price">Free</div>
+        <div class="tier-subtitle">Perfect to get started</div>
+        <ul class="tier-feats">
+          <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Up to $10,000 balance</li>
+          <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Standard spreads</li>
+          <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> 1:100 max leverage</li>
+          <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Full market access</li>
+          <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Email support</li>
+        </ul>
+        <a href="signup.html" class="tier-btn basic">Get Started</a>
+      </div>
+
+      <div class="tier-card featured" data-reveal data-delay="100">
+        <div class="tier-popular">Most Popular</div>
+        <div class="tier-badge gold">GOLD</div>
+        <div class="tier-price">Contact Us</div>
+        <div class="tier-subtitle">For growing traders</div>
+        <ul class="tier-feats">
+          <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Up to $100,000 balance</li>
+          <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Elite spreads from 0.5 pips</li>
+          <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> 1:500 max leverage</li>
+          <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Dedicated account manager</li>
+          <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Advanced analytics dashboard</li>
+          <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Weekly market reports</li>
+        </ul>
+        <a href="account-upgrade.html" class="tier-btn gold-btn">Upgrade to Gold</a>
+      </div>
+
+      <div class="tier-card" data-reveal data-delay="200">
+        <div class="tier-badge plat">PLATINUM</div>
+        <div class="tier-price">Contact Us</div>
+        <div class="tier-subtitle">For professional traders</div>
+        <ul class="tier-feats">
+          <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Unlimited balance</li>
+          <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Raw spreads from 0.0 pips</li>
+          <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> 1:1000 max leverage</li>
+          <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Personal relationship manager</li>
+          <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Institutional-grade tools</li>
+          <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Priority withdrawal processing</li>
+        </ul>
+        <a href="account-upgrade.html" class="tier-btn plat-btn">Upgrade to Platinum</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── STATS COUNTER ─────────────────────────────────────────────── -->
+<section class="stats-section">
+  <div class="container stats-inner">
+    <div class="stat-block" data-reveal>
+      <strong class="counter" data-target="2400">0</strong><span>M+</span>
+      <p>Monthly trading volume (USD)</p>
+    </div>
+    <div class="stat-block" data-reveal data-delay="100">
+      <strong class="counter" data-target="180">0</strong><span>+</span>
+      <p>Countries with active traders</p>
+    </div>
+    <div class="stat-block" data-reveal data-delay="200">
+      <strong class="counter" data-target="1000">0</strong><span>+</span>
+      <p>Tradeable instruments</p>
+    </div>
+    <div class="stat-block" data-reveal data-delay="300">
+      <strong class="counter" data-target="99">0</strong><span>.9%</span>
+      <p>Platform uptime SLA</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── PLATFORM SPLIT ────────────────────────────────────────────── -->
+<section class="section split-section" id="about">
+  <div class="container split-inner">
+    <div class="split-copy" data-reveal>
+      <div class="section-label">The AtrontifyX platform</div>
+      <h2>One login.<br><span class="grad-text">Every market.</span></h2>
+      <p>AtrontifyX unifies forex, indices, crypto, commodities and shares under a single clean trading environment — so you spend less time switching tools and more time reading markets.</p>
+      <div class="split-feats">
+        <div class="sf"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#4f6ef7" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Real-time P&L tracking</div>
+        <div class="sf"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#4f6ef7" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Instant deposits & withdrawals</div>
+        <div class="sf"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#4f6ef7" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Profit target manager</div>
+        <div class="sf"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#4f6ef7" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Full trade history & analytics</div>
+        <div class="sf"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#4f6ef7" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> KYC verification & compliance</div>
+        <div class="sf"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#4f6ef7" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> 24/7 live support</div>
+      </div>
+      <a href="signup.html" class="btn-hero-primary" style="margin-top:32px;display:inline-flex">Open Your Account →</a>
+    </div>
+    <div class="split-visual" data-reveal data-delay="120">
+      <div class="sv-card main-card">
+        <div class="sv-header">
+          <div class="sv-dots"><span></span><span></span><span></span></div>
+          <span class="sv-title">Portfolio Overview</span>
+        </div>
+        <div class="sv-balance">$48,250.00</div>
+        <div class="sv-chg up">+$5,840 &nbsp;+13.8% this month</div>
+        <div class="sv-chart">
+          <svg viewBox="0 0 280 80" preserveAspectRatio="none" width="100%" height="80">
+            <defs>
+              <linearGradient id="sg" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#4f6ef7" stop-opacity="0.3"/>
+                <stop offset="100%" stop-color="#4f6ef7" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <path d="M0,70 C20,68 40,55 70,50 S110,38 140,32 S190,18 220,15 S260,10 280,8 L280,80 L0,80 Z" fill="url(#sg)"/>
+            <path d="M0,70 C20,68 40,55 70,50 S110,38 140,32 S190,18 220,15 S260,10 280,8" fill="none" stroke="#4f6ef7" stroke-width="2"/>
+          </svg>
+        </div>
+        <div class="sv-positions">
+          <div class="sv-pos up"><span>EUR/USD</span><b>+$420</b></div>
+          <div class="sv-pos up"><span>XAU/USD</span><b>+$820</b></div>
+          <div class="sv-pos dn"><span>USD/JPY</span><b>-$140</b></div>
+        </div>
+      </div>
+      <div class="sv-card side-card">
+        <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">Quick Trade</div>
+        <div class="sv-pair-label">BTC/USDT</div>
+        <div class="sv-pair-price">67,420.00</div>
+        <div style="display:flex;gap:8px;margin-top:14px">
+          <div class="sv-buy">BUY</div>
+          <div class="sv-sell">SELL</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA ───────────────────────────────────────────────────────── -->
+<section class="cta-section">
+  <div class="cta-glow"></div>
+  <div class="container cta-inner" data-reveal>
+    <div class="cta-copy">
+      <div class="section-label" style="color:#a5b4fc">Start today</div>
+      <h2>Ready to trade the world's<br>financial markets?</h2>
+      <p>Join thousands of traders who trust AtrontifyX for fast execution, tight spreads, and a professional trading experience.</p>
+    </div>
+    <div class="cta-actions">
+      <a href="signup.html" class="btn-hero-primary btn-xl">Open Free Account</a>
+      <a href="login.html" class="btn-hero-ghost btn-xl">Log In →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ────────────────────────────────────────────────────── -->
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div class="footer-brand-col">
+      <a class="footer-brand" href="index.html">
+        <img src="assets/logo.png" alt="AtrontifyX" style="height:38px;object-fit:contain" onerror="this.style.display='none';document.querySelector('.fb-text').style.display='block'">
+        <span class="fb-text" style="display:none;font-size:20px;font-weight:800">AtrontifyX</span>
       </a>
-
-      <nav class="main-nav">
-        <div class="nav-item has-menu">
-          <button>Markets</button>
-          <div class="mega-menu">
-            <div class="menu-grid">
-              <a href="#markets" class="menu-card"><strong>Forex</strong><span>Major, minor, and cross currency pairs.</span></a>
-              <a href="#markets" class="menu-card"><strong>Indices</strong><span>Global index exposure from major regions.</span></a>
-              <a href="#markets" class="menu-card"><strong>Gold & Silver</strong><span>Precious metal opportunities with flexible access.</span></a>
-              <a ="#markets" class="menu-card"><strong>Energy</strong><span>Oil and energy products for active traders.</span></a>
-              <a href="#markets" class="menu-card"><strong>ETFs</strong><span>Diversified instruments across global themes.</span></a>
-              <a href="#markets" class="menu-card"><strong>Soft Commodities</strong><span>Agricultural markets and macro-driven assets.</span></a>
-              <a href="#markets" class="menu-card"><strong>Shares</strong><span>Popular global share CFDs from leading brands.</span></a>
-              <a href="#markets" class="menu-card"><strong>Bonds</strong><span>Rate-sensitive instruments for portfolio depth.</span></a>
-            </div>
-          </div>
-        </div>
-
-        <div class="nav-item has-menu">
-          <button>Platforms</button>
-          <div class="mega-menu">
-            <div class="menu-grid compact">
-              <a href="#platforms" class="menu-card"><strong>Web Platform</strong><span>Trade directly from your browser.</span></a>
-              <a href="#platforms" class="menu-card"><strong>Mobile App</strong><span>Monitor and manage positions anywhere.</span></a>
-              <a href="#platforms" class="menu-card"><strong>Desktop</strong><span>Advanced tools for fast execution.</span></a>
-              <a href="#platforms" class="menu-card"><strong>Copy Trading</strong><span>Discover strategies and follow market ideas.</span></a>
-            </div>
-          </div>
-        </div>
-
-        <div class="nav-item has-menu">
-          <button>Analysis</button>
-          <div class="mega-menu">
-            <div class="menu-grid compact">
-              <a href="#analysis" class="menu-card"><strong>Overview</strong><span>Stay informed across key market themes.</span></a>
-              <a href="#analysis" class="menu-card"><strong>Economic Calendar</strong><span>Track major market-moving events.</span></a>
-              <a href="#analysis" class="menu-card"><strong>News & Analysis</strong><span>Daily insights for active traders.</span></a>
-              <a href="#analysis" class="menu-card"><strong>Client Sentiment</strong><span>Gauge how traders are positioned.</span></a>
-              <a href="#analysis" class="menu-card"><strong>VPS</strong><span>Stable infrastructure for uninterrupted strategies.</span></a>
-              <a href="#analysis" class="menu-card"><strong>Trading Signals</strong><span>Structured ideas built around market momentum.</span></a>
-              <a href="#analysis" class="menu-card"><strong>Notifications</strong><span>Important platform and market updates.</span></a>
-            </div>
-          </div>
-        </div>
-
-        <a class="nav-link" href="#learn">Learn</a>
-        <a class="nav-link" href="#about">About</a>
-      </nav>
-
-      <div class="nav-actions">
-        <a class="btn btn-link" href="login.html">Log in</a>
-        <a class="btn btn-primary" id="signup" href="#open-account">Open Account</a>
-      </div>
-
-      <button class="mobile-toggle" aria-label="Toggle Menu">☰</button>
-    </div>
-
-    <div class="mobile-panel">
-      <a href="#markets">Markets</a>
-      <a href="#platforms">Platforms</a>
-      <a href="#analysis">Analysis</a>
-      <a href="#learn">Learn</a>
-      <a href="#about">About</a>
-      <a href="#login">Log in</a>
-      <a href="#open-account">Open Account</a>
-    </div>
-  </header>
-
-  <main>
-    <section class="hero">
-      <video class="hero-video" autoplay muted loop playsinline preload="auto">
-        <source src="assets/hero.mp4" type="video/mp4" />
-      </video>
-      <div class="hero-overlay"></div>
-
-      <div class="container hero-grid">
-        <div class="hero-copy">
-          <div class="eyebrow">Built for modern market participation</div>
-          <h1>Trade Anytime, Anywhere with AstrontifyX</h1>
-          <p class="hero-text">
-            Explore a multi-asset trading environment with access to forex, indices, commodities,
-            shares, ETFs, and bonds through a fast, intuitive platform designed for modern traders.
-          </p>
-
-          <div class="hero-actions">
-            <a class="btn btn-primary btn-lg" href="#open-account">Sign Up Now</a>
-            <a class="btn btn-secondary btn-lg" href="#markets">Explore Markets</a>
-          </div>
-
-          <div class="store-row">
-            <div class="qr-box">
-              <div class="qr-grid">
-                <span></span><span></span><span></span><span></span>
-                <span></span><span></span><span></span><span></span>
-                <span></span><span></span><span></span><span></span>
-                <span></span><span></span><span></span><span></span>
-              </div>
-              <small>App access</small>
-            </div>
-            <div class="store-buttons">
-              <a href="#">Google Play</a>
-              <a href="#">App Store</a>
-            </div>
-          </div>
-        </div>
-
-        <div class="hero-visual">
-          <div class="orb orb-one"></div>
-          <div class="orb orb-two"></div>
-          <div class="device-card card-main">
-            <div class="device-top">
-              <span></span><span></span><span></span>
-            </div>
-            <div class="chart"></div>
-            <div class="stats-row">
-              <div><strong>1,000+</strong><span>Instruments</span></div>
-              <div><strong>24/5</strong><span>Market Access</span></div>
-              <div><strong>Fast</strong><span>Execution</span></div>
-            </div>
-          </div>
-          <div class="device-card card-side">
-            <div class="mini-head"></div>
-            <div class="mini-line"></div>
-            <div class="mini-line short"></div>
-            <div class="mini-bars">
-              <span></span><span></span><span></span><span></span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="logos">
-      <div class="container">
-        <p class="section-kicker center">Trusted by growth-focused traders</p>
-        <div class="logo-strip">
-          <span>Execution Focus</span>
-          <span>Global Markets</span>
-          <span>Platform Stability</span>
-          <span>Market Access</span>
-          <span>Client Support</span>
-        </div>
-      </div>
-    </section>
-
-    <section class="section split-section" id="about">
-      <div class="container split-grid">
-        <div class="split-copy">
-          <p class="section-kicker">AstrontifyX Markets</p>
-          <h2>Trade on desktop, web, and mobile with one unified experience</h2>
-          <p>
-            AstrontifyX brings together streamlined execution, flexible platform access, and a clean
-            trading workflow so clients can monitor opportunities and manage positions with confidence.
-          </p>
-          <a class="text-link" href="#platforms">Discover the platform</a>
-        </div>
-        <div class="split-visual">
-          <div class="mockup large"></div>
-          <div class="mockup small"></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section markets-section" id="markets">
-      <div class="container">
-        <div class="section-head">
-          <div>
-            <p class="section-kicker">Markets</p>
-            <h2>Driving opportunity across leading asset classes</h2>
-          </div>
-          <p class="section-note">Browse major trading categories in a layout inspired by top brokerage sites, but built as AstrontifyX.</p>
-        </div>
-
-        <div class="tabs" role="tablist">
-          <button class="tab active" data-tab="forex">Forex</button>
-          <button class="tab" data-tab="indices">Indices</button>
-          <button class="tab" data-tab="metals">Gold & Silver</button>
-          <button class="tab" data-tab="energy">Energy</button>
-          <button class="tab" data-tab="etfs">ETFs</button>
-          <button class="tab" data-tab="softs">Soft Commodities</button>
-          <button class="tab" data-tab="shares">Shares</button>
-        </div>
-
-        <div class="tab-panels">
-          <article class="tab-panel active" id="forex">
-            <div class="panel-copy">
-              <h3>Forex</h3>
-              <p>Trade major, minor, and cross currency markets with flexible exposure and a professional trading environment.</p>
-              <ul>
-                <li>Broad market coverage</li>
-                <li>Fast order routing</li>
-                <li>Designed for active traders</li>
-              </ul>
-            </div>
-            <div class="panel-visual gradient-a"></div>
-          </article>
-
-          <article class="tab-panel" id="indices">
-            <div class="panel-copy">
-              <h3>Indices</h3>
-              <p>Access global index themes and react to macro developments with instruments tied to major economies.</p>
-              <ul>
-                <li>Global benchmark exposure</li>
-                <li>Event-driven opportunities</li>
-                <li>Multi-session coverage</li>
-              </ul>
-            </div>
-            <div class="panel-visual gradient-b"></div>
-          </article>
-
-          <article class="tab-panel" id="metals">
-            <div class="panel-copy">
-              <h3>Gold & Silver</h3>
-              <p>Engage with precious metals through a responsive platform suited for momentum and macro-driven setups.</p>
-              <ul>
-                <li>Popular safe-haven assets</li>
-                <li>Flexible trade access</li>
-                <li>Real-time monitoring</li>
-              </ul>
-            </div>
-            <div class="panel-visual gradient-c"></div>
-          </article>
-
-          <article class="tab-panel" id="energy">
-            <div class="panel-copy">
-              <h3>Energy</h3>
-              <p>Track and trade energy-linked products influenced by geopolitics, supply, and demand shifts.</p>
-              <ul>
-                <li>Oil-focused opportunities</li>
-                <li>Macro-sensitive markets</li>
-                <li>Fast-moving setups</li>
-              </ul>
-            </div>
-            <div class="panel-visual gradient-d"></div>
-          </article>
-
-          <article class="tab-panel" id="etfs">
-            <div class="panel-copy">
-              <h3>ETFs</h3>
-              <p>Get diversified access to market segments, industries, and themes through exchange-traded fund products.</p>
-              <ul>
-                <li>Broader theme exposure</li>
-                <li>Flexible portfolio ideas</li>
-                <li>Easy category discovery</li>
-              </ul>
-            </div>
-            <div class="panel-visual gradient-e"></div>
-          </article>
-
-          <article class="tab-panel" id="softs">
-            <div class="panel-copy">
-              <h3>Soft Commodities</h3>
-              <p>Follow agricultural and climate-sensitive markets that respond to seasonal and global trade conditions.</p>
-              <ul>
-                <li>Alternative macro plays</li>
-                <li>Diverse commodity access</li>
-                <li>Useful for broader strategies</li>
-              </ul>
-            </div>
-            <div class="panel-visual gradient-f"></div>
-          </article>
-
-          <article class="tab-panel" id="shares">
-            <div class="panel-copy">
-              <h3>Shares</h3>
-              <p>Trade share CFDs tied to popular companies and market leaders from major global exchanges.</p>
-              <ul>
-                <li>Brand-name market access</li>
-                <li>Tech, finance, consumer sectors</li>
-                <li>Short-term or thematic setups</li>
-              </ul>
-            </div>
-            <div class="panel-visual gradient-g"></div>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section class="section platforms-section" id="platforms">
-      <div class="container">
-        <div class="section-head">
-          <div>
-            <p class="section-kicker">Platforms & tools</p>
-            <h2>Choose the way you want to trade</h2>
-          </div>
-        </div>
-
-        <div class="feature-grid four">
-          <article class="feature-card">
-            <h3>Web Trading</h3>
-            <p>Access your trading environment instantly from a browser with no complex setup.</p>
-          </article>
-          <article class="feature-card">
-            <h3>Desktop Experience</h3>
-            <p>Designed for traders who prefer a large-screen workflow with strong visibility.</p>
-          </article>
-          <article class="feature-card">
-            <h3>Mobile Platform</h3>
-            <p>Stay connected to the market and manage positions on the move.</p>
-          </article>
-          <article class="feature-card">
-            <h3>Account Management</h3>
-            <p>Move between account actions, funding, and platform tools through one client area.</p>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section class="section analysis-section" id="analysis">
-      <div class="container">
-        <div class="section-head">
-          <div>
-            <p class="section-kicker">Analysis</p>
-            <h2>Market intelligence built into the experience</h2>
-          </div>
-        </div>
-
-        <div class="feature-grid">
-          <article class="feature-card"><h3>Economic Calendar</h3><p>Track scheduled macro events and high-impact releases.</p></article>
-          <article class="feature-card"><h3>News & Analysis</h3><p>Stay informed with market commentary and event-driven insights.</p></article>
-          <article class="feature-card"><h3>Client Sentiment</h3><p>See how broader trading activity is positioned across selected markets.</p></article>
-          <article class="feature-card"><h3>VPS</h3><p>Stable infrastructure for strategies that benefit from consistent connectivity.</p></article>
-          <article class="feature-card"><h3>Trading Signals</h3><p>Discover technical and momentum-based ideas through guided signal content.</p></article>
-          <article class="feature-card"><h3>Notifications</h3><p>Receive important updates about platform changes and market highlights.</p></article>
-        </div>
-      </div>
-    </section>
-
-    <section class="section learn-section" id="learn">
-      <div class="container promo-grid">
-        <div class="promo-copy">
-          <p class="section-kicker">Learn & grow</p>
-          <h2>Build confidence with education, updates, and guided market access</h2>
-          <p>
-            AstrontifyX is positioned as a broker-style experience with a strong onboarding path,
-            helpful platform content, and clear access points for new and experienced clients alike.
-          </p>
-          <a class="btn btn-primary" href="#open-account">Start with AstrontifyX</a>
-        </div>
-        <div class="promo-stats">
-          <div class="stat-box"><strong>7</strong><span>Market categories</span></div>
-          <div class="stat-box"><strong>24/5</strong><span>Trading window</span></div>
-          <div class="stat-box"><strong>Multi-device</strong><span>Access model</span></div>
-          <div class="stat-box"><strong>Client-first</strong><span>Support approach</span></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="cta-band" id="open-account">
-      <div class="container cta-inner">
-        <div>
-          <p class="section-kicker">Get started</p>
-          <h2>Open your AstrontifyX account and begin exploring the markets</h2>
-        </div>
-        <div class="cta-actions">
-          <a class="btn btn-primary btn-lg" href="#signup">Open Account</a>
-          <a class="btn btn-secondary btn-lg" href="#login">Log in</a>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <footer class="site-footer">
-    <div class="container footer-grid">
-      <div>
-        <a class="brand footer-brand" href="#">
-          <span class="brand-mark">A</span>
-          <span class="brand-text">AstrontifyX</span>
-        </a>
-        <p class="footer-copy">A broker-style digital experience for modern multi-asset trading.</p>
-      </div>
-
-      <div>
-        <h4>Markets</h4>
-        <a href="#markets">Forex</a>
-        <a href="#markets">Indices</a>
-        <a href="#markets">Commodities</a>
-        <a href="#markets">Shares</a>
-      </div>
-
-      <div>
-        <h4>Platforms</h4>
-        <a href="#platforms">Web Trading</a>
-        <a href="#platforms">Mobile</a>
-        <a href="#platforms">Desktop</a>
-        <a href="#platforms">Client Area</a>
-      </div>
-
-      <div>
-        <h4>Analysis</h4>
-        <a href="#analysis">Economic Calendar</a>
-        <a href="#analysis">News & Analysis</a>
-        <a href="#analysis">Sentiment</a>
-        <a href="#analysis">Trading Signals</a>
+      <p class="footer-desc">A professional multi-asset trading platform designed for modern traders worldwide.</p>
+      <div class="footer-contact">
+        <a href="mailto:help.astrontifyxglobal@gmail.com">help.astrontifyxglobal@gmail.com</a>
       </div>
     </div>
-    <div class="container footer-bottom">
-      <span>© 2026 AstrontifyX Markets. All rights reserved.</span>
-      <span id="login">Designed as an original AstrontifyX starter homepage.</span>
+    <div class="footer-col">
+      <h5>Markets</h5>
+      <a href="markets.html">Forex</a>
+      <a href="markets.html">Indices</a>
+      <a href="markets.html">Crypto</a>
+      <a href="markets.html">Gold & Silver</a>
+      <a href="markets.html">Energy</a>
+      <a href="markets.html">Shares</a>
     </div>
-  </footer>
+    <div class="footer-col">
+      <h5>Platform</h5>
+      <a href="trade-terminal.html">Trade Terminal</a>
+      <a href="dashboard.html">Client Dashboard</a>
+      <a href="deposit.html">Deposit Funds</a>
+      <a href="withdrawal.html">Withdraw Funds</a>
+      <a href="account-upgrade.html">Account Upgrade</a>
+    </div>
+    <div class="footer-col">
+      <h5>Company</h5>
+      <a href="#about">About Us</a>
+      <a href="#accounts">Account Types</a>
+      <a href="login.html">Client Login</a>
+      <a href="signup.html">Open Account</a>
+    </div>
+  </div>
 
-  <script src="script.js"></script>
+  <div class="container footer-legal">
+    <p><strong>Risk Warning:</strong> CFDs are complex instruments and come with a high risk of losing money rapidly due to leverage. A significant proportion of retail investor accounts lose money when trading CFDs. You should consider whether you understand how CFDs work and whether you can afford to take the high risk of losing your money.</p>
+    <div class="footer-bottom">
+      <span>© 2026 AtrontifyX Markets. All rights reserved.</span>
+      <span>Privacy Policy &nbsp;·&nbsp; Terms of Service &nbsp;·&nbsp; Cookie Policy</span>
+    </div>
+  </div>
+</footer>
+
+<script src="script.js"></script>
 </body>
 </html>
