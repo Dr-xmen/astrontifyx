@@ -2112,27 +2112,39 @@ async function atrontifyAdminAllowed(db, user, email) {
 
 // -- Users -----------------------------------------------------
 async function _loadUsers() {
-  const db = window.ATRONTIFY_DB;
-  if (!db) return null;
+  const svcKey    = window.ATRONTIFY_SERVICE_KEY;
+  const baseUrl   = 'https://guguugokdhiwobmuopro.supabase.co';
+  const adminClient = window.supabase.createClient(baseUrl, svcKey, {
+    auth: { persistSession: false, autoRefreshToken: false }
+  });
+
+  // Auth users = source of truth (catches orphans whose profile was deleted)
+  const { data: authData } = await adminClient.auth.admin.listUsers({ perPage: 1000 });
+  const authUsers = authData?.users || [];
+
   const [{ data: profiles }, { data: accounts }] = await Promise.all([
-    db.from('profiles').select('*').order('created_at', { ascending: false }),
-    db.from('trading_accounts').select('user_id, balance, type'),
+    adminClient.from('profiles').select('*'),
+    adminClient.from('trading_accounts').select('user_id, balance, type'),
   ]);
-  if (!profiles?.length) return null;
+
+  const profileMap = {};
+  (profiles || []).forEach(p => { profileMap[p.id] = p; });
+
   const COLORS = ['#1a5cff','#22a06b','#7c3aed','#f5a623','#e60023'];
-  return profiles.map((p, i) => {
-    const accs  = accounts?.filter(a => a.user_id === p.id) || [];
+  return authUsers.map((u, i) => {
+    const p    = profileMap[u.id] || {};
+    const accs = (accounts || []).filter(a => a.user_id === u.id);
     const total = accs.reduce((s, a) => s + (parseFloat(a.balance) || 0), 0);
     const live  = accs.some(a => a.type?.toLowerCase().includes('live'));
     return {
-      id:      p.id,
-      name:    p.full_name || p.name || `${p.first_name || ''} ${p.last_name || ''}`.trim() || p.username || p.id,
-      email:   p.email,
+      id:      u.id,
+      name:    p.full_name || p.name || `${p.first_name || ''} ${p.last_name || ''}`.trim() || u.email || u.id,
+      email:   u.email || p.email || '',
       country: p.country || '-',
       phone:   p.phone || p.phone_number || '',
       type:    live ? 'Live' : 'Demo',
       balance: '$' + total.toLocaleString('en-US', { minimumFractionDigits: 2 }),
-      joined:  new Date(p.created_at).toLocaleDateString('en-GB'),
+      joined:  new Date(u.created_at).toLocaleDateString('en-GB'),
       status:  p.status || 'active',
       kyc:     p.kyc_status || 'pending',
       color:   COLORS[i % COLORS.length],
