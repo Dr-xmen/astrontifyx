@@ -3590,15 +3590,24 @@ document.addEventListener('click', function(e){
         auth: { persistSession: false, autoRefreshToken: false }
       });
 
-      // Delete all app data first
-      var appTables = [
+      // Delete all app data first (clears every FK that references auth.users.id)
+      var userIdTables = [
         'deposit_requests','withdrawal_requests','transactions','positions',
         'trades','kyc_submissions','notifications','trading_accounts',
-        'profit_target_trades','profit_targets','banned_users'
+        'profit_target_trades','profit_targets','banned_users',
+        // legacy / extra tables that may exist
+        'deposits','withdrawals','user_trades','trade_history',
+        'support_tickets','user_preferences','user_sessions','user_logs'
       ];
-      for (var t of appTables) {
+      for (var t of userIdTables) {
         var r = await adminClient.from(t).delete().eq('user_id', uid);
-        if (r.error) console.warn('Delete ' + t + ':', r.error.message);
+        if (r.error && !r.error.message.includes('does not exist')) console.warn('Delete ' + t + ':', r.error.message);
+      }
+      // Tables where the FK column is `id` not `user_id`
+      var idTables = ['admin_users','admins'];
+      for (var t2 of idTables) {
+        var r2 = await adminClient.from(t2).delete().eq('id', uid);
+        if (r2.error && !r2.error.message.includes('does not exist')) console.warn('Delete ' + t2 + ':', r2.error.message);
       }
       await adminClient.from('audit_log').delete().eq('target_user_id', uid);
       await adminClient.from('admin_sent_emails').delete().eq('recipient_user_id', uid);
