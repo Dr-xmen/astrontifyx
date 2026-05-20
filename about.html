@@ -1,1 +1,616 @@
-gi
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>About Us — AtrontifyX</title>
+<meta name="description" content="Learn about AtrontifyX — a trusted global broker serving traders across 180+ countries with institutional-grade execution and a client-first approach.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ── RESET & BASE ──────────────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Space Grotesk',sans-serif;background:#0b0e1a;color:#e8eaf0;line-height:1.65;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+button{cursor:pointer;border:none;background:none;font-family:inherit}
+
+/* ── UTILITIES ─────────────────────────────────────────────────────── */
+.container{width:100%;max-width:1200px;margin:0 auto;padding:0 24px}
+
+/* ── SCROLL REVEAL ─────────────────────────────────────────────────── */
+[data-reveal]{opacity:0;transform:translateY(28px);transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1)}
+[data-reveal].revealed{opacity:1;transform:none}
+[data-reveal-delay="1"]{transition-delay:.1s}
+[data-reveal-delay="2"]{transition-delay:.2s}
+[data-reveal-delay="3"]{transition-delay:.3s}
+[data-reveal-delay="4"]{transition-delay:.4s}
+[data-reveal-delay="5"]{transition-delay:.5s}
+
+/* ── HEADER ────────────────────────────────────────────────────────── */
+.site-header{position:fixed;top:0;left:0;right:0;z-index:900;padding:0;transition:background .4s cubic-bezier(.22,1,.36,1),box-shadow .4s cubic-bezier(.22,1,.36,1)}
+.site-header.scrolled{background:rgba(11,14,26,.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);box-shadow:0 1px 0 rgba(255,255,255,.06)}
+.nav-wrap{display:flex;align-items:center;gap:32px;height:68px}
+.brand{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.brand-logo{height:32px;width:auto}
+.brand-wordmark{display:flex;align-items:center;gap:8px}
+.brand-mark{background:linear-gradient(135deg,#4f6ef7,#7c3aed);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:800;font-size:18px;letter-spacing:-.5px}
+.brand-text{font-weight:700;font-size:17px;color:#e8eaf0}
+.main-nav{display:flex;align-items:center;gap:2px;margin-left:auto}
+.nav-item{position:relative}
+.nav-btn{display:flex;align-items:center;gap:5px;padding:8px 14px;font-size:14px;font-weight:500;color:#8b93b0;border-radius:8px;transition:color .2s,background .2s}
+.nav-btn:hover,.nav-item:hover .nav-btn{color:#e8eaf0;background:rgba(255,255,255,.06)}
+.nav-item:hover .mega-menu{opacity:1;pointer-events:all;transform:translateY(0)}
+.mega-menu{position:absolute;top:calc(100% + 12px);left:50%;transform:translateX(-50%) translateY(8px);background:#0f1220;border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:16px;min-width:560px;opacity:0;pointer-events:none;transition:opacity .25s cubic-bezier(.22,1,.36,1),transform .25s cubic-bezier(.22,1,.36,1);box-shadow:0 24px 64px rgba(0,0,0,.5)}
+.mega-menu.narrow{min-width:360px}
+.mega-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.mega-menu.narrow .mega-grid{grid-template-columns:1fr}
+.mega-card{display:flex;align-items:flex-start;gap:12px;padding:12px;border-radius:10px;transition:background .2s}
+.mega-card:hover{background:rgba(255,255,255,.05)}
+.mega-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.mega-card strong{display:block;font-size:13px;font-weight:600;color:#e8eaf0;margin-bottom:2px}
+.mega-card span{font-size:12px;color:#8b93b0;line-height:1.4}
+.nav-actions{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.nav-login{font-size:14px;font-weight:500;color:#8b93b0;padding:8px 14px;border-radius:8px;transition:color .2s,background .2s}
+.nav-login:hover{color:#e8eaf0;background:rgba(255,255,255,.06)}
+.btn-cta{display:inline-flex;align-items:center;gap:6px;padding:9px 20px;background:linear-gradient(135deg,#4f6ef7,#7c3aed);color:#fff;font-size:14px;font-weight:600;border-radius:10px;transition:opacity .2s,transform .2s;box-shadow:0 4px 20px rgba(79,110,247,.35)}
+.btn-cta:hover{opacity:.9;transform:translateY(-1px)}
+.mob-toggle{display:none;flex-direction:column;gap:5px;padding:8px;border-radius:8px;transition:background .2s}
+.mob-toggle:hover{background:rgba(255,255,255,.06)}
+.mob-toggle span{display:block;width:22px;height:2px;background:#e8eaf0;border-radius:2px;transition:transform .3s cubic-bezier(.22,1,.36,1),opacity .3s}
+.mob-toggle.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.mob-toggle.open span:nth-child(2){opacity:0}
+.mob-toggle.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+.mob-drawer{display:none;flex-direction:column;background:#0f1220;border-top:1px solid rgba(255,255,255,.06);padding:16px 24px 24px}
+.mob-drawer a{padding:13px 0;font-size:15px;font-weight:500;color:#8b93b0;border-bottom:1px solid rgba(255,255,255,.05);transition:color .2s}
+.mob-drawer a:last-child{border-bottom:none}
+.mob-drawer a:hover{color:#e8eaf0}
+.mob-actions{display:flex;gap:12px;padding-top:20px;margin-top:4px}
+.mob-actions a{flex:1;text-align:center;padding:11px;border-radius:10px;font-size:14px;font-weight:600}
+.mob-actions a:first-child{border:1px solid rgba(255,255,255,.12);color:#e8eaf0;border-bottom:1px solid rgba(255,255,255,.12)}
+.mob-actions .btn-cta{background:linear-gradient(135deg,#4f6ef7,#7c3aed);color:#fff;border:none}
+
+/* ── HERO ──────────────────────────────────────────────────────────── */
+.about-hero{position:relative;min-height:92vh;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:120px 24px 80px}
+.hero-bg{position:absolute;inset:0;background:#0b0e1a}
+.hero-glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:700px;height:700px;background:radial-gradient(circle,rgba(79,110,247,.18) 0%,rgba(124,58,237,.08) 45%,transparent 70%);border-radius:50%;pointer-events:none}
+.hero-glow-2{position:absolute;top:30%;left:60%;transform:translate(-50%,-50%);width:400px;height:400px;background:radial-gradient(circle,rgba(124,58,237,.1) 0%,transparent 70%);border-radius:50%;pointer-events:none}
+
+/* ── PARTICLES ─────────────────────────────────────────────────────── */
+.particles{position:absolute;inset:0;pointer-events:none}
+.particle{position:absolute;border-radius:50%;animation:particlePulse 3s ease-in-out infinite}
+.p1{width:8px;height:8px;background:rgba(79,110,247,.8);box-shadow:0 0 12px rgba(79,110,247,.6);top:18%;left:14%;animation-delay:0s}
+.p2{width:6px;height:6px;background:rgba(124,58,237,.8);box-shadow:0 0 10px rgba(124,58,237,.6);top:25%;right:18%;animation-delay:.5s}
+.p3{width:7px;height:7px;background:rgba(79,110,247,.7);box-shadow:0 0 14px rgba(79,110,247,.5);top:65%;left:10%;animation-delay:1s}
+.p4{width:5px;height:5px;background:rgba(34,197,94,.8);box-shadow:0 0 10px rgba(34,197,94,.5);top:72%;right:14%;animation-delay:1.5s}
+.p5{width:9px;height:9px;background:rgba(79,110,247,.6);box-shadow:0 0 16px rgba(79,110,247,.4);top:40%;left:5%;animation-delay:.8s}
+.p6{width:6px;height:6px;background:rgba(245,158,11,.7);box-shadow:0 0 10px rgba(245,158,11,.4);top:15%;right:35%;animation-delay:2s}
+.p7{width:7px;height:7px;background:rgba(124,58,237,.7);box-shadow:0 0 12px rgba(124,58,237,.5);top:80%;left:35%;animation-delay:1.2s}
+.p8{width:5px;height:5px;background:rgba(79,110,247,.9);box-shadow:0 0 10px rgba(79,110,247,.6);top:50%;right:8%;animation-delay:.3s}
+
+/* SVG connection lines */
+.particle-lines{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.particle-lines svg{width:100%;height:100%;opacity:.2}
+.particle-lines line{stroke:url(#lineGrad);stroke-width:1;animation:linePulse 4s ease-in-out infinite}
+.particle-lines line:nth-child(2){animation-delay:.8s}
+.particle-lines line:nth-child(3){animation-delay:1.6s}
+.particle-lines line:nth-child(4){animation-delay:2.4s}
+
+@keyframes particlePulse{0%,100%{transform:scale(1);opacity:.7}50%{transform:scale(1.5);opacity:1}}
+@keyframes linePulse{0%,100%{opacity:.15}50%{opacity:.45}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(32px)}to{opacity:1;transform:none}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+.hero-content{position:relative;z-index:2;text-align:center;max-width:760px}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#4f6ef7;background:rgba(79,110,247,.1);border:1px solid rgba(79,110,247,.25);padding:6px 16px;border-radius:100px;margin-bottom:28px;animation:fadeUp .7s cubic-bezier(.22,1,.36,1) both}
+.hero-eyebrow-dot{width:6px;height:6px;background:#4f6ef7;border-radius:50%;box-shadow:0 0 8px rgba(79,110,247,.8);animation:particlePulse 2s ease-in-out infinite}
+.hero-h1{font-size:clamp(42px,6vw,72px);font-weight:800;line-height:1.08;letter-spacing:-.03em;margin-bottom:24px;animation:fadeUp .7s cubic-bezier(.22,1,.36,1) .15s both}
+.hero-h1 span{background:linear-gradient(135deg,#4f6ef7 0%,#7c3aed 60%,#a78bfa 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-size:17px;color:#8b93b0;max-width:580px;margin:0 auto 40px;line-height:1.7;animation:fadeUp .7s cubic-bezier(.22,1,.36,1) .28s both}
+.hero-actions{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;animation:fadeUp .7s cubic-bezier(.22,1,.36,1) .4s both}
+.btn-primary{display:inline-flex;align-items:center;gap:8px;padding:14px 30px;background:linear-gradient(135deg,#4f6ef7,#7c3aed);color:#fff;font-size:15px;font-weight:600;border-radius:12px;transition:opacity .2s,transform .2s,box-shadow .2s;box-shadow:0 8px 32px rgba(79,110,247,.4)}
+.btn-primary:hover{opacity:.9;transform:translateY(-2px);box-shadow:0 12px 40px rgba(79,110,247,.5)}
+.btn-ghost{display:inline-flex;align-items:center;gap:8px;padding:14px 30px;border:1px solid rgba(255,255,255,.15);color:#e8eaf0;font-size:15px;font-weight:600;border-radius:12px;background:rgba(255,255,255,.04);transition:background .2s,border-color .2s,transform .2s}
+.btn-ghost:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.25);transform:translateY(-2px)}
+
+/* ── STATS BAR ─────────────────────────────────────────────────────── */
+.stats-bar{background:#0d1228;border-top:1px solid rgba(255,255,255,.06);border-bottom:1px solid rgba(255,255,255,.06);padding:40px 0}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0}
+.stat-item{text-align:center;padding:16px 24px;position:relative}
+.stat-item::after{content:'';position:absolute;right:0;top:20%;bottom:20%;width:1px;background:rgba(255,255,255,.08)}
+.stat-item:last-child::after{display:none}
+.stat-value{font-size:clamp(28px,4vw,44px);font-weight:800;letter-spacing:-.03em;background:linear-gradient(135deg,#e8eaf0,#a0a8cc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;margin-bottom:8px}
+.stat-value.blue{background:linear-gradient(135deg,#4f6ef7,#7c3aed);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.stat-value.green{background:linear-gradient(135deg,#22c55e,#16a34a);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.stat-value.gold{background:linear-gradient(135deg,#f59e0b,#d97706);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.stat-label{font-size:13px;color:#8b93b0;font-weight:500;letter-spacing:.02em}
+
+/* ── OUR STORY ─────────────────────────────────────────────────────── */
+.story-section{background:#0f1220;padding:96px 0}
+.section-tag{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#4f6ef7;margin-bottom:16px}
+.section-tag::before{content:'';width:20px;height:2px;background:linear-gradient(90deg,#4f6ef7,transparent);border-radius:2px}
+.section-heading{font-size:clamp(28px,4vw,42px);font-weight:800;letter-spacing:-.025em;line-height:1.15;margin-bottom:16px}
+.section-sub{font-size:16px;color:#8b93b0;max-width:540px;line-height:1.7}
+.story-intro{text-align:center;margin-bottom:64px}
+.story-intro .section-tag{justify-content:center}
+.story-intro .section-sub{margin:0 auto}
+.story-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.story-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:36px 32px;position:relative;overflow:hidden;transition:border-color .3s,transform .3s cubic-bezier(.22,1,.36,1)}
+.story-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:20px 20px 0 0}
+.story-card:nth-child(1)::before{background:linear-gradient(90deg,#4f6ef7,#7c3aed)}
+.story-card:nth-child(2)::before{background:linear-gradient(90deg,#7c3aed,#4f6ef7)}
+.story-card:nth-child(3)::before{background:linear-gradient(90deg,#22c55e,#16a34a)}
+.story-card:hover{border-color:rgba(79,110,247,.3);transform:translateY(-4px)}
+.story-card-icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;margin-bottom:20px;font-size:22px}
+.story-card h3{font-size:19px;font-weight:700;margin-bottom:14px;letter-spacing:-.02em}
+.story-card p{font-size:14px;color:#8b93b0;line-height:1.75}
+
+/* ── WHY CHOOSE US ─────────────────────────────────────────────────── */
+.features-section{padding:96px 0;background:#0b0e1a}
+.features-header{text-align:center;margin-bottom:64px}
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.feature-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:32px 28px;position:relative;overflow:hidden;transition:border-color .3s,transform .3s cubic-bezier(.22,1,.36,1)}
+.feature-card::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(79,110,247,.04),rgba(124,58,237,.04));opacity:0;transition:opacity .3s}
+.feature-card:hover{border-color:rgba(79,110,247,.3);transform:translateY(-4px)}
+.feature-card:hover::after{opacity:1}
+.feature-icon{font-size:28px;margin-bottom:18px;display:block}
+.feature-card h4{font-size:17px;font-weight:700;margin-bottom:10px;letter-spacing:-.01em;color:#e8eaf0}
+.feature-card p{font-size:14px;color:#8b93b0;line-height:1.7}
+.feature-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:4px 10px;border-radius:6px;margin-top:14px}
+.badge-blue{background:rgba(79,110,247,.1);color:#4f6ef7;border:1px solid rgba(79,110,247,.2)}
+.badge-green{background:rgba(34,197,94,.1);color:#22c55e;border:1px solid rgba(34,197,94,.2)}
+.badge-gold{background:rgba(245,158,11,.1);color:#f59e0b;border:1px solid rgba(245,158,11,.2)}
+.badge-purple{background:rgba(124,58,237,.1);color:#7c3aed;border:1px solid rgba(124,58,237,.2)}
+
+/* ── REGULATION ────────────────────────────────────────────────────── */
+.regulation-section{background:#0f1220;padding:96px 0}
+.regulation-header{text-align:center;margin-bottom:64px}
+.regulation-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.reg-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:36px 32px;transition:border-color .3s,transform .3s cubic-bezier(.22,1,.36,1);position:relative;overflow:hidden}
+.reg-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(79,110,247,.4),transparent);opacity:0;transition:opacity .3s}
+.reg-card:hover{border-color:rgba(79,110,247,.3);transform:translateY(-4px)}
+.reg-card:hover::after{opacity:1}
+.reg-badge{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:10px;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;margin-bottom:22px;border:1px solid}
+.reg-badge.blue{background:rgba(79,110,247,.1);color:#4f6ef7;border-color:rgba(79,110,247,.25)}
+.reg-badge.green{background:rgba(34,197,94,.1);color:#22c55e;border-color:rgba(34,197,94,.25)}
+.reg-badge.gold{background:rgba(245,158,11,.1);color:#f59e0b;border-color:rgba(245,158,11,.25)}
+.reg-badge svg{flex-shrink:0}
+.reg-card h3{font-size:19px;font-weight:700;margin-bottom:14px;letter-spacing:-.02em}
+.reg-card p{font-size:14px;color:#8b93b0;line-height:1.75}
+
+/* ── CTA SECTION ───────────────────────────────────────────────────── */
+.cta-section{padding:100px 24px;background:linear-gradient(180deg,#0b0e1a 0%,#0a0d1f 40%,#0c0f22 100%);position:relative;overflow:hidden;text-align:center}
+.cta-section::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:900px;height:600px;background:radial-gradient(ellipse at top center,rgba(79,110,247,.15) 0%,rgba(124,58,237,.08) 40%,transparent 70%);pointer-events:none}
+.cta-section::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(79,110,247,.3),transparent)}
+.cta-inner{position:relative;z-index:2;max-width:640px;margin:0 auto}
+.cta-label{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#4f6ef7;background:rgba(79,110,247,.1);border:1px solid rgba(79,110,247,.2);padding:6px 16px;border-radius:100px;margin-bottom:28px}
+.cta-label-dot{width:5px;height:5px;background:#4f6ef7;border-radius:50%;animation:particlePulse 2s ease-in-out infinite}
+.cta-h2{font-size:clamp(32px,5vw,52px);font-weight:800;letter-spacing:-.03em;line-height:1.1;margin-bottom:20px}
+.cta-h2 span{background:linear-gradient(135deg,#4f6ef7,#7c3aed);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.cta-p{font-size:16px;color:#8b93b0;line-height:1.7;margin-bottom:44px}
+.cta-actions{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap}
+.btn-white{display:inline-flex;align-items:center;gap:8px;padding:14px 32px;background:#fff;color:#0b0e1a;font-size:15px;font-weight:700;border-radius:12px;transition:background .2s,transform .2s,box-shadow .2s;box-shadow:0 8px 32px rgba(255,255,255,.12)}
+.btn-white:hover{background:#e8eaf0;transform:translateY(-2px);box-shadow:0 12px 40px rgba(255,255,255,.18)}
+.btn-ghost-white{display:inline-flex;align-items:center;gap:8px;padding:14px 32px;border:1px solid rgba(255,255,255,.2);color:#e8eaf0;font-size:15px;font-weight:600;border-radius:12px;background:transparent;transition:background .2s,border-color .2s,transform .2s}
+.btn-ghost-white:hover{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.35);transform:translateY(-2px)}
+
+/* ── FOOTER ────────────────────────────────────────────────────────── */
+.site-footer{background:#0a0c18;border-top:1px solid rgba(255,255,255,.06)}
+.footer-inner{display:grid;grid-template-columns:1.8fr 1fr 1fr 1fr 1fr;gap:48px;padding:60px 0 48px}
+.footer-brand p{font-size:13px;color:#8b93b0;line-height:1.7;margin-top:14px;max-width:260px}
+.footer-email{margin-top:12px !important;color:#4f6ef7 !important}
+.footer-col h5{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#e8eaf0;margin-bottom:16px}
+.footer-col a{display:block;font-size:13px;color:#8b93b0;margin-bottom:10px;transition:color .2s}
+.footer-col a:hover{color:#e8eaf0}
+.footer-risk{background:#080a15;border-top:1px solid rgba(255,255,255,.05);padding:32px 0}
+.footer-risk p{font-size:12px;color:#8b93b0;line-height:1.75;max-width:900px}
+.footer-risk strong{color:#e8eaf0}
+.footer-bottom{margin-top:20px;padding-top:20px;border-top:1px solid rgba(255,255,255,.06);font-size:12px;color:#8b93b0}
+
+/* ── RESPONSIVE ────────────────────────────────────────────────────── */
+@media(max-width:1024px){
+  .story-cards,.features-grid,.regulation-grid{grid-template-columns:repeat(2,1fr)}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .stat-item:nth-child(2)::after{display:none}
+  .footer-inner{grid-template-columns:1fr 1fr;gap:32px}
+  .footer-brand{grid-column:1/-1}
+  .main-nav{display:none}
+}
+@media(max-width:768px){
+  .story-cards,.features-grid,.regulation-grid{grid-template-columns:1fr}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .stat-item::after{display:none}
+  .hero-actions,.cta-actions{flex-direction:column;align-items:center}
+  .btn-primary,.btn-ghost,.btn-white,.btn-ghost-white{width:100%;justify-content:center}
+  .mob-toggle{display:flex}
+  .mob-drawer.open{display:flex}
+  .nav-actions{display:none}
+  .footer-inner{grid-template-columns:1fr 1fr}
+  .footer-brand{grid-column:1/-1}
+  .particle-lines{display:none}
+  .p3,.p4,.p5,.p7,.p8{display:none}
+}
+@media(max-width:480px){
+  .stats-grid{grid-template-columns:1fr}
+  .footer-inner{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ─────────────────────────────────────────────────────── -->
+<header class="site-header" id="site-header">
+  <div class="container nav-wrap">
+    <a class="brand" href="index.html">
+      <img src="assets/logo.png" alt="AtrontifyX" class="brand-logo" onerror="this.style.display='none';document.querySelector('.brand-wordmark').style.display='flex'">
+      <span class="brand-wordmark" style="display:none">
+        <span class="brand-mark">ATX</span>
+        <span class="brand-text">AtrontifyX</span>
+      </span>
+    </a>
+    <nav class="main-nav">
+      <div class="nav-item has-mega">
+        <button class="nav-btn">Markets <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></button>
+        <div class="mega-menu"><div class="mega-grid">
+          <a href="markets.html" class="mega-card"><span class="mega-icon" style="background:rgba(79,110,247,.12);color:#4f6ef7"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></span><strong>Forex</strong><span>70+ major, minor & exotic pairs</span></a>
+          <a href="markets.html" class="mega-card"><span class="mega-icon" style="background:rgba(245,158,11,.12);color:#f59e0b"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/></svg></span><strong>Indices</strong><span>SPX500, DAX40, NASDAQ & more</span></a>
+          <a href="markets.html" class="mega-card"><span class="mega-icon" style="background:rgba(251,191,36,.12);color:#fbbf24"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg></span><strong>Metals</strong><span>Gold, silver & precious metals</span></a>
+          <a href="markets.html" class="mega-card"><span class="mega-icon" style="background:rgba(239,68,68,.12);color:#ef4444"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/></svg></span><strong>Energy</strong><span>Crude oil, Brent & natural gas</span></a>
+          <a href="markets.html" class="mega-card"><span class="mega-icon" style="background:rgba(34,197,94,.12);color:#22c55e"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></span><strong>Shares</strong><span>AAPL, TSLA, NVDA & 50+ CFDs</span></a>
+          <a href="markets.html" class="mega-card"><span class="mega-icon" style="background:rgba(139,92,246,.12);color:#8b5cf6"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M9 8h6M12 5v6M8.5 14.5L6 20h12l-2.5-5.5"/></svg></span><strong>Crypto</strong><span>BTC, ETH, SOL & 30+ pairs vs USDT</span></a>
+        </div></div>
+      </div>
+      <div class="nav-item has-mega">
+        <button class="nav-btn">Platform <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></button>
+        <div class="mega-menu narrow"><div class="mega-grid">
+          <a href="platforms.html" class="mega-card"><span class="mega-icon" style="background:rgba(79,110,247,.12);color:#4f6ef7"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></span><strong>Web Platform</strong><span>Trade from any browser, instantly</span></a>
+          <a href="dashboard.html" class="mega-card"><span class="mega-icon" style="background:rgba(34,197,94,.12);color:#22c55e"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M9 22v-4h6v4M8 6h.01M12 6h.01M16 6h.01M8 10h.01M12 10h.01M16 10h.01"/></svg></span><strong>Mobile App</strong><span>Monitor positions from anywhere</span></a>
+          <a href="dashboard.html" class="mega-card"><span class="mega-icon" style="background:rgba(245,158,11,.12);color:#f59e0b"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg></span><strong>Client Dashboard</strong><span>Manage your account & portfolio</span></a>
+        </div></div>
+      </div>
+      <div class="nav-item has-mega">
+        <button class="nav-btn">Company <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></button>
+        <div class="mega-menu narrow"><div class="mega-grid">
+          <a href="about.html" class="mega-card"><span class="mega-icon" style="background:rgba(79,110,247,.12);color:#4f6ef7"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span><strong>About</strong><span>Our story, mission & values</span></a>
+          <a href="privacy.html" class="mega-card"><span class="mega-icon" style="background:rgba(139,92,246,.12);color:#8b5cf6"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span><strong>Privacy Policy</strong><span>How we protect your data</span></a>
+          <a href="contact.html" class="mega-card"><span class="mega-icon" style="background:rgba(34,197,94,.12);color:#22c55e"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span><strong>Contact Us</strong><span>Reach our support team</span></a>
+        </div></div>
+      </div>
+    </nav>
+    <div class="nav-actions">
+      <a class="nav-login" href="login.html">Log in</a>
+      <a class="btn-cta" href="signup.html">Open Account</a>
+    </div>
+    <button class="mob-toggle" id="mobToggle" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+  <div class="mob-drawer" id="mobDrawer">
+    <a href="markets.html">Markets</a>
+    <a href="platforms.html">Platform</a>
+    <a href="about.html">About</a>
+    <a href="contact.html">Contact Us</a>
+    <a href="privacy.html">Privacy Policy</a>
+    <div class="mob-actions">
+      <a href="login.html">Log in</a>
+      <a href="signup.html" class="btn-cta">Open Account</a>
+    </div>
+  </div>
+</header>
+
+<!-- ── HERO ───────────────────────────────────────────────────────── -->
+<section class="about-hero">
+  <div class="hero-bg"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-glow-2"></div>
+
+  <!-- Particles -->
+  <div class="particles">
+    <div class="particle p1"></div>
+    <div class="particle p2"></div>
+    <div class="particle p3"></div>
+    <div class="particle p4"></div>
+    <div class="particle p5"></div>
+    <div class="particle p6"></div>
+    <div class="particle p7"></div>
+    <div class="particle p8"></div>
+  </div>
+
+  <!-- SVG connection lines -->
+  <div class="particle-lines">
+    <svg preserveAspectRatio="none" viewBox="0 0 1440 800">
+      <defs>
+        <linearGradient id="lineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#4f6ef7" stop-opacity="0"/>
+          <stop offset="50%" stop-color="#4f6ef7" stop-opacity="1"/>
+          <stop offset="100%" stop-color="#7c3aed" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <line x1="202" y1="144" x2="554" y2="201" class="l1"/>
+      <line x1="554" y1="201" x2="1188" y2="120" class="l2"/>
+      <line x1="72" y1="320" x2="202" y2="144" class="l3"/>
+      <line x1="1188" y1="120" x2="1267" y2="400" class="l4"/>
+      <line x1="504" y1="572" x2="554" y2="201" class="l1"/>
+      <line x1="72" y1="320" x2="504" y2="572" class="l2"/>
+      <line x1="1267" y1="400" x2="1152" y2="600" class="l3"/>
+    </svg>
+  </div>
+
+  <div class="hero-content">
+    <div class="hero-eyebrow">
+      <span class="hero-eyebrow-dot"></span>
+      Who We Are
+    </div>
+    <h1 class="hero-h1">About <span>AtrontifyX</span></h1>
+    <p class="hero-sub">A trusted global broker serving traders across 180+ countries with institutional-grade execution and a client-first approach.</p>
+    <div class="hero-actions">
+      <a href="signup.html" class="btn-primary">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Open Account
+      </a>
+      <a href="platforms.html" class="btn-ghost">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+        Our Platform
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ── STATS BAR ──────────────────────────────────────────────────── -->
+<section class="stats-bar">
+  <div class="container">
+    <div class="stats-grid">
+      <div class="stat-item" data-reveal>
+        <div class="stat-value blue">2024</div>
+        <div class="stat-label">Founded</div>
+      </div>
+      <div class="stat-item" data-reveal data-reveal-delay="1">
+        <div class="stat-value">180+</div>
+        <div class="stat-label">Countries Served</div>
+      </div>
+      <div class="stat-item" data-reveal data-reveal-delay="2">
+        <div class="stat-value green">$2.4B+</div>
+        <div class="stat-label">Monthly Volume</div>
+      </div>
+      <div class="stat-item" data-reveal data-reveal-delay="3">
+        <div class="stat-value gold">1,000+</div>
+        <div class="stat-label">Instruments</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── OUR STORY ──────────────────────────────────────────────────── -->
+<section class="story-section">
+  <div class="container">
+    <div class="story-intro" data-reveal>
+      <div class="section-tag">Our Foundation</div>
+      <h2 class="section-heading">Built for Traders,<br>By Traders</h2>
+      <p class="section-sub">Everything we do starts with one question — what does a trader actually need to succeed?</p>
+    </div>
+
+    <div class="story-cards">
+      <div class="story-card" data-reveal data-reveal-delay="1">
+        <div class="story-card-icon" style="background:rgba(79,110,247,.1)">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#4f6ef7" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        </div>
+        <h3>Our Story</h3>
+        <p>AtrontifyX was built by a team of financial professionals with one purpose — to give every trader access to institutional-grade tools, pricing, and execution speed. We set out to bridge the gap between retail and institutional trading, making the best of global markets accessible to everyone.</p>
+      </div>
+
+      <div class="story-card" data-reveal data-reveal-delay="2">
+        <div class="story-card-icon" style="background:rgba(124,58,237,.1)">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#7c3aed" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+        </div>
+        <h3>Our Mission</h3>
+        <p>To provide every trader with the tightest spreads, fastest execution, and best-in-class support — without compromise. We believe professional trading infrastructure should not be a privilege reserved for large institutions.</p>
+      </div>
+
+      <div class="story-card" data-reveal data-reveal-delay="3">
+        <div class="story-card-icon" style="background:rgba(34,197,94,.1)">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#22c55e" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <h3>Our Values</h3>
+        <p>Transparency, integrity, and client-first decision making. We do not mark up prices behind your back. No hidden fees, no conflicts of interest. What you see is what you trade — always.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── WHY CHOOSE US ───────────────────────────────────────────────── -->
+<section class="features-section">
+  <div class="container">
+    <div class="features-header" data-reveal>
+      <div class="section-tag">Why AtrontifyX</div>
+      <h2 class="section-heading">The Edge Every Trader Deserves</h2>
+      <p class="section-sub" style="margin:0 auto;max-width:500px;color:#8b93b0">Professional infrastructure, transparent pricing, and real support — all in one place.</p>
+    </div>
+
+    <div class="features-grid">
+      <div class="feature-card" data-reveal data-reveal-delay="1">
+        <span class="feature-icon">&#9889;</span>
+        <h4>Lightning Execution</h4>
+        <p>Sub-12ms NDD execution with no requotes and no last look. Your orders hit the market at the price you see — every single time.</p>
+        <span class="feature-badge badge-blue">
+          <svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          No Requotes
+        </span>
+      </div>
+
+      <div class="feature-card" data-reveal data-reveal-delay="2">
+        <span class="feature-icon">&#128737;</span>
+        <h4>Segregated Funds</h4>
+        <p>Client funds are held in segregated accounts at tier-1 banking institutions, entirely separate from company operating capital.</p>
+        <span class="feature-badge badge-green">
+          <svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          Protected
+        </span>
+      </div>
+
+      <div class="feature-card" data-reveal data-reveal-delay="3">
+        <span class="feature-icon">&#128202;</span>
+        <h4>Tight Spreads</h4>
+        <p>Raw spreads starting from 0.0 pips on premium tiers. Direct market access with institutional-grade liquidity from top-tier providers.</p>
+        <span class="feature-badge badge-gold">
+          <svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          From 0.0 pips
+        </span>
+      </div>
+
+      <div class="feature-card" data-reveal data-reveal-delay="1">
+        <span class="feature-icon">&#128172;</span>
+        <h4>24/7 Support</h4>
+        <p>Around-the-clock support via live chat and email. Our team of trading specialists is available whenever the markets are open — and when they're not.</p>
+        <span class="feature-badge badge-blue">
+          <svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          Always Available
+        </span>
+      </div>
+
+      <div class="feature-card" data-reveal data-reveal-delay="2">
+        <span class="feature-icon">&#127758;</span>
+        <h4>Multi-Asset Trading</h4>
+        <p>Forex, indices, crypto, metals, and energy — all accessible from a single unified platform with seamless account management.</p>
+        <span class="feature-badge badge-purple">
+          <svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          1,000+ Instruments
+        </span>
+      </div>
+
+      <div class="feature-card" data-reveal data-reveal-delay="3">
+        <span class="feature-icon">&#10003;</span>
+        <h4>Zero Commission</h4>
+        <p>Trade major pairs with zero commission on select account tiers. More of your profit stays where it belongs — in your account.</p>
+        <span class="feature-badge badge-green">
+          <svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          No Hidden Fees
+        </span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── REGULATION & COMPLIANCE ────────────────────────────────────── -->
+<section class="regulation-section">
+  <div class="container">
+    <div class="regulation-header" data-reveal>
+      <div class="section-tag">Compliance</div>
+      <h2 class="section-heading">Regulation &amp; Client Protection</h2>
+      <p class="section-sub" style="margin:0 auto;max-width:520px;color:#8b93b0">Operating with full regulatory compliance and industry-standard client protections across every jurisdiction we serve.</p>
+    </div>
+
+    <div class="regulation-grid">
+      <div class="reg-card" data-reveal data-reveal-delay="1">
+        <div class="reg-badge blue">
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          FSC — Mauritius
+        </div>
+        <h3>Regulated &amp; Licensed</h3>
+        <p>Financial Services Commission. Licence No. C119024294. The FSC provides our international clients with a regulated and transparent trading environment, ensuring operational integrity and fund protection across all account types.</p>
+      </div>
+
+      <div class="reg-card" data-reveal data-reveal-delay="2">
+        <div class="reg-badge green">
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="20 6 9 17 4 12"/></svg>
+          Global Operations
+        </div>
+        <h3>Full Compliance Framework</h3>
+        <p>AtrontifyX Markets operates under strict internal compliance frameworks including AML, KYC verification, and client fund segregation policies applied uniformly across all jurisdictions we serve.</p>
+      </div>
+
+      <div class="reg-card" data-reveal data-reveal-delay="3">
+        <div class="reg-badge gold">
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          Client Fund Protection
+        </div>
+        <h3>Segregated Client Accounts</h3>
+        <p>All client funds are held in segregated accounts, entirely separate from company operating capital. This ensures your funds remain protected and accessible at all times, regardless of company financial standing.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA ────────────────────────────────────────────────────────── -->
+<section class="cta-section">
+  <div class="cta-inner">
+    <div class="cta-label" data-reveal>
+      <span class="cta-label-dot"></span>
+      Start Trading Today
+    </div>
+    <h2 class="cta-h2" data-reveal data-reveal-delay="1">Ready to start <span>trading?</span></h2>
+    <p class="cta-p" data-reveal data-reveal-delay="2">Join thousands of traders who trust AtrontifyX for fast execution, tight spreads, and a professional trading experience across 180+ countries.</p>
+    <div class="cta-actions" data-reveal data-reveal-delay="3">
+      <a href="signup.html" class="btn-white">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Open Live Account
+      </a>
+      <a href="contact.html" class="btn-ghost-white">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Contact Us
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ─────────────────────────────────────────────────────── -->
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <div class="footer-brand">
+      <span class="brand-wordmark"><span class="brand-mark">ATX</span><span class="brand-text">AtrontifyX</span></span>
+      <p>Multi-asset CFD trading across forex, indices, commodities, crypto and shares with institutional execution.</p>
+      <p class="footer-email">help.astrontifyxglobal@gmail.com</p>
+    </div>
+    <div class="footer-col"><h5>Markets</h5><a href="markets.html">Forex</a><a href="markets.html">Indices</a><a href="markets.html">Crypto</a><a href="markets.html">Gold & Silver</a><a href="markets.html">Energy</a><a href="markets.html">Shares</a></div>
+    <div class="footer-col"><h5>Platform</h5><a href="platforms.html">Platform Overview</a><a href="dashboard.html">Client Dashboard</a><a href="dashboard.html">Mobile App</a></div>
+    <div class="footer-col"><h5>Company</h5><a href="about.html">About Us</a><a href="contact.html">Contact Us</a><a href="privacy.html">Privacy Policy</a></div>
+    <div class="footer-col"><h5>Account</h5><a href="signup.html">Open Account</a><a href="login.html">Log In</a><a href="account-upgrade.html">Upgrade Account</a></div>
+  </div>
+  <div class="footer-risk">
+    <div class="container">
+      <p><strong>Risk Warning:</strong> CFDs are complex instruments and come with a high risk of losing money rapidly due to leverage. A significant proportion of retail investor accounts lose money when trading CFDs. You should consider whether you understand how CFDs work and whether you can afford to take the high risk of losing your money.</p>
+      <div class="footer-bottom"><span>© 2026 AtrontifyX Markets. All rights reserved.</span></div>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ── NAV SCROLL ────────────────────────────────────────────────────── */
+(function(){
+  var header = document.getElementById('site-header');
+  function onScroll(){
+    if(window.scrollY > 40){header.classList.add('scrolled')}
+    else{header.classList.remove('scrolled')}
+  }
+  window.addEventListener('scroll',onScroll,{passive:true});
+  onScroll();
+})();
+
+/* ── MOBILE MENU ───────────────────────────────────────────────────── */
+(function(){
+  var toggle = document.getElementById('mobToggle');
+  var drawer = document.getElementById('mobDrawer');
+  if(!toggle||!drawer) return;
+  toggle.addEventListener('click',function(){
+    var open = drawer.classList.toggle('open');
+    toggle.classList.toggle('open',open);
+    toggle.setAttribute('aria-expanded',open?'true':'false');
+  });
+})();
+
+/* ── SCROLL REVEAL ─────────────────────────────────────────────────── */
+(function(){
+  var els = document.querySelectorAll('[data-reveal]');
+  if(!els.length) return;
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){
+        e.target.classList.add('revealed');
+        io.unobserve(e.target);
+      }
+    });
+  },{threshold:0.12,rootMargin:'0px 0px -40px 0px'});
+  els.forEach(function(el){io.observe(el)});
+})();
+</script>
+</body>
+</html>

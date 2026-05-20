@@ -1,1 +1,658 @@
-hi
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Contact Us — AtrontifyX</title>
+<meta name="description" content="Get in touch with the AtrontifyX support team. Available 24/7 via live chat and email to assist with your trading account.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ── Reset & Base ──────────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Space Grotesk',sans-serif;background:#0b0e1a;color:#e8eaf0;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{text-decoration:none;color:inherit}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+img{display:block;max-width:100%}
+
+/* ── Container ─────────────────────────────────────────────────── */
+.container{max-width:1200px;margin:0 auto;padding:0 24px}
+
+/* ── Gradient text ─────────────────────────────────────────────── */
+.grad-text{background:linear-gradient(135deg,#4f6ef7 0%,#7c3aed 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+/* ── Buttons ───────────────────────────────────────────────────── */
+.btn-primary{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;border-radius:10px;background:linear-gradient(135deg,#4f6ef7,#7c3aed);color:#fff;font-weight:600;font-size:15px;transition:opacity .2s,transform .2s;white-space:nowrap}
+.btn-primary:hover{opacity:.88;transform:translateY(-1px)}
+.btn-ghost{display:inline-flex;align-items:center;gap:8px;padding:13px 28px;border-radius:10px;border:1px solid rgba(255,255,255,.18);color:#e8eaf0;font-weight:600;font-size:15px;transition:background .2s,border-color .2s,transform .2s;white-space:nowrap}
+.btn-ghost:hover{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.3);transform:translateY(-1px)}
+
+/* ── NAV ────────────────────────────────────────────────────────── */
+.site-header{position:fixed;top:0;left:0;right:0;z-index:1000;transition:background .3s,border-color .3s,backdrop-filter .3s}
+.site-header.scrolled{background:rgba(11,14,26,.92);border-bottom:1px solid rgba(255,255,255,.08);backdrop-filter:blur(16px)}
+.nav-wrap{display:flex;align-items:center;gap:24px;height:72px}
+.brand{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.brand-logo{height:36px;object-fit:contain}
+.brand-wordmark{display:flex;align-items:center;gap:8px}
+.brand-mark{background:linear-gradient(135deg,#4f6ef7,#7c3aed);color:#fff;font-weight:800;font-size:14px;padding:4px 8px;border-radius:6px;letter-spacing:.5px}
+.brand-text{font-weight:700;font-size:18px;color:#e8eaf0}
+.main-nav{display:flex;align-items:center;gap:4px;margin-left:auto}
+.nav-item{position:relative}
+.nav-btn{display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;color:#8b93b0;font-size:14px;font-weight:500;transition:color .2s,background .2s}
+.nav-btn:hover,.nav-item:hover .nav-btn{color:#e8eaf0;background:rgba(255,255,255,.06)}
+.mega-menu{display:none;position:absolute;top:calc(100% + 12px);left:50%;transform:translateX(-50%);background:#0f1220;border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:16px;min-width:560px;box-shadow:0 24px 64px rgba(0,0,0,.5)}
+.mega-menu.narrow{min-width:380px}
+.nav-item:hover .mega-menu{display:block;animation:fadeDown .18s ease}
+@keyframes fadeDown{from{opacity:0;transform:translateX(-50%) translateY(-6px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+.mega-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.mega-menu.narrow .mega-grid{grid-template-columns:1fr 1fr}
+.mega-card{display:flex;flex-direction:column;gap:4px;padding:12px;border-radius:10px;transition:background .2s}
+.mega-card:hover{background:rgba(255,255,255,.06)}
+.mega-icon{display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:8px;margin-bottom:6px}
+.mega-card strong{font-size:13px;font-weight:600;color:#e8eaf0}
+.mega-card span{font-size:12px;color:#8b93b0;line-height:1.4}
+.nav-actions{display:flex;align-items:center;gap:12px;margin-left:16px;flex-shrink:0}
+.nav-login{padding:8px 16px;border-radius:8px;color:#8b93b0;font-size:14px;font-weight:500;transition:color .2s}
+.nav-login:hover{color:#e8eaf0}
+.btn-cta{padding:9px 20px;border-radius:8px;background:linear-gradient(135deg,#4f6ef7,#7c3aed);color:#fff;font-size:14px;font-weight:600;transition:opacity .2s,transform .2s}
+.btn-cta:hover{opacity:.85;transform:translateY(-1px)}
+.mob-toggle{display:none;flex-direction:column;gap:5px;padding:8px;border-radius:8px;transition:background .2s}
+.mob-toggle:hover{background:rgba(255,255,255,.08)}
+.mob-toggle span{display:block;width:22px;height:2px;background:#e8eaf0;border-radius:2px;transition:transform .3s,opacity .3s}
+.mob-toggle.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.mob-toggle.open span:nth-child(2){opacity:0}
+.mob-toggle.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+.mob-drawer{display:none;flex-direction:column;gap:4px;padding:16px 24px 24px;background:#0f1220;border-top:1px solid rgba(255,255,255,.08)}
+.mob-drawer a{padding:12px 8px;color:#8b93b0;font-size:15px;font-weight:500;border-bottom:1px solid rgba(255,255,255,.05);transition:color .2s}
+.mob-drawer a:hover{color:#e8eaf0}
+.mob-actions{display:flex;flex-direction:column;gap:10px;margin-top:16px}
+.mob-actions a{padding:12px;border-radius:8px;text-align:center;font-weight:600;font-size:15px}
+.mob-actions a:first-child{border:1px solid rgba(255,255,255,.15);color:#e8eaf0}
+.mob-actions a.btn-cta{border:none}
+
+/* ── HERO ───────────────────────────────────────────────────────── */
+.contact-hero{position:relative;min-height:560px;display:flex;align-items:center;justify-content:center;background:#080f1e;overflow:hidden;padding:120px 24px 80px}
+.hero-glow{position:absolute;width:700px;height:700px;border-radius:50%;background:radial-gradient(ellipse,rgba(79,110,247,.18) 0%,transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none}
+.hero-nodes{position:absolute;inset:0;pointer-events:none}
+.node{position:absolute;width:10px;height:10px;border-radius:50%}
+.node::after{content:'';position:absolute;inset:-4px;border-radius:50%;opacity:.35;animation:nodePulse 3s ease-in-out infinite}
+.node-1{top:18%;left:12%;background:#4f6ef7}.node-1::after{background:#4f6ef7;animation-delay:0s}
+.node-2{top:35%;left:7%;background:#4f6ef7}.node-2::after{background:#4f6ef7;animation-delay:.6s}
+.node-3{top:60%;left:18%;background:#f59e0b}.node-3::after{background:#f59e0b;animation-delay:1.2s}
+.node-4{top:22%;right:14%;background:#4f6ef7}.node-4::after{background:#4f6ef7;animation-delay:.3s}
+.node-5{top:50%;right:8%;background:#7c3aed}.node-5::after{background:#7c3aed;animation-delay:.9s}
+.node-6{top:70%;right:22%;background:#f59e0b}.node-6::after{background:#f59e0b;animation-delay:1.5s}
+.node-7{top:78%;left:45%;background:#4f6ef7}.node-7::after{background:#4f6ef7;animation-delay:.4s}
+@keyframes nodePulse{0%,100%{transform:scale(1);opacity:.35}50%{transform:scale(2.2);opacity:.1}}
+.hero-lines{position:absolute;inset:0;pointer-events:none}
+.hero-inner-content{position:relative;z-index:2;text-align:center;max-width:680px}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;padding:7px 16px;border-radius:100px;background:rgba(79,110,247,.1);border:1px solid rgba(79,110,247,.25);font-size:13px;font-weight:500;color:#4f6ef7;margin-bottom:28px;letter-spacing:.3px}
+.hero-eyebrow .dot{width:7px;height:7px;border-radius:50%;background:#4f6ef7;animation:nodePulse 2s ease-in-out infinite}
+.contact-hero h1{font-size:clamp(40px,6vw,68px);font-weight:800;line-height:1.08;letter-spacing:-1.5px;margin-bottom:20px}
+.contact-hero .hero-sub{font-size:17px;color:#8b93b0;max-width:540px;margin:0 auto 36px;line-height:1.65}
+.hero-btns{display:flex;align-items:center;gap:14px;justify-content:center;flex-wrap:wrap}
+.ha{opacity:0;transform:translateY(28px)}
+.ha.visible{opacity:1;transform:translateY(0);transition:opacity .65s ease,transform .65s ease}
+.ha-1.visible{transition-delay:.0s}
+.ha-2.visible{transition-delay:.12s}
+.ha-3.visible{transition-delay:.24s}
+.ha-4.visible{transition-delay:.36s}
+
+/* ── SECTION COMMON ─────────────────────────────────────────────── */
+.section{padding:96px 0}
+.section-label{font-size:12px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:#4f6ef7;margin-bottom:14px}
+.section-h2{font-size:clamp(28px,4vw,44px);font-weight:800;letter-spacing:-1px;line-height:1.12;margin-bottom:16px}
+.section-sub{font-size:16px;color:#8b93b0;max-width:560px;line-height:1.65}
+[data-reveal]{opacity:0;transform:translateY(30px);transition:opacity .7s ease,transform .7s ease}
+[data-reveal].revealed{opacity:1;transform:translateY(0)}
+
+/* ── CONTACT METHODS ────────────────────────────────────────────── */
+.methods-section{background:#0b0e1a}
+.methods-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:56px}
+.method-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:36px 30px;display:flex;flex-direction:column;transition:border-color .25s,transform .25s,background .25s}
+.method-card:hover{border-color:rgba(79,110,247,.35);transform:translateY(-4px);background:rgba(79,110,247,.04)}
+.method-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;margin-bottom:22px;flex-shrink:0}
+.method-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:100px;font-size:11px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;margin-bottom:14px;width:fit-content}
+.badge-green{background:rgba(34,197,94,.1);color:#22c55e;border:1px solid rgba(34,197,94,.2)}
+.badge-blue{background:rgba(79,110,247,.1);color:#4f6ef7;border:1px solid rgba(79,110,247,.2)}
+.badge-purple{background:rgba(124,58,237,.1);color:#7c3aed;border:1px solid rgba(124,58,237,.2)}
+.method-card h3{font-size:20px;font-weight:700;margin-bottom:12px;letter-spacing:-.3px}
+.method-card p{font-size:14px;color:#8b93b0;line-height:1.65;flex:1;margin-bottom:28px}
+.method-email-link{display:block;color:#4f6ef7;font-size:14px;font-weight:500;margin-bottom:28px;word-break:break-all;flex:1}
+.method-email-link:hover{text-decoration:underline}
+.method-btn{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:9px;font-weight:600;font-size:14px;transition:opacity .2s,transform .2s;align-self:flex-start;margin-top:auto}
+.method-btn-blue{background:linear-gradient(135deg,#4f6ef7,#7c3aed);color:#fff}
+.method-btn-blue:hover{opacity:.85;transform:translateY(-1px)}
+.method-btn-outline{border:1px solid rgba(255,255,255,.15);color:#e8eaf0}
+.method-btn-outline:hover{background:rgba(255,255,255,.07);transform:translateY(-1px)}
+
+/* ── CONTACT FORM ───────────────────────────────────────────────── */
+.form-section{background:#0f1220;padding:96px 0}
+.form-wrap{max-width:640px;margin:0 auto}
+.form-heading{font-size:clamp(26px,3.5vw,38px);font-weight:800;letter-spacing:-.8px;margin-bottom:8px}
+.form-sub{font-size:15px;color:#8b93b0;margin-bottom:40px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.form-group{display:flex;flex-direction:column;gap:8px;margin-bottom:20px}
+.form-group label{font-size:13px;font-weight:600;color:#8b93b0;letter-spacing:.3px}
+.form-group input,
+.form-group select,
+.form-group textarea{width:100%;padding:14px 16px;border-radius:10px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:#e8eaf0;font-family:'Space Grotesk',sans-serif;font-size:15px;outline:none;transition:border-color .2s,background .2s;-webkit-appearance:none;appearance:none}
+.form-group input::placeholder,
+.form-group textarea::placeholder{color:#4a5068}
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus{border-color:#4f6ef7;background:rgba(79,110,247,.05)}
+.form-group select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238b93b0' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;background-size:16px;padding-right:44px;cursor:pointer}
+.form-group select option{background:#0f1220;color:#e8eaf0}
+.form-group textarea{resize:vertical;min-height:140px;line-height:1.6}
+.form-submit{width:100%;padding:16px;border-radius:10px;background:linear-gradient(135deg,#4f6ef7,#7c3aed);color:#fff;font-weight:700;font-size:16px;cursor:pointer;transition:opacity .2s,transform .2s;border:none;font-family:'Space Grotesk',sans-serif;margin-top:4px}
+.form-submit:hover{opacity:.87;transform:translateY(-1px)}
+.form-submit:disabled{opacity:.55;cursor:not-allowed;transform:none}
+.form-success{display:none;text-align:center;padding:40px 32px;border-radius:14px;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2)}
+.success-icon{width:56px;height:56px;border-radius:50%;background:rgba(34,197,94,.15);display:flex;align-items:center;justify-content:center;margin:0 auto 18px;color:#22c55e}
+.form-success h4{font-size:20px;font-weight:700;color:#22c55e;margin-bottom:8px}
+.form-success p{font-size:14px;color:#8b93b0}
+
+/* ── FAQ ─────────────────────────────────────────────────────────── */
+.faq-section{background:#0b0e1a;padding:96px 0}
+.faq-wrap{max-width:720px;margin:0 auto}
+.faq-list{margin-top:48px;display:flex;flex-direction:column;gap:12px}
+.faq-item{border:1px solid rgba(255,255,255,.08);border-radius:14px;overflow:hidden;background:rgba(255,255,255,.03);transition:border-color .25s}
+.faq-item.open{border-color:rgba(79,110,247,.3)}
+.faq-q{width:100%;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:22px 24px;text-align:left;background:none;border:none;cursor:pointer;color:#e8eaf0;font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600;line-height:1.4;transition:color .2s}
+.faq-q:hover{color:#4f6ef7}
+.faq-item.open .faq-q{color:#4f6ef7}
+.faq-chevron{flex-shrink:0;width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;transition:background .2s,transform .35s}
+.faq-item.open .faq-chevron{background:rgba(79,110,247,.15);transform:rotate(180deg)}
+.faq-chevron svg{color:#8b93b0;display:block}
+.faq-item.open .faq-chevron svg{color:#4f6ef7}
+.faq-body{max-height:0;overflow:hidden;transition:max-height .38s ease}
+.faq-item.open .faq-body{max-height:300px}
+.faq-a{padding:0 24px 22px;font-size:14px;color:#8b93b0;line-height:1.72}
+.faq-a a{color:#4f6ef7}
+.faq-a a:hover{text-decoration:underline}
+
+/* ── CTA ─────────────────────────────────────────────────────────── */
+.cta-section{padding:96px 0;background:linear-gradient(135deg,rgba(79,110,247,.1) 0%,rgba(124,58,237,.08) 100%);border-top:1px solid rgba(255,255,255,.06)}
+.cta-inner{text-align:center;max-width:600px;margin:0 auto}
+.cta-inner h2{font-size:clamp(28px,4vw,44px);font-weight:800;letter-spacing:-1px;margin-bottom:14px}
+.cta-inner p{font-size:16px;color:#8b93b0;margin-bottom:36px;line-height:1.65}
+.cta-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+
+/* ── FOOTER ─────────────────────────────────────────────────────── */
+.site-footer{background:#080c16;border-top:1px solid rgba(255,255,255,.07);padding-top:64px}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;padding-bottom:48px;border-bottom:1px solid rgba(255,255,255,.06)}
+.footer-brand-col{display:flex;flex-direction:column}
+.footer-brand{margin-bottom:14px;display:flex;align-items:center}
+.footer-desc{font-size:13px;color:#8b93b0;line-height:1.7;margin-bottom:14px}
+.footer-contact a{font-size:13px;color:#4f6ef7;transition:opacity .2s}
+.footer-contact a:hover{opacity:.75}
+.footer-col{display:flex;flex-direction:column}
+.footer-col h5{font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#e8eaf0;margin-bottom:18px}
+.footer-col a{display:block;font-size:13px;color:#8b93b0;padding:4px 0;transition:color .2s}
+.footer-col a:hover{color:#e8eaf0}
+.footer-legal{padding:24px 0 40px}
+.footer-legal p{font-size:11.5px;color:#4a5068;line-height:1.7;margin-bottom:18px}
+.footer-bottom{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;font-size:12px;color:#4a5068}
+
+/* ── RESPONSIVE ─────────────────────────────────────────────────── */
+@media(max-width:960px){
+  .main-nav,.nav-actions{display:none}
+  .mob-toggle{display:flex}
+  .methods-grid{grid-template-columns:1fr}
+  .form-row{grid-template-columns:1fr}
+  .footer-grid{grid-template-columns:1fr 1fr;gap:32px}
+  .footer-brand-col{grid-column:1 / -1}
+}
+@media(max-width:640px){
+  .contact-hero{min-height:480px;padding:100px 16px 64px}
+  .hero-btns{flex-direction:column;align-items:stretch}
+  .hero-btns a{justify-content:center}
+  .footer-grid{grid-template-columns:1fr}
+  .footer-bottom{flex-direction:column;text-align:center}
+  .cta-btns{flex-direction:column;align-items:center}
+  .cta-btns a{width:100%;max-width:320px;justify-content:center}
+  .section,.form-section,.faq-section,.cta-section{padding:64px 0}
+}
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ───────────────────────────────────────────────────── -->
+<header class="site-header" id="site-header">
+  <div class="container nav-wrap">
+    <a class="brand" href="index.html">
+      <img src="assets/logo.png" alt="AtrontifyX" class="brand-logo" onerror="this.style.display='none';document.querySelector('.brand-wordmark').style.display='flex'">
+      <span class="brand-wordmark" style="display:none"><span class="brand-mark">ATX</span><span class="brand-text">AtrontifyX</span></span>
+    </a>
+    <nav class="main-nav">
+      <div class="nav-item has-mega">
+        <button class="nav-btn">Markets <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></button>
+        <div class="mega-menu"><div class="mega-grid">
+          <a href="markets.html" class="mega-card"><span class="mega-icon" style="background:rgba(79,110,247,.12);color:#4f6ef7"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></span><strong>Forex</strong><span>70+ major, minor & exotic pairs</span></a>
+          <a href="markets.html" class="mega-card"><span class="mega-icon" style="background:rgba(245,158,11,.12);color:#f59e0b"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/></svg></span><strong>Indices</strong><span>SPX500, DAX40, NASDAQ & more</span></a>
+          <a href="markets.html" class="mega-card"><span class="mega-icon" style="background:rgba(251,191,36,.12);color:#fbbf24"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg></span><strong>Metals</strong><span>Gold, silver & precious metals</span></a>
+          <a href="markets.html" class="mega-card"><span class="mega-icon" style="background:rgba(239,68,68,.12);color:#ef4444"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/></svg></span><strong>Energy</strong><span>Crude oil, Brent & natural gas</span></a>
+          <a href="markets.html" class="mega-card"><span class="mega-icon" style="background:rgba(34,197,94,.12);color:#22c55e"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></span><strong>Shares</strong><span>AAPL, TSLA, NVDA & 50+ CFDs</span></a>
+          <a href="markets.html" class="mega-card"><span class="mega-icon" style="background:rgba(139,92,246,.12);color:#8b5cf6"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M9 8h6M12 5v6M8.5 14.5L6 20h12l-2.5-5.5"/></svg></span><strong>Crypto</strong><span>BTC, ETH, SOL & 30+ pairs vs USDT</span></a>
+        </div></div>
+      </div>
+      <div class="nav-item has-mega">
+        <button class="nav-btn">Platform <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></button>
+        <div class="mega-menu narrow"><div class="mega-grid">
+          <a href="platforms.html" class="mega-card"><span class="mega-icon" style="background:rgba(79,110,247,.12);color:#4f6ef7"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></span><strong>Web Platform</strong><span>Trade from any browser, instantly</span></a>
+          <a href="dashboard.html" class="mega-card"><span class="mega-icon" style="background:rgba(34,197,94,.12);color:#22c55e"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M9 22v-4h6v4M8 6h.01M12 6h.01M16 6h.01M8 10h.01M12 10h.01M16 10h.01"/></svg></span><strong>Mobile App</strong><span>Monitor positions from anywhere</span></a>
+          <a href="dashboard.html" class="mega-card"><span class="mega-icon" style="background:rgba(245,158,11,.12);color:#f59e0b"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg></span><strong>Client Dashboard</strong><span>Manage your account & portfolio</span></a>
+        </div></div>
+      </div>
+      <div class="nav-item has-mega">
+        <button class="nav-btn">Company <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></button>
+        <div class="mega-menu narrow"><div class="mega-grid">
+          <a href="about.html" class="mega-card"><span class="mega-icon" style="background:rgba(79,110,247,.12);color:#4f6ef7"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span><strong>About</strong><span>Our story, mission & values</span></a>
+          <a href="privacy.html" class="mega-card"><span class="mega-icon" style="background:rgba(139,92,246,.12);color:#8b5cf6"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span><strong>Privacy Policy</strong><span>How we protect your data</span></a>
+          <a href="contact.html" class="mega-card"><span class="mega-icon" style="background:rgba(34,197,94,.12);color:#22c55e"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span><strong>Contact Us</strong><span>Reach our support team</span></a>
+        </div></div>
+      </div>
+    </nav>
+    <div class="nav-actions"><a class="nav-login" href="login.html">Log in</a><a class="btn-cta" href="signup.html">Open Account</a></div>
+    <button class="mob-toggle" id="mobToggle" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+  <div class="mob-drawer" id="mobDrawer">
+    <a href="markets.html">Markets</a><a href="platforms.html">Platform</a><a href="about.html">About</a><a href="contact.html">Contact Us</a><a href="privacy.html">Privacy Policy</a>
+    <div class="mob-actions"><a href="login.html">Log in</a><a href="signup.html" class="btn-cta">Open Account</a></div>
+  </div>
+</header>
+
+<!-- ── HERO ──────────────────────────────────────────────────────── -->
+<section class="contact-hero" id="hero">
+  <div class="hero-glow"></div>
+
+  <div class="hero-nodes">
+    <div class="node node-1"></div>
+    <div class="node node-2"></div>
+    <div class="node node-3"></div>
+    <div class="node node-4"></div>
+    <div class="node node-5"></div>
+    <div class="node node-6"></div>
+    <div class="node node-7"></div>
+  </div>
+
+  <svg class="hero-lines" viewBox="0 0 1440 560" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+    <line x1="173" y1="101" x2="101" y2="196" stroke="rgba(79,110,247,.18)" stroke-width="1"/>
+    <line x1="101" y1="196" x2="259" y2="336" stroke="rgba(79,110,247,.12)" stroke-width="1"/>
+    <line x1="259" y1="336" x2="648" y2="437" stroke="rgba(245,158,11,.1)" stroke-width="1"/>
+    <line x1="1267" y1="123" x2="1325" y2="280" stroke="rgba(79,110,247,.18)" stroke-width="1"/>
+    <line x1="1325" y1="280" x2="1181" y2="392" stroke="rgba(124,58,237,.12)" stroke-width="1"/>
+    <line x1="173" y1="101" x2="1267" y2="123" stroke="rgba(79,110,247,.07)" stroke-width="1" stroke-dasharray="5 8"/>
+    <line x1="648" y1="437" x2="1181" y2="392" stroke="rgba(79,110,247,.07)" stroke-width="1" stroke-dasharray="5 8"/>
+    <line x1="259" y1="336" x2="1325" y2="280" stroke="rgba(124,58,237,.05)" stroke-width="1" stroke-dasharray="3 10"/>
+  </svg>
+
+  <div class="hero-inner-content">
+    <div class="hero-eyebrow ha ha-1">
+      <span class="dot"></span>
+      Get In Touch
+    </div>
+    <h1 class="ha ha-2">We're Here to <span class="grad-text">Help</span></h1>
+    <p class="hero-sub ha ha-3">Our support team is available 24/7 to assist with any questions about your account, trading, or the platform.</p>
+    <div class="hero-btns ha ha-4">
+      <a href="#" class="btn-primary">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Start Live Chat
+      </a>
+      <a href="mailto:help.astrontifyxglobal@gmail.com" class="btn-ghost">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg>
+        Send Email
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ── CONTACT METHODS ────────────────────────────────────────────── -->
+<section class="section methods-section" id="methods">
+  <div class="container">
+    <div class="section-label" data-reveal>How to reach us</div>
+    <h2 class="section-h2" data-reveal>Choose Your <span class="grad-text">Channel</span></h2>
+    <p class="section-sub" data-reveal>Multiple ways to get the help you need — fast.</p>
+
+    <div class="methods-grid">
+
+      <!-- Live Chat -->
+      <div class="method-card" data-reveal>
+        <div class="method-icon" style="background:rgba(79,110,247,.12);color:#4f6ef7">
+          <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </div>
+        <span class="method-badge badge-green">
+          <svg viewBox="0 0 8 8" width="7" height="7"><circle cx="4" cy="4" r="4" fill="#22c55e"/></svg>
+          Available 24/7
+        </span>
+        <h3>Live Chat</h3>
+        <p>Get instant help from our support team. Live chat is the fastest way to resolve account questions and get trading assistance.</p>
+        <a href="#" class="method-btn method-btn-blue">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Start Chat
+        </a>
+      </div>
+
+      <!-- Email Support -->
+      <div class="method-card" data-reveal data-delay="100">
+        <div class="method-icon" style="background:rgba(34,197,94,.12);color:#22c55e">
+          <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg>
+        </div>
+        <span class="method-badge badge-blue">Response within 4 hours</span>
+        <h3>Email Support</h3>
+        <p>Send a detailed message to our support team and we'll get back to you with a comprehensive response.</p>
+        <a href="mailto:help.astrontifyxglobal@gmail.com" class="method-email-link">help.astrontifyxglobal@gmail.com</a>
+        <a href="mailto:help.astrontifyxglobal@gmail.com" class="method-btn method-btn-blue">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg>
+          Send Email
+        </a>
+      </div>
+
+      <!-- Account Help -->
+      <div class="method-card" data-reveal data-delay="200">
+        <div class="method-icon" style="background:rgba(124,58,237,.12);color:#7c3aed">
+          <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/></svg>
+        </div>
+        <span class="method-badge badge-purple">Dedicated support</span>
+        <h3>Account Help</h3>
+        <p>Premium and Platinum account holders have access to dedicated account managers for personalised trading support.</p>
+        <a href="signup.html" class="method-btn method-btn-outline">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          Open Account
+        </a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── CONTACT FORM ───────────────────────────────────────────────── -->
+<section class="form-section" id="contact-form">
+  <div class="container">
+    <div class="form-wrap" data-reveal>
+      <div class="section-label">Direct message</div>
+      <h2 class="form-heading">Send Us a <span class="grad-text">Message</span></h2>
+      <p class="form-sub">Fill in the form below and we'll get back to you within 4 hours.</p>
+
+      <form id="contactForm" novalidate>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="fullName">Full Name</label>
+            <input type="text" id="fullName" name="fullName" placeholder="John Smith" required/>
+          </div>
+          <div class="form-group">
+            <label for="emailAddr">Email Address</label>
+            <input type="email" id="emailAddr" name="emailAddr" placeholder="you@example.com" required/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="subject">Subject</label>
+          <select id="subject" name="subject" required>
+            <option value="" disabled selected>Select a topic&hellip;</option>
+            <option value="general">General Enquiry</option>
+            <option value="account">Account Help</option>
+            <option value="deposit">Deposit &amp; Withdrawal</option>
+            <option value="technical">Technical Issue</option>
+            <option value="upgrade">Upgrade Account</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="message">Message</label>
+          <textarea id="message" name="message" placeholder="Tell us how we can help&hellip;" required></textarea>
+        </div>
+        <button type="submit" class="form-submit" id="formSubmit">Send Message</button>
+      </form>
+
+      <div class="form-success" id="formSuccess">
+        <div class="success-icon">
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <h4>Message sent!</h4>
+        <p>We'll get back to you within 4 hours. Check your inbox for a confirmation.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FAQ ───────────────────────────────────────────────────────── -->
+<section class="faq-section" id="faq">
+  <div class="container">
+    <div class="faq-wrap">
+      <div class="section-label" data-reveal>FAQs</div>
+      <h2 class="section-h2" data-reveal>Frequently Asked <span class="grad-text">Questions</span></h2>
+
+      <div class="faq-list" data-reveal>
+
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">
+            How do I open a live trading account?
+            <span class="faq-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></span>
+          </button>
+          <div class="faq-body">
+            <p class="faq-a">Complete the registration form at our signup page, verify your identity with a government-issued ID, fund your account with the minimum deposit, and you're ready to trade within minutes.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">
+            How long does withdrawal processing take?
+            <span class="faq-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></span>
+          </button>
+          <div class="faq-body">
+            <p class="faq-a">Withdrawals are typically processed within 1&ndash;3 business days depending on your payment method. Bank transfers may take up to 5 business days.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">
+            What is the minimum deposit?
+            <span class="faq-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></span>
+          </button>
+          <div class="faq-body">
+            <p class="faq-a">The minimum deposit for a Basic account is $250. Gold accounts require $5,000 and Platinum accounts $25,000. All deposits are processed instantly via supported payment methods.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">
+            Is my money safe with AtrontifyX?
+            <span class="faq-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></span>
+          </button>
+          <div class="faq-body">
+            <p class="faq-a">All client funds are held in segregated accounts at tier-1 banking institutions, completely separate from company operating capital. Your funds are never used for company operations.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">
+            How do I upgrade my account tier?
+            <span class="faq-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></span>
+          </button>
+          <div class="faq-body">
+            <p class="faq-a">You can upgrade your account at any time by visiting the account upgrade page in your dashboard, or by contacting our support team directly at <a href="mailto:help.astrontifyxglobal@gmail.com">help.astrontifyxglobal@gmail.com</a>.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA ───────────────────────────────────────────────────────── -->
+<section class="cta-section">
+  <div class="container">
+    <div class="cta-inner" data-reveal>
+      <div class="section-label" style="margin-bottom:14px">Ready to trade?</div>
+      <h2>Start Trading <span class="grad-text">Today</span></h2>
+      <p>Open your account in minutes and access 1,000+ instruments across forex, indices, crypto, and more.</p>
+      <div class="cta-btns">
+        <a href="signup.html" class="btn-primary">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          Open Account
+        </a>
+        <a href="#contact-form" class="btn-ghost">Contact Support</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ────────────────────────────────────────────────────── -->
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div class="footer-brand-col">
+      <a class="footer-brand" href="index.html">
+        <img src="assets/logo.png" alt="AtrontifyX" style="height:38px;object-fit:contain" onerror="this.style.display='none';document.querySelector('.fb-text').style.display='block'">
+        <span class="fb-text" style="display:none;font-size:20px;font-weight:800">AtrontifyX</span>
+      </a>
+      <p class="footer-desc">A professional multi-asset trading platform designed for modern traders worldwide.</p>
+      <div class="footer-contact">
+        <a href="mailto:help.astrontifyxglobal@gmail.com">help.astrontifyxglobal@gmail.com</a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h5>Markets</h5>
+      <a href="markets.html">Forex</a>
+      <a href="markets.html">Indices</a>
+      <a href="markets.html">Crypto</a>
+      <a href="markets.html">Gold &amp; Silver</a>
+      <a href="markets.html">Energy</a>
+      <a href="markets.html">Shares</a>
+    </div>
+    <div class="footer-col">
+      <h5>Platform</h5>
+      <a href="trade-terminal.html">Trade Terminal</a>
+      <a href="dashboard.html">Client Dashboard</a>
+      <a href="deposit.html">Deposit Funds</a>
+      <a href="withdrawal.html">Withdraw Funds</a>
+      <a href="account-upgrade.html">Account Upgrade</a>
+    </div>
+    <div class="footer-col">
+      <h5>Company</h5>
+      <a href="about.html">About Us</a>
+      <a href="contact.html">Contact Us</a>
+      <a href="login.html">Client Login</a>
+      <a href="signup.html">Open Account</a>
+    </div>
+  </div>
+  <div class="container footer-legal">
+    <p><strong>Risk Warning:</strong> CFDs are complex instruments and come with a high risk of losing money rapidly due to leverage. A significant proportion of retail investor accounts lose money when trading CFDs. You should consider whether you understand how CFDs work and whether you can afford to take the high risk of losing your money.</p>
+    <div class="footer-bottom">
+      <span>&copy; 2026 AtrontifyX Markets. All rights reserved.</span>
+      <span>Privacy Policy &nbsp;&middot;&nbsp; Terms of Service &nbsp;&middot;&nbsp; Cookie Policy</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ── Nav scroll effect ─────────────────────────────────────────────
+(function () {
+  var hdr = document.getElementById('site-header');
+  function tick() { hdr.classList.toggle('scrolled', window.scrollY > 20); }
+  window.addEventListener('scroll', tick, { passive: true });
+  tick();
+}());
+
+// ── Mobile menu toggle ────────────────────────────────────────────
+(function () {
+  var btn = document.getElementById('mobToggle');
+  var drw = document.getElementById('mobDrawer');
+  var open = false;
+  btn.addEventListener('click', function () {
+    open = !open;
+    btn.classList.toggle('open', open);
+    drw.style.display = open ? 'flex' : 'none';
+  });
+}());
+
+// ── Hero stagger fade-up ──────────────────────────────────────────
+(function () {
+  var els = document.querySelectorAll('.ha');
+  requestAnimationFrame(function () {
+    requestAnimationFrame(function () {
+      els.forEach(function (el) { el.classList.add('visible'); });
+    });
+  });
+}());
+
+// ── Scroll reveal via IntersectionObserver ────────────────────────
+(function () {
+  if (!('IntersectionObserver' in window)) {
+    document.querySelectorAll('[data-reveal]').forEach(function (el) {
+      el.style.opacity = 1; el.style.transform = 'none';
+    });
+    return;
+  }
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (!entry.isIntersecting) return;
+      var delay = parseInt(entry.target.getAttribute('data-delay') || '0', 10);
+      var el = entry.target;
+      setTimeout(function () { el.classList.add('revealed'); }, delay);
+      io.unobserve(el);
+    });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('[data-reveal]').forEach(function (el) { io.observe(el); });
+}());
+
+// ── FAQ accordion ─────────────────────────────────────────────────
+(function () {
+  document.querySelectorAll('.faq-q').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var item = btn.closest('.faq-item');
+      var isOpen = item.classList.contains('open');
+      // collapse all
+      document.querySelectorAll('.faq-item.open').forEach(function (el) {
+        el.classList.remove('open');
+        el.querySelector('.faq-q').setAttribute('aria-expanded', 'false');
+      });
+      // expand clicked if it was closed
+      if (!isOpen) {
+        item.classList.add('open');
+        btn.setAttribute('aria-expanded', 'true');
+      }
+    });
+  });
+}());
+
+// ── Contact form submit ───────────────────────────────────────────
+(function () {
+  var form    = document.getElementById('contactForm');
+  var success = document.getElementById('formSuccess');
+  var submit  = document.getElementById('formSubmit');
+
+  function highlight(el, bad) {
+    el.style.borderColor = bad ? '#ef4444' : '';
+    el.addEventListener('input', function () { el.style.borderColor = ''; }, { once: true });
+  }
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var name    = document.getElementById('fullName');
+    var email   = document.getElementById('emailAddr');
+    var subject = document.getElementById('subject');
+    var message = document.getElementById('message');
+    var valid   = true;
+
+    [name, email, subject, message].forEach(function (f) {
+      if (!f.value.trim() || (f === subject && !f.value)) {
+        highlight(f, true);
+        valid = false;
+      }
+    });
+    if (!valid) return;
+
+    submit.disabled = true;
+    submit.textContent = 'Sending…';
+
+    setTimeout(function () {
+      form.style.display = 'none';
+      success.style.display = 'block';
+    }, 900);
+  });
+}());
+</script>
+</body>
+</html>
