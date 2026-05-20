@@ -3568,36 +3568,33 @@ document.addEventListener('click', function(e){
   (async function(){
     var svcKey  = window.ATRONTIFY_SERVICE_KEY;
     var baseUrl = 'https://guguugokdhiwobmuopro.supabase.co';
-    var svcHdr  = { 'apikey': svcKey, 'Authorization': 'Bearer ' + svcKey, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' };
 
     btn.textContent = 'Deleting…';
     btn.disabled = true;
 
     try {
-      // 1. Try the RPC (works once the function exists on the project)
-      var rf = window._realFetch || fetch;
-      var rpcRes = await rf(baseUrl + '/rest/v1/rpc/ops_delete_user', {
-        method: 'POST', headers: svcHdr, body: JSON.stringify({ target_user_id: uid })
+      // Create a service-role client — bypasses RLS, can call auth.admin.deleteUser
+      var adminClient = window.supabase.createClient(baseUrl, svcKey, {
+        auth: { persistSession: false, autoRefreshToken: false }
       });
 
-      if (!rpcRes.ok) {
-        // 2. Fallback: direct REST deletes with service role key
-        var appTables = [
-          'deposit_requests','withdrawal_requests','transactions','positions',
-          'trades','kyc_submissions','notifications','trading_accounts',
-          'profit_target_trades','profit_targets','banned_users'
-        ];
-        for (var t of appTables) {
-          await rf(baseUrl + '/rest/v1/' + t + '?user_id=eq.' + uid, { method: 'DELETE', headers: svcHdr });
-        }
-        await rf(baseUrl + '/rest/v1/audit_log?target_user_id=eq.' + uid,    { method: 'DELETE', headers: svcHdr });
-        await rf(baseUrl + '/rest/v1/admin_sent_emails?recipient_user_id=eq.' + uid, { method: 'DELETE', headers: svcHdr });
-        await rf(baseUrl + '/rest/v1/profiles?id=eq.' + uid,                  { method: 'DELETE', headers: svcHdr });
-        // Hard-delete the auth user
-        await rf(baseUrl + '/auth/v1/admin/users/' + uid, {
-          method: 'DELETE', headers: { 'apikey': svcKey, 'Authorization': 'Bearer ' + svcKey }
-        });
+      // Delete all app data first
+      var appTables = [
+        'deposit_requests','withdrawal_requests','transactions','positions',
+        'trades','kyc_submissions','notifications','trading_accounts',
+        'profit_target_trades','profit_targets','banned_users'
+      ];
+      for (var t of appTables) {
+        var r = await adminClient.from(t).delete().eq('user_id', uid);
+        if (r.error) console.warn('Delete ' + t + ':', r.error.message);
       }
+      await adminClient.from('audit_log').delete().eq('target_user_id', uid);
+      await adminClient.from('admin_sent_emails').delete().eq('recipient_user_id', uid);
+      await adminClient.from('profiles').delete().eq('id', uid);
+
+      // Hard-delete the auth user (requires service role)
+      var authDel = await adminClient.auth.admin.deleteUser(uid);
+      if (authDel.error) throw new Error('Auth delete failed: ' + authDel.error.message);
 
       // Update local state
       if (window.USERS) window.USERS = window.USERS.filter(function(u){ return String(u.id) !== String(uid); });
