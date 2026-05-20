@@ -1520,37 +1520,37 @@
         Changing plan for <strong id="upgrade-user-name" style="color:var(--text);"></strong>
       </p>
       <div style="display:flex;flex-direction:column;gap:10px;" id="plan-option-list">
-        <label class="plan-option" data-plan="Standard">
-          <input type="radio" name="plan-select" value="Standard">
+        <label class="plan-option" data-plan="basic">
+          <input type="radio" name="plan-select" value="basic">
           <div class="plan-option__content">
-            <span class="plan-option__name">Standard</span>
-            <span class="plan-option__desc">Default tier — no upgrade fee</span>
+            <span class="plan-option__name">Basic</span>
+            <span class="plan-option__desc">Free — up to $10,000 balance · 1:100 leverage · Standard spreads</span>
           </div>
-          <span class="badge-pill pill-blue">Standard</span>
+          <span class="badge-pill pill-grey">BASIC</span>
         </label>
-        <label class="plan-option" data-plan="RAW+">
-          <input type="radio" name="plan-select" value="RAW+">
+        <label class="plan-option" data-plan="silver">
+          <input type="radio" name="plan-select" value="silver">
           <div class="plan-option__content">
-            <span class="plan-option__name">RAW+</span>
-            <span class="plan-option__desc">Balance limit $50,000 — $500 fee</span>
+            <span class="plan-option__name">Silver</span>
+            <span class="plan-option__desc">Up to $50,000 balance · 1:200 leverage · Spreads from 1.5 pips</span>
           </div>
-          <span class="badge-pill pill-blue">RAW+</span>
+          <span class="badge-pill" style="background:rgba(192,200,220,.18);color:#a8b8cc;">SILVER</span>
         </label>
-        <label class="plan-option" data-plan="ELITE">
-          <input type="radio" name="plan-select" value="ELITE">
+        <label class="plan-option" data-plan="gold">
+          <input type="radio" name="plan-select" value="gold">
           <div class="plan-option__content">
-            <span class="plan-option__name">ELITE</span>
-            <span class="plan-option__desc">Balance limit $100,000 — $1,000 fee</span>
+            <span class="plan-option__name">Gold <span style="font-size:10px;font-weight:500;color:var(--orange);margin-left:4px;">MOST POPULAR</span></span>
+            <span class="plan-option__desc">Up to $100,000 balance · 1:500 leverage · Elite spreads from 0.5 pips</span>
           </div>
-          <span class="badge-pill pill-purple">ELITE</span>
+          <span class="badge-pill pill-orange">GOLD</span>
         </label>
-        <label class="plan-option" data-plan="MASTER">
-          <input type="radio" name="plan-select" value="MASTER">
+        <label class="plan-option" data-plan="platinum">
+          <input type="radio" name="plan-select" value="platinum">
           <div class="plan-option__content">
-            <span class="plan-option__name">MASTER</span>
-            <span class="plan-option__desc">Balance limit $1,000,000 — $5,000 fee</span>
+            <span class="plan-option__name">Platinum</span>
+            <span class="plan-option__desc">Unlimited balance · 1:1000 leverage · Raw spreads from 0.0 pips</span>
           </div>
-          <span class="badge-pill pill-orange">MASTER</span>
+          <span class="badge-pill pill-purple">PLATINUM</span>
         </label>
       </div>
       <input type="hidden" id="upgrade-user-id">
@@ -1935,7 +1935,7 @@ function renderUsers() {
       <td>
         <div class="row-actions">
           <button class="btn btn--sm btn--outline" onclick="resetUserPassword('${escapeHTML(user.email || '')}')">Reset</button>
-          <button class="btn btn--sm btn--outline" onclick="openUpgradePlanModal('${escapeHTML(user.id || '')}','${escapeHTML(user.name || '')}')">Plan</button>
+          <button class="btn btn--sm btn--outline" onclick="openUpgradePlanModal('${escapeHTML(user.id || '')}','${escapeHTML(user.name || '')}','${escapeHTML(user.plan || '')}')">Plan</button>
           <button type="button" class="btn btn--sm btn--red" data-delete-user="${escapeHTML(user.id || '')}" data-name="${escapeHTML(user.name || '')}" data-email="${escapeHTML(user.email || '')}">Delete</button>
         </div>
       </td>
@@ -2147,6 +2147,7 @@ async function _loadUsers() {
       joined:  new Date(u.created_at).toLocaleDateString('en-GB'),
       status:  p.status || 'active',
       kyc:     p.kyc_status || 'pending',
+      plan:    p.plan || 'basic',
       color:   COLORS[i % COLORS.length],
     };
   });
@@ -3714,11 +3715,13 @@ function fmtMoney(value) {
 /* ============================================================
    PLAN UPGRADE
 ============================================================ */
-window.openUpgradePlanModal = function(userId, userName) {
+window.openUpgradePlanModal = function(userId, userName, currentPlan) {
   document.getElementById('upgrade-user-id').value = userId || '';
   document.getElementById('upgrade-user-name').textContent = userName || 'User';
   const radios = document.querySelectorAll('input[name=plan-select]');
-  radios.forEach(r => r.checked = false);
+  radios.forEach(r => {
+    r.checked = currentPlan && r.value === currentPlan.toLowerCase();
+  });
   openModal('modal-upgrade-plan');
 };
 
