@@ -67,6 +67,17 @@ img{display:block;max-width:100%}
 .mob-drawer{display:none;flex-direction:column;gap:4px;padding:16px 24px 24px;background:#0f1220;border-top:1px solid rgba(255,255,255,.08)}
 .mob-drawer a{padding:12px 8px;color:#8b93b0;font-size:15px;font-weight:500;border-bottom:1px solid rgba(255,255,255,.05);transition:color .2s}
 .mob-drawer a:hover{color:#e8eaf0}
+.mob-section{border-bottom:1px solid rgba(255,255,255,.05)}
+.mob-acc-btn{display:flex;align-items:center;justify-content:space-between;width:100%;padding:14px 0;font-size:15px;font-weight:500;color:#8b93b0;background:none;border:none;cursor:pointer;transition:color .2s;font-family:inherit}
+.mob-acc-btn:hover,.mob-acc-btn.open{color:#e8eaf0}
+.mob-acc-btn svg{transition:transform .25s cubic-bezier(.22,1,.36,1);flex-shrink:0}
+.mob-acc-btn.open svg{transform:rotate(180deg)}
+.mob-acc-sub{display:none;flex-direction:column;padding:4px 0 12px 14px}
+.mob-acc-sub.open{display:flex}
+.mob-acc-sub a{display:flex;align-items:center;gap:10px;padding:9px 0;font-size:14px;color:#8b93b0;border-bottom:1px solid rgba(255,255,255,.04);transition:color .2s}
+.mob-acc-sub a:last-child{border-bottom:none}
+.mob-acc-sub a:hover{color:#e8eaf0}
+.mob-acc-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;display:inline-block}
 .mob-actions{display:flex;flex-direction:column;gap:10px;margin-top:16px}
 .mob-actions a{padding:12px;border-radius:8px;text-align:center;font-weight:600;font-size:15px}
 .mob-actions a:first-child{border:1px solid rgba(255,255,255,.15);color:#e8eaf0}
@@ -258,9 +269,37 @@ img{display:block;max-width:100%}
     <div class="nav-actions"><a class="nav-login" href="login.html">Log in</a><a class="btn-cta" href="signup.html">Open Account</a></div>
     <button class="mob-toggle" id="mobToggle" aria-label="Menu"><span></span><span></span><span></span></button>
   </div>
-  <div class="mob-drawer" id="mobDrawer">
-    <a href="market-forex.html">Markets</a><a href="platforms.html">Platform</a><a href="about.html">About</a><a href="contact.html">Contact Us</a><a href="privacy.html">Privacy Policy</a>
-    <div class="mob-actions"><a href="login.html">Log in</a><a href="signup.html" class="btn-cta">Open Account</a></div>
+    <div class="mob-drawer" id="mobDrawer">
+    <div class="mob-section">
+      <button class="mob-acc-btn" onclick="toggleMobAcc(this)">Markets <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></button>
+      <div class="mob-acc-sub">
+        <a href="market-forex.html"><span class="mob-acc-dot" style="background:#4f6ef7"></span>Forex</a>
+        <a href="market-indices.html"><span class="mob-acc-dot" style="background:#f59e0b"></span>Indices</a>
+        <a href="market-metals.html"><span class="mob-acc-dot" style="background:#fbbf24"></span>Metals</a>
+        <a href="market-energy.html"><span class="mob-acc-dot" style="background:#ef4444"></span>Energy</a>
+        <a href="market-shares.html"><span class="mob-acc-dot" style="background:#22c55e"></span>Shares</a>
+        <a href="market-crypto.html"><span class="mob-acc-dot" style="background:#8b5cf6"></span>Crypto</a>
+      </div>
+    </div>
+    <div class="mob-section">
+      <button class="mob-acc-btn" onclick="toggleMobAcc(this)">Platform <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></button>
+      <div class="mob-acc-sub">
+        <a href="platforms.html">Web Platform</a>
+        <a href="platform-tradingview.html">TradingView</a>
+      </div>
+    </div>
+    <div class="mob-section">
+      <button class="mob-acc-btn" onclick="toggleMobAcc(this)">Company <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></button>
+      <div class="mob-acc-sub">
+        <a href="about.html">About Us</a>
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="contact.html">Contact Us</a>
+      </div>
+    </div>
+    <div class="mob-actions">
+      <a href="login.html">Log in</a>
+      <a href="signup.html" class="btn-cta">Open Account</a>
+    </div>
   </div>
 </header>
 

@@ -521,9 +521,37 @@ ul{list-style:none}
     <div class="nav-actions"><a class="nav-login" href="login.html">Log in</a><a class="btn-cta" href="signup.html">Open Account</a></div>
     <button class="mob-toggle" id="mobToggle" aria-label="Menu"><span></span><span></span><span></span></button>
   </div>
-  <div class="mob-drawer" id="mobDrawer">
-    <a href="market-forex.html">Markets</a><a href="platforms.html">Platform</a><a href="about.html">About</a><a href="contact.html">Contact Us</a><a href="privacy.html">Privacy Policy</a>
-    <div class="mob-actions"><a href="login.html">Log in</a><a href="signup.html" class="btn-cta">Open Account</a></div>
+    <div class="mob-drawer" id="mobDrawer">
+    <div class="mob-section">
+      <button class="mob-acc-btn" onclick="toggleMobAcc(this)">Markets <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></button>
+      <div class="mob-acc-sub">
+        <a href="market-forex.html"><span class="mob-acc-dot" style="background:#4f6ef7"></span>Forex</a>
+        <a href="market-indices.html"><span class="mob-acc-dot" style="background:#f59e0b"></span>Indices</a>
+        <a href="market-metals.html"><span class="mob-acc-dot" style="background:#fbbf24"></span>Metals</a>
+        <a href="market-energy.html"><span class="mob-acc-dot" style="background:#ef4444"></span>Energy</a>
+        <a href="market-shares.html"><span class="mob-acc-dot" style="background:#22c55e"></span>Shares</a>
+        <a href="market-crypto.html"><span class="mob-acc-dot" style="background:#8b5cf6"></span>Crypto</a>
+      </div>
+    </div>
+    <div class="mob-section">
+      <button class="mob-acc-btn" onclick="toggleMobAcc(this)">Platform <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></button>
+      <div class="mob-acc-sub">
+        <a href="platforms.html">Web Platform</a>
+        <a href="platform-tradingview.html">TradingView</a>
+      </div>
+    </div>
+    <div class="mob-section">
+      <button class="mob-acc-btn" onclick="toggleMobAcc(this)">Company <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></button>
+      <div class="mob-acc-sub">
+        <a href="about.html">About Us</a>
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="contact.html">Contact Us</a>
+      </div>
+    </div>
+    <div class="mob-actions">
+      <a href="login.html">Log in</a>
+      <a href="signup.html" class="btn-cta">Open Account</a>
+    </div>
   </div>
 </header>
 
