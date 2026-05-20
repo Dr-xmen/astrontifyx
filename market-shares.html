@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Shares &amp; Stock CFD Trading — AtrontifyX</title>
+<meta name="description" content="Trade 50+ stock CFDs including Apple, Tesla, NVIDIA and more on AtrontifyX — go long or short with up to 1:20 leverage.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--accent:#22c55e;--accent-rgb:34,197,94}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{font-family:'Space Grotesk',system-ui,sans-serif;background:#0b0e1a;color:#e8eaf0;line-height:1.65;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+.container{width:100%;max-width:1200px;margin:0 auto;padding:0 24px}
+[data-reveal]{opacity:0;transform:translateY(28px);transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1)}
+[data-reveal].revealed{opacity:1;transform:none}
+[data-reveal-delay="1"]{transition-delay:.1s}
+[data-reveal-delay="2"]{transition-delay:.2s}
+[data-reveal-delay="3"]{transition-delay:.3s}
+[data-reveal-delay="4"]{transition-delay:.4s}
+.site-header{position:fixed;top:0;left:0;right:0;z-index:900;transition:background .4s,box-shadow .4s}
+.site-header.scrolled{background:rgba(11,14,26,.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);box-shadow:0 1px 0 rgba(255,255,255,.06)}
+.nav-wrap{display:flex;align-items:center;gap:32px;height:68px}
+.brand{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.brand-logo{height:32px;width:auto}
+.brand-wordmark{display:flex;align-items:center;gap:8px}
+.brand-mark{background:linear-gradient(135deg,#4f6ef7,#7c3aed);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:800;font-size:18px;letter-spacing:-.5px}
+.brand-text{font-weight:700;font-size:17px;color:#e8eaf0}
+.main-nav{display:flex;align-items:center;gap:2px;margin-left:auto}
+.nav-item{position:relative}
+.nav-btn{display:flex;align-items:center;gap:5px;padding:8px 14px;font-size:14px;font-weight:500;color:#8b93b0;border-radius:8px;transition:color .2s,background .2s}
+.nav-btn:hover,.nav-item:hover .nav-btn{color:#e8eaf0;background:rgba(255,255,255,.06)}
+.nav-item:hover .mega-menu{opacity:1;pointer-events:all;transform:translateX(-50%) translateY(0)}
+.mega-menu{position:absolute;top:calc(100% + 12px);left:50%;transform:translateX(-50%) translateY(8px);background:#0f1220;border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:16px;min-width:560px;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;box-shadow:0 24px 64px rgba(0,0,0,.5)}
+.mega-menu.narrow{min-width:360px}
+.mega-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.mega-menu.narrow .mega-grid{grid-template-columns:1fr}
+.mega-card{display:flex;align-items:flex-start;gap:12px;padding:12px;border-radius:10px;transition:background .2s}
+.mega-card:hover{background:rgba(255,255,255,.05)}
+.mega-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.mega-card strong{display:block;font-size:13px;font-weight:600;color:#e8eaf0;margin-bottom:2px}
+.mega-card span{font-size:12px;color:#8b93b0;line-height:1.4}
+.nav-actions{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.nav-login{font-size:14px;font-weight:500;color:#8b93b0;padding:8px 14px;border-radius:8px;transition:color .2s,background .2s}
+.nav-login:hover{color:#e8eaf0;background:rgba(255,255,255,.06)}
+.btn-cta{display:inline-flex;align-items:center;gap:6px;padding:9px 20px;background:linear-gradient(135deg,#4f6ef7,#7c3aed);color:#fff;font-size:14px;font-weight:600;border-radius:10px;transition:opacity .2s,transform .2s;box-shadow:0 4px 20px rgba(79,110,247,.35)}
+.btn-cta:hover{opacity:.9;transform:translateY(-1px)}
+.mob-toggle{display:none;flex-direction:column;gap:5px;padding:8px;border-radius:8px;transition:background .2s}
+.mob-toggle:hover{background:rgba(255,255,255,.06)}
+.mob-toggle span{display:block;width:22px;height:2px;background:#e8eaf0;border-radius:2px;transition:transform .3s,opacity .3s}
+.mob-toggle.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.mob-toggle.open span:nth-child(2){opacity:0}
+.mob-toggle.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+.mob-drawer{display:none;flex-direction:column;background:#0f1220;border-top:1px solid rgba(255,255,255,.06);padding:16px 24px 24px}
+.mob-drawer a{padding:13px 0;font-size:15px;font-weight:500;color:#8b93b0;border-bottom:1px solid rgba(255,255,255,.05);transition:color .2s}
+.mob-drawer a:hover{color:#e8eaf0}
+.mob-actions{display:flex;gap:12px;padding-top:20px;margin-top:4px}
+.mob-actions a{flex:1;text-align:center;padding:11px;border-radius:10px;font-size:14px;font-weight:600}
+.mob-actions a:first-child{border:1px solid rgba(255,255,255,.12);color:#e8eaf0}
+.mob-actions .btn-cta{background:linear-gradient(135deg,#4f6ef7,#7c3aed);color:#fff;border:none}
+.btn-primary{display:inline-flex;align-items:center;gap:8px;padding:14px 30px;background:linear-gradient(135deg,#4f6ef7,#7c3aed);color:#fff;font-size:15px;font-weight:600;border-radius:12px;transition:opacity .2s,transform .2s;box-shadow:0 8px 32px rgba(79,110,247,.4)}
+.btn-primary:hover{opacity:.9;transform:translateY(-2px)}
+.btn-outline{display:inline-flex;align-items:center;gap:8px;padding:14px 30px;border:1px solid rgba(255,255,255,.2);color:#e8eaf0;font-size:15px;font-weight:600;border-radius:12px;background:rgba(255,255,255,.04);transition:background .2s,border-color .2s,transform .2s}
+.btn-outline:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.3);transform:translateY(-2px)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(32px)}to{opacity:1;transform:none}}
+@keyframes particlePulse{0%,100%{transform:scale(1);opacity:.7}50%{transform:scale(1.5);opacity:1}}
+@keyframes linePulse{0%,100%{opacity:.12}50%{opacity:.4}}
+.mkt-hero{position:relative;min-height:88vh;display:flex;align-items:center;overflow:hidden;padding:120px 0 80px}
+.hero-bg{position:absolute;inset:0;background:#0b0e1a}
+.hero-glow{position:absolute;top:40%;left:30%;transform:translate(-50%,-50%);width:700px;height:700px;background:radial-gradient(circle,rgba(var(--accent-rgb),.2) 0%,rgba(var(--accent-rgb),.05) 50%,transparent 70%);border-radius:50%;pointer-events:none}
+.hero-glow-2{position:absolute;top:60%;right:10%;width:400px;height:400px;background:radial-gradient(circle,rgba(124,58,237,.1) 0%,transparent 70%);border-radius:50%;pointer-events:none}
+.particles{position:absolute;inset:0;pointer-events:none}
+.particle{position:absolute;border-radius:50%;animation:particlePulse 3s ease-in-out infinite}
+.p1{width:8px;height:8px;background:rgba(var(--accent-rgb),.8);box-shadow:0 0 12px rgba(var(--accent-rgb),.6);top:18%;left:14%;animation-delay:0s}
+.p2{width:6px;height:6px;background:rgba(124,58,237,.8);box-shadow:0 0 10px rgba(124,58,237,.6);top:25%;right:18%;animation-delay:.5s}
+.p3{width:7px;height:7px;background:rgba(var(--accent-rgb),.7);box-shadow:0 0 14px rgba(var(--accent-rgb),.5);top:65%;left:10%;animation-delay:1s}
+.p4{width:5px;height:5px;background:rgba(var(--accent-rgb),.8);box-shadow:0 0 10px rgba(var(--accent-rgb),.5);top:72%;right:14%;animation-delay:1.5s}
+.p5{width:9px;height:9px;background:rgba(var(--accent-rgb),.5);box-shadow:0 0 16px rgba(var(--accent-rgb),.4);top:40%;left:5%;animation-delay:.8s}
+.particle-lines{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.particle-lines svg{width:100%;height:100%;opacity:.18}
+.particle-lines line{stroke:url(#lg);stroke-width:1;animation:linePulse 4s ease-in-out infinite}
+.particle-lines line:nth-child(2){animation-delay:.8s}
+.particle-lines line:nth-child(3){animation-delay:1.6s}
+.hero-content{position:relative;z-index:2;max-width:700px}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);background:rgba(var(--accent-rgb),.1);border:1px solid rgba(var(--accent-rgb),.3);padding:6px 16px;border-radius:100px;margin-bottom:28px;animation:fadeUp .7s .05s both}
+.hero-eyebrow-dot{width:6px;height:6px;background:var(--accent);border-radius:50%;animation:particlePulse 2s ease-in-out infinite}
+.hero-h1{font-size:clamp(38px,6vw,68px);font-weight:800;line-height:1.08;letter-spacing:-.03em;margin-bottom:22px;animation:fadeUp .7s .15s both}
+.hero-h1 em{font-style:normal;background:linear-gradient(135deg,var(--accent) 0%,#7c3aed 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-size:17px;color:#8b93b0;max-width:560px;line-height:1.7;margin-bottom:40px;animation:fadeUp .7s .27s both}
+.hero-actions{display:flex;align-items:center;gap:14px;flex-wrap:wrap;animation:fadeUp .7s .38s both}
+.stats-bar{background:#0d1228;border-top:1px solid rgba(255,255,255,.06);border-bottom:1px solid rgba(255,255,255,.06);padding:40px 0}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr)}
+.stat-item{text-align:center;padding:16px 24px;position:relative}
+.stat-item::after{content:'';position:absolute;right:0;top:20%;bottom:20%;width:1px;background:rgba(255,255,255,.08)}
+.stat-item:last-child::after{display:none}
+.stat-value{font-size:clamp(26px,3.5vw,42px);font-weight:800;letter-spacing:-.03em;line-height:1;margin-bottom:8px;color:var(--accent)}
+.stat-label{font-size:13px;color:#8b93b0;font-weight:500}
+.section-tag{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:16px}
+.section-tag::before{content:'';width:20px;height:2px;background:linear-gradient(90deg,var(--accent),transparent);border-radius:2px}
+.section-heading{font-size:clamp(26px,4vw,40px);font-weight:800;letter-spacing:-.025em;line-height:1.15;margin-bottom:16px}
+.section-sub{font-size:16px;color:#8b93b0;line-height:1.7;max-width:600px}
+.features-section{padding:96px 0;background:#0f1220}
+.features-header{margin-bottom:56px}
+.feat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.feat-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:28px 22px;transition:border-color .3s,transform .3s cubic-bezier(.22,1,.36,1)}
+.feat-card:hover{border-color:rgba(var(--accent-rgb),.3);transform:translateY(-4px)}
+.feat-icon{width:48px;height:48px;border-radius:12px;background:rgba(var(--accent-rgb),.1);border:1px solid rgba(var(--accent-rgb),.2);display:flex;align-items:center;justify-content:center;margin-bottom:18px;flex-shrink:0}
+.feat-card h3{font-size:16px;font-weight:700;margin-bottom:10px;letter-spacing:-.01em}
+.feat-card p{font-size:13.5px;color:#8b93b0;line-height:1.7}
+.chart-section{padding:80px 0;background:#0b0e1a}
+.chart-header{margin-bottom:40px}
+.chart-wrap{border-radius:18px;overflow:hidden;border:1px solid rgba(255,255,255,.08);box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.table-section{padding:80px 0;background:#0f1220}
+.table-header{margin-bottom:40px}
+.table-wrap{overflow-x:auto;border-radius:16px;border:1px solid rgba(255,255,255,.08)}
+.cond-table{width:100%;border-collapse:collapse;font-size:14px;min-width:560px;font-family:'JetBrains Mono',monospace}
+.cond-table thead tr{background:#131729}
+.cond-table th{padding:14px 20px;text-align:left;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8b93b0;border-bottom:1px solid rgba(255,255,255,.08)}
+.cond-table td{padding:14px 20px;border-bottom:1px solid rgba(255,255,255,.04);color:#e8eaf0;font-size:13.5px}
+.cond-table tbody tr:last-child td{border-bottom:none}
+.cond-table tbody tr:hover td{background:rgba(255,255,255,.03)}
+.cond-table tbody tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+.cond-table tbody tr:nth-child(even):hover td{background:rgba(255,255,255,.04)}
+.td-symbol{color:#e8eaf0;font-weight:600}
+.td-spread{color:var(--accent);font-weight:700}
+.td-lev{color:#22c55e;font-weight:600}
+.cta-section{padding:96px 24px;background:linear-gradient(180deg,#0b0e1a 0%,#0a0d1f 50%,#0c0f22 100%);position:relative;overflow:hidden;text-align:center}
+.cta-section::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:900px;height:600px;background:radial-gradient(ellipse at top,rgba(var(--accent-rgb),.14) 0%,rgba(124,58,237,.07) 40%,transparent 70%);pointer-events:none}
+.cta-inner{position:relative;z-index:2;max-width:580px;margin:0 auto}
+.cta-label{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);background:rgba(var(--accent-rgb),.1);border:1px solid rgba(var(--accent-rgb),.2);padding:6px 16px;border-radius:100px;margin-bottom:24px}
+.cta-dot{width:5px;height:5px;background:var(--accent);border-radius:50%;animation:particlePulse 2s ease-in-out infinite}
+.cta-h2{font-size:clamp(30px,5vw,50px);font-weight:800;letter-spacing:-.03em;line-height:1.1;margin-bottom:18px}
+.cta-h2 span{background:linear-gradient(135deg,var(--accent),#7c3aed);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.cta-p{font-size:16px;color:#8b93b0;line-height:1.7;margin-bottom:40px}
+.cta-actions{display:flex;justify-content:center;gap:14px;flex-wrap:wrap}
+.btn-white{display:inline-flex;align-items:center;gap:8px;padding:14px 32px;background:#fff;color:#0b0e1a;font-size:15px;font-weight:700;border-radius:12px;transition:background .2s,transform .2s;box-shadow:0 8px 32px rgba(255,255,255,.1)}
+.btn-white:hover{background:#e8eaf0;transform:translateY(-2px)}
+.btn-ghost-w{display:inline-flex;align-items:center;gap:8px;padding:14px 32px;border:1px solid rgba(255,255,255,.2);color:#e8eaf0;font-size:15px;font-weight:600;border-radius:12px;transition:background .2s,border-color .2s,transform .2s}
+.btn-ghost-w:hover{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.35);transform:translateY(-2px)}
+.site-footer{background:#0a0c18;border-top:1px solid rgba(255,255,255,.06)}
+.footer-inner{display:grid;grid-template-columns:1.8fr 1fr 1fr 1fr;gap:48px;padding:60px 0 48px}
+.footer-brand p{font-size:13px;color:#8b93b0;line-height:1.7;margin-top:14px;max-width:260px}
+.footer-email{margin-top:12px!important;color:#4f6ef7!important;font-size:13px;display:block}
+.footer-col h5{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#e8eaf0;margin-bottom:16px}
+.footer-col a{display:block;font-size:13px;color:#8b93b0;margin-bottom:10px;transition:color .2s}
+.footer-col a:hover{color:#e8eaf0}
+.footer-risk{background:#080a15;border-top:1px solid rgba(255,255,255,.05);padding:32px 0}
+.footer-risk p{font-size:12px;color:#8b93b0;line-height:1.75;max-width:900px}
+.footer-risk strong{color:#e8eaf0}
+.footer-bottom{margin-top:20px;padding-top:20px;border-top:1px solid rgba(255,255,255,.06);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;font-size:12px;color:#8b93b0}
+@media(max-width:1024px){.feat-grid{grid-template-columns:repeat(2,1fr)}.stats-grid{grid-template-columns:repeat(2,1fr)}.stat-item:nth-child(2)::after{display:none}.footer-inner{grid-template-columns:1fr 1fr;gap:32px}.main-nav{display:none}}
+@media(max-width:768px){.feat-grid{grid-template-columns:1fr}.stats-grid{grid-template-columns:repeat(2,1fr)}.stat-item::after{display:none}.hero-actions,.cta-actions{flex-direction:column;align-items:flex-start}.mkt-hero{padding:100px 0 60px}.mob-toggle{display:flex}.mob-drawer.open{display:flex}.nav-actions{display:none}.footer-inner{grid-template-columns:1fr}.particle-lines,.p3,.p4,.p5{display:none}}
+@media(max-width:480px){.stats-grid{grid-template-columns:1fr}.footer-bottom{flex-direction:column}}
+</style>
+</head>
+<body>
+
+<header class="site-header" id="site-header">
+  <div class="container nav-wrap">
+    <a class="brand" href="index.html">
+      <img src="assets/logo.png" alt="AtrontifyX" class="brand-logo" onerror="this.style.display='none';document.querySelector('.brand-wordmark').style.display='flex'">
+      <span class="brand-wordmark" style="display:none">
+        <span class="brand-mark">ATX</span>
+        <span class="brand-text">AtrontifyX</span>
+      </span>
+    </a>
+    <nav class="main-nav">
+      <div class="nav-item has-mega">
+        <button class="nav-btn">Markets <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></button>
+        <div class="mega-menu"><div class="mega-grid">
+          <a href="market-forex.html" class="mega-card"><span class="mega-icon" style="background:rgba(79,110,247,.12);color:#4f6ef7"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></span><strong>Forex</strong><span>70+ major, minor &amp; exotic pairs</span></a>
+          <a href="market-indices.html" class="mega-card"><span class="mega-icon" style="background:rgba(245,158,11,.12);color:#f59e0b"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/></svg></span><strong>Indices</strong><span>SPX500, DAX40, NASDAQ &amp; more</span></a>
+          <a href="market-metals.html" class="mega-card"><span class="mega-icon" style="background:rgba(251,191,36,.12);color:#fbbf24"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg></span><strong>Metals</strong><span>Gold, silver &amp; precious metals</span></a>
+          <a href="market-energy.html" class="mega-card"><span class="mega-icon" style="background:rgba(239,68,68,.12);color:#ef4444"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/></svg></span><strong>Energy</strong><span>Crude oil, Brent &amp; natural gas</span></a>
+          <a href="market-shares.html" class="mega-card"><span class="mega-icon" style="background:rgba(34,197,94,.12);color:#22c55e"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></span><strong>Shares</strong><span>AAPL, TSLA, NVDA &amp; 50+ CFDs</span></a>
+          <a href="market-crypto.html" class="mega-card"><span class="mega-icon" style="background:rgba(139,92,246,.12);color:#8b5cf6"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M9 8h6M12 5v6M8.5 14.5L6 20h12l-2.5-5.5"/></svg></span><strong>Crypto</strong><span>BTC, ETH, SOL &amp; 30+ pairs vs USDT</span></a>
+        </div></div>
+      </div>
+      <div class="nav-item has-mega">
+        <button class="nav-btn">Platform <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></button>
+        <div class="mega-menu narrow"><div class="mega-grid">
+          <a href="platforms.html" class="mega-card"><span class="mega-icon" style="background:rgba(79,110,247,.12);color:#4f6ef7"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></span><strong>Web Platform</strong><span>Trade from any browser, instantly</span></a>
+          <a href="dashboard.html" class="mega-card"><span class="mega-icon" style="background:rgba(34,197,94,.12);color:#22c55e"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M9 22v-4h6v4M8 6h.01M12 6h.01M16 6h.01M8 10h.01M12 10h.01M16 10h.01"/></svg></span><strong>Mobile App</strong><span>Monitor positions from anywhere</span></a>
+          <a href="dashboard.html" class="mega-card"><span class="mega-icon" style="background:rgba(245,158,11,.12);color:#f59e0b"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg></span><strong>Client Dashboard</strong><span>Manage your account &amp; portfolio</span></a>
+        </div></div>
+      </div>
+      <div class="nav-item has-mega">
+        <button class="nav-btn">Company <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></button>
+        <div class="mega-menu narrow"><div class="mega-grid">
+          <a href="about.html" class="mega-card"><span class="mega-icon" style="background:rgba(79,110,247,.12);color:#4f6ef7"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span><strong>About</strong><span>Our story, mission &amp; values</span></a>
+          <a href="privacy.html" class="mega-card"><span class="mega-icon" style="background:rgba(139,92,246,.12);color:#8b5cf6"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span><strong>Privacy Policy</strong><span>How we protect your data</span></a>
+          <a href="contact.html" class="mega-card"><span class="mega-icon" style="background:rgba(34,197,94,.12);color:#22c55e"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span><strong>Contact Us</strong><span>Reach our support team</span></a>
+        </div></div>
+      </div>
+    </nav>
+    <div class="nav-actions">
+      <a class="nav-login" href="login.html">Log in</a>
+      <a class="btn-cta" href="signup.html">Open Account</a>
+    </div>
+    <button class="mob-toggle" id="mobToggle" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+  <div class="mob-drawer" id="mobDrawer">
+    <a href="market-forex.html">Forex</a>
+    <a href="market-indices.html">Indices</a>
+    <a href="market-metals.html">Metals</a>
+    <a href="market-energy.html">Energy</a>
+    <a href="market-shares.html">Shares</a>
+    <a href="market-crypto.html">Crypto</a>
+    <a href="platforms.html">Platform</a>
+    <a href="about.html">About</a>
+    <a href="contact.html">Contact Us</a>
+    <div class="mob-actions">
+      <a href="login.html">Log in</a>
+      <a href="signup.html" class="btn-cta">Open Account</a>
+    </div>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="mkt-hero">
+  <div class="hero-bg"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-glow-2"></div>
+  <div class="particles">
+    <div class="particle p1"></div>
+    <div class="particle p2"></div>
+    <div class="particle p3"></div>
+    <div class="particle p4"></div>
+    <div class="particle p5"></div>
+  </div>
+  <div class="particle-lines">
+    <svg viewBox="0 0 1440 800" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="lg" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#22c55e" stop-opacity="0"/>
+          <stop offset="50%" stop-color="#22c55e" stop-opacity="1"/>
+          <stop offset="100%" stop-color="#7c3aed" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <line x1="0" y1="200" x2="1440" y2="400"/>
+      <line x1="0" y1="500" x2="1440" y2="300"/>
+      <line x1="200" y1="0" x2="800" y2="800"/>
+    </svg>
+  </div>
+  <div class="container">
+    <div class="hero-content">
+      <div class="hero-eyebrow"><span class="hero-eyebrow-dot"></span> Stock CFDs</div>
+      <h1 class="hero-h1">Trade the World's Top <em>Stocks</em></h1>
+      <p class="hero-sub">50+ major stock CFDs — AAPL, TSLA, NVDA, MSFT and more. Go long or short with leverage up to 1:20, no stamp duty, and direct exposure to the world's biggest companies.</p>
+      <div class="hero-actions">
+        <a href="signup.html" class="btn-primary">Start Trading Shares <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+        <a href="platforms.html" class="btn-outline">Explore Platform</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS BAR -->
+<section class="stats-bar">
+  <div class="container">
+    <div class="stats-grid">
+      <div class="stat-item" data-reveal>
+        <div class="stat-value">50+</div>
+        <div class="stat-label">Stock CFDs</div>
+      </div>
+      <div class="stat-item" data-reveal data-reveal-delay="1">
+        <div class="stat-value">0.1%</div>
+        <div class="stat-label">From</div>
+      </div>
+      <div class="stat-item" data-reveal data-reveal-delay="2">
+        <div class="stat-value">1:20</div>
+        <div class="stat-label">Max Leverage</div>
+      </div>
+      <div class="stat-item" data-reveal data-reveal-delay="3">
+        <div class="stat-value">Exchange Hrs</div>
+        <div class="stat-label">Trading</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features-section">
+  <div class="container">
+    <div class="features-header" data-reveal>
+      <div class="section-tag">Why Trade Shares</div>
+      <h2 class="section-heading">The World's Biggest Companies at Your Fingertips</h2>
+      <p class="section-sub">Trade shares in Apple, Tesla, NVIDIA and dozens more — with the flexibility of CFDs, no stamp duty and the ability to profit from both rising and falling prices.</p>
+    </div>
+    <div class="feat-grid">
+      <div class="feat-card" data-reveal data-reveal-delay="1">
+        <div class="feat-icon">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="var(--accent)" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/></svg>
+        </div>
+        <h3>Go Long or Short</h3>
+        <p>CFDs let you profit whether a stock goes up or down. Open short positions on overvalued stocks or hedge your portfolio against a market downturn.</p>
+      </div>
+      <div class="feat-card" data-reveal data-reveal-delay="2">
+        <div class="feat-icon">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="var(--accent)" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        </div>
+        <h3>No Stamp Duty</h3>
+        <p>Share CFDs are exempt from stamp duty. You get the same economic exposure to the stock as an equity buyer — without the additional transaction tax.</p>
+      </div>
+      <div class="feat-card" data-reveal data-reveal-delay="3">
+        <div class="feat-icon">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="var(--accent)" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+        </div>
+        <h3>Leverage Up to 1:20</h3>
+        <p>Control a larger position with less capital. 1:20 leverage means you can open $10,000 worth of Apple shares with just $500 of margin.</p>
+      </div>
+      <div class="feat-card" data-reveal data-reveal-delay="4">
+        <div class="feat-icon">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <h3>Tech, Finance &amp; More</h3>
+        <p>Access stocks across US, UK and European markets — covering technology, finance, healthcare, energy and consumer sectors, all from one account.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CHART -->
+<section class="chart-section">
+  <div class="container">
+    <div class="chart-header" data-reveal>
+      <div class="section-tag">Live Chart</div>
+      <h2 class="section-heading">NVIDIA (NVDA) — Live Price Chart</h2>
+      <p class="section-sub">Real-time stock pricing powered by TradingView.</p>
+    </div>
+    <div class="chart-wrap" data-reveal>
+      <div class="tradingview-widget-container" style="height:460px;width:100%">
+        <div id="tradingview_shares" style="height:460px;width:100%"></div>
+        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
+        {
+          "symbol": "NASDAQ:NVDA",
+          "interval": "D",
+          "width": "100%",
+          "height": "460",
+          "theme": "dark",
+          "style": "1",
+          "locale": "en",
+          "backgroundColor": "rgba(15,18,32,1)",
+          "gridColor": "rgba(255,255,255,0.04)",
+          "save_image": false,
+          "hide_top_toolbar": false,
+          "container_id": "tradingview_shares"
+        }
+        </script>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONDITIONS TABLE -->
+<section class="table-section">
+  <div class="container">
+    <div class="table-header" data-reveal>
+      <div class="section-tag">Trading Conditions</div>
+      <h2 class="section-heading">Share CFD Trading Conditions</h2>
+      <p class="section-sub">Competitive spreads on Apple, Tesla, NVIDIA and 50+ more stock CFDs.</p>
+    </div>
+    <div class="table-wrap" data-reveal>
+      <table class="cond-table">
+        <thead>
+          <tr>
+            <th>Instrument</th>
+            <th>Spread From</th>
+            <th>Leverage</th>
+            <th>Min Lot</th>
+            <th>Hours</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="td-symbol">Apple (AAPL)</td><td class="td-spread">0.1%</td><td class="td-lev">1:20</td><td>1 share</td><td>Exchange hrs</td></tr>
+          <tr><td class="td-symbol">Tesla (TSLA)</td><td class="td-spread">0.1%</td><td class="td-lev">1:20</td><td>1 share</td><td>Exchange hrs</td></tr>
+          <tr><td class="td-symbol">NVIDIA (NVDA)</td><td class="td-spread">0.1%</td><td class="td-lev">1:20</td><td>1 share</td><td>Exchange hrs</td></tr>
+          <tr><td class="td-symbol">Microsoft (MSFT)</td><td class="td-spread">0.1%</td><td class="td-lev">1:20</td><td>1 share</td><td>Exchange hrs</td></tr>
+          <tr><td class="td-symbol">Amazon (AMZN)</td><td class="td-spread">0.1%</td><td class="td-lev">1:20</td><td>1 share</td><td>Exchange hrs</td></tr>
+          <tr><td class="td-symbol">Alphabet (GOOGL)</td><td class="td-spread">0.1%</td><td class="td-lev">1:20</td><td>1 share</td><td>Exchange hrs</td></tr>
+          <tr><td class="td-symbol">Meta (META)</td><td class="td-spread">0.1%</td><td class="td-lev">1:20</td><td>1 share</td><td>Exchange hrs</td></tr>
+          <tr><td class="td-symbol">Netflix (NFLX)</td><td class="td-spread">0.15%</td><td class="td-lev">1:20</td><td>1 share</td><td>Exchange hrs</td></tr>
+          <tr><td class="td-symbol">AMD</td><td class="td-spread">0.15%</td><td class="td-lev">1:20</td><td>1 share</td><td>Exchange hrs</td></tr>
+          <tr><td class="td-symbol">Berkshire (BRK.B)</td><td class="td-spread">0.15%</td><td class="td-lev">1:10</td><td>1 share</td><td>Exchange hrs</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="cta-inner">
+    <div class="cta-label"><span class="cta-dot"></span> Start Trading Shares</div>
+    <h2 class="cta-h2">Start Trading <span>Top Stocks</span> Today</h2>
+    <p class="cta-p">Access 50+ major stock CFDs — go long or short, no stamp duty, leverage up to 1:20.</p>
+    <div class="cta-actions">
+      <a href="signup.html" class="btn-white">Open Free Account</a>
+      <a href="platforms.html" class="btn-ghost-w">Explore Platform</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <a href="index.html">
+          <img src="assets/logo.png" alt="AtrontifyX" style="height:38px;object-fit:contain" onerror="this.style.display='none'">
+        </a>
+        <p>A professional multi-asset trading platform designed for modern traders worldwide.</p>
+        <a href="mailto:help.astrontifyxglobal@gmail.com" class="footer-email">help.astrontifyxglobal@gmail.com</a>
+      </div>
+      <div class="footer-col">
+        <h5>Markets</h5>
+        <a href="market-forex.html">Forex</a>
+        <a href="market-indices.html">Indices</a>
+        <a href="market-metals.html">Metals</a>
+        <a href="market-energy.html">Energy</a>
+        <a href="market-shares.html">Shares</a>
+        <a href="market-crypto.html">Crypto</a>
+      </div>
+      <div class="footer-col">
+        <h5>Platform</h5>
+        <a href="platforms.html">Platform Overview</a>
+        <a href="trade-terminal.html">Trade Terminal</a>
+        <a href="dashboard.html">Client Dashboard</a>
+        <a href="deposit.html">Deposit Funds</a>
+        <a href="withdrawal.html">Withdraw Funds</a>
+        <a href="account-upgrade.html">Account Upgrade</a>
+      </div>
+      <div class="footer-col">
+        <h5>Company</h5>
+        <a href="about.html">About Us</a>
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="contact.html">Contact Us</a>
+        <a href="login.html">Client Login</a>
+        <a href="signup.html">Open Account</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-risk">
+    <div class="container">
+      <p><strong>Risk Warning:</strong> CFDs are complex instruments and come with a high risk of losing money rapidly due to leverage. A significant proportion of retail investor accounts lose money when trading CFDs. You should consider whether you understand how CFDs work and whether you can afford to take the high risk of losing your money.</p>
+      <div class="footer-bottom">
+        <span>© 2026 AtrontifyX Markets. All rights reserved.</span>
+        <span><a href="privacy.html" style="color:inherit">Privacy Policy</a> &nbsp;·&nbsp; Terms of Service</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){var h=document.getElementById('site-header');function s(){h.classList.toggle('scrolled',window.scrollY>40);}window.addEventListener('scroll',s,{passive:true});s();})();
+(function(){var b=document.getElementById('mobToggle'),d=document.getElementById('mobDrawer');if(!b||!d)return;b.addEventListener('click',function(){var o=d.classList.toggle('open');b.classList.toggle('open',o);document.body.style.overflow=o?'hidden':'';});d.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){d.classList.remove('open');b.classList.remove('open');document.body.style.overflow='';});});})();
+(function(){var io=new IntersectionObserver(function(e){e.forEach(function(en){if(en.isIntersecting){var d=en.target.dataset.revealDelay?parseInt(en.target.dataset.revealDelay)*100:0;setTimeout(function(){en.target.classList.add('revealed');},d);io.unobserve(en.target);}});},{threshold:0.12,rootMargin:'0px 0px -40px 0px'});document.querySelectorAll('[data-reveal]').forEach(function(el){io.observe(el);});})();
+</script>
+</body>
+</html>
