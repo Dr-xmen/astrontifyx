@@ -131,6 +131,10 @@ input::placeholder{color:#9ca3af}
 .eye-btn{position:absolute;right:11px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;padding:4px;color:#9ca3af;display:flex;align-items:center}
 .eye-btn:hover{color:#6b7280}
 .eye-btn svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2}
+.phone-wrap{display:flex;align-items:center;border:1.5px solid #e5e7eb;border-radius:8px;overflow:hidden;transition:border-color .2s,box-shadow .2s}
+.phone-wrap:focus-within{border-color:#4f46e5;box-shadow:0 0 0 3px rgba(79,70,229,.1)}
+.phone-code{padding:11px 10px;background:#f9fafb;border-right:1.5px solid #e5e7eb;font-size:13px;font-weight:600;color:#374151;white-space:nowrap;min-width:52px;text-align:center;flex-shrink:0}
+.phone-wrap input{border:none;outline:none;flex:1;padding:11px 13px;font-size:14px;color:#111;font-family:'Space Grotesk',sans-serif;box-shadow:none!important}
 
 .btn-submit{
   width:100%;padding:13px;border-radius:10px;border:none;
@@ -316,20 +320,82 @@ input::placeholder{color:#9ca3af}
           <input type="email" id="email" placeholder="john@example.com" autocomplete="email" required>
         </div>
 
-        <div class="input-group">
-          <label>Phone Number</label>
-          <input type="tel" id="phone" placeholder="+44 7700 900000" autocomplete="tel" required>
-        </div>
-
         <div class="input-row">
           <div class="input-group">
             <label>Country</label>
             <select id="country" required>
-              <option value="">Select…</option>
-              <option>Nigeria</option>
-              <option>United Kingdom</option>
-              <option>United States</option>
-              <option>Canada</option>
+              <option value="">Select country…</option>
+              <option value="Afghanistan">Afghanistan (+93)</option>
+              <option value="Albania">Albania (+355)</option>
+              <option value="Algeria">Algeria (+213)</option>
+              <option value="Argentina">Argentina (+54)</option>
+              <option value="Australia">Australia (+61)</option>
+              <option value="Austria">Austria (+43)</option>
+              <option value="Bahrain">Bahrain (+973)</option>
+              <option value="Bangladesh">Bangladesh (+880)</option>
+              <option value="Belgium">Belgium (+32)</option>
+              <option value="Brazil">Brazil (+55)</option>
+              <option value="Canada">Canada (+1)</option>
+              <option value="Chile">Chile (+56)</option>
+              <option value="China">China (+86)</option>
+              <option value="Colombia">Colombia (+57)</option>
+              <option value="Croatia">Croatia (+385)</option>
+              <option value="Czech Republic">Czech Republic (+420)</option>
+              <option value="Denmark">Denmark (+45)</option>
+              <option value="Egypt">Egypt (+20)</option>
+              <option value="Ethiopia">Ethiopia (+251)</option>
+              <option value="Finland">Finland (+358)</option>
+              <option value="France">France (+33)</option>
+              <option value="Germany">Germany (+49)</option>
+              <option value="Ghana">Ghana (+233)</option>
+              <option value="Greece">Greece (+30)</option>
+              <option value="Hong Kong">Hong Kong (+852)</option>
+              <option value="Hungary">Hungary (+36)</option>
+              <option value="India">India (+91)</option>
+              <option value="Indonesia">Indonesia (+62)</option>
+              <option value="Iran">Iran (+98)</option>
+              <option value="Iraq">Iraq (+964)</option>
+              <option value="Ireland">Ireland (+353)</option>
+              <option value="Israel">Israel (+972)</option>
+              <option value="Italy">Italy (+39)</option>
+              <option value="Japan">Japan (+81)</option>
+              <option value="Jordan">Jordan (+962)</option>
+              <option value="Kenya">Kenya (+254)</option>
+              <option value="Kuwait">Kuwait (+965)</option>
+              <option value="Lebanon">Lebanon (+961)</option>
+              <option value="Malaysia">Malaysia (+60)</option>
+              <option value="Mexico">Mexico (+52)</option>
+              <option value="Morocco">Morocco (+212)</option>
+              <option value="Netherlands">Netherlands (+31)</option>
+              <option value="New Zealand">New Zealand (+64)</option>
+              <option value="Nigeria">Nigeria (+234)</option>
+              <option value="Norway">Norway (+47)</option>
+              <option value="Oman">Oman (+968)</option>
+              <option value="Pakistan">Pakistan (+92)</option>
+              <option value="Philippines">Philippines (+63)</option>
+              <option value="Poland">Poland (+48)</option>
+              <option value="Portugal">Portugal (+351)</option>
+              <option value="Qatar">Qatar (+974)</option>
+              <option value="Romania">Romania (+40)</option>
+              <option value="Russia">Russia (+7)</option>
+              <option value="Saudi Arabia">Saudi Arabia (+966)</option>
+              <option value="Singapore">Singapore (+65)</option>
+              <option value="South Africa">South Africa (+27)</option>
+              <option value="South Korea">South Korea (+82)</option>
+              <option value="Spain">Spain (+34)</option>
+              <option value="Sweden">Sweden (+46)</option>
+              <option value="Switzerland">Switzerland (+41)</option>
+              <option value="Taiwan">Taiwan (+886)</option>
+              <option value="Tanzania">Tanzania (+255)</option>
+              <option value="Thailand">Thailand (+66)</option>
+              <option value="Turkey">Turkey (+90)</option>
+              <option value="Uganda">Uganda (+256)</option>
+              <option value="Ukraine">Ukraine (+380)</option>
+              <option value="United Arab Emirates">UAE (+971)</option>
+              <option value="United Kingdom">United Kingdom (+44)</option>
+              <option value="United States">United States (+1)</option>
+              <option value="Vietnam">Vietnam (+84)</option>
+              <option value="Zimbabwe">Zimbabwe (+263)</option>
             </select>
           </div>
           <div class="input-group">
@@ -339,7 +405,22 @@ input::placeholder{color:#9ca3af}
               <option>USD</option>
               <option>EUR</option>
               <option>GBP</option>
+              <option>NGN</option>
+              <option>AED</option>
+              <option>AUD</option>
+              <option>CAD</option>
+              <option>JPY</option>
+              <option>CHF</option>
+              <option>SGD</option>
             </select>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label>Phone Number</label>
+          <div class="phone-wrap">
+            <span class="phone-code" id="phoneCode">—</span>
+            <input type="tel" id="phone" placeholder="Select country first" autocomplete="tel" required>
           </div>
         </div>
 
@@ -406,6 +487,34 @@ function togglePassword(id, btn) {
   }
 }
 
+const DIAL_CODES = {
+  'Afghanistan':'+93','Albania':'+355','Algeria':'+213','Argentina':'+54',
+  'Australia':'+61','Austria':'+43','Bahrain':'+973','Bangladesh':'+880',
+  'Belgium':'+32','Brazil':'+55','Canada':'+1','Chile':'+56','China':'+86',
+  'Colombia':'+57','Croatia':'+385','Czech Republic':'+420','Denmark':'+45',
+  'Egypt':'+20','Ethiopia':'+251','Finland':'+358','France':'+33',
+  'Germany':'+49','Ghana':'+233','Greece':'+30','Hong Kong':'+852',
+  'Hungary':'+36','India':'+91','Indonesia':'+62','Iran':'+98','Iraq':'+964',
+  'Ireland':'+353','Israel':'+972','Italy':'+39','Japan':'+81','Jordan':'+962',
+  'Kenya':'+254','Kuwait':'+965','Lebanon':'+961','Malaysia':'+60',
+  'Mexico':'+52','Morocco':'+212','Netherlands':'+31','New Zealand':'+64',
+  'Nigeria':'+234','Norway':'+47','Oman':'+968','Pakistan':'+92',
+  'Philippines':'+63','Poland':'+48','Portugal':'+351','Qatar':'+974',
+  'Romania':'+40','Russia':'+7','Saudi Arabia':'+966','Singapore':'+65',
+  'South Africa':'+27','South Korea':'+82','Spain':'+34','Sweden':'+46',
+  'Switzerland':'+41','Taiwan':'+886','Tanzania':'+255','Thailand':'+66',
+  'Turkey':'+90','Uganda':'+256','Ukraine':'+380','United Arab Emirates':'+971',
+  'United Kingdom':'+44','United States':'+1','Vietnam':'+84','Zimbabwe':'+263'
+};
+
+document.getElementById('country').addEventListener('change', function() {
+  const code = DIAL_CODES[this.value] || '—';
+  const ph = document.getElementById('phone');
+  document.getElementById('phoneCode').textContent = code;
+  ph.placeholder = code === '—' ? 'Select country first' : '000 000 0000';
+  ph.disabled = code === '—';
+});
+
 function showMessage(msg, type = 'error') {
   const el = document.getElementById('message');
   el.textContent = msg;
@@ -425,7 +534,9 @@ document.getElementById('signupForm').addEventListener('submit', async (e) => {
   const firstName = document.getElementById('firstName').value;
   const lastName  = document.getElementById('lastName').value;
   const email     = document.getElementById('email').value;
-  const phone     = document.getElementById('phone').value;
+  const phoneCode = document.getElementById('phoneCode').textContent;
+  const phoneNum  = document.getElementById('phone').value.replace(/\s/g, '');
+  const phone     = (phoneCode !== '—' ? phoneCode : '') + phoneNum;
   const country   = document.getElementById('country').value;
   const currency  = document.getElementById('currency').value;
   const password  = document.getElementById('password').value;

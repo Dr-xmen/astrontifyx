@@ -167,9 +167,8 @@ img{max-width:100%;display:block}
 .hstat-sep{width:1px;height:36px;background:var(--border)}
 
 /* ── TICKER ──────────────────────────────────────────────────────── */
-.ticker-wrap{background:#0d1020;border-bottom:1px solid var(--border);overflow:hidden;height:46px;line-height:0}
-.ticker-wrap .tradingview-widget-container{width:100%;height:46px}
-.ticker-wrap .tradingview-widget-container__widget{height:46px}
+.ticker-wrap{background:#0d1020;border-bottom:1px solid var(--border);overflow:hidden}
+.ticker-wrap .tradingview-widget-container{width:100%}
 .tk.dn em{color:#ef4444}
 
 /* ── SECTIONS SHARED ─────────────────────────────────────────────── */
