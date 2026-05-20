@@ -79,6 +79,15 @@ img{max-width:100%;display:block}
 .mob-actions a{flex:1;text-align:center;padding:12px;border-radius:9px;font-weight:600;font-size:14px}
 .mob-actions a:first-child{border:1px solid var(--border2);color:#fff}
 .mob-actions .btn-cta{min-width:auto}
+.mob-section{border-bottom:1px solid var(--border)}
+.mob-acc-btn{display:flex;justify-content:space-between;align-items:center;width:100%;background:none;border:none;color:rgba(232,234,240,.85);font-size:15px;font-weight:500;padding:13px 0;cursor:pointer;font-family:inherit;letter-spacing:-.01em}
+.mob-acc-btn svg{transition:transform .25s;flex-shrink:0}
+.mob-acc-btn.open svg{transform:rotate(180deg)}
+.mob-acc-sub{max-height:0;overflow:hidden;transition:max-height .3s ease}
+.mob-acc-sub.open{max-height:400px}
+.mob-acc-sub a{padding:10px 14px;font-size:14px;color:rgba(232,234,240,.65);display:flex;align-items:center;gap:8px;border-bottom:none!important}
+.mob-acc-sub a:hover{color:#e8eaf0}
+.mob-acc-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
 
 /* ── HERO ANIMATIONS ─────────────────────────────────────────────── */
 @keyframes heroUp{

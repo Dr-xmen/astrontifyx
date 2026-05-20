@@ -21,6 +21,17 @@ mobDrawer.querySelectorAll('a').forEach(a => {
   });
 });
 
+function toggleMobAcc(btn) {
+  const sub = btn.nextElementSibling;
+  const isOpen = sub.classList.contains('open');
+  document.querySelectorAll('.mob-acc-sub.open').forEach(s => s.classList.remove('open'));
+  document.querySelectorAll('.mob-acc-btn.open').forEach(b => b.classList.remove('open'));
+  if (!isOpen) {
+    sub.classList.add('open');
+    btn.classList.add('open');
+  }
+}
+
 // ── Scroll reveal ──────────────────────────────────────────────────
 const revealObs = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
