@@ -72,33 +72,37 @@ const counterObs = new IntersectionObserver((entries) => {
 
 document.querySelectorAll('.counter').forEach(el => counterObs.observe(el));
 
-// ── Hero card live prices ──────────────────────────────────────────
+// ── Hero card live prices (TradingView scanner) ────────────────────
 const HERO_PAIRS = [
-  { id: 'hp-0', sym: 'EURUSD=X',  label: 'EUR/USD', dp: 5 },
-  { id: 'hp-1', sym: 'XAUUSD=X',  label: 'XAU/USD', dp: 2 },
-  { id: 'hp-2', sym: 'USDJPY=X',  label: 'USD/JPY', dp: 3 },
-  { id: 'hp-3', sym: 'BTC-USD',   label: 'BTC/USD', dp: 2 }
+  { id: 'hp-0', tv: 'FX_IDC:EURUSD',   label: 'EUR/USD', dp: 5 },
+  { id: 'hp-1', tv: 'OANDA:XAUUSD',    label: 'XAU/USD', dp: 2 },
+  { id: 'hp-2', tv: 'FX_IDC:USDJPY',   label: 'USD/JPY', dp: 3 },
+  { id: 'hp-3', tv: 'BITSTAMP:BTCUSD', label: 'BTC/USD', dp: 2 }
 ];
 
 async function fetchHeroPrices() {
   try {
-    const symbols = HERO_PAIRS.map(p => p.sym).join(',');
-    const res = await fetch(
-      `https://query1.finance.yahoo.com/v8/finance/quote?symbols=${encodeURIComponent(symbols)}&fields=regularMarketPrice,regularMarketChangePercent`,
-      { headers: { 'Accept': 'application/json' } }
-    );
+    const res = await fetch('https://scanner.tradingview.com/global/scan', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        symbols: { tickers: HERO_PAIRS.map(p => p.tv) },
+        columns: ['close', 'change_percent']
+      })
+    });
     if (!res.ok) return;
     const json = await res.json();
-    const results = json?.quoteResponse?.result || [];
+    const results = json?.data || [];
 
-    results.forEach((q, i) => {
+    results.forEach((item, i) => {
       const cfg = HERO_PAIRS[i];
       const card = document.getElementById(cfg.id);
-      if (!card) return;
+      if (!card || !item.d) return;
 
-      const price = q.regularMarketPrice;
-      const chg   = q.regularMarketChangePercent;
-      const up    = chg >= 0;
+      const price = item.d[0];
+      const chg   = item.d[1];
+      if (price == null) return;
+      const up = chg >= 0;
       const priceStr = price >= 1000
         ? price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
         : price.toFixed(cfg.dp);
@@ -110,7 +114,6 @@ async function fetchHeroPrices() {
       em.style.color = up ? 'var(--green)' : 'var(--red)';
       card.className = 'hpc-pair ' + (up ? 'up' : 'dn');
 
-      // update main price display from first pair (EUR/USD)
       if (i === 0) {
         const mainPrice = document.getElementById('hpc-main-price');
         const mainChg   = document.getElementById('hpc-main-chg');

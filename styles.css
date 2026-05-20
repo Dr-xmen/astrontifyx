@@ -167,8 +167,9 @@ img{max-width:100%;display:block}
 .hstat-sep{width:1px;height:36px;background:var(--border)}
 
 /* ── TICKER ──────────────────────────────────────────────────────── */
-.ticker-wrap{background:#0d1020;border-bottom:1px solid var(--border);overflow:hidden}
-.ticker-wrap .tradingview-widget-container{width:100%}
+.ticker-wrap{background:#0d1020;border-bottom:1px solid var(--border);overflow:hidden;height:46px;line-height:0}
+.ticker-wrap .tradingview-widget-container{width:100%;height:46px}
+.ticker-wrap .tradingview-widget-container__widget{height:46px}
 .tk.dn em{color:#ef4444}
 
 /* ── SECTIONS SHARED ─────────────────────────────────────────────── */
@@ -217,12 +218,13 @@ img{max-width:100%;display:block}
 
 /* ── ACCOUNT TIERS ───────────────────────────────────────────────── */
 .tiers-section{background:var(--bg)}
-.tiers-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:52px}
+.tiers-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:52px}
 .tier-card{padding:32px;border-radius:22px;background:var(--card);border:1px solid var(--border);position:relative;transition:border-color .25s,transform .25s}
 .tier-card:hover{border-color:var(--border2);transform:translateY(-4px)}
 .tier-card.featured{border-color:rgba(79,110,247,.4);background:rgba(79,110,247,.06)}
 .tier-popular{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;font-size:11px;font-weight:700;letter-spacing:.06em;padding:4px 14px;border-radius:999px;white-space:nowrap}
 .tier-badge{font-size:11px;font-weight:800;letter-spacing:.1em;padding:4px 10px;border-radius:6px;display:inline-block;margin-bottom:16px;background:rgba(255,255,255,.07);color:rgba(232,234,240,.6)}
+.tier-badge.silver{background:rgba(192,200,220,.12);color:#a8b8cc}
 .tier-badge.gold{background:rgba(245,158,11,.12);color:#f59e0b}
 .tier-badge.plat{background:rgba(139,92,246,.12);color:#8b5cf6}
 .tier-price{font-size:28px;font-weight:800;margin-bottom:4px;letter-spacing:-.02em}
@@ -233,6 +235,7 @@ img{max-width:100%;display:block}
 .tier-btn{display:block;text-align:center;font-size:14px;font-weight:700;padding:13px;border-radius:10px;transition:opacity .2s,transform .15s}
 .tier-btn:hover{opacity:.88;transform:translateY(-1px)}
 .tier-btn.basic{background:rgba(255,255,255,.07);color:#fff;border:1px solid var(--border2)}
+.tier-btn.silver-btn{background:linear-gradient(135deg,#8a9bb0,#a8b8cc);color:#0b0e1a;box-shadow:0 8px 28px rgba(168,184,204,.25)}
 .tier-btn.gold-btn{background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;box-shadow:0 8px 28px rgba(79,110,247,.35)}
 .tier-btn.plat-btn{background:linear-gradient(135deg,#7c3aed,#8b5cf6);color:#fff;box-shadow:0 8px 28px rgba(124,58,237,.35)}
 
@@ -304,7 +307,7 @@ img{max-width:100%;display:block}
   .bst-img-wrap{order:-1}
   .why-grid{grid-template-columns:repeat(2,1fr)}
   .markets__grid{grid-template-columns:repeat(3,1fr)}
-  .tiers-grid{grid-template-columns:1fr}
+  .tiers-grid{grid-template-columns:repeat(2,1fr)}
   .stats-inner{grid-template-columns:repeat(2,1fr)}
   .split-inner{grid-template-columns:1fr}
   .split-visual{height:340px}
