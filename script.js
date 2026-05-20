@@ -92,7 +92,7 @@ async function buildTicker() {
   try {
     const res = await fetch('https://scanner.tradingview.com/global/scan', {
       method:'POST',
-      headers:{'Content-Type':'application/json'},
+      headers:{'Content-Type':'text/plain'},
       body:JSON.stringify({
         symbols:{tickers:TICKER_SYMS.map(s=>s.tv)},
         columns:['close','change_percent']

@@ -135,6 +135,21 @@ input::placeholder{color:#9ca3af}
 .phone-wrap:focus-within{border-color:#4f46e5;box-shadow:0 0 0 3px rgba(79,70,229,.1)}
 .phone-code{padding:11px 10px;background:#f9fafb;border-right:1.5px solid #e5e7eb;font-size:13px;font-weight:600;color:#374151;white-space:nowrap;min-width:52px;text-align:center;flex-shrink:0}
 .phone-wrap input{border:none;outline:none;flex:1;padding:11px 13px;font-size:14px;color:#111;font-family:'Space Grotesk',sans-serif;box-shadow:none!important}
+.csel-wrap{position:relative}
+.csel-display{display:flex;align-items:center;justify-content:space-between;padding:11px 13px;border:1.5px solid #e5e7eb;border-radius:8px;cursor:pointer;font-size:14px;color:#9ca3af;background:#fff;transition:border-color .2s,box-shadow .2s;user-select:none}
+.csel-display.open,.csel-display:focus{border-color:#4f46e5;box-shadow:0 0 0 3px rgba(79,70,229,.1);outline:none}
+.csel-display.selected{color:#111}
+.csel-display svg{flex-shrink:0;stroke:#9ca3af;fill:none;transition:transform .2s}
+.csel-display.open svg{transform:rotate(180deg)}
+.csel-drop{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:1.5px solid #e5e7eb;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.12);z-index:200;display:none}
+.csel-drop.open{display:block}
+.csel-search-wrap{display:flex;align-items:center;gap:8px;padding:9px 12px;border-bottom:1px solid #f3f4f6}
+.csel-search-wrap svg{flex-shrink:0;stroke:#9ca3af;fill:none}
+.csel-search-wrap input{border:none;outline:none;font-size:13px;width:100%;font-family:'Space Grotesk',sans-serif;color:#111}
+.csel-list{max-height:192px;overflow-y:auto}
+.csel-opt{padding:10px 13px;font-size:13.5px;cursor:pointer;color:#374151;transition:background .1s}
+.csel-opt:hover,.csel-opt.hi{background:#f5f3ff;color:#4f46e5}
+.csel-empty{padding:12px 13px;font-size:13px;color:#9ca3af;text-align:center}
 
 .btn-submit{
   width:100%;padding:13px;border-radius:10px;border:none;
@@ -321,81 +336,21 @@ input::placeholder{color:#9ca3af}
         </div>
 
         <div class="input-group">
-            <label>Country</label>
-            <select id="country" required>
-              <option value="">Select country…</option>
-              <option value="Afghanistan">Afghanistan (+93)</option>
-              <option value="Albania">Albania (+355)</option>
-              <option value="Algeria">Algeria (+213)</option>
-              <option value="Argentina">Argentina (+54)</option>
-              <option value="Australia">Australia (+61)</option>
-              <option value="Austria">Austria (+43)</option>
-              <option value="Bahrain">Bahrain (+973)</option>
-              <option value="Bangladesh">Bangladesh (+880)</option>
-              <option value="Belgium">Belgium (+32)</option>
-              <option value="Brazil">Brazil (+55)</option>
-              <option value="Canada">Canada (+1)</option>
-              <option value="Chile">Chile (+56)</option>
-              <option value="China">China (+86)</option>
-              <option value="Colombia">Colombia (+57)</option>
-              <option value="Croatia">Croatia (+385)</option>
-              <option value="Czech Republic">Czech Republic (+420)</option>
-              <option value="Denmark">Denmark (+45)</option>
-              <option value="Egypt">Egypt (+20)</option>
-              <option value="Ethiopia">Ethiopia (+251)</option>
-              <option value="Finland">Finland (+358)</option>
-              <option value="France">France (+33)</option>
-              <option value="Germany">Germany (+49)</option>
-              <option value="Ghana">Ghana (+233)</option>
-              <option value="Greece">Greece (+30)</option>
-              <option value="Hong Kong">Hong Kong (+852)</option>
-              <option value="Hungary">Hungary (+36)</option>
-              <option value="India">India (+91)</option>
-              <option value="Indonesia">Indonesia (+62)</option>
-              <option value="Iran">Iran (+98)</option>
-              <option value="Iraq">Iraq (+964)</option>
-              <option value="Ireland">Ireland (+353)</option>
-              <option value="Israel">Israel (+972)</option>
-              <option value="Italy">Italy (+39)</option>
-              <option value="Japan">Japan (+81)</option>
-              <option value="Jordan">Jordan (+962)</option>
-              <option value="Kenya">Kenya (+254)</option>
-              <option value="Kuwait">Kuwait (+965)</option>
-              <option value="Lebanon">Lebanon (+961)</option>
-              <option value="Malaysia">Malaysia (+60)</option>
-              <option value="Mexico">Mexico (+52)</option>
-              <option value="Morocco">Morocco (+212)</option>
-              <option value="Netherlands">Netherlands (+31)</option>
-              <option value="New Zealand">New Zealand (+64)</option>
-              <option value="Nigeria">Nigeria (+234)</option>
-              <option value="Norway">Norway (+47)</option>
-              <option value="Oman">Oman (+968)</option>
-              <option value="Pakistan">Pakistan (+92)</option>
-              <option value="Philippines">Philippines (+63)</option>
-              <option value="Poland">Poland (+48)</option>
-              <option value="Portugal">Portugal (+351)</option>
-              <option value="Qatar">Qatar (+974)</option>
-              <option value="Romania">Romania (+40)</option>
-              <option value="Russia">Russia (+7)</option>
-              <option value="Saudi Arabia">Saudi Arabia (+966)</option>
-              <option value="Singapore">Singapore (+65)</option>
-              <option value="South Africa">South Africa (+27)</option>
-              <option value="South Korea">South Korea (+82)</option>
-              <option value="Spain">Spain (+34)</option>
-              <option value="Sweden">Sweden (+46)</option>
-              <option value="Switzerland">Switzerland (+41)</option>
-              <option value="Taiwan">Taiwan (+886)</option>
-              <option value="Tanzania">Tanzania (+255)</option>
-              <option value="Thailand">Thailand (+66)</option>
-              <option value="Turkey">Turkey (+90)</option>
-              <option value="Uganda">Uganda (+256)</option>
-              <option value="Ukraine">Ukraine (+380)</option>
-              <option value="United Arab Emirates">UAE (+971)</option>
-              <option value="United Kingdom">United Kingdom (+44)</option>
-              <option value="United States">United States (+1)</option>
-              <option value="Vietnam">Vietnam (+84)</option>
-              <option value="Zimbabwe">Zimbabwe (+263)</option>
-            </select>
+          <label>Country</label>
+          <div class="csel-wrap" id="cselWrap">
+            <div class="csel-display" id="cselDisplay" tabindex="0">
+              <span id="cselText">Select country…</span>
+              <svg viewBox="0 0 24 24" width="14" height="14" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+            </div>
+            <div class="csel-drop" id="cselDrop">
+              <div class="csel-search-wrap">
+                <svg viewBox="0 0 24 24" width="14" height="14" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input type="text" id="cselSearch" placeholder="Search country…" autocomplete="off">
+              </div>
+              <div class="csel-list" id="cselList"></div>
+            </div>
+            <input type="hidden" id="country">
+          </div>
         </div>
 
         <div class="input-group">
@@ -469,33 +424,143 @@ function togglePassword(id, btn) {
   }
 }
 
-const DIAL_CODES = {
-  'Afghanistan':'+93','Albania':'+355','Algeria':'+213','Argentina':'+54',
-  'Australia':'+61','Austria':'+43','Bahrain':'+973','Bangladesh':'+880',
-  'Belgium':'+32','Brazil':'+55','Canada':'+1','Chile':'+56','China':'+86',
-  'Colombia':'+57','Croatia':'+385','Czech Republic':'+420','Denmark':'+45',
-  'Egypt':'+20','Ethiopia':'+251','Finland':'+358','France':'+33',
-  'Germany':'+49','Ghana':'+233','Greece':'+30','Hong Kong':'+852',
-  'Hungary':'+36','India':'+91','Indonesia':'+62','Iran':'+98','Iraq':'+964',
-  'Ireland':'+353','Israel':'+972','Italy':'+39','Japan':'+81','Jordan':'+962',
-  'Kenya':'+254','Kuwait':'+965','Lebanon':'+961','Malaysia':'+60',
-  'Mexico':'+52','Morocco':'+212','Netherlands':'+31','New Zealand':'+64',
-  'Nigeria':'+234','Norway':'+47','Oman':'+968','Pakistan':'+92',
-  'Philippines':'+63','Poland':'+48','Portugal':'+351','Qatar':'+974',
-  'Romania':'+40','Russia':'+7','Saudi Arabia':'+966','Singapore':'+65',
-  'South Africa':'+27','South Korea':'+82','Spain':'+34','Sweden':'+46',
-  'Switzerland':'+41','Taiwan':'+886','Tanzania':'+255','Thailand':'+66',
-  'Turkey':'+90','Uganda':'+256','Ukraine':'+380','United Arab Emirates':'+971',
-  'United Kingdom':'+44','United States':'+1','Vietnam':'+84','Zimbabwe':'+263'
-};
+const COUNTRIES = [
+  {name:'Afghanistan',dial:'+93'},{name:'Albania',dial:'+355'},{name:'Algeria',dial:'+213'},
+  {name:'Andorra',dial:'+376'},{name:'Angola',dial:'+244'},{name:'Antigua and Barbuda',dial:'+1-268'},
+  {name:'Argentina',dial:'+54'},{name:'Armenia',dial:'+374'},{name:'Australia',dial:'+61'},
+  {name:'Austria',dial:'+43'},{name:'Azerbaijan',dial:'+994'},{name:'Bahamas',dial:'+1-242'},
+  {name:'Bahrain',dial:'+973'},{name:'Bangladesh',dial:'+880'},{name:'Barbados',dial:'+1-246'},
+  {name:'Belarus',dial:'+375'},{name:'Belgium',dial:'+32'},{name:'Belize',dial:'+501'},
+  {name:'Benin',dial:'+229'},{name:'Bhutan',dial:'+975'},{name:'Bolivia',dial:'+591'},
+  {name:'Bosnia and Herzegovina',dial:'+387'},{name:'Botswana',dial:'+267'},{name:'Brazil',dial:'+55'},
+  {name:'Brunei',dial:'+673'},{name:'Bulgaria',dial:'+359'},{name:'Burkina Faso',dial:'+226'},
+  {name:'Burundi',dial:'+257'},{name:'Cambodia',dial:'+855'},{name:'Cameroon',dial:'+237'},
+  {name:'Canada',dial:'+1'},{name:'Cape Verde',dial:'+238'},{name:'Central African Republic',dial:'+236'},
+  {name:'Chad',dial:'+235'},{name:'Chile',dial:'+56'},{name:'China',dial:'+86'},
+  {name:'Colombia',dial:'+57'},{name:'Comoros',dial:'+269'},{name:'Congo',dial:'+242'},
+  {name:'Congo (DRC)',dial:'+243'},{name:'Costa Rica',dial:'+506'},{name:'Croatia',dial:'+385'},
+  {name:'Cuba',dial:'+53'},{name:'Cyprus',dial:'+357'},{name:'Czech Republic',dial:'+420'},
+  {name:'Denmark',dial:'+45'},{name:'Djibouti',dial:'+253'},{name:'Dominica',dial:'+1-767'},
+  {name:'Dominican Republic',dial:'+1-809'},{name:'Ecuador',dial:'+593'},{name:'Egypt',dial:'+20'},
+  {name:'El Salvador',dial:'+503'},{name:'Equatorial Guinea',dial:'+240'},{name:'Eritrea',dial:'+291'},
+  {name:'Estonia',dial:'+372'},{name:'Eswatini',dial:'+268'},{name:'Ethiopia',dial:'+251'},
+  {name:'Fiji',dial:'+679'},{name:'Finland',dial:'+358'},{name:'France',dial:'+33'},
+  {name:'Gabon',dial:'+241'},{name:'Gambia',dial:'+220'},{name:'Georgia',dial:'+995'},
+  {name:'Germany',dial:'+49'},{name:'Ghana',dial:'+233'},{name:'Greece',dial:'+30'},
+  {name:'Grenada',dial:'+1-473'},{name:'Guatemala',dial:'+502'},{name:'Guinea',dial:'+224'},
+  {name:'Guinea-Bissau',dial:'+245'},{name:'Guyana',dial:'+592'},{name:'Haiti',dial:'+509'},
+  {name:'Honduras',dial:'+504'},{name:'Hong Kong',dial:'+852'},{name:'Hungary',dial:'+36'},
+  {name:'Iceland',dial:'+354'},{name:'India',dial:'+91'},{name:'Indonesia',dial:'+62'},
+  {name:'Iran',dial:'+98'},{name:'Iraq',dial:'+964'},{name:'Ireland',dial:'+353'},
+  {name:'Israel',dial:'+972'},{name:'Italy',dial:'+39'},{name:'Jamaica',dial:'+1-876'},
+  {name:'Japan',dial:'+81'},{name:'Jordan',dial:'+962'},{name:'Kazakhstan',dial:'+7'},
+  {name:'Kenya',dial:'+254'},{name:'Kiribati',dial:'+686'},{name:'Kuwait',dial:'+965'},
+  {name:'Kyrgyzstan',dial:'+996'},{name:'Laos',dial:'+856'},{name:'Latvia',dial:'+371'},
+  {name:'Lebanon',dial:'+961'},{name:'Lesotho',dial:'+266'},{name:'Liberia',dial:'+231'},
+  {name:'Libya',dial:'+218'},{name:'Liechtenstein',dial:'+423'},{name:'Lithuania',dial:'+370'},
+  {name:'Luxembourg',dial:'+352'},{name:'Madagascar',dial:'+261'},{name:'Malawi',dial:'+265'},
+  {name:'Malaysia',dial:'+60'},{name:'Maldives',dial:'+960'},{name:'Mali',dial:'+223'},
+  {name:'Malta',dial:'+356'},{name:'Marshall Islands',dial:'+692'},{name:'Mauritania',dial:'+222'},
+  {name:'Mauritius',dial:'+230'},{name:'Mexico',dial:'+52'},{name:'Micronesia',dial:'+691'},
+  {name:'Moldova',dial:'+373'},{name:'Monaco',dial:'+377'},{name:'Mongolia',dial:'+976'},
+  {name:'Montenegro',dial:'+382'},{name:'Morocco',dial:'+212'},{name:'Mozambique',dial:'+258'},
+  {name:'Myanmar',dial:'+95'},{name:'Namibia',dial:'+264'},{name:'Nauru',dial:'+674'},
+  {name:'Nepal',dial:'+977'},{name:'Netherlands',dial:'+31'},{name:'New Zealand',dial:'+64'},
+  {name:'Nicaragua',dial:'+505'},{name:'Niger',dial:'+227'},{name:'Nigeria',dial:'+234'},
+  {name:'North Korea',dial:'+850'},{name:'North Macedonia',dial:'+389'},{name:'Norway',dial:'+47'},
+  {name:'Oman',dial:'+968'},{name:'Pakistan',dial:'+92'},{name:'Palau',dial:'+680'},
+  {name:'Panama',dial:'+507'},{name:'Papua New Guinea',dial:'+675'},{name:'Paraguay',dial:'+595'},
+  {name:'Peru',dial:'+51'},{name:'Philippines',dial:'+63'},{name:'Poland',dial:'+48'},
+  {name:'Portugal',dial:'+351'},{name:'Qatar',dial:'+974'},{name:'Romania',dial:'+40'},
+  {name:'Russia',dial:'+7'},{name:'Rwanda',dial:'+250'},{name:'Saint Kitts and Nevis',dial:'+1-869'},
+  {name:'Saint Lucia',dial:'+1-758'},{name:'Saint Vincent and the Grenadines',dial:'+1-784'},
+  {name:'Samoa',dial:'+685'},{name:'San Marino',dial:'+378'},{name:'São Tomé and Príncipe',dial:'+239'},
+  {name:'Saudi Arabia',dial:'+966'},{name:'Senegal',dial:'+221'},{name:'Serbia',dial:'+381'},
+  {name:'Seychelles',dial:'+248'},{name:'Sierra Leone',dial:'+232'},{name:'Singapore',dial:'+65'},
+  {name:'Slovakia',dial:'+421'},{name:'Slovenia',dial:'+386'},{name:'Solomon Islands',dial:'+677'},
+  {name:'Somalia',dial:'+252'},{name:'South Africa',dial:'+27'},{name:'South Korea',dial:'+82'},
+  {name:'South Sudan',dial:'+211'},{name:'Spain',dial:'+34'},{name:'Sri Lanka',dial:'+94'},
+  {name:'Sudan',dial:'+249'},{name:'Suriname',dial:'+597'},{name:'Sweden',dial:'+46'},
+  {name:'Switzerland',dial:'+41'},{name:'Syria',dial:'+963'},{name:'Taiwan',dial:'+886'},
+  {name:'Tajikistan',dial:'+992'},{name:'Tanzania',dial:'+255'},{name:'Thailand',dial:'+66'},
+  {name:'Timor-Leste',dial:'+670'},{name:'Togo',dial:'+228'},{name:'Tonga',dial:'+676'},
+  {name:'Trinidad and Tobago',dial:'+1-868'},{name:'Tunisia',dial:'+216'},{name:'Turkey',dial:'+90'},
+  {name:'Turkmenistan',dial:'+993'},{name:'Tuvalu',dial:'+688'},{name:'Uganda',dial:'+256'},
+  {name:'Ukraine',dial:'+380'},{name:'United Arab Emirates',dial:'+971'},
+  {name:'United Kingdom',dial:'+44'},{name:'United States',dial:'+1'},
+  {name:'Uruguay',dial:'+598'},{name:'Uzbekistan',dial:'+998'},{name:'Vanuatu',dial:'+678'},
+  {name:'Vatican City',dial:'+39'},{name:'Venezuela',dial:'+58'},{name:'Vietnam',dial:'+84'},
+  {name:'Yemen',dial:'+967'},{name:'Zambia',dial:'+260'},{name:'Zimbabwe',dial:'+263'},
+];
 
-document.getElementById('country').addEventListener('change', function() {
-  const code = DIAL_CODES[this.value] || '—';
-  const ph = document.getElementById('phone');
-  document.getElementById('phoneCode').textContent = code;
-  ph.placeholder = code === '—' ? 'Select country first' : '000 000 0000';
-  ph.disabled = code === '—';
-});
+(function() {
+  const wrap    = document.getElementById('cselWrap');
+  const display = document.getElementById('cselDisplay');
+  const text    = document.getElementById('cselText');
+  const drop    = document.getElementById('cselDrop');
+  const search  = document.getElementById('cselSearch');
+  const list    = document.getElementById('cselList');
+  const hidden  = document.getElementById('country');
+  let hiIdx = -1;
+
+  function renderList(filter) {
+    const q = (filter || '').toLowerCase();
+    const filtered = q ? COUNTRIES.filter(c => c.name.toLowerCase().includes(q)) : COUNTRIES;
+    if (!filtered.length) {
+      list.innerHTML = '<div class="csel-empty">No countries found</div>';
+      hiIdx = -1; return;
+    }
+    list.innerHTML = filtered.map(c =>
+      `<div class="csel-opt" data-name="${c.name}" data-dial="${c.dial}">${c.name}<span style="color:#9ca3af;font-size:12px;margin-left:6px">${c.dial}</span></div>`
+    ).join('');
+    hiIdx = -1;
+  }
+
+  function openDrop() {
+    drop.classList.add('open'); display.classList.add('open');
+    search.value = ''; renderList(''); search.focus();
+  }
+
+  function closeDrop() {
+    drop.classList.remove('open'); display.classList.remove('open');
+  }
+
+  function selectCountry(name, dial) {
+    hidden.value = name; text.textContent = name;
+    display.classList.add('selected'); closeDrop();
+    const ph = document.getElementById('phone');
+    document.getElementById('phoneCode').textContent = dial;
+    ph.placeholder = '000 000 0000'; ph.disabled = false;
+  }
+
+  display.addEventListener('click', () => drop.classList.contains('open') ? closeDrop() : openDrop());
+  display.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openDrop(); } });
+
+  search.addEventListener('input', () => { renderList(search.value); hiIdx = -1; });
+  search.addEventListener('keydown', e => {
+    const opts = list.querySelectorAll('.csel-opt');
+    if (!opts.length) return;
+    if (e.key === 'ArrowDown') {
+      e.preventDefault(); hiIdx = Math.min(hiIdx + 1, opts.length - 1);
+      opts.forEach((o, i) => o.classList.toggle('hi', i === hiIdx));
+      opts[hiIdx].scrollIntoView({ block: 'nearest' });
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault(); hiIdx = Math.max(hiIdx - 1, 0);
+      opts.forEach((o, i) => o.classList.toggle('hi', i === hiIdx));
+      opts[hiIdx].scrollIntoView({ block: 'nearest' });
+    } else if (e.key === 'Enter' && hiIdx >= 0) {
+      e.preventDefault();
+      const opt = opts[hiIdx]; selectCountry(opt.dataset.name, opt.dataset.dial);
+    } else if (e.key === 'Escape') { closeDrop(); display.focus(); }
+  });
+
+  list.addEventListener('click', e => {
+    const opt = e.target.closest('.csel-opt');
+    if (opt) selectCountry(opt.dataset.name, opt.dataset.dial);
+  });
+
+  document.addEventListener('click', e => { if (!wrap.contains(e.target)) closeDrop(); });
+})();
 
 function showMessage(msg, type = 'error') {
   const el = document.getElementById('message');
