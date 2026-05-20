@@ -211,7 +211,7 @@ img{display:block;max-width:100%}
 /* ── RESPONSIVE ─────────────────────────────────────────────────── */
 @media(max-width:960px){
   .main-nav,.nav-actions{display:none}
-  .mob-toggle{display:flex}
+  .mob-toggle{display:flex;margin-left:auto}
   .methods-grid{grid-template-columns:1fr}
   .form-row{grid-template-columns:1fr}
   .footer-grid{grid-template-columns:1fr 1fr;gap:32px}
@@ -692,5 +692,6 @@ img{display:block;max-width:100%}
   });
 }());
 </script>
+<script>function toggleMobAcc(b){var s=b.nextElementSibling,o=s.classList.contains("open");document.querySelectorAll(".mob-acc-sub.open").forEach(function(x){x.classList.remove("open");});document.querySelectorAll(".mob-acc-btn.open").forEach(function(x){x.classList.remove("open");});if(!o){s.classList.add("open");b.classList.add("open");}}</script>
 </body>
 </html>

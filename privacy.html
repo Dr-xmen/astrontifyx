@@ -462,7 +462,7 @@ ul{list-style:none}
 /* ── RESPONSIVE ───────────────────────────────────────────────────── */
 @media(max-width:900px){
   .main-nav,.nav-actions{display:none}
-  .mob-toggle{display:flex}
+  .mob-toggle{display:flex;margin-left:auto}
   .mob-drawer{display:flex}
   .footer-grid{grid-template-columns:1fr 1fr;gap:32px}
   .policy-toc ol{grid-template-columns:1fr}
@@ -874,5 +874,6 @@ document.addEventListener('click', function(e){
   }
 });
 </script>
+<script>function toggleMobAcc(b){var s=b.nextElementSibling,o=s.classList.contains("open");document.querySelectorAll(".mob-acc-sub.open").forEach(function(x){x.classList.remove("open");});document.querySelectorAll(".mob-acc-btn.open").forEach(function(x){x.classList.remove("open");});if(!o){s.classList.add("open");b.classList.add("open");}}</script>
 </body>
 </html>

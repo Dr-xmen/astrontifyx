@@ -235,7 +235,7 @@ button{cursor:pointer;border:none;background:none;font-family:inherit}
   .stat-item::after{display:none}
   .hero-actions,.cta-actions{flex-direction:column;align-items:center}
   .btn-primary,.btn-ghost,.btn-white,.btn-ghost-white{width:100%;justify-content:center}
-  .mob-toggle{display:flex}
+  .mob-toggle{display:flex;margin-left:auto}
   .mob-drawer.open{display:flex}
   .nav-actions{display:none}
   .footer-inner{grid-template-columns:1fr 1fr}
@@ -643,5 +643,6 @@ button{cursor:pointer;border:none;background:none;font-family:inherit}
   els.forEach(function(el){io.observe(el)});
 })();
 </script>
+<script>function toggleMobAcc(b){var s=b.nextElementSibling,o=s.classList.contains("open");document.querySelectorAll(".mob-acc-sub.open").forEach(function(x){x.classList.remove("open");});document.querySelectorAll(".mob-acc-btn.open").forEach(function(x){x.classList.remove("open");});if(!o){s.classList.add("open");b.classList.add("open");}}</script>
 </body>
 </html>
