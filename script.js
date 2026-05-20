@@ -72,6 +72,54 @@ const counterObs = new IntersectionObserver((entries) => {
 
 document.querySelectorAll('.counter').forEach(el => counterObs.observe(el));
 
+// ── Live ticker (TradingView scanner) ─────────────────────────────
+const TICKER_SYMS = [
+  {tv:'FX_IDC:EURUSD',   label:'EUR/USD',  dp:5},
+  {tv:'FX_IDC:GBPUSD',   label:'GBP/USD',  dp:5},
+  {tv:'OANDA:XAUUSD',    label:'XAU/USD',  dp:2},
+  {tv:'BITSTAMP:BTCUSD', label:'BTC/USD',  dp:2},
+  {tv:'FX_IDC:USDJPY',   label:'USD/JPY',  dp:3},
+  {tv:'BITSTAMP:ETHUSD', label:'ETH/USD',  dp:2},
+  {tv:'FOREXCOM:SPXUSD', label:'S&P 500',  dp:2},
+  {tv:'FOREXCOM:NSXUSD', label:'NASDAQ',   dp:2},
+  {tv:'TVC:USOIL',       label:'WTI Oil',  dp:2},
+  {tv:'FX_IDC:AUDUSD',   label:'AUD/USD',  dp:5},
+  {tv:'NASDAQ:NVDA',     label:'NVDA',     dp:2},
+  {tv:'OANDA:XAGUSD',    label:'XAG/USD',  dp:3},
+];
+
+async function buildTicker() {
+  try {
+    const res = await fetch('https://scanner.tradingview.com/global/scan', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        symbols:{tickers:TICKER_SYMS.map(s=>s.tv)},
+        columns:['close','change_percent']
+      })
+    });
+    if (!res.ok) return;
+    const {data=[]} = await res.json();
+    const items = data.map((item, i) => {
+      const sym = TICKER_SYMS[i];
+      if (!item.d || item.d[0]==null) return '';
+      const [price, chg] = item.d;
+      const up = chg >= 0;
+      const priceStr = price >= 1000
+        ? price.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})
+        : price.toFixed(sym.dp);
+      const chgStr = (up?'+':'') + chg.toFixed(2)+'%';
+      return `<div class="tk-item"><span class="tk-name">${sym.label}</span><span class="tk-price">${priceStr}</span><span class="tk-chg ${up?'up':'dn'}">${chgStr}</span></div>`;
+    }).join('');
+    const track = document.getElementById('tickerTrack');
+    if (!track || !items) return;
+    track.innerHTML = items + items;
+    track.classList.add('running');
+  } catch(_) {}
+}
+buildTicker();
+setInterval(buildTicker, 60000);
+
 // ── Hero card live prices (TradingView scanner) ────────────────────
 const HERO_PAIRS = [
   { id: 'hp-0', tv: 'FX_IDC:EURUSD',   label: 'EUR/USD', dp: 5 },

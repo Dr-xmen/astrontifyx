@@ -167,8 +167,17 @@ img{max-width:100%;display:block}
 .hstat-sep{width:1px;height:36px;background:var(--border)}
 
 /* ── TICKER ──────────────────────────────────────────────────────── */
-.ticker-wrap{background:#0d1020;border-bottom:1px solid var(--border);overflow:hidden}
-.ticker-wrap .tradingview-widget-container{width:100%}
+.ticker-wrap{background:#0d1020;border-bottom:1px solid var(--border);overflow:hidden;height:40px;display:flex;align-items:center}
+.ticker-track{display:flex;align-items:center;white-space:nowrap;will-change:transform}
+.ticker-track.running{animation:tickerScroll 55s linear infinite}
+.ticker-track.running:hover{animation-play-state:paused}
+@keyframes tickerScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.tk-item{display:inline-flex;align-items:center;gap:7px;padding:0 24px;font-size:13px;border-right:1px solid rgba(255,255,255,.06);height:40px}
+.tk-name{font-family:'JetBrains Mono',monospace;font-weight:600;color:#c8cfe0;font-size:12px}
+.tk-price{font-family:'JetBrains Mono',monospace;font-weight:700;color:#e8eaf0;font-size:13px}
+.tk-chg{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:500}
+.tk-chg.up{color:#22c55e}.tk-chg.dn{color:#ef4444}
+.tk-loading{padding:0 24px;font-size:12px;color:#8b93b0}
 .tk.dn em{color:#ef4444}
 
 /* ── SECTIONS SHARED ─────────────────────────────────────────────── */

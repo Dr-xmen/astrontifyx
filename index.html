@@ -228,31 +228,8 @@
 
 <!-- ── LIVE TICKER ───────────────────────────────────────────────── -->
 <div class="ticker-wrap">
-  <div class="tradingview-widget-container">
-    <div class="tradingview-widget-container__widget"></div>
-    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
-    {
-      "symbols": [
-        {"proName": "FX_IDC:EURUSD",   "title": "EUR/USD"},
-        {"proName": "FX_IDC:GBPUSD",   "title": "GBP/USD"},
-        {"proName": "OANDA:XAUUSD",    "title": "XAU/USD"},
-        {"proName": "BITSTAMP:BTCUSD", "title": "BTC/USD"},
-        {"proName": "FX_IDC:USDJPY",   "title": "USD/JPY"},
-        {"proName": "BITSTAMP:ETHUSD", "title": "ETH/USD"},
-        {"proName": "FOREXCOM:SPXUSD", "title": "S&P 500"},
-        {"proName": "FOREXCOM:NSXUSD", "title": "NASDAQ"},
-        {"proName": "TVC:USOIL",       "title": "WTI Crude"},
-        {"proName": "FX_IDC:AUDUSD",   "title": "AUD/USD"},
-        {"proName": "NASDAQ:NVDA",     "title": "NVDA"},
-        {"proName": "OANDA:XAGUSD",    "title": "XAG/USD"}
-      ],
-      "showSymbolLogo": true,
-      "colorTheme": "dark",
-      "isTransparent": true,
-      "displayMode": "compact",
-      "locale": "en"
-    }
-    </script>
+  <div class="ticker-track" id="tickerTrack">
+    <span class="tk-loading">Loading live prices…</span>
   </div>
 </div>
 

@@ -320,8 +320,7 @@ input::placeholder{color:#9ca3af}
           <input type="email" id="email" placeholder="john@example.com" autocomplete="email" required>
         </div>
 
-        <div class="input-row">
-          <div class="input-group">
+        <div class="input-group">
             <label>Country</label>
             <select id="country" required>
               <option value="">Select country…</option>
@@ -397,23 +396,6 @@ input::placeholder{color:#9ca3af}
               <option value="Vietnam">Vietnam (+84)</option>
               <option value="Zimbabwe">Zimbabwe (+263)</option>
             </select>
-          </div>
-          <div class="input-group">
-            <label>Account Currency</label>
-            <select id="currency" required>
-              <option value="">Select…</option>
-              <option>USD</option>
-              <option>EUR</option>
-              <option>GBP</option>
-              <option>NGN</option>
-              <option>AED</option>
-              <option>AUD</option>
-              <option>CAD</option>
-              <option>JPY</option>
-              <option>CHF</option>
-              <option>SGD</option>
-            </select>
-          </div>
         </div>
 
         <div class="input-group">
@@ -538,7 +520,6 @@ document.getElementById('signupForm').addEventListener('submit', async (e) => {
   const phoneNum  = document.getElementById('phone').value.replace(/\s/g, '');
   const phone     = (phoneCode !== '—' ? phoneCode : '') + phoneNum;
   const country   = document.getElementById('country').value;
-  const currency  = document.getElementById('currency').value;
   const password  = document.getElementById('password').value;
   const confirm   = document.getElementById('confirmPassword').value;
 
@@ -546,7 +527,7 @@ document.getElementById('signupForm').addEventListener('submit', async (e) => {
 
   const { data, error } = await supabaseClient.auth.signUp({
     email, password,
-    options: { data: { first_name: firstName, last_name: lastName, phone, country, currency } }
+    options: { data: { first_name: firstName, last_name: lastName, phone, country } }
   });
 
   if (error) { showMessage(error.message); return; }
@@ -554,7 +535,7 @@ document.getElementById('signupForm').addEventListener('submit', async (e) => {
   if (data.user) {
     const { error: profileError } = await supabaseClient
       .from('profiles')
-      .update({ first_name: firstName, last_name: lastName, phone, country, currency })
+      .update({ first_name: firstName, last_name: lastName, phone, country })
       .eq('id', data.user.id);
     if (profileError) { console.error(profileError); showMessage('Profile creation failed'); return; }
   }
