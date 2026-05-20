@@ -3561,51 +3561,55 @@ document.addEventListener('click', function(e){
   var email = btn.getAttribute('data-email') || '';
   if (!uid) return;
 
-  // Simple native confirm — 100% reliable, no modal issues
-  var msg = 'Delete user: ' + uname + (email ? ' (' + email + ')' : '') + '?\n\nThis cannot be undone. Type DELETE below to confirm.';
+  var msg = 'Delete user: ' + uname + (email ? ' (' + email + ')' : '') + '?\n\nThis cannot be undone. Type DELETE to confirm.';
   var typed = window.prompt(msg, '');
-  if (!typed || typed.trim().toUpperCase() !== 'DELETE') {
-    return; // cancelled or wrong input
-  }
+  if (!typed || typed.trim().toUpperCase() !== 'DELETE') return;
 
-  // Do the delete
   (async function(){
+    var svcKey  = window.ATRONTIFY_SERVICE_KEY;
+    var baseUrl = 'https://guguugokdhiwobmuopro.supabase.co';
+    var svcHdr  = { 'apikey': svcKey, 'Authorization': 'Bearer ' + svcKey, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' };
+
+    btn.textContent = 'Deleting…';
+    btn.disabled = true;
+
     try {
-      var db = window.ATRONTIFY_DB;
-      if (db) {
-        // Try RPC
-        var rpc = await db.rpc('ops_delete_user', { target_user_id: uid });
-        if (rpc.error) {
-          // Fallback: delete related records then profile
-          var tables = ['deposits','withdrawals','transactions','trades','kyc_verifications','trading_accounts','accounts'];
-          for (var t of tables) {
-            try { await db.from(t).delete().eq('user_id', uid); } catch(_){}
-          }
-          var pr = await db.from('profiles').delete().eq('id', uid);
-          if (pr.error) console.warn('Profile delete:', pr.error.message);
+      // 1. Try the RPC (works once the function exists on the project)
+      var rf = window._realFetch || fetch;
+      var rpcRes = await rf(baseUrl + '/rest/v1/rpc/ops_delete_user', {
+        method: 'POST', headers: svcHdr, body: JSON.stringify({ target_user_id: uid })
+      });
+
+      if (!rpcRes.ok) {
+        // 2. Fallback: direct REST deletes with service role key
+        var appTables = [
+          'deposit_requests','withdrawal_requests','transactions','positions',
+          'trades','kyc_submissions','notifications','trading_accounts',
+          'profit_target_trades','profit_targets','banned_users'
+        ];
+        for (var t of appTables) {
+          await rf(baseUrl + '/rest/v1/' + t + '?user_id=eq.' + uid, { method: 'DELETE', headers: svcHdr });
         }
+        await rf(baseUrl + '/rest/v1/audit_log?target_user_id=eq.' + uid,    { method: 'DELETE', headers: svcHdr });
+        await rf(baseUrl + '/rest/v1/admin_sent_emails?recipient_user_id=eq.' + uid, { method: 'DELETE', headers: svcHdr });
+        await rf(baseUrl + '/rest/v1/profiles?id=eq.' + uid,                  { method: 'DELETE', headers: svcHdr });
+        // Hard-delete the auth user
+        await rf(baseUrl + '/auth/v1/admin/users/' + uid, {
+          method: 'DELETE', headers: { 'apikey': svcKey, 'Authorization': 'Bearer ' + svcKey }
+        });
       }
 
-      // Remove from local array
+      // Update local state
       if (window.USERS) window.USERS = window.USERS.filter(function(u){ return String(u.id) !== String(uid); });
-
-      // Remove row from DOM
       var row = btn.closest('tr');
       if (row) row.remove();
-
-      // Re-render counts
       if (typeof renderUsers === 'function') renderUsers();
       if (typeof renderRecentUsers === 'function') renderRecentUsers();
+      showToast('User deleted successfully', 'success');
 
-      // Toast
-      var toast = document.getElementById('toast');
-      var toastMsg = document.getElementById('toast-msg');
-      if (toast && toastMsg) {
-        toastMsg.textContent = 'User deleted successfully';
-        toast.className = 'toast success show';
-        setTimeout(function(){ toast.classList.remove('show'); }, 3200);
-      }
     } catch(err) {
+      btn.textContent = 'Delete';
+      btn.disabled = false;
       alert('Delete failed: ' + (err.message || err));
     }
   })();
@@ -3631,6 +3635,7 @@ window.loadSupportTickets = window.loadSupportTickets || noop;
 
 // Silence noisy fetch errors from missing Supabase tables
 const originalFetch = window.fetch;
+window._realFetch = window.fetch; // exposed so delete handler can bypass the override
 
 window.fetch = async (...args) => {
   try {
@@ -3642,7 +3647,7 @@ window.fetch = async (...args) => {
       args[0].includes('/rest/v1/')
     ) {
 
-      if (!res.ok) {
+      if (!res.ok && !args[0].includes('/rpc/')) {
         console.warn('Suppressed Supabase table error:', args[0]);
         return new Response(JSON.stringify([]), {
           status: 200,
