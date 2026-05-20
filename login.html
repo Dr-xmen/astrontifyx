@@ -3,365 +3,364 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Login - AstrontifyX</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<title>Sign In — AtrontifyX</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase.js"></script>
-
 <style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: "Inter", sans-serif;
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:'Space Grotesk',system-ui,sans-serif;background:#0b0e1a;color:#e8eaf0;-webkit-font-smoothing:antialiased}
+a{text-decoration:none;color:inherit}
+button{font-family:inherit;cursor:pointer;border:none}
+
+/* ── LAYOUT ── */
+.auth-wrapper{display:flex;min-height:100vh}
+
+/* ── LEFT PANEL ── */
+.auth-left{
+  flex:1;position:relative;overflow:hidden;
+  display:flex;flex-direction:column;justify-content:space-between;padding:40px 48px;
+  background:#0b0e1a;
 }
+.left-glow-1{position:absolute;top:-80px;right:-60px;width:480px;height:480px;background:radial-gradient(circle,rgba(124,58,237,.28) 0%,transparent 65%);border-radius:50%;pointer-events:none;animation:glowPulse 6s ease-in-out infinite}
+.left-glow-2{position:absolute;bottom:-60px;left:-60px;width:380px;height:380px;background:radial-gradient(circle,rgba(79,110,247,.22) 0%,transparent 65%);border-radius:50%;pointer-events:none;animation:glowPulse 6s ease-in-out infinite 2s}
+.left-glow-3{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:300px;height:300px;background:radial-gradient(circle,rgba(79,110,247,.07) 0%,transparent 70%);border-radius:50%;pointer-events:none}
 
-body {
-  background: #0B0F1A;
-  color: #fff;
+/* particles */
+.particles{position:absolute;inset:0;pointer-events:none}
+.pt{position:absolute;border-radius:50%;animation:ptPulse 3s ease-in-out infinite}
+.pt1{width:7px;height:7px;background:rgba(124,58,237,.9);box-shadow:0 0 14px rgba(124,58,237,.7);top:15%;left:20%;animation-delay:0s}
+.pt2{width:5px;height:5px;background:rgba(79,110,247,.8);box-shadow:0 0 10px rgba(79,110,247,.6);top:22%;right:20%;animation-delay:.7s}
+.pt3{width:8px;height:8px;background:rgba(79,110,247,.6);box-shadow:0 0 16px rgba(79,110,247,.5);top:58%;left:10%;animation-delay:1.2s}
+.pt4{width:4px;height:4px;background:rgba(245,158,11,.9);box-shadow:0 0 10px rgba(245,158,11,.6);bottom:26%;right:18%;animation-delay:1.8s}
+.pt5{width:6px;height:6px;background:rgba(79,110,247,.7);box-shadow:0 0 12px rgba(79,110,247,.5);bottom:20%;left:30%;animation-delay:.4s}
+.pt6{width:5px;height:5px;background:rgba(34,197,94,.8);box-shadow:0 0 10px rgba(34,197,94,.5);top:40%;right:8%;animation-delay:2.1s}
+@keyframes ptPulse{0%,100%{transform:scale(1);opacity:.7}50%{transform:scale(1.6);opacity:1}}
+@keyframes glowPulse{0%,100%{opacity:.6}50%{opacity:1}}
+
+/* grid lines */
+.grid-lines{position:absolute;inset:0;pointer-events:none;opacity:.06}
+.grid-lines svg{width:100%;height:100%}
+
+/* ── LEFT CONTENT ── */
+.left-top{position:relative;z-index:2}
+.left-logo{display:flex;align-items:center;gap:10px;margin-bottom:48px}
+.left-logo img{height:34px;width:auto}
+.left-logo-mark{background:linear-gradient(135deg,#4f6ef7,#7c3aed);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:800;font-size:20px;letter-spacing:-.5px}
+.left-logo-text{font-weight:700;font-size:18px;color:#e8eaf0}
+.left-headline{font-size:clamp(26px,3.5vw,40px);font-weight:800;line-height:1.12;letter-spacing:-.03em;margin-bottom:14px}
+.left-headline em{font-style:normal;background:linear-gradient(135deg,#7c3aed,#4f6ef7);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.left-sub{font-size:15px;color:#8b93b0;line-height:1.65;max-width:380px;margin-bottom:40px}
+
+/* market ticker cards */
+.ticker-stack{display:flex;flex-direction:column;gap:10px;margin-bottom:28px;position:relative;z-index:2}
+.ticker-card{
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);
+  border-radius:12px;padding:14px 18px;
+  display:flex;align-items:center;justify-content:space-between;
+  animation:cardSlide .5s cubic-bezier(.22,1,.36,1) both;
 }
+.ticker-card:nth-child(1){animation-delay:.15s}
+.ticker-card:nth-child(2){animation-delay:.3s}
+.ticker-card:nth-child(3){animation-delay:.45s}
+@keyframes cardSlide{from{opacity:0;transform:translateX(-20px)}to{opacity:1;transform:none}}
+.ticker-left{display:flex;align-items:center;gap:12px}
+.ticker-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.ticker-name{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;color:#e8eaf0}
+.ticker-desc{font-size:11px;color:#8b93b0;margin-top:1px}
+.ticker-right{text-align:right}
+.ticker-price{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:#e8eaf0}
+.ticker-chg{font-size:11px;font-weight:600;margin-top:2px}
+.up{color:#22c55e}.dn{color:#ef4444}
 
-.auth-wrapper {
-  display: flex;
-  min-height: 100vh;
+/* mini sparkline */
+.sparkline{width:60px;height:28px}
+.sparkline polyline{fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+
+/* stat row */
+.stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;position:relative;z-index:2;margin-bottom:32px}
+.stat-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:14px;text-align:center;animation:cardUp .5s cubic-bezier(.22,1,.36,1) both}
+.stat-card:nth-child(1){animation-delay:.3s}
+.stat-card:nth-child(2){animation-delay:.45s}
+.stat-card:nth-child(3){animation-delay:.6s}
+@keyframes cardUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.stat-val{font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:700;color:#4f6ef7;margin-bottom:4px}
+.stat-lbl{font-size:10px;color:#8b93b0;font-weight:500}
+
+/* bottom trust */
+.left-bottom{position:relative;z-index:2}
+.left-trust{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.left-trust-item{display:flex;align-items:center;gap:6px;font-size:12px;color:#8b93b0}
+.left-trust-item svg{width:14px;height:14px;stroke:#4f6ef7;flex-shrink:0}
+.trust-sep{width:1px;height:14px;background:rgba(255,255,255,.1)}
+
+/* ── RIGHT PANEL ── */
+.auth-right{
+  width:460px;flex-shrink:0;
+  background:#ffffff;color:#111;
+  display:flex;align-items:center;justify-content:center;
+  padding:48px 40px;overflow-y:auto;
 }
+.form-box{width:100%;max-width:360px}
+.form-logo{display:none;align-items:center;gap:8px;margin-bottom:28px}
+.form-logo-mark{background:linear-gradient(135deg,#4f46e5,#7c3aed);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:800;font-size:18px;letter-spacing:-.4px}
+.form-logo img{height:28px;width:auto}
+.form-h2{font-size:24px;font-weight:800;letter-spacing:-.02em;margin-bottom:4px;color:#0f172a}
+.form-sub{color:#6b7280;font-size:14px;margin-bottom:24px}
 
-.auth-left {
-  flex: 1;
-  padding: 60px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  background: radial-gradient(circle at 80% 20%, rgba(124,58,237,0.25), transparent),
-              radial-gradient(circle at 20% 80%, rgba(79,70,229,0.2), transparent),
-              #0B0F1A;
+.message{margin-bottom:14px;font-size:13px;text-align:center;padding:10px;border-radius:8px;display:none}
+.message.success{display:block;background:#f0fdf4;color:#16a34a;border:1px solid #bbf7d0}
+.message.error{display:block;background:#fef2f2;color:#dc2626;border:1px solid #fecaca}
+
+.google-btn{
+  width:100%;padding:13px;border-radius:10px;
+  border:1.5px solid #e5e7eb;background:#fff;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  font-weight:600;font-size:14px;color:#374151;cursor:pointer;
+  transition:background .15s,border-color .15s;margin-bottom:18px
 }
+.google-btn:hover{background:#f9fafb;border-color:#d1d5db}
+.divider{text-align:center;margin:14px 0;font-size:12px;color:#9ca3af;position:relative}
+.divider::before,.divider::after{content:'';position:absolute;top:50%;width:38%;height:1px;background:#e5e7eb}
+.divider::before{left:0}.divider::after{right:0}
 
-.brand {
-  font-size: 22px;
-  font-weight: 800;
-  margin-bottom: 30px;
+.input-group{margin-bottom:13px}
+.input-group label{display:block;font-size:12px;font-weight:600;color:#374151;margin-bottom:5px}
+input{
+  width:100%;padding:12px 13px;border-radius:8px;
+  border:1.5px solid #e5e7eb;font-size:14px;color:#111;
+  font-family:'Space Grotesk',sans-serif;background:#fff;
+  outline:none;transition:border-color .2s,box-shadow .2s
 }
+input:focus{border-color:#4f46e5;box-shadow:0 0 0 3px rgba(79,70,229,.1)}
+input::placeholder{color:#9ca3af}
+.password-wrap{position:relative}
+.eye-btn{position:absolute;right:11px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;padding:4px;color:#9ca3af;display:flex;align-items:center}
+.eye-btn:hover{color:#6b7280}
+.eye-btn svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2}
+.row{display:flex;justify-content:flex-end;margin-bottom:14px}
+.row a{font-size:13px;color:#4f46e5;font-weight:500}
 
-.headline {
-  font-size: 34px;
-  font-weight: 700;
-  margin-bottom: 12px;
+.btn-submit{
+  width:100%;padding:13px;border-radius:10px;border:none;
+  background:linear-gradient(135deg,#4f46e5,#7c3aed);
+  color:#fff;font-size:15px;font-weight:700;cursor:pointer;
+  font-family:'Space Grotesk',sans-serif;
+  transition:opacity .2s,transform .15s;
+  box-shadow:0 4px 18px rgba(79,70,229,.35);
+  margin-bottom:14px
 }
+.btn-submit:hover{opacity:.92;transform:translateY(-1px)}
+.btn-submit:active{transform:translateY(0)}
 
-.subtext {
-  color: #9CA3AF;
-  margin-bottom: 40px;
-  max-width: 420px;
+/* trust row below button */
+.trust-row{display:flex;justify-content:center;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:20px}
+.trust-item{display:flex;align-items:center;gap:5px;font-size:11.5px;color:#6b7280;font-weight:500}
+.trust-item svg{width:13px;height:13px;stroke:#16a34a;flex-shrink:0}
+.trust-dot{width:3px;height:3px;background:#d1d5db;border-radius:50%}
+.form-footer{text-align:center;font-size:13px;color:#6b7280}
+.form-footer a{color:#4f46e5;font-weight:600}
+
+/* responsive */
+@media(max-width:960px){
+  .auth-left{display:none}
+  .auth-right{width:100%;min-height:100vh}
+  .form-logo{display:flex}
 }
-
-.platform-card {
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 16px;
-  padding: 25px;
-  max-width: 420px;
-  backdrop-filter: blur(20px);
-}
-
-.platform-card h3 {
-  margin-bottom: 20px;
-  font-size: 18px;
-}
-
-.spec {
-  display: flex;
-  justify-content: space-between;
-  padding: 12px 0;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
-  font-size: 14px;
-}
-
-.spec:last-child {
-  border-bottom: none;
-}
-
-.spec span {
-  color: #9CA3AF;
-}
-
-.auth-right {
-  flex: 1;
-  background: #ffffff;
-  color: #111;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 40px;
-}
-
-.form-box {
-  width: 100%;
-  max-width: 400px;
-}
-
-h2 {
-  margin-bottom: 10px;
-}
-
-.subtitle {
-  color: #6b7280;
-  margin-bottom: 20px;
-  font-size: 14px;
-}
-
-.input-group {
-  margin-bottom: 15px;
-}
-
-input {
-  width: 100%;
-  padding: 14px;
-  border-radius: 10px;
-  border: 1px solid #e5e7eb;
-  outline: none;
-}
-
-.google-btn {
-  width: 100%;
-  padding: 14px;
-  border-radius: 12px;
-  border: 1px solid #e5e7eb;
-  background: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.google-btn:hover {
-  background: #f9fafb;
-}
-
-.divider {
-  text-align: center;
-  margin: 18px 0;
-  position: relative;
-  color: #6b7280;
-  font-size: 13px;
-}
-
-.divider::before,
-.divider::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  width: 38%;
-  height: 1px;
-  background: #e5e7eb;
-}
-
-.divider::before {
-  left: 0;
-}
-
-.divider::after {
-  right: 0;
-}
-
-.row {
-  display: flex;
-  justify-content: flex-end;
-  font-size: 13px;
-  margin-bottom: 15px;
-}
-
-.row a {
-  text-decoration: none;
-  color: #4f46e5;
-}
-
-.btn {
-  width: 100%;
-  padding: 15px;
-  border-radius: 12px;
-  border: none;
-  background: linear-gradient(135deg, #4f46e5, #7c3aed);
-  color: white;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.footer-text {
-  margin-top: 20px;
-  text-align: center;
-  font-size: 14px;
-}
-
-.footer-text a {
-  color: #4f46e5;
-  text-decoration: none;
-}
-
-.message {
-  margin-bottom: 15px;
-  font-size: 14px;
-  text-align: center;
-}
-
-.success {
-  color: #16a34a;
-}
-
-.error {
-  color: #dc2626;
-}
-
-.trust-row {
-  margin-top: 30px;
-  padding-top: 20px;
-  border-top: 1px solid #e5e7eb;
-  display: flex;
-  justify-content: center;
-  gap: 18px;
-  flex-wrap: wrap;
-}
-
-.trust-item {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  color: #6b7280;
-  font-size: 13px;
-}
-
-.trust-item svg {
-  width: 15px;
-  height: 15px;
-  color: #16a34a;
-}
-
-@media(max-width: 900px){
-  .auth-left {
-    display: none;
-  }
-
-  .auth-right {
-    padding: 25px;
-  }
-
-  .trust-row {
-    gap: 12px;
-  }
+@media(max-width:480px){
+  .auth-right{padding:28px 20px}
 }
 </style>
 </head>
-
 <body>
 
 <div class="auth-wrapper">
 
+  <!-- ── LEFT PANEL ── -->
   <div class="auth-left">
-    <div class="brand">AstrontifyX</div>
-
-    <div class="headline">Professional trading environment</div>
-    <div class="subtext">
-      Built for performance, speed, and multi-asset market access across global instruments.
+    <div class="left-glow-1"></div>
+    <div class="left-glow-2"></div>
+    <div class="left-glow-3"></div>
+    <div class="particles">
+      <div class="pt pt1"></div><div class="pt pt2"></div><div class="pt pt3"></div>
+      <div class="pt pt4"></div><div class="pt pt5"></div><div class="pt pt6"></div>
+    </div>
+    <div class="grid-lines">
+      <svg viewBox="0 0 600 800" preserveAspectRatio="none">
+        <line x1="0" y1="200" x2="600" y2="200" stroke="white" stroke-width=".5"/>
+        <line x1="0" y1="400" x2="600" y2="400" stroke="white" stroke-width=".5"/>
+        <line x1="0" y1="600" x2="600" y2="600" stroke="white" stroke-width=".5"/>
+        <line x1="150" y1="0" x2="150" y2="800" stroke="white" stroke-width=".5"/>
+        <line x1="300" y1="0" x2="300" y2="800" stroke="white" stroke-width=".5"/>
+        <line x1="450" y1="0" x2="450" y2="800" stroke="white" stroke-width=".5"/>
+      </svg>
     </div>
 
-    <div class="platform-card">
-      <h3>Platform Specifications</h3>
-
-      <div class="spec">
-        <span>Asset Classes</span>
-        <strong>Forex, Indices, Commodities</strong>
+    <div class="left-top">
+      <div class="left-logo">
+        <img src="assets/logo.png" alt="AtrontifyX" onerror="this.style.display='none';document.getElementById('leftLogoFallback').style.display='flex'">
+        <span id="leftLogoFallback" style="display:none;align-items:center;gap:8px">
+          <span class="left-logo-mark">ATX</span>
+          <span class="left-logo-text">AtrontifyX</span>
+        </span>
       </div>
 
-      <div class="spec">
-        <span>Execution Type</span>
-        <strong>Market Execution</strong>
+      <h1 class="left-headline">Welcome Back,<br><em>Trader</em></h1>
+      <p class="left-sub">Your portfolio, positions and markets are waiting. Pick up right where you left off.</p>
+
+      <!-- live market ticker cards -->
+      <div class="ticker-stack">
+        <div class="ticker-card">
+          <div class="ticker-left">
+            <div class="ticker-dot" style="background:#4f6ef7;box-shadow:0 0 8px rgba(79,110,247,.6)"></div>
+            <div>
+              <div class="ticker-name">EUR/USD</div>
+              <div class="ticker-desc">Forex Major</div>
+            </div>
+          </div>
+          <svg class="sparkline" viewBox="0 0 60 28">
+            <polyline stroke="#4f6ef7" points="0,22 8,18 16,20 24,14 32,16 40,8 48,10 60,4"/>
+          </svg>
+          <div class="ticker-right">
+            <div class="ticker-price" id="t1">1.08742</div>
+            <div class="ticker-chg up">+0.21%</div>
+          </div>
+        </div>
+        <div class="ticker-card">
+          <div class="ticker-left">
+            <div class="ticker-dot" style="background:#fbbf24;box-shadow:0 0 8px rgba(251,191,36,.6)"></div>
+            <div>
+              <div class="ticker-name">XAU/USD</div>
+              <div class="ticker-desc">Gold Spot</div>
+            </div>
+          </div>
+          <svg class="sparkline" viewBox="0 0 60 28">
+            <polyline stroke="#fbbf24" points="0,18 8,14 16,16 24,10 32,12 40,6 48,8 60,4"/>
+          </svg>
+          <div class="ticker-right">
+            <div class="ticker-price" id="t2">2,341.50</div>
+            <div class="ticker-chg up">+0.47%</div>
+          </div>
+        </div>
+        <div class="ticker-card">
+          <div class="ticker-left">
+            <div class="ticker-dot" style="background:#8b5cf6;box-shadow:0 0 8px rgba(139,92,246,.6)"></div>
+            <div>
+              <div class="ticker-name">BTC/USD</div>
+              <div class="ticker-desc">Crypto</div>
+            </div>
+          </div>
+          <svg class="sparkline" viewBox="0 0 60 28">
+            <polyline stroke="#8b5cf6" points="0,10 8,14 16,12 24,18 32,14 40,20 48,16 60,22"/>
+          </svg>
+          <div class="ticker-right">
+            <div class="ticker-price" id="t3">77,551</div>
+            <div class="ticker-chg dn">-0.32%</div>
+          </div>
+        </div>
       </div>
 
-      <div class="spec">
-        <span>Platform Access</span>
-        <strong>Web / Mobile / Desktop</strong>
+      <!-- stat row -->
+      <div class="stat-row">
+        <div class="stat-card">
+          <div class="stat-val">&lt;12ms</div>
+          <div class="stat-lbl">Execution</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val">1,000+</div>
+          <div class="stat-lbl">Instruments</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val">24/5</div>
+          <div class="stat-lbl">Markets Open</div>
+        </div>
       </div>
+    </div>
 
-      <div class="spec">
-        <span>Trading Hours</span>
-        <strong>24/5</strong>
-      </div>
-
-      <div class="spec">
-        <span>Order Speed</span>
-        <strong>Low Latency</strong>
-      </div>
-
-      <div class="spec">
-        <span>Security</span>
-        <strong>Encrypted Infrastructure</strong>
+    <div class="left-bottom">
+      <div class="left-trust">
+        <div class="left-trust-item">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2L4 5v6c0 5.25 3.5 10 8 11 4.5-1 8-5.75 8-11V5l-8-3z"/></svg>
+          FCA Regulated
+        </div>
+        <div class="trust-sep"></div>
+        <div class="left-trust-item">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+          SSL Secured
+        </div>
+        <div class="trust-sep"></div>
+        <div class="left-trust-item">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
+          Segregated Funds
+        </div>
       </div>
     </div>
   </div>
 
+  <!-- ── RIGHT PANEL (FORM) ── -->
   <div class="auth-right">
     <div class="form-box">
 
-      <h2>Sign in</h2>
-      <div class="subtitle">Access your trading dashboard</div>
+      <!-- logo (mobile only) -->
+      <div class="form-logo">
+        <img src="assets/logo.png" alt="AtrontifyX" onerror="this.style.display='none'">
+        <span class="form-logo-mark">AtrontifyX</span>
+      </div>
+
+      <div class="form-h2">Welcome back</div>
+      <div class="form-sub">Sign in to access your trading dashboard</div>
 
       <div id="message" class="message"></div>
 
       <button class="google-btn" onclick="signInWithGoogle()">
-        <img src="https://www.svgrepo.com/show/475656/google-color.svg" width="18">
-        Sign in with Google
+        <img src="https://www.svgrepo.com/show/475656/google-color.svg" width="18" alt="Google">
+        Continue with Google
       </button>
 
       <div class="divider">or continue with email</div>
 
-      <form id="loginForm">
+      <form id="loginForm" autocomplete="on">
         <div class="input-group">
-          <input type="email" id="email" placeholder="Email address" required>
+          <label>Email Address</label>
+          <input type="email" id="email" placeholder="john@example.com" autocomplete="email" required>
         </div>
 
         <div class="input-group">
-          <input type="password" id="password" placeholder="Password" required>
+          <label>Password</label>
+          <div class="password-wrap">
+            <input type="password" id="password" placeholder="Your password" autocomplete="current-password" required>
+            <button type="button" class="eye-btn" onclick="togglePassword('password',this)">
+              <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
         </div>
 
-        <div class="row">
-          <a href="#">Forgot Password?</a>
-        </div>
+        <div class="row"><a href="#">Forgot password?</a></div>
 
-        <button type="submit" class="btn">Sign in</button>
+        <button type="submit" class="btn-submit">Sign In</button>
       </form>
 
-      <div class="footer-text">
-        Don't have an account? <a href="signup.html">Open one</a>
-      </div>
-
+      <!-- trust badges -->
       <div class="trust-row">
-
         <div class="trust-item">
-          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path d="M12 2L4 5v6c0 5.25 3.5 10 8 11 4.5-1 8-5.75 8-11V5l-8-3z"/>
-          </svg>
+          <svg fill="none" viewBox="0 0 24 24"><path d="M12 2L4 5v6c0 5.25 3.5 10 8 11 4.5-1 8-5.75 8-11V5l-8-3z"/></svg>
           FCA Regulated
         </div>
-
+        <div class="trust-dot"></div>
         <div class="trust-item">
-          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <rect x="3" y="11" width="18" height="10" rx="2"/>
-            <path d="M7 11V7a5 5 0 0110 0v4"/>
-          </svg>
+          <svg fill="none" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
           SSL Secured
         </div>
-
+        <div class="trust-dot"></div>
         <div class="trust-item">
-          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path d="M5 13l4 4L19 7"/>
-          </svg>
+          <svg fill="none" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
           Segregated Funds
         </div>
+      </div>
 
+      <div class="form-footer">
+        Don't have an account? <a href="signup.html">Open one free</a>
       </div>
 
     </div>
@@ -370,49 +369,58 @@ input {
 </div>
 
 <script>
+function togglePassword(id, btn) {
+  const input = document.getElementById(id);
+  const svg = btn.querySelector('svg');
+  if (input.type === 'password') {
+    input.type = 'text';
+    svg.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>';
+  } else {
+    input.type = 'password';
+    svg.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+  }
+}
 
-function showMessage(message, type = 'error') {
-  const messageBox = document.getElementById('message');
-  messageBox.textContent = message;
-  messageBox.className = 'message ' + type;
+function showMessage(msg, type = 'error') {
+  const el = document.getElementById('message');
+  el.textContent = msg;
+  el.className = 'message ' + type;
 }
 
 async function signInWithGoogle() {
   const { error } = await supabaseClient.auth.signInWithOAuth({
     provider: 'google',
-    options: {
-      redirectTo: window.location.origin + '/dashboard.html'
-    }
+    options: { redirectTo: window.location.origin + '/dashboard.html' }
   });
-
-  if (error) {
-    showMessage(error.message);
-  }
+  if (error) showMessage(error.message);
 }
 
 document.getElementById('loginForm').addEventListener('submit', async (e) => {
   e.preventDefault();
-
-  const email = document.getElementById('email').value;
+  const email    = document.getElementById('email').value;
   const password = document.getElementById('password').value;
-
-  const { error } = await supabaseClient.auth.signInWithPassword({
-    email,
-    password
-  });
-
-  if (error) {
-    showMessage(error.message);
-    return;
-  }
-
-  showMessage('Login successful', 'success');
-
-  setTimeout(() => {
-    window.location.href = 'dashboard.html';
-  }, 1000);
+  const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+  if (error) { showMessage(error.message); return; }
+  showMessage('Login successful!', 'success');
+  setTimeout(() => { window.location.href = 'dashboard.html'; }, 1000);
 });
-</script>
 
+/* subtle ticker animations */
+(function() {
+  const tickers = [
+    { id: 't1', base: 1.08742, dec: 5 },
+    { id: 't2', base: 2341.50, dec: 2 },
+    { id: 't3', base: 77551,   dec: 0 }
+  ];
+  tickers.forEach(t => {
+    let v = t.base;
+    setInterval(() => {
+      v += (Math.random() - 0.5) * (t.base * 0.0003);
+      const el = document.getElementById(t.id);
+      if (el) el.textContent = t.dec === 0 ? Math.round(v).toLocaleString() : v.toFixed(t.dec);
+    }, 2000 + Math.random() * 1000);
+  });
+})();
+</script>
 </body>
 </html>

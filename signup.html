@@ -3,317 +3,379 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Create Account - AstrontifyX</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<title>Create Account — AtrontifyX</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase.js"></script>
-
 <style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: "Inter", sans-serif;
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:'Space Grotesk',system-ui,sans-serif;background:#0b0e1a;color:#e8eaf0;-webkit-font-smoothing:antialiased}
+a{text-decoration:none;color:inherit}
+button{font-family:inherit;cursor:pointer;border:none}
+
+/* ── LAYOUT ── */
+.auth-wrapper{display:flex;min-height:100vh}
+
+/* ── LEFT PANEL ── */
+.auth-left{
+  flex:1;position:relative;overflow:hidden;
+  display:flex;flex-direction:column;justify-content:space-between;padding:40px 48px;
+  background:#0b0e1a;
 }
+.left-glow-1{position:absolute;top:-80px;left:-80px;width:480px;height:480px;background:radial-gradient(circle,rgba(79,110,247,.28) 0%,transparent 65%);border-radius:50%;pointer-events:none;animation:glowPulse 6s ease-in-out infinite}
+.left-glow-2{position:absolute;bottom:-60px;right:-60px;width:380px;height:380px;background:radial-gradient(circle,rgba(124,58,237,.22) 0%,transparent 65%);border-radius:50%;pointer-events:none;animation:glowPulse 6s ease-in-out infinite 2s}
+.left-glow-3{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:300px;height:300px;background:radial-gradient(circle,rgba(79,110,247,.08) 0%,transparent 70%);border-radius:50%;pointer-events:none}
 
-body {
-  background: #0B0F1A;
-  color: #fff;
+/* particles */
+.particles{position:absolute;inset:0;pointer-events:none}
+.pt{position:absolute;border-radius:50%;animation:ptPulse 3s ease-in-out infinite}
+.pt1{width:7px;height:7px;background:rgba(79,110,247,.9);box-shadow:0 0 14px rgba(79,110,247,.7);top:12%;left:18%;animation-delay:0s}
+.pt2{width:5px;height:5px;background:rgba(124,58,237,.8);box-shadow:0 0 10px rgba(124,58,237,.6);top:20%;right:22%;animation-delay:.7s}
+.pt3{width:8px;height:8px;background:rgba(79,110,247,.6);box-shadow:0 0 16px rgba(79,110,247,.5);top:55%;left:8%;animation-delay:1.2s}
+.pt4{width:4px;height:4px;background:rgba(34,197,94,.9);box-shadow:0 0 10px rgba(34,197,94,.6);bottom:28%;right:16%;animation-delay:1.8s}
+.pt5{width:6px;height:6px;background:rgba(79,110,247,.7);box-shadow:0 0 12px rgba(79,110,247,.5);bottom:18%;left:28%;animation-delay:.4s}
+.pt6{width:5px;height:5px;background:rgba(245,158,11,.8);box-shadow:0 0 10px rgba(245,158,11,.5);top:38%;right:10%;animation-delay:2.1s}
+
+@keyframes ptPulse{0%,100%{transform:scale(1);opacity:.7}50%{transform:scale(1.6);opacity:1}}
+@keyframes glowPulse{0%,100%{opacity:.6}50%{opacity:1}}
+
+/* grid lines */
+.grid-lines{position:absolute;inset:0;pointer-events:none;opacity:.06}
+.grid-lines svg{width:100%;height:100%}
+
+/* ── LEFT CONTENT ── */
+.left-top{position:relative;z-index:2}
+.left-logo{display:flex;align-items:center;gap:10px;margin-bottom:48px}
+.left-logo img{height:34px;width:auto}
+.left-logo-mark{background:linear-gradient(135deg,#4f6ef7,#7c3aed);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:800;font-size:20px;letter-spacing:-.5px}
+.left-logo-text{font-weight:700;font-size:18px;color:#e8eaf0}
+.left-headline{font-size:clamp(26px,3.5vw,40px);font-weight:800;line-height:1.12;letter-spacing:-.03em;margin-bottom:14px}
+.left-headline em{font-style:normal;background:linear-gradient(135deg,#4f6ef7,#7c3aed);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.left-sub{font-size:15px;color:#8b93b0;line-height:1.65;max-width:380px;margin-bottom:40px}
+
+/* animated chart */
+.chart-visual{position:relative;z-index:2;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:20px;margin-bottom:28px;overflow:hidden}
+.chart-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.chart-pair{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;color:#e8eaf0}
+.chart-badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:#22c55e;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.25);border-radius:20px;padding:3px 10px}
+.chart-badge::before{content:'';width:5px;height:5px;background:#22c55e;border-radius:50%;animation:ptPulse 1.5s ease-in-out infinite}
+.chart-price{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;color:#e8eaf0;margin-bottom:4px}
+.chart-change{font-size:12px;color:#22c55e;margin-bottom:14px}
+.chart-svg-wrap{width:100%;height:80px}
+.chart-svg-wrap svg{width:100%;height:100%}
+.chart-line{fill:none;stroke:url(#lineGrad);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:600;animation:drawChart 3s ease-out forwards}
+.chart-area{fill:url(#areaGrad);opacity:.4;animation:fadeIn .5s 2.5s both}
+@keyframes drawChart{0%{stroke-dashoffset:600}100%{stroke-dashoffset:0}}
+@keyframes fadeIn{from{opacity:0}to{opacity:.4}}
+
+/* stat cards */
+.stat-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;position:relative;z-index:2;margin-bottom:32px}
+.stat-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:14px 12px;text-align:center;animation:cardUp .5s cubic-bezier(.22,1,.36,1) both}
+.stat-card:nth-child(1){animation-delay:.2s}
+.stat-card:nth-child(2){animation-delay:.35s}
+.stat-card:nth-child(3){animation-delay:.5s}
+.stat-card:nth-child(4){animation-delay:.65s}
+@keyframes cardUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.stat-val{font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:700;color:#4f6ef7;margin-bottom:4px;white-space:nowrap}
+.stat-lbl{font-size:10px;color:#8b93b0;font-weight:500;line-height:1.3}
+
+/* left bottom trust */
+.left-bottom{position:relative;z-index:2}
+.left-trust{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.left-trust-item{display:flex;align-items:center;gap:6px;font-size:12px;color:#8b93b0}
+.left-trust-item svg{width:14px;height:14px;stroke:#4f6ef7;flex-shrink:0}
+.trust-sep{width:1px;height:14px;background:rgba(255,255,255,.1)}
+
+/* ── RIGHT PANEL ── */
+.auth-right{
+  width:480px;flex-shrink:0;
+  background:#ffffff;color:#111;
+  display:flex;align-items:center;justify-content:center;
+  padding:40px;overflow-y:auto;
 }
+.form-box{width:100%;max-width:380px}
+.form-logo{display:none;align-items:center;gap:8px;margin-bottom:28px}
+.form-logo-mark{background:linear-gradient(135deg,#4f46e5,#7c3aed);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:800;font-size:18px;letter-spacing:-.4px}
+.form-logo img{height:28px;width:auto}
+.form-h2{font-size:22px;font-weight:800;letter-spacing:-.02em;margin-bottom:4px;color:#0f172a}
+.form-sub{color:#6b7280;font-size:14px;margin-bottom:22px}
+.message{margin-bottom:14px;font-size:13px;text-align:center;padding:10px;border-radius:8px;display:none}
+.message.success{display:block;background:#f0fdf4;color:#16a34a;border:1px solid #bbf7d0}
+.message.error{display:block;background:#fef2f2;color:#dc2626;border:1px solid #fecaca}
 
-.auth-wrapper {
-  display: flex;
-  min-height: 100vh;
+.google-btn{
+  width:100%;padding:12px;border-radius:10px;
+  border:1.5px solid #e5e7eb;background:#fff;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  font-weight:600;font-size:14px;color:#374151;cursor:pointer;
+  transition:background .15s,border-color .15s;margin-bottom:16px
 }
+.google-btn:hover{background:#f9fafb;border-color:#d1d5db}
+.divider{text-align:center;margin:14px 0;font-size:12px;color:#9ca3af;position:relative}
+.divider::before,.divider::after{content:'';position:absolute;top:50%;width:38%;height:1px;background:#e5e7eb}
+.divider::before{left:0}.divider::after{right:0}
 
-.auth-left {
-  flex: 1;
-  padding: 60px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  background: radial-gradient(circle at 80% 20%, rgba(124,58,237,0.25), transparent),
-              radial-gradient(circle at 20% 80%, rgba(79,70,229,0.2), transparent),
-              #0B0F1A;
+.input-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.input-group{margin-bottom:11px}
+.input-group label{display:block;font-size:12px;font-weight:600;color:#374151;margin-bottom:5px}
+input,select{
+  width:100%;padding:11px 13px;border-radius:8px;
+  border:1.5px solid #e5e7eb;font-size:14px;color:#111;
+  font-family:'Space Grotesk',sans-serif;background:#fff;
+  outline:none;transition:border-color .2s,box-shadow .2s
 }
+input:focus,select:focus{border-color:#4f46e5;box-shadow:0 0 0 3px rgba(79,70,229,.1)}
+input::placeholder{color:#9ca3af}
+.password-wrap{position:relative}
+.eye-btn{position:absolute;right:11px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;padding:4px;color:#9ca3af;display:flex;align-items:center}
+.eye-btn:hover{color:#6b7280}
+.eye-btn svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2}
 
-.brand {
-  font-size: 22px;
-  font-weight: 800;
-  margin-bottom: 30px;
+.btn-submit{
+  width:100%;padding:13px;border-radius:10px;border:none;
+  background:linear-gradient(135deg,#4f46e5,#7c3aed);
+  color:#fff;font-size:15px;font-weight:700;cursor:pointer;
+  font-family:'Space Grotesk',sans-serif;
+  transition:opacity .2s,transform .15s;
+  box-shadow:0 4px 18px rgba(79,70,229,.35);
+  margin-bottom:14px
 }
+.btn-submit:hover{opacity:.92;transform:translateY(-1px)}
+.btn-submit:active{transform:translateY(0)}
 
-.headline {
-  font-size: 34px;
-  font-weight: 700;
-  margin-bottom: 12px;
+/* trust row below button */
+.trust-row{display:flex;justify-content:center;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+.trust-item{display:flex;align-items:center;gap:5px;font-size:11.5px;color:#6b7280;font-weight:500}
+.trust-item svg{width:13px;height:13px;stroke:#16a34a;flex-shrink:0}
+.trust-dot{width:3px;height:3px;background:#d1d5db;border-radius:50%}
+
+.form-footer{text-align:center;font-size:13px;color:#6b7280}
+.form-footer a{color:#4f46e5;font-weight:600}
+
+/* responsive */
+@media(max-width:960px){
+  .auth-left{display:none}
+  .auth-right{width:100%;min-height:100vh}
+  .form-logo{display:flex}
 }
-
-.subtext {
-  color: #9CA3AF;
-  margin-bottom: 40px;
-  max-width: 420px;
-}
-
-.platform-card {
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 16px;
-  padding: 25px;
-  max-width: 420px;
-  backdrop-filter: blur(20px);
-}
-
-.platform-card h3 {
-  margin-bottom: 20px;
-  font-size: 18px;
-}
-
-.spec {
-  display: flex;
-  justify-content: space-between;
-  padding: 12px 0;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
-  font-size: 14px;
-}
-
-.spec:last-child {
-  border-bottom: none;
-}
-
-.spec span {
-  color: #9CA3AF;
-}
-
-.auth-right {
-  flex: 1;
-  background: #ffffff;
-  color: #111;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 40px;
-}
-
-.form-box {
-  width: 100%;
-  max-width: 400px;
-}
-
-h2 {
-  margin-bottom: 10px;
-}
-
-.subtitle {
-  color: #6b7280;
-  margin-bottom: 20px;
-  font-size: 14px;
-}
-
-.input-group {
-  margin-bottom: 15px;
-}
-
-.password-group {
-  position: relative;
-}
-
-.toggle-password {
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  cursor: pointer;
-  font-size: 16px;
-  color: #6b7280;
-}
-
-.toggle-password:hover {
-  color: #111;
-}
-
-input, select {
-  width: 100%;
-  padding: 14px;
-  border-radius: 10px;
-  border: 1px solid #e5e7eb;
-  outline: none;
-}
-
-.btn {
-  width: 100%;
-  padding: 15px;
-  border-radius: 12px;
-  border: none;
-  background: linear-gradient(135deg, #4f46e5, #7c3aed);
-  color: white;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.google-btn {
-  width: 100%;
-  padding: 13px;
-  border-radius: 12px;
-  border: 1px solid #e5e7eb;
-  background: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  font-weight: 500;
-  cursor: pointer;
-  margin-bottom: 15px;
-}
-
-.google-btn:hover {
-  background: #f9fafb;
-}
-
-.divider {
-  text-align: center;
-  margin: 15px 0;
-  font-size: 13px;
-  color: #6b7280;
-  position: relative;
-}
-
-.divider::before,
-.divider::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  width: 40%;
-  height: 1px;
-  background: #e5e7eb;
-}
-
-.divider::before { left: 0; }
-.divider::after { right: 0; }
-
-.footer-text {
-  margin-top: 20px;
-  text-align: center;
-  font-size: 14px;
-}
-
-.footer-text a {
-  color: #4f46e5;
-  text-decoration: none;
-}
-
-.message {
-  margin-bottom: 15px;
-  font-size: 14px;
-  text-align: center;
-}
-
-.success {
-  color: #16a34a;
-}
-
-.error {
-  color: #dc2626;
-}
-
-@media(max-width: 900px){
-  .auth-left {
-    display: none;
-  }
+@media(max-width:480px){
+  .auth-right{padding:28px 20px}
+  .input-row{grid-template-columns:1fr}
 }
 </style>
 </head>
-
 <body>
 
 <div class="auth-wrapper">
 
+  <!-- ── LEFT PANEL ── -->
   <div class="auth-left">
-    <div class="brand">AstrontifyX</div>
-
-    <div class="headline">Professional trading environment</div>
-    <div class="subtext">
-      Built for performance, speed, and multi-asset market access across global instruments.
+    <div class="left-glow-1"></div>
+    <div class="left-glow-2"></div>
+    <div class="left-glow-3"></div>
+    <div class="particles">
+      <div class="pt pt1"></div><div class="pt pt2"></div><div class="pt pt3"></div>
+      <div class="pt pt4"></div><div class="pt pt5"></div><div class="pt pt6"></div>
+    </div>
+    <div class="grid-lines">
+      <svg viewBox="0 0 600 800" preserveAspectRatio="none">
+        <line x1="0" y1="200" x2="600" y2="200" stroke="white" stroke-width=".5"/>
+        <line x1="0" y1="400" x2="600" y2="400" stroke="white" stroke-width=".5"/>
+        <line x1="0" y1="600" x2="600" y2="600" stroke="white" stroke-width=".5"/>
+        <line x1="150" y1="0" x2="150" y2="800" stroke="white" stroke-width=".5"/>
+        <line x1="300" y1="0" x2="300" y2="800" stroke="white" stroke-width=".5"/>
+        <line x1="450" y1="0" x2="450" y2="800" stroke="white" stroke-width=".5"/>
+      </svg>
     </div>
 
-    <div class="platform-card">
-      <h3>Platform Specifications</h3>
+    <div class="left-top">
+      <div class="left-logo">
+        <img src="assets/logo.png" alt="AtrontifyX" onerror="this.style.display='none';document.getElementById('leftLogoFallback').style.display='flex'">
+        <span id="leftLogoFallback" style="display:none;align-items:center;gap:8px">
+          <span class="left-logo-mark">ATX</span>
+          <span class="left-logo-text">AtrontifyX</span>
+        </span>
+      </div>
 
-      <div class="spec"><span>Asset Classes</span><strong>Forex, Indices, Commodities</strong></div>
-      <div class="spec"><span>Execution Type</span><strong>Market Execution</strong></div>
-      <div class="spec"><span>Platform Access</span><strong>Web / Mobile / Desktop</strong></div>
-      <div class="spec"><span>Trading Hours</span><strong>24/5</strong></div>
-      <div class="spec"><span>Order Speed</span><strong>Low Latency</strong></div>
-      <div class="spec"><span>Security</span><strong>Encrypted Infrastructure</strong></div>
+      <h1 class="left-headline">Join Thousands of<br><em>Professional Traders</em></h1>
+      <p class="left-sub">Access 1,000+ instruments across forex, indices, crypto, commodities and shares — all from one powerful platform.</p>
+
+      <!-- animated chart -->
+      <div class="chart-visual">
+        <div class="chart-header">
+          <span class="chart-pair">EUR / USD</span>
+          <span class="chart-badge">LIVE</span>
+        </div>
+        <div class="chart-price" id="chartPrice">1.08742</div>
+        <div class="chart-change">+0.0023 (+0.21%) today</div>
+        <div class="chart-svg-wrap">
+          <svg viewBox="0 0 400 80" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="lineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#4f6ef7"/>
+                <stop offset="100%" stop-color="#7c3aed"/>
+              </linearGradient>
+              <linearGradient id="areaGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#4f6ef7" stop-opacity=".5"/>
+                <stop offset="100%" stop-color="#4f6ef7" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <polyline class="chart-area" points="0,70 30,62 60,58 90,64 120,50 150,44 180,46 210,38 240,42 270,30 300,24 330,28 360,18 390,10 400,8 400,80 0,80"/>
+            <polyline class="chart-line" points="0,70 30,62 60,58 90,64 120,50 150,44 180,46 210,38 240,42 270,30 300,24 330,28 360,18 390,10 400,8"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- stat cards -->
+      <div class="stat-cards">
+        <div class="stat-card">
+          <div class="stat-val">&lt;12ms</div>
+          <div class="stat-lbl">Execution Speed</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val">1,000+</div>
+          <div class="stat-lbl">Instruments</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val">99.9%</div>
+          <div class="stat-lbl">Uptime SLA</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val">24/5</div>
+          <div class="stat-lbl">Trading Hours</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="left-bottom">
+      <div class="left-trust">
+        <div class="left-trust-item">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2L4 5v6c0 5.25 3.5 10 8 11 4.5-1 8-5.75 8-11V5l-8-3z"/></svg>
+          FCA Regulated
+        </div>
+        <div class="trust-sep"></div>
+        <div class="left-trust-item">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+          SSL Secured
+        </div>
+        <div class="trust-sep"></div>
+        <div class="left-trust-item">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
+          Segregated Funds
+        </div>
+      </div>
     </div>
   </div>
 
+  <!-- ── RIGHT PANEL (FORM) ── -->
   <div class="auth-right">
     <div class="form-box">
 
-      <h2>Create Account</h2>
-      <div class="subtitle">Open your AstrontifyX trading account</div>
+      <!-- logo (mobile only) -->
+      <div class="form-logo">
+        <img src="assets/logo.png" alt="AtrontifyX" onerror="this.style.display='none'">
+        <span class="form-logo-mark">AtrontifyX</span>
+      </div>
+
+      <div class="form-h2">Create Account</div>
+      <div class="form-sub">Open your AtrontifyX trading account in minutes</div>
 
       <div id="message" class="message"></div>
 
       <button class="google-btn" onclick="signupWithGoogle()">
-        <img src="https://www.svgrepo.com/show/475656/google-color.svg" width="18">
-        Sign up with Google
+        <img src="https://www.svgrepo.com/show/475656/google-color.svg" width="18" alt="Google">
+        Continue with Google
       </button>
 
       <div class="divider">or sign up with email</div>
 
-      <form id="signupForm">
-        <div class="input-group">
-          <input type="text" id="firstName" placeholder="First Name" required>
+      <form id="signupForm" autocomplete="on">
+        <div class="input-row">
+          <div class="input-group">
+            <label>First Name</label>
+            <input type="text" id="firstName" placeholder="John" autocomplete="given-name" required>
+          </div>
+          <div class="input-group">
+            <label>Last Name</label>
+            <input type="text" id="lastName" placeholder="Smith" autocomplete="family-name" required>
+          </div>
         </div>
 
         <div class="input-group">
-          <input type="text" id="lastName" placeholder="Last Name" required>
+          <label>Email Address</label>
+          <input type="email" id="email" placeholder="john@example.com" autocomplete="email" required>
         </div>
 
         <div class="input-group">
-          <input type="email" id="email" placeholder="Email address" required>
+          <label>Phone Number</label>
+          <input type="tel" id="phone" placeholder="+44 7700 900000" autocomplete="tel" required>
+        </div>
+
+        <div class="input-row">
+          <div class="input-group">
+            <label>Country</label>
+            <select id="country" required>
+              <option value="">Select…</option>
+              <option>Nigeria</option>
+              <option>United Kingdom</option>
+              <option>United States</option>
+              <option>Canada</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label>Account Currency</label>
+            <select id="currency" required>
+              <option value="">Select…</option>
+              <option>USD</option>
+              <option>EUR</option>
+              <option>GBP</option>
+            </select>
+          </div>
         </div>
 
         <div class="input-group">
-          <input type="tel" id="phone" placeholder="Phone number" required>
+          <label>Password</label>
+          <div class="password-wrap">
+            <input type="password" id="password" placeholder="Min. 8 characters" autocomplete="new-password" required>
+            <button type="button" class="eye-btn" onclick="togglePassword('password',this)">
+              <svg id="eye-password" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
         </div>
 
         <div class="input-group">
-          <select id="country" required>
-            <option value="">Country</option>
-            <option>Nigeria</option>
-            <option>United Kingdom</option>
-            <option>United States</option>
-            <option>Canada</option>
-          </select>
+          <label>Confirm Password</label>
+          <div class="password-wrap">
+            <input type="password" id="confirmPassword" placeholder="Repeat password" autocomplete="new-password" required>
+            <button type="button" class="eye-btn" onclick="togglePassword('confirmPassword',this)">
+              <svg id="eye-confirmPassword" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
         </div>
 
-        <div class="input-group">
-          <select id="currency" required>
-            <option value="">Account Currency</option>
-            <option>USD</option>
-            <option>EUR</option>
-            <option>GBP</option>
-          </select>
-        </div>
-
-        <div class="input-group password-group">
-          <input type="password" id="password" placeholder="Password" required>
-          <span class="toggle-password" onclick="togglePassword('password', this)">👁</span>
-        </div>
-
-        <div class="input-group password-group">
-          <input type="password" id="confirmPassword" placeholder="Confirm Password" required>
-          <span class="toggle-password" onclick="togglePassword('confirmPassword', this)">👁</span>
-        </div>
-
-        <button type="submit" class="btn">Create Account</button>
+        <button type="submit" class="btn-submit">Create Account</button>
       </form>
 
-      <div class="footer-text">
+      <!-- trust badges -->
+      <div class="trust-row">
+        <div class="trust-item">
+          <svg fill="none" viewBox="0 0 24 24"><path d="M12 2L4 5v6c0 5.25 3.5 10 8 11 4.5-1 8-5.75 8-11V5l-8-3z"/></svg>
+          FCA Regulated
+        </div>
+        <div class="trust-dot"></div>
+        <div class="trust-item">
+          <svg fill="none" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+          SSL Secured
+        </div>
+        <div class="trust-dot"></div>
+        <div class="trust-item">
+          <svg fill="none" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
+          Segregated Funds
+        </div>
+      </div>
+
+      <div class="form-footer">
         Already have an account? <a href="login.html">Sign in</a>
       </div>
 
@@ -323,104 +385,74 @@ input, select {
 </div>
 
 <script>
-
-function togglePassword(id, el) {
+function togglePassword(id, btn) {
   const input = document.getElementById(id);
-  input.type = input.type === "password" ? "text" : "password";
-  el.textContent = input.type === "password" ? "👁" : "🙈";
+  const svg = btn.querySelector('svg');
+  if (input.type === 'password') {
+    input.type = 'text';
+    svg.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>';
+  } else {
+    input.type = 'password';
+    svg.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+  }
 }
 
-function showMessage(message, type = 'error') {
-  const messageBox = document.getElementById('message');
-  messageBox.textContent = message;
-  messageBox.className = 'message ' + type;
+function showMessage(msg, type = 'error') {
+  const el = document.getElementById('message');
+  el.textContent = msg;
+  el.className = 'message ' + type;
 }
 
 async function signupWithGoogle() {
   const { error } = await supabaseClient.auth.signInWithOAuth({
     provider: 'google',
-    options: {
-      redirectTo: window.location.origin + '/dashboard.html'
-    }
+    options: { redirectTo: window.location.origin + '/dashboard.html' }
   });
-
-  if (error) {
-    showMessage(error.message);
-  }
+  if (error) showMessage(error.message);
 }
 
 document.getElementById('signupForm').addEventListener('submit', async (e) => {
   e.preventDefault();
-
   const firstName = document.getElementById('firstName').value;
-  const lastName = document.getElementById('lastName').value;
-  const email = document.getElementById('email').value;
-  const phone = document.getElementById('phone').value;
-  const country = document.getElementById('country').value;
-  const currency = document.getElementById('currency').value;
-  const password = document.getElementById('password').value;
-  const confirmPassword = document.getElementById('confirmPassword').value;
+  const lastName  = document.getElementById('lastName').value;
+  const email     = document.getElementById('email').value;
+  const phone     = document.getElementById('phone').value;
+  const country   = document.getElementById('country').value;
+  const currency  = document.getElementById('currency').value;
+  const password  = document.getElementById('password').value;
+  const confirm   = document.getElementById('confirmPassword').value;
 
-  if (password !== confirmPassword) {
-    showMessage('Passwords do not match');
-    return;
-  }
+  if (password !== confirm) { showMessage('Passwords do not match'); return; }
 
   const { data, error } = await supabaseClient.auth.signUp({
-    email,
-    password,
-    options: {
-      data: {
-        first_name: firstName,
-        last_name: lastName,
-        phone,
-        country,
-        currency
-      }
-    }
+    email, password,
+    options: { data: { first_name: firstName, last_name: lastName, phone, country, currency } }
   });
 
-  if (error) {
-    showMessage(error.message);
-    return;
-  }
+  if (error) { showMessage(error.message); return; }
 
-  /*
-  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  SAVE PROFILE DATA TO SUPABASE
-  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  */
-
-  if(data.user){
-
+  if (data.user) {
     const { error: profileError } = await supabaseClient
       .from('profiles')
-      .update({
-        first_name: firstName,
-        last_name: lastName,
-        phone: phone,
-        country: country,
-        currency: currency
-      })
+      .update({ first_name: firstName, last_name: lastName, phone, country, currency })
       .eq('id', data.user.id);
-
-    if(profileError){
-
-      console.error(profileError);
-      showMessage('Profile creation failed');
-      return;
-
-    }
-
+    if (profileError) { console.error(profileError); showMessage('Profile creation failed'); return; }
   }
 
-  showMessage('Account created successfully. Check your email.', 'success');
-
-  setTimeout(() => {
-    window.location.href = 'login.html';
-  }, 2500);
+  showMessage('Account created! Check your email to verify.', 'success');
+  setTimeout(() => { window.location.href = 'login.html'; }, 2500);
 });
-</script>
 
+/* subtle price tick animation */
+(function() {
+  const el = document.getElementById('chartPrice');
+  if (!el) return;
+  let price = 1.08742;
+  setInterval(() => {
+    price += (Math.random() - 0.5) * 0.00008;
+    el.textContent = price.toFixed(5);
+  }, 1800);
+})();
+</script>
 </body>
 </html>
