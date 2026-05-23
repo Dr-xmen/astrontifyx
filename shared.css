@@ -184,9 +184,11 @@ body.sidebar-overlay-active{overflow:hidden;}
   table{min-width:700px;}
 }
 @media(max-width:860px){
-  .sidebar{position:fixed;left:-260px !important;top:0;height:100vh;z-index:9999;width:240px !important;transition:left .3s ease;box-shadow:0 0 30px rgba(0,0,0,.45);}
+  .sidebar{position:fixed;left:-260px !important;top:0;height:100vh;z-index:9999;width:240px !important;transition:left .3s ease;box-shadow:0 0 30px rgba(0,0,0,.45);overflow-y:auto;overflow-x:hidden;}
   .sidebar.collapsed{left:-260px !important;width:240px !important;}
   .sidebar.mobile-open{left:0 !important;}
+  .sidebar.mobile-open .nav-label{opacity:1 !important;pointer-events:auto !important;width:auto !important;overflow:visible !important;}
+  .sidebar-bottom{position:sticky;bottom:0;background:var(--bg2);z-index:2;}
   .main{width:100%;}
   .topbar{gap:8px;height:auto;min-height:58px;padding:10px;flex-wrap:wrap;}
   .tb-left{width:100%;}
