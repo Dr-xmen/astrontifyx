@@ -1107,37 +1107,6 @@
         </div>
       </div>
 
-      <!-- ==================== SUPPORT TICKETS ==================== -->
-      <div class="page" id="page-support">
-        <div class="page-header">
-          <div>
-            <div class="page-header__title">Support Tickets</div>
-            <div class="page-header__sub">Manage user support requests and replies</div>
-          </div>
-          <div style="display:flex;gap:10px;flex-wrap:wrap;">
-            <div class="tabs" id="support-filter-tabs">
-              <button class="tab-btn active" onclick="filterSupport('all',this)">All</button>
-              <button class="tab-btn" onclick="filterSupport('open',this)">Open</button>
-              <button class="tab-btn" onclick="filterSupport('closed',this)">Closed</button>
-            </div>
-            <button class="btn btn--outline" onclick="renderSupportLive()">
-              <svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-              Refresh
-            </button>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card__body--p0 table-wrap">
-            <table class="data-table">
-              <thead><tr>
-                <th>User</th><th>Subject</th><th>Message</th>
-                <th>Submitted</th><th>Status</th><th>Admin Reply</th><th>Actions</th>
-              </tr></thead>
-              <tbody id="support-tbody"></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
 
 
       <!-- ==================== TRADES HISTORY ==================== -->
@@ -1877,7 +1846,7 @@ function showPage(page, btn) {
     transactions: window.renderTransactionsLive,
     announcements: window.renderAnnouncementsLive,
     audit: window.renderAuditLive,
-    support: window.renderSupportLive,
+
     trades: function() { window.renderTradesLive && window.renderTradesLive(); window.onTradeMarketChange && window.onTradeMarketChange('forex'); },
     settings: window.loadCryptoAddresses,
     activity: window.renderActivity,
@@ -3005,15 +2974,9 @@ window.renderAll = function() {
   renderMarketsControl();
   loadDashboardStats();
   // Load badge counts for new sections
-  loadSupportBadge();
+
 };
 
-async function loadSupportBadge() {
-  const db = window.ATRONTIFY_DB; if (!db) return;
-  const { count } = await db.from('support_tickets').select('id', { count:'exact', head:true }).eq('status','open');
-  const badge = document.getElementById('badge-support');
-  if (badge) badge.textContent = count > 0 ? count : '';
-}
 
 // -- Real-time dashboard stats ---------------------------------
 async function loadDashboardStats() {
@@ -3193,82 +3156,6 @@ window.opsRejectWithdrawalReq = async id => {
   showToast('Withdrawal rejected — balance refunded','error'); renderWithdrawalsLive(); loadDashboardStats();
 };
 
-// -- Support Tickets -------------------------------------------
-let _supportFilter = 'all';
-
-window.filterSupport = function(type, btn) {
-  _supportFilter = type;
-  document.querySelectorAll('#support-filter-tabs .tab-btn').forEach(b => b.classList.remove('active'));
-  if (btn) btn.classList.add('active');
-  renderSupportLive();
-};
-
-async function renderSupportLive() {
-  const db = window.ATRONTIFY_DB; if (!db) return;
-  const tbody = document.getElementById('support-tbody');
-  if (tbody) tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--muted);">Loading...</td></tr>';
-
-  let q = db.from('support_tickets')
-    .select('*, profiles(*)')
-    .order('created_at', { ascending: false });
-  if (_supportFilter !== 'all') q = q.eq('status', _supportFilter);
-
-  const { data, error } = await q;
-  if (error) { showToast('Error loading tickets: ' + error.message, 'error'); return; }
-
-  const badge = document.getElementById('badge-support');
-  const open = (data||[]).filter(t => t.status === 'open').length;
-  if (badge) badge.textContent = open > 0 ? open : '';
-
-  if (!data?.length) {
-    if (tbody) tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--muted);">No tickets found</td></tr>';
-    return;
-  }
-  if (tbody) tbody.innerHTML = data.map(t => {
-    const p    = t.profiles || {};
-    const name = p.full_name || p.name || `${p.first_name||''} ${p.last_name||''}`.trim() || p.username || p.id || '-';
-    const msg  = (t.message || '').substring(0, 120) + ((t.message||'').length > 120 ? '...' : '');
-    const isClosed = t.status === 'closed';
-    return `<tr>
-      <td><div class="user-cell"><div class="user-avatar" style="background:var(--blue);">${name.split(' ').map(n=>n[0]||'').join('').toUpperCase().slice(0,2)||'?'}</div>
-        <div><div class="user-name">${name}</div><div class="user-email">${p.email || p.username ||  p.username || '-'}</div></div></div></td>
-      <td style="font-weight:600;">${t.subject||'(no subject)'}</td>
-      <td style="font-size:12px;color:var(--muted);max-width:220px;">${msg}</td>
-      <td style="font-size:12px;">${fmtDate(t.created_at)}</td>
-      <td><span class="badge-pill ${isClosed?'pill-green':'pill-orange'}">${t.status}</span></td>
-      <td><textarea id="reply-${t.id}" style="width:200px;min-height:60px;border:1.5px solid var(--border);border-radius:6px;padding:6px 8px;font-size:12px;resize:vertical;">${t.admin_reply||''}</textarea></td>
-      <td><div class="row-actions">
-        <button class="btn btn--sm btn--primary" onclick="opsSaveReply('${t.id}')">Save</button>
-        ${!isClosed ? `<button class="btn btn--sm btn--green" onclick="opsCloseTicket('${t.id}')">Close</button>` : ''}
-        <button class="btn btn--sm btn--red" onclick="opsDeleteTicket('${t.id}')">Delete</button>
-      </div></td>
-    </tr>`;
-  }).join('');
-}
-window.renderSupportLive = renderSupportLive;
-
-window.opsSaveReply = async id => {
-  const reply = document.getElementById('reply-'+id)?.value?.trim() || '';
-  const { error } = await window.ATRONTIFY_DB.from('support_tickets')
-    .update({ admin_reply: reply, updated_at: new Date().toISOString() }).eq('id', id);
-  if (error) { showToast('Error: '+error.message,'error'); return; }
-  logAudit('SUPPORT_REPLY', id, `Reply sent on ticket ${id.slice(0,8)}`);
-  showToast('Reply saved','success');
-};
-window.opsCloseTicket = async id => {
-  const reply = document.getElementById('reply-'+id)?.value?.trim() || '';
-  const { error } = await window.ATRONTIFY_DB.from('support_tickets')
-    .update({ status:'closed', admin_reply: reply || undefined, updated_at: new Date().toISOString() }).eq('id', id);
-  if (error) { showToast('Error: '+error.message,'error'); return; }
-  logAudit('TICKET_CLOSED', id, `Ticket ${id.slice(0,8)} closed`);
-  showToast('Ticket closed','success'); renderSupportLive();
-};
-window.opsDeleteTicket = async id => {
-  if (!confirm('Delete this ticket permanently?')) return;
-  await window.ATRONTIFY_DB.from('support_tickets').delete().eq('id', id);
-  logAudit('TICKET_DELETED', id, `Ticket ${id.slice(0,8)} permanently deleted`);
-  showToast('Ticket deleted','error'); renderSupportLive();
-};
 
 // -- Maintenance Mode toggle -----------------------------------
 window.opsToggleMaintenance = async function(enabled) {

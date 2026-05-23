@@ -305,11 +305,21 @@ function applyProfile(profile) {
   const winEl = document.getElementById('winningTrades');
   if (winEl) winEl.textContent = `${Number(profile.winning_trades||0)} winning trades`;
   const badge = document.getElementById('accountTypeBadge');
-  if (badge && profile.plan) {
-    const planMap = { 'STANDARD':'Basic', 'BASIC':'Basic', 'RAW+':'Silver', 'SILVER':'Silver', 'ELITE':'Gold', 'GOLD':'Gold', 'MASTER':'Platinum', 'PLATINUM':'Platinum' };
-    const label = planMap[(profile.plan||'').toUpperCase()] || profile.plan;
-    badge.textContent = label.toUpperCase();
-    badge.style.display = 'inline-block';
+  if (badge) {
+    const planMap = { 'STANDARD':'Basic','BASIC':'Basic','RAW+':'Silver','SILVER':'Silver','ELITE':'Gold','GOLD':'Gold','MASTER':'Platinum','PLATINUM':'Platinum' };
+    const raw   = (profile.plan || 'basic').toUpperCase();
+    const label = planMap[raw] || profile.plan || 'Basic';
+    const colors = {
+      'Basic':    { bg:'rgba(255,255,255,.15)', color:'#fff' },
+      'Silver':   { bg:'rgba(192,200,220,.35)', color:'#e8eaf0' },
+      'Gold':     { bg:'rgba(251,191,36,.3)',   color:'#fde68a' },
+      'Platinum': { bg:'rgba(167,139,250,.35)', color:'#e9d5ff' },
+    };
+    const c = colors[label] || colors['Basic'];
+    badge.textContent  = label.toUpperCase();
+    badge.style.background = c.bg;
+    badge.style.color      = c.color;
+    badge.style.display    = 'inline-block';
   }
 }
 
