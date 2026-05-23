@@ -132,7 +132,7 @@ async function fetchHeroPrices() {
   try {
     const res = await fetch('https://scanner.tradingview.com/global/scan', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'text/plain' },
       body: JSON.stringify({
         symbols: { tickers: HERO_PAIRS.map(p => p.tv) },
         columns: ['close', 'change_percent']
