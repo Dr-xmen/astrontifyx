@@ -27,7 +27,7 @@ body{font-family:'Space Grotesk',sans-serif;background:var(--bg1);color:var(--te
 .logo{height:72px;padding:10px 12px;display:flex;align-items:center;justify-content:center;border-bottom:1px solid var(--border);flex-shrink:0;overflow:hidden}
 .logo-icon{width:36px;height:36px;background:var(--accentg);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#fff;font-size:18px;font-weight:700}
 .logo-text{font-size:18px;font-weight:700;letter-spacing:2px;background:var(--accentg);-webkit-background-clip:text;-webkit-text-fill-color:transparent;white-space:nowrap}
-.nav{padding:10px 8px;flex:1;overflow-y:auto;overflow-x:hidden}
+.nav{padding:10px 8px;flex:1;overflow-y:auto;overflow-x:hidden;min-height:0}
 .nav-section{font-size:10px;font-weight:600;letter-spacing:1.5px;color:var(--text3);padding:10px 10px 4px;text-transform:uppercase;white-space:nowrap}
 .nav-item{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;cursor:pointer;color:var(--text2);font-size:13.5px;font-weight:500;white-space:nowrap;margin-bottom:2px;border:1px solid transparent;transition:background .15s,color .15s,border-color .15s;user-select:none}
 .nav-item:hover{background:var(--glass);color:var(--text1)}
@@ -184,15 +184,14 @@ body.sidebar-overlay-active{overflow:hidden;}
   table{min-width:700px;}
 }
 @media(max-width:860px){
-  .sidebar{position:fixed;left:-260px !important;top:0;height:100vh;z-index:9999;width:240px !important;transition:left .3s ease;box-shadow:0 0 30px rgba(0,0,0,.45);overflow-y:auto;overflow-x:hidden;}
+  .sidebar{position:fixed;left:-260px !important;top:0;height:100vh;z-index:9999;width:240px !important;transition:left .3s ease;box-shadow:0 0 30px rgba(0,0,0,.45);overflow:hidden;}
   .sidebar.collapsed{left:-260px !important;width:240px !important;}
   .sidebar.mobile-open{left:0 !important;}
   .sidebar.mobile-open .nav-label{opacity:1 !important;pointer-events:auto !important;width:auto !important;overflow:visible !important;}
-  .sidebar-bottom{position:sticky;bottom:0;background:var(--bg2);z-index:2;}
   .main{width:100%;}
-  .topbar{gap:8px;height:auto;min-height:58px;padding:10px;flex-wrap:wrap;}
-  .tb-left{width:100%;}
-  .tb-right{width:100%;justify-content:flex-end;}
+  .topbar{height:58px;padding:0 12px;gap:8px;}
+  .tb-left{flex:1;min-width:0;}
+  .tb-right{flex-shrink:0;}
   .page-title{font-size:14px;}
   .ticker-shell{display:none;}
   .g4,.g3,.g2,.g12,.g23{grid-template-columns:1fr !important;}
