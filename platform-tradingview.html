@@ -60,7 +60,6 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
 .mob-drawer{display:none;flex-direction:column;background:#0f1220;border-top:1px solid rgba(255,255,255,.06);padding:16px 24px 24px}
 .mob-drawer a{padding:13px 0;font-size:15px;font-weight:500;color:#8b93b0;border-bottom:1px solid rgba(255,255,255,.05);transition:color .2s}
 .mob-drawer a:hover{color:#e8eaf0}
-.mob-drawer.open{display:flex}
 .mob-section{border-bottom:1px solid rgba(255,255,255,.05)}
 .mob-acc-btn{display:flex;align-items:center;justify-content:space-between;width:100%;padding:14px 0;font-size:15px;font-weight:500;color:#8b93b0;background:none;border:none;cursor:pointer;transition:color .2s;font-family:inherit}
 .mob-acc-btn:hover,.mob-acc-btn.open{color:#e8eaf0}
@@ -169,7 +168,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
 .footer-bottom{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#3a4060;flex-wrap:wrap;gap:8px}
 /* RESPONSIVE */
 @media(max-width:1024px){.feat-grid{grid-template-columns:repeat(2,1fr)}.steps-inner{grid-template-columns:1fr}.steps-chart{display:none}}
-@media(max-width:768px){.main-nav{display:none}.mob-toggle{display:flex;margin-left:auto}.footer-inner{grid-template-columns:1fr 1fr}.stats-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:768px){.main-nav,.nav-actions{display:none}.mob-toggle{display:flex;margin-left:auto}.mob-drawer.open{display:flex}.footer-inner{grid-template-columns:1fr 1fr}.stats-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:480px){.footer-inner{grid-template-columns:1fr}.feat-grid{grid-template-columns:1fr}}
 </style>
 </head>
@@ -534,7 +533,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
 
 <script>
 (function(){var h=document.getElementById('site-header');function s(){h.classList.toggle('scrolled',window.scrollY>40);}window.addEventListener('scroll',s,{passive:true});s();})();
-(function(){var b=document.getElementById('mobToggle'),d=document.getElementById('mobDrawer');if(!b||!d)return;b.addEventListener('click',function(){var o=d.classList.toggle('open');b.classList.toggle('open',o);document.body.style.overflow=o?'hidden':'';});d.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){d.classList.remove('open');b.classList.remove('open');document.body.style.overflow='';});});})();
+(function(){var b=document.getElementById('mobToggle'),d=document.getElementById('mobDrawer');if(!b||!d)return;b.addEventListener('click',function(){var o=d.classList.toggle('open');b.classList.toggle('open',o);});d.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){d.classList.remove('open');b.classList.remove('open');});});})();
 (function(){var io=new IntersectionObserver(function(e){e.forEach(function(en){if(en.isIntersecting){var d=en.target.dataset.revealDelay?parseInt(en.target.dataset.revealDelay)*100:0;setTimeout(function(){en.target.classList.add('revealed');},d);io.unobserve(en.target);}});},{threshold:0.12,rootMargin:'0px 0px -40px 0px'});document.querySelectorAll('[data-reveal]').forEach(function(el){io.observe(el);});})();
 </script>
 <script>function toggleMobAcc(b){var s=b.nextElementSibling,o=s.classList.contains("open");document.querySelectorAll(".mob-acc-sub.open").forEach(function(x){x.classList.remove("open");});document.querySelectorAll(".mob-acc-btn.open").forEach(function(x){x.classList.remove("open");});if(!o){s.classList.add("open");b.classList.add("open");}}</script>
