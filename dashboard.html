@@ -501,13 +501,16 @@ else {
 
   // Fetch profile + all trades in parallel (one round-trip instead of three)
   const [{ data: profile }, { data: trades }] = await Promise.all([
-    supabase.from('profiles').select('balance,equity,free_margin,total_pnl,winning_trades,first_name,last_name,plan').eq('id', user.id).single(),
+    supabase.from('profiles').select('balance,equity,free_margin,total_pnl,winning_trades,first_name,last_name').eq('id', user.id).single(),
     supabase.from('trades').select('id,symbol,pnl,opened_at,side').eq('user_id', user.id).order('opened_at', {ascending:false})
   ]);
 
   if (profile) {
     const pfn = profile.first_name || fn, pln = profile.last_name || ln;
     if (avatar) avatar.textContent = (pfn && pln) ? `${pfn[0]}${pln[0]}`.toUpperCase() : initials;
+    // Fetch plan separately so a missing column never blocks the balance query
+    const { data: planRow } = await supabase.from('profiles').select('plan').eq('id', user.id).single();
+    if (planRow) profile.plan = planRow.plan;
     applyProfile(profile);
     try { sessionStorage.setItem(CACHE_KEY, JSON.stringify(profile)); } catch(e) {}
   }
