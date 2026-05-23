@@ -291,7 +291,7 @@ img{max-width:100%;display:block}
 
 /* ── FOOTER ──────────────────────────────────────────────────────── */
 .site-footer{background:#080b14;border-top:1px solid var(--border)}
-.footer-grid{display:grid;grid-template-columns:1.8fr 1fr 1fr 1fr;gap:24px;padding:60px 0 40px}
+.footer-grid{display:grid;grid-template-columns:1.8fr 1fr 1fr 1fr;gap:24px;padding-top:60px;padding-bottom:40px}
 .footer-brand-col{}
 .footer-brand{display:inline-flex;align-items:center;gap:10px;margin-bottom:16px}
 .footer-desc{font-size:14px;color:var(--muted);line-height:1.75;max-width:280px;margin-bottom:14px}
