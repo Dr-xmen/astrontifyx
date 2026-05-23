@@ -419,7 +419,7 @@ ul{list-style:none}
 .footer-contact a{
   font-size:13px;color:#a78bfa;
   text-decoration:underline;text-underline-offset:3px;
-  transition:color .2s;
+  transition:color .2s;word-break:break-all;
 }
 .footer-contact a:hover{color:#c4b5fd}
 .footer-col h5{
@@ -452,6 +452,7 @@ ul{list-style:none}
   .main-nav,.nav-actions{display:none}
   .mob-toggle{display:flex;margin-left:auto}
   .footer-grid{grid-template-columns:1fr 1fr;gap:32px}
+  .footer-brand-col{grid-column:1/-1}
   .policy-toc ol{grid-template-columns:1fr}
 }
 @media(max-width:600px){
@@ -459,7 +460,7 @@ ul{list-style:none}
   .priv-hero h1{font-size:36px}
   .policy-wrap{padding:56px 20px 72px}
   .policy-section h3{font-size:19px}
-  .footer-grid{grid-template-columns:1fr}
+  .footer-grid{grid-template-columns:1fr;gap:24px}
   .footer-bottom{flex-direction:column;align-items:flex-start}
   .priv-rings{width:400px;height:400px}
   .priv-ring:nth-child(1){width:180px;height:180px}
@@ -780,11 +781,8 @@ ul{list-style:none}
     </div>
     <div class="footer-col">
       <h5>Platform</h5>
-      <a href="trade-terminal.html">Trade Terminal</a>
-      <a href="dashboard.html">Client Dashboard</a>
-      <a href="deposit.html">Deposit Funds</a>
-      <a href="withdrawal.html">Withdraw Funds</a>
-      <a href="account-upgrade.html">Account Upgrade</a>
+      <a href="platforms.html">Platform Overview</a>
+      <a href="platform-tradingview.html">TradingView</a>
     </div>
     <div class="footer-col">
       <h5>Company</h5>
