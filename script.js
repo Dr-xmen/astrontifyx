@@ -95,7 +95,7 @@ async function buildTicker() {
       headers:{'Content-Type':'text/plain'},
       body:JSON.stringify({
         symbols:{tickers:TICKER_SYMS.map(s=>s.tv)},
-        columns:['close','change_percent']
+        columns:['close','change_percent','open']
       })
     });
     if (!res.ok) return;
@@ -103,7 +103,11 @@ async function buildTicker() {
     const items = data.map((item, i) => {
       const sym = TICKER_SYMS[i];
       if (!item.d || item.d[0]==null) return '';
-      const [price, chg] = item.d;
+      const price = item.d[0];
+      let chg = item.d[1];
+      const open = item.d[2];
+      if (chg == null && open != null && open !== 0) chg = ((price - open) / open) * 100;
+      chg = chg ?? 0;
       const up = chg >= 0;
       const priceStr = price >= 1000
         ? price.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})
@@ -135,7 +139,7 @@ async function fetchHeroPrices() {
       headers: { 'Content-Type': 'text/plain' },
       body: JSON.stringify({
         symbols: { tickers: HERO_PAIRS.map(p => p.tv) },
-        columns: ['close', 'change_percent']
+        columns: ['close', 'change_percent', 'open']
       })
     });
     if (!res.ok) return;
@@ -148,8 +152,11 @@ async function fetchHeroPrices() {
       if (!card || !item.d) return;
 
       const price = item.d[0];
-      const chg   = item.d[1];
+      let chg     = item.d[1];
+      const open  = item.d[2];
       if (price == null) return;
+      if (chg == null && open != null && open !== 0) chg = ((price - open) / open) * 100;
+      chg = chg ?? 0;
       const up = chg >= 0;
       const priceStr = price >= 1000
         ? price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
