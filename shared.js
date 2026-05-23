@@ -46,6 +46,15 @@ function badge(label, cls) { return `<span class="badge ${cls}">${label}</span>`
 function statIcon(svg, bg, color) { return `<div class="stat-icon" style="background:${bg};color:${color}">${svg}</div>`; }
 function toast(msg) { console.log('[Toast]', msg); }
 
+function setAvatar(el, avatarUrl, initials) {
+  if (!el) return;
+  if (avatarUrl) {
+    el.innerHTML = `<img src="${avatarUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%" onerror="this.textContent='${initials}';this.style.display='none';this.parentElement.textContent='${initials}'">`;
+  } else {
+    el.textContent = initials;
+  }
+}
+
 function generateQR() {
   let c = '';
   for (let y = 0; y < 10; y++) for (let x = 0; x < 10; x++) if (Math.random() > .42) c += `<rect x="${x*10}" y="${y*10}" width="9" height="9" fill="#000"/>`;

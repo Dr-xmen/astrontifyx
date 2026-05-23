@@ -383,10 +383,8 @@ async function init() {
   const meta = session.user.user_metadata || {};
   const fn = meta.first_name || '', ln = meta.last_name || '';
   const initials = (fn && ln) ? `${fn[0]}${ln[0]}`.toUpperCase() : (session.user.email||'U')[0].toUpperCase();
-  const avatarEl = document.getElementById('userAvatar');
-  if (avatarEl) avatarEl.textContent = initials;
-
-  const { data: profile } = await supabase.from('profiles').select('plan,first_name,last_name').eq('id', _userId).single();
+  const { data: profile } = await supabase.from('profiles').select('plan,first_name,last_name,avatar_url').eq('id', _userId).single();
+  setAvatar(document.getElementById('userAvatar'), profile?.avatar_url, initials);
   _currentPlan = (profile?.plan || 'BASIC').toUpperCase();
 
   // Check if current plan matches a tier key (map admin names)

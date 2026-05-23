@@ -261,11 +261,10 @@ async function loadNotifications() {
   const user = session.user;
   _userId = user.id;
 
-  const { data: profile } = await supabase.from('profiles').select('first_name,last_name').eq('id', user.id).single();
+  const { data: profile } = await supabase.from('profiles').select('first_name,last_name,avatar_url').eq('id', user.id).single();
   const fn = profile?.first_name || '', ln = profile?.last_name || '';
   const initials = (fn && ln) ? `${fn[0]}${ln[0]}`.toUpperCase() : (user.email || 'U')[0].toUpperCase();
-  const avatarEl = document.getElementById('userAvatar');
-  if (avatarEl) avatarEl.textContent = initials;
+  setAvatar(document.getElementById('userAvatar'), profile?.avatar_url, initials);
 
   const { data } = await supabase
     .from('notifications')
