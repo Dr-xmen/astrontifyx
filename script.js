@@ -95,7 +95,7 @@ async function buildTicker() {
       headers:{'Content-Type':'text/plain'},
       body:JSON.stringify({
         symbols:{tickers:TICKER_SYMS.map(s=>s.tv)},
-        columns:['close','change_percent','open']
+        columns:['close','change_percent','change']
       })
     });
     if (!res.ok) return;
@@ -104,10 +104,13 @@ async function buildTicker() {
       const sym = TICKER_SYMS[i];
       if (!item.d || item.d[0]==null) return '';
       const price = item.d[0];
-      let chg = item.d[1];
-      const open = item.d[2];
-      if (chg == null && open != null && open !== 0) chg = ((price - open) / open) * 100;
-      chg = chg ?? 0;
+      let chgPct = item.d[1];
+      const absChg = item.d[2];
+      if (chgPct == null && absChg != null) {
+        const openPrice = price - absChg;
+        if (openPrice !== 0) chgPct = (absChg / openPrice) * 100;
+      }
+      const chg = chgPct ?? 0;
       const up = chg >= 0;
       const priceStr = price >= 1000
         ? price.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})
@@ -139,7 +142,7 @@ async function fetchHeroPrices() {
       headers: { 'Content-Type': 'text/plain' },
       body: JSON.stringify({
         symbols: { tickers: HERO_PAIRS.map(p => p.tv) },
-        columns: ['close', 'change_percent', 'open']
+        columns: ['close', 'change_percent', 'change']
       })
     });
     if (!res.ok) return;
@@ -151,12 +154,15 @@ async function fetchHeroPrices() {
       const card = document.getElementById(cfg.id);
       if (!card || !item.d) return;
 
-      const price = item.d[0];
-      let chg     = item.d[1];
-      const open  = item.d[2];
+      const price  = item.d[0];
+      let chgPct   = item.d[1];
+      const absChg = item.d[2];
       if (price == null) return;
-      if (chg == null && open != null && open !== 0) chg = ((price - open) / open) * 100;
-      chg = chg ?? 0;
+      if (chgPct == null && absChg != null) {
+        const openPrice = price - absChg;
+        if (openPrice !== 0) chgPct = (absChg / openPrice) * 100;
+      }
+      const chg = chgPct ?? 0;
       const up = chg >= 0;
       const priceStr = price >= 1000
         ? price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
