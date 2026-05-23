@@ -320,6 +320,7 @@ img{max-width:100%;display:block}
   .split-inner{grid-template-columns:1fr}
   .split-visual{height:340px}
   .footer-grid{grid-template-columns:repeat(2,1fr)}
+  .footer-brand-col{grid-column:1/-1}
   .cta-inner{flex-direction:column;text-align:center;padding:40px 32px}
   .cta-actions{justify-content:center}
 }
@@ -364,5 +365,5 @@ img{max-width:100%;display:block}
   .hstat strong{font-size:16px}
   .hstat span{font-size:11px}
   .hero-stats-inner{grid-template-columns:repeat(2,1fr);gap:10px}
-  .footer-grid{grid-template-columns:1fr}
+  .footer-grid{grid-template-columns:1fr 1fr;gap:24px 16px}
 }
