@@ -7,6 +7,28 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="shared.css">
+<style>
+/* ── Plan Themes ──────────────────────────────────────────────── */
+body[data-plan]{transition:--accent .4s}
+
+/* SILVER */
+body[data-plan="silver"]{--accent:#94a3b8;--accent2:#b0bcd4;--accentg:linear-gradient(135deg,#64748b,#94a3b8)}
+body[data-plan="silver"] .portfolio-gradient{background:linear-gradient(135deg,#1e293b 0%,#334155 55%,#475569 100%) !important;box-shadow:0 12px 35px rgba(100,116,139,.4) !important}
+body[data-plan="silver"] .nav-item.active{background:linear-gradient(135deg,rgba(100,116,139,.18),rgba(148,163,184,.08));color:var(--accent2);border-color:rgba(100,116,139,.25)}
+body[data-plan="silver"] .tb-btn:hover{border-color:var(--accent);color:var(--accent);background:rgba(100,116,139,.1)}
+
+/* GOLD */
+body[data-plan="gold"]{--accent:#f59e0b;--accent2:#fbbf24;--accentg:linear-gradient(135deg,#b45309,#f59e0b)}
+body[data-plan="gold"] .portfolio-gradient{background:linear-gradient(135deg,#78350f 0%,#b45309 55%,#d97706 100%) !important;box-shadow:0 12px 35px rgba(245,158,11,.4) !important}
+body[data-plan="gold"] .nav-item.active{background:linear-gradient(135deg,rgba(245,158,11,.18),rgba(251,191,36,.08));color:var(--accent2);border-color:rgba(245,158,11,.25)}
+body[data-plan="gold"] .tb-btn:hover{border-color:var(--accent);color:var(--accent);background:rgba(245,158,11,.1)}
+
+/* PLATINUM */
+body[data-plan="platinum"]{--accent:#a855f7;--accent2:#c084fc;--accentg:linear-gradient(135deg,#7c3aed,#a855f7)}
+body[data-plan="platinum"] .portfolio-gradient{background:linear-gradient(135deg,#4c1d95 0%,#6d28d9 55%,#a855f7 100%) !important;box-shadow:0 12px 35px rgba(168,85,247,.4) !important}
+body[data-plan="platinum"] .nav-item.active{background:linear-gradient(135deg,rgba(168,85,247,.18),rgba(192,132,252,.08));color:var(--accent2);border-color:rgba(168,85,247,.25)}
+body[data-plan="platinum"] .tb-btn:hover{border-color:var(--accent);color:var(--accent);background:rgba(168,85,247,.1)}
+</style>
 </head>
 <body>
 <div class="app">
@@ -321,6 +343,12 @@ function applyProfile(profile) {
     badge.style.color      = c.color;
     badge.style.display    = 'inline-block';
   }
+  applyPlanTheme(label);
+}
+
+function applyPlanTheme(label) {
+  const key = (label || 'basic').toLowerCase();
+  document.body.setAttribute('data-plan', key);
 }
 
 function categorizeSym(sym) {
