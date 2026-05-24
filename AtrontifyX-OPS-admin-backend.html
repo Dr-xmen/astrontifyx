@@ -2135,7 +2135,11 @@ window.renderUsersLive = renderUsersLive;
 
 // -- KYC -------------------------------------------------------
 async function renderKYCLive() {
-  const db = window.ATRONTIFY_DB; if (!db) return;
+  const svcKey = window.ATRONTIFY_SERVICE_KEY;
+  const db = svcKey
+    ? window.supabase.createClient('https://guguugokdhiwobmuopro.supabase.co', svcKey, { auth: { persistSession: false } })
+    : window.ATRONTIFY_DB;
+  if (!db) return;
   const { data, error } = await db
     .from('kyc_submissions')
     .select('id, user_id, document_type, submitted_at, status, front_url, back_url, selfie_url, proof_address_url, profiles(*)')
@@ -2300,19 +2304,28 @@ window.viewKYCDocs = function(encoded) {
   openModal('modal-kyc-docs');
 };
 
+function _adminDb() {
+  const svcKey = window.ATRONTIFY_SERVICE_KEY;
+  return svcKey
+    ? window.supabase.createClient('https://guguugokdhiwobmuopro.supabase.co', svcKey, { auth: { persistSession: false } })
+    : window.ATRONTIFY_DB;
+}
+
 window.opsApproveKYC = async id => {
-  const { error } = await window.ATRONTIFY_DB.from('kyc_submissions').update({ status:'verified' }).eq('id', id);
+  const db = _adminDb();
+  const { error } = await db.from('kyc_submissions').update({ status:'verified' }).eq('id', id);
   if (error) { showToast('Error: '+error.message,'error'); return; }
-  const { data: sub } = await window.ATRONTIFY_DB.from('kyc_submissions').select('user_id').eq('id', id).single();
-  if (sub) await window.ATRONTIFY_DB.from('profiles').update({ kyc_status:'verified' }).eq('id', sub.user_id);
+  const { data: sub } = await db.from('kyc_submissions').select('user_id').eq('id', id).single();
+  if (sub) await db.from('profiles').update({ kyc_status:'verified' }).eq('id', sub.user_id);
   logAudit('KYC_APPROVED', sub?.user_id || id, `KYC submission ${id.slice(0,8)} approved`);
   showToast('KYC approved','success'); renderKYCLive();
 };
 window.opsRejectKYC = async id => {
-  const { error } = await window.ATRONTIFY_DB.from('kyc_submissions').update({ status:'rejected' }).eq('id', id);
+  const db = _adminDb();
+  const { error } = await db.from('kyc_submissions').update({ status:'rejected' }).eq('id', id);
   if (error) { showToast('Error: '+error.message,'error'); return; }
-  const { data: sub } = await window.ATRONTIFY_DB.from('kyc_submissions').select('user_id').eq('id', id).single();
-  if (sub) await window.ATRONTIFY_DB.from('profiles').update({ kyc_status:'rejected' }).eq('id', sub.user_id);
+  const { data: sub } = await db.from('kyc_submissions').select('user_id').eq('id', id).single();
+  if (sub) await db.from('profiles').update({ kyc_status:'rejected' }).eq('id', sub.user_id);
   logAudit('KYC_REJECTED', sub?.user_id || id, `KYC submission ${id.slice(0,8)} rejected`);
   showToast('KYC rejected','error'); renderKYCLive();
 };
