@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Identity Verification — AtrontifyX</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --blue:    #4f6ef7;
+      --blue-lt: rgba(79,110,247,0.10);
+      --purple:  #7c3aed;
+      --green:   #22c55e;
+      --red:     #ef4444;
+      --orange:  #f59e0b;
+      --bg:      #0b0e1a;
+      --bg2:     #0f1220;
+      --surface: #131726;
+      --border:  rgba(255,255,255,0.08);
+      --text:    #e8eaf0;
+      --muted:   rgba(232,234,240,0.45);
+    }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { min-height: 100vh; font-family: 'Space Grotesk', system-ui, sans-serif; color: var(--text); font-size: 14px; line-height: 1.6; }
+    body { background: var(--bg); display: flex; flex-direction: column; align-items: center; padding: 32px 16px 60px; }
+    a { text-decoration: none; color: inherit; }
+    button { font-family: inherit; cursor: pointer; }
+
+    /* ── Topbar ── */
+    .topbar {
+      width: 100%; max-width: 600px;
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 32px;
+    }
+    .topbar-logo { display: flex; align-items: center; gap: 8px; }
+    .topbar-logo img { height: 54px; width: auto; }
+    .topbar-logo-fallback { display: none; align-items: center; gap: 6px; }
+    .logo-mark { background: linear-gradient(135deg,#4f6ef7,#7c3aed); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-weight: 800; font-size: 18px; letter-spacing: -.5px; }
+    .logo-text { font-weight: 700; font-size: 16px; color: var(--text); }
+    .topbar-signout {
+      display: flex; align-items: center; gap: 6px; font-size: 13px;
+      color: var(--muted); background: none; border: 1.5px solid var(--border);
+      border-radius: 20px; padding: 7px 16px; transition: border-color .15s, color .15s;
+    }
+    .topbar-signout:hover { border-color: var(--red); color: var(--red); }
+    .topbar-signout svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; }
+
+    /* ── Card ── */
+    .card {
+      width: 100%; max-width: 580px;
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 20px; overflow: hidden;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.5);
+    }
+
+    /* ── Status header ── */
+    .status-header {
+      padding: 36px 36px 28px; text-align: center;
+      border-bottom: 1px solid var(--border);
+      position: relative; overflow: hidden;
+    }
+    .status-header::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, #4f6ef7, #7c3aed);
+    }
+    .status-icon {
+      width: 72px; height: 72px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 20px;
+    }
+    .status-icon svg { width: 34px; height: 34px; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .status-icon--upload  { background: rgba(79,110,247,.12); }
+    .status-icon--upload  svg { stroke: var(--blue); }
+    .status-icon--pending { background: rgba(245,158,11,.12); }
+    .status-icon--pending svg { stroke: var(--orange); }
+    .status-icon--rejected{ background: rgba(239,68,68,.10); }
+    .status-icon--rejected svg { stroke: var(--red); }
+    .status-icon--verified{ background: rgba(34,197,94,.12); }
+    .status-icon--verified svg { stroke: var(--green); }
+
+    .status-title { font-size: 22px; font-weight: 800; letter-spacing: -.02em; margin-bottom: 8px; }
+    .status-sub   { font-size: 14px; color: var(--muted); max-width: 380px; margin: 0 auto; line-height: 1.65; }
+
+    /* ── User strip ── */
+    .user-strip {
+      display: flex; align-items: center; gap: 14px;
+      padding: 18px 28px; border-bottom: 1px solid var(--border);
+      background: rgba(255,255,255,0.02);
+    }
+    .user-avatar {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: linear-gradient(135deg,#4f6ef7,#7c3aed);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; font-weight: 700; color: #fff; flex-shrink: 0;
+      background-size: cover; background-position: center;
+    }
+    .user-name  { font-size: 14px; font-weight: 700; margin-bottom: 1px; }
+    .user-email { font-size: 12px; color: var(--muted); }
+    .kyc-badge  {
+      margin-left: auto; padding: 5px 13px; border-radius: 20px;
+      font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em;
+    }
+    .kyc-badge--upload   { background: rgba(79,110,247,.12);  color: var(--blue); border: 1px solid rgba(79,110,247,.25); }
+    .kyc-badge--pending  { background: rgba(245,158,11,.12);  color: var(--orange); border: 1px solid rgba(245,158,11,.25); }
+    .kyc-badge--rejected { background: rgba(239,68,68,.10);   color: var(--red); border: 1px solid rgba(239,68,68,.2); }
+    .kyc-badge--verified { background: rgba(34,197,94,.12);   color: var(--green); border: 1px solid rgba(34,197,94,.25); }
+
+    /* ── Body ── */
+    .card-body { padding: 28px; }
+
+    /* ── Step list ── */
+    .step-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
+    .step-item {
+      display: flex; align-items: flex-start; gap: 14px;
+      padding: 14px 16px; border-radius: 12px;
+      border: 1px solid var(--border); background: rgba(255,255,255,0.02);
+    }
+    .step-dot {
+      width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700;
+    }
+    .step-dot--done    { background: rgba(34,197,94,.15);  color: var(--green); }
+    .step-dot--active  { background: rgba(245,158,11,.15); color: var(--orange); }
+    .step-dot--waiting { background: rgba(255,255,255,.05); color: var(--muted); }
+    .step-dot svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 2.5; }
+    .step-label { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+    .step-sub   { font-size: 12px; color: var(--muted); }
+
+    /* ── Info box ── */
+    .info-box {
+      background: rgba(79,110,247,.07); border: 1px solid rgba(79,110,247,.18);
+      border-radius: 12px; padding: 14px 16px;
+      font-size: 13px; color: #a5b4fc; line-height: 1.6;
+      margin-bottom: 20px;
+    }
+    .info-box--orange {
+      background: rgba(245,158,11,.07); border-color: rgba(245,158,11,.2);
+      color: #fbbf24;
+    }
+    .info-box--red {
+      background: rgba(239,68,68,.06); border-color: rgba(239,68,68,.18);
+      color: #fca5a5;
+    }
+    .info-box strong { font-weight: 700; color: var(--text); }
+
+    /* ── Poll row ── */
+    .poll-row {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      font-size: 12px; color: var(--muted); margin-bottom: 20px;
+    }
+    .poll-dot {
+      width: 7px; height: 7px; border-radius: 50%; background: var(--green);
+      animation: pollPulse 2s ease-in-out infinite;
+    }
+    @keyframes pollPulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(.8)} }
+
+    /* ── Upload section ── */
+    .upload-section { display: none; }
+    .upload-section.visible { display: block; }
+    .section-title {
+      font-size: 14px; font-weight: 700; margin-bottom: 16px;
+      padding-bottom: 12px; border-bottom: 1px solid var(--border);
+      letter-spacing: -.01em;
+    }
+
+    .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+    .field label { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+    .field select, .field input[type=tel] {
+      height: 44px; background: rgba(255,255,255,.04); border: 1.5px solid var(--border);
+      border-radius: 10px; padding: 0 13px; font-size: 13px;
+      font-family: 'Space Grotesk', sans-serif; color: var(--text);
+      outline: none; appearance: none; width: 100%;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .field select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238b93b0' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 13px center; padding-right: 36px; }
+    .field select option { background: #1a1d2e; color: var(--text); }
+    .field select:focus, .field input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(79,110,247,.12); }
+    .field input::placeholder { color: var(--muted); }
+
+    /* hint below ID type */
+    .doc-hint { font-size: 11px; color: var(--muted); margin-bottom: 14px; line-height: 1.5; }
+    .doc-hint strong { color: var(--text); font-weight: 600; }
+
+    /* upload boxes */
+    .upload-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 18px; }
+    .upload-box {
+      border: 2px dashed var(--border); border-radius: 12px; padding: 18px 10px;
+      text-align: center; cursor: pointer; transition: border-color .15s, background .15s;
+      position: relative;
+    }
+    .upload-box:hover { border-color: var(--blue); background: rgba(79,110,247,.04); }
+    .upload-box.has-file { border-color: var(--green); border-style: solid; background: rgba(34,197,94,.04); }
+    .upload-box svg { width: 26px; height: 26px; fill: none; stroke: var(--muted); stroke-width: 1.5; display: block; margin: 0 auto 8px; }
+    .upload-box.has-file svg { stroke: var(--green); }
+    .upload-label { font-size: 11px; font-weight: 700; margin-bottom: 2px; color: var(--text); }
+    .upload-sub   { font-size: 10px; color: var(--muted); }
+    .upload-chosen{ font-size: 10px; color: var(--green); margin-top: 5px; word-break: break-all; display: none; }
+    .upload-box.has-file .upload-chosen { display: block; }
+
+    /* selfie preview */
+    .selfie-preview {
+      width: 56px; height: 56px; border-radius: 50%;
+      object-fit: cover; display: none;
+      margin: 6px auto 4px; border: 2px solid var(--green);
+    }
+    .upload-box.has-file .selfie-preview { display: block; }
+
+    /* ── Submit button ── */
+    .btn-primary {
+      width: 100%; height: 50px;
+      background: linear-gradient(135deg, #4f6ef7, #7c3aed);
+      color: #fff; border: none; border-radius: 14px;
+      font-size: 15px; font-weight: 700; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      transition: opacity .2s, transform .15s;
+      box-shadow: 0 8px 24px rgba(79,110,247,.35);
+      font-family: 'Space Grotesk', sans-serif;
+    }
+    .btn-primary:hover   { opacity: .92; transform: translateY(-1px); }
+    .btn-primary:active  { transform: translateY(0); }
+    .btn-primary.loading { opacity: .6; pointer-events: none; }
+    .btn-primary svg { width: 16px; height: 16px; fill: none; stroke: #fff; stroke-width: 2.2; }
+
+    .upload-msg { text-align: center; font-size: 13px; margin-top: 12px; min-height: 18px; }
+    .upload-msg.ok  { color: var(--green); }
+    .upload-msg.err { color: var(--red); }
+
+    /* ── Card footer ── */
+    .card-footer {
+      padding: 16px 28px; border-top: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; color: var(--muted);
+    }
+    .card-footer a { color: var(--blue); }
+    .card-footer a:hover { text-decoration: underline; }
+
+    /* ── Approved overlay ── */
+    .approved-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(11,14,26,.9); backdrop-filter: blur(6px);
+      z-index: 999; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 16px; color: var(--text); text-align: center;
+    }
+    .approved-overlay.visible { display: flex; }
+    .approved-icon {
+      width: 72px; height: 72px; border-radius: 50%;
+      background: rgba(34,197,94,.15);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .approved-icon svg { width: 32px; height: 32px; fill: none; stroke: var(--green); stroke-width: 2.5; }
+    .approved-title { font-size: 22px; font-weight: 800; letter-spacing: -.02em; }
+    .approved-sub   { font-size: 14px; color: var(--muted); }
+
+    /* ── Mobile ── */
+    @media (max-width: 560px) {
+      body { padding: 20px 12px 48px; }
+      .status-header { padding: 28px 20px 22px; }
+      .card-body { padding: 20px; }
+      .upload-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="topbar-logo">
+      <img src="assets/logo.png" alt="AtrontifyX"
+           onerror="this.style.display='none';document.querySelector('.topbar-logo-fallback').style.display='flex'">
+      <span class="topbar-logo-fallback">
+        <span class="logo-mark">ATX</span>
+        <span class="logo-text">AtrontifyX</span>
+      </span>
+    </div>
+    <button class="topbar-signout" id="signout-btn">
+      <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Sign out
+    </button>
+  </div>
+
+  <!-- Card -->
+  <div class="card" id="main-card">
+
+    <!-- Status header -->
+    <div class="status-header">
+      <div class="status-icon status-icon--upload" id="status-icon">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+      </div>
+      <div class="status-title" id="status-title">Complete Your Verification</div>
+      <div class="status-sub" id="status-sub">Upload your identity documents to unlock full access to your AtrontifyX account.</div>
+    </div>
+
+    <!-- User strip -->
+    <div class="user-strip">
+      <div class="user-avatar" id="user-avatar">—</div>
+      <div>
+        <div class="user-name"  id="user-name">Loading…</div>
+        <div class="user-email" id="user-email"></div>
+      </div>
+      <span class="kyc-badge kyc-badge--upload" id="kyc-badge">Action Required</span>
+    </div>
+
+    <!-- Body -->
+    <div class="card-body">
+
+      <!-- Steps -->
+      <div class="step-list" id="step-list">
+        <div class="step-item">
+          <div class="step-dot step-dot--done">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div>
+            <div class="step-label">Account Created</div>
+            <div class="step-sub">Your AtrontifyX account is set up and email verified</div>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-dot step-dot--active" id="step-docs-dot">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          </div>
+          <div>
+            <div class="step-label" id="step-docs-label">Submit Documents</div>
+            <div class="step-sub"   id="step-docs-sub">Upload your ID and a selfie photo below</div>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-dot step-dot--waiting" id="step-review-dot">3</div>
+          <div>
+            <div class="step-label" id="step-review-label">Compliance Review</div>
+            <div class="step-sub"  id="step-review-sub">Our team will verify your identity</div>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-dot step-dot--waiting">4</div>
+          <div>
+            <div class="step-label">Full Account Access</div>
+            <div class="step-sub">Deposit, trade, and access all features</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Info box -->
+      <div class="info-box" id="info-box">
+        <strong>Why do we need this?</strong><br>
+        KYC verification is required by financial regulations. It keeps your account safe and ensures compliance with international trading standards. Your selfie will also be used as your account profile photo.
+      </div>
+
+      <!-- Poll row (hidden until pending state) -->
+      <div class="poll-row" id="poll-row" style="display:none">
+        <div class="poll-dot"></div>
+        <span id="poll-label">Checking status automatically…</span>
+      </div>
+
+      <!-- Upload / re-upload form -->
+      <div class="upload-section" id="upload-section">
+        <div class="section-title" id="upload-title">Submit Your Documents</div>
+
+        <div class="field">
+          <label>Identity Document Type</label>
+          <select id="doc-type">
+            <option value="" disabled selected>Select document type…</option>
+            <option>Passport</option>
+            <option>National ID Card</option>
+            <option>Driver's Licence</option>
+          </select>
+        </div>
+
+        <p class="doc-hint"><strong>No back side?</strong> If your document (e.g. passport) only has one page, upload the same image in both the Front and Back slots.</p>
+
+        <div class="upload-grid">
+          <!-- ID Front -->
+          <div class="upload-box" id="box-front" onclick="document.getElementById('file-front').click()">
+            <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            <div class="upload-label">ID Front</div>
+            <div class="upload-sub">Passport / ID card</div>
+            <input type="file" id="file-front" accept=".jpg,.jpeg,.png,.pdf" style="display:none" onchange="handleFile(this,'box-front','lbl-front')">
+            <div class="upload-chosen" id="lbl-front"></div>
+          </div>
+          <!-- ID Back -->
+          <div class="upload-box" id="box-back" onclick="document.getElementById('file-back').click()">
+            <svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+            <div class="upload-label">ID Back</div>
+            <div class="upload-sub">Reverse side</div>
+            <input type="file" id="file-back" accept=".jpg,.jpeg,.png,.pdf" style="display:none" onchange="handleFile(this,'box-back','lbl-back')">
+            <div class="upload-chosen" id="lbl-back"></div>
+          </div>
+          <!-- Selfie -->
+          <div class="upload-box" id="box-selfie" onclick="document.getElementById('file-selfie').click()">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+            <img class="selfie-preview" id="selfie-preview" src="" alt="Selfie preview">
+            <div class="upload-label">Selfie</div>
+            <div class="upload-sub">Face clearly visible</div>
+            <input type="file" id="file-selfie" accept=".jpg,.jpeg,.png" style="display:none" onchange="handleSelfie(this)">
+            <div class="upload-chosen" id="lbl-selfie"></div>
+          </div>
+        </div>
+
+        <button class="btn-primary" id="submit-btn" onclick="submitKyc()">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Submit Documents
+        </button>
+        <div class="upload-msg" id="upload-msg"></div>
+      </div>
+
+    </div><!-- /card-body -->
+
+    <div class="card-footer">
+      Need help? <a href="mailto:help.astrontifyxglobal@gmail.com" style="margin-left:4px">Contact support</a>
+    </div>
+
+  </div><!-- /card -->
+
+  <!-- Approved overlay -->
+  <div class="approved-overlay" id="approved-overlay">
+    <div class="approved-icon">
+      <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <div class="approved-title">Verification Approved!</div>
+    <div class="approved-sub">Taking you to your dashboard…</div>
+  </div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+<script>
+(async () => {
+  const db = window.ATRONTIFY_DB;
+  if (!db) { window.location.href = 'login.html'; return; }
+
+  // ── PIN gate ──────────────────────────────────────────────
+  if (sessionStorage.getItem('atrontifyx_pin_ok') !== '1') {
+    window.location.href = 'session.html';
+    return;
+  }
+
+  // ── Auth ──────────────────────────────────────────────────
+  let session;
+  try {
+    const { data } = await db.auth.getSession();
+    session = data?.session;
+  } catch(e) {}
+  if (!session) { window.location.href = 'login.html'; return; }
+
+  const userId = session.user.id;
+
+  // ── Load profile ──────────────────────────────────────────
+  let _kycStatus = 'pending', _firstName = '', _lastName = '', _email = session.user.email || '';
+  try {
+    const { data: prof } = await db.from('profiles')
+      .select('first_name,last_name,email,kyc_status,status,avatar_url')
+      .eq('id', userId).maybeSingle();
+
+    if (prof?.status === 'suspended') {
+      await db.auth.signOut();
+      window.location.href = 'login.html?suspended=1';
+      return;
+    }
+
+    _kycStatus = prof?.kyc_status || 'pending';
+    _firstName = prof?.first_name || '';
+    _lastName  = prof?.last_name  || '';
+    _email     = prof?.email || _email;
+
+    const fullName = [_firstName, _lastName].filter(Boolean).join(' ') || _email;
+    const initials = ((_firstName[0]||'') + (_lastName[0]||'')).toUpperCase() || (_email[0]||'?').toUpperCase();
+    const avatarEl = document.getElementById('user-avatar');
+
+    document.getElementById('user-name').textContent  = fullName;
+    document.getElementById('user-email').textContent = _email;
+
+    if (prof?.avatar_url) {
+      avatarEl.style.backgroundImage    = `url(${prof.avatar_url})`;
+      avatarEl.style.backgroundSize     = 'cover';
+      avatarEl.style.backgroundPosition = 'center';
+      avatarEl.textContent = '';
+    } else {
+      avatarEl.textContent = initials;
+    }
+  } catch(e) {
+    document.getElementById('user-name').textContent = _email;
+  }
+
+  // ── Already verified? Go straight to dashboard ────────────
+  if (_kycStatus === 'verified') {
+    showApproved();
+    return;
+  }
+
+  // ── Check for existing submission ─────────────────────────
+  let _hasSubmission = false;
+  try {
+    const { data: subs } = await db.from('kyc_submissions').select('id').eq('user_id', userId).limit(1);
+    _hasSubmission = !!(subs && subs.length > 0);
+  } catch(e) {}
+
+  if (_hasSubmission) {
+    applyStatus(_kycStatus);
+  } else {
+    applyUploadState();
+  }
+
+  // ── Poll every 30 s ────────────────────────────────────────
+  const _pollInterval = setInterval(async () => {
+    try {
+      const { data } = await db.from('profiles').select('kyc_status').eq('id', userId).maybeSingle();
+      const newStatus = data?.kyc_status;
+      if (newStatus === 'verified') {
+        clearInterval(_pollInterval);
+        showApproved();
+      } else if (newStatus && newStatus !== _kycStatus) {
+        _kycStatus = newStatus;
+        applyStatus(newStatus);
+      }
+    } catch(e) {}
+    const lbl = document.getElementById('poll-label');
+    if (lbl) lbl.textContent = `Checking status… (last checked ${new Date().toLocaleTimeString('en-US',{timeStyle:'short'})})`;
+  }, 30000);
+
+  // ── Sign out ──────────────────────────────────────────────
+  document.getElementById('signout-btn').onclick = async () => {
+    clearInterval(_pollInterval);
+    sessionStorage.removeItem('atrontifyx_pin_ok');
+    await db.auth.signOut();
+    window.location.href = 'login.html';
+  };
+
+  // ── File handlers ─────────────────────────────────────────
+  window.handleFile = (input, boxId, lblId) => {
+    const box = document.getElementById(boxId);
+    const lbl = document.getElementById(lblId);
+    if (input.files[0]) {
+      box.classList.add('has-file');
+      lbl.textContent = '✓ ' + input.files[0].name;
+    } else {
+      box.classList.remove('has-file');
+      lbl.textContent = '';
+    }
+  };
+
+  window.handleSelfie = (input) => {
+    const box     = document.getElementById('box-selfie');
+    const lbl     = document.getElementById('lbl-selfie');
+    const preview = document.getElementById('selfie-preview');
+    if (input.files[0]) {
+      box.classList.add('has-file');
+      lbl.textContent = '✓ ' + input.files[0].name;
+      const reader = new FileReader();
+      reader.onload = e => { preview.src = e.target.result; };
+      reader.readAsDataURL(input.files[0]);
+    } else {
+      box.classList.remove('has-file');
+      lbl.textContent = '';
+      preview.src = '';
+    }
+  };
+
+  // ── Submit KYC ────────────────────────────────────────────
+  window.submitKyc = async () => {
+    const btn     = document.getElementById('submit-btn');
+    const msgEl   = document.getElementById('upload-msg');
+    const docType = document.getElementById('doc-type').value;
+    const front   = document.getElementById('file-front').files[0];
+    const back    = document.getElementById('file-back').files[0];
+    const selfie  = document.getElementById('file-selfie').files[0];
+
+    msgEl.className = 'upload-msg';
+    msgEl.textContent = '';
+
+    if (!docType)  { msgEl.className='upload-msg err'; msgEl.textContent='Please select a document type.'; return; }
+    if (!front)    { msgEl.className='upload-msg err'; msgEl.textContent='Please upload your ID front image.'; return; }
+    if (!selfie)   { msgEl.className='upload-msg err'; msgEl.textContent='Please upload your selfie photo.'; return; }
+
+    btn.classList.add('loading');
+    btn.textContent = 'Uploading…';
+    msgEl.className = 'upload-msg';
+    msgEl.textContent = 'Uploading your documents securely…';
+
+    try {
+      const upload = async (bucket, file, path) => {
+        const ext = file.name.split('.').pop().toLowerCase();
+        const fullPath = `${path}.${ext}`;
+        const { error } = await db.storage.from(bucket).upload(fullPath, file, { upsert: true });
+        if (error) throw error;
+        return fullPath;
+      };
+
+      // Upload ID documents
+      const frontPath = await upload('kyc-docs', front,  `${userId}/id-front`);
+      const backPath  = back ? await upload('kyc-docs', back, `${userId}/id-back`) : null;
+
+      // Upload selfie to avatars bucket and get public URL
+      const selfieExt = selfie.name.split('.').pop().toLowerCase();
+      const selfiePath = `${userId}/avatar.${selfieExt}`;
+      const { error: selfieErr } = await db.storage.from('avatars').upload(selfiePath, selfie, { upsert: true });
+      if (selfieErr) throw selfieErr;
+
+      const { data: { publicUrl: selfieUrl } } = db.storage.from('avatars').getPublicUrl(selfiePath);
+
+      // Set selfie as avatar on profile
+      await db.from('profiles').update({ avatar_url: selfieUrl, kyc_status: 'pending' }).eq('id', userId);
+
+      // Create KYC submission record
+      await db.from('kyc_submissions').insert({
+        user_id:       userId,
+        document_type: docType,
+        front_url:     frontPath,
+        back_url:      backPath,
+        selfie_url:    selfieUrl,
+        status:        'pending',
+      });
+
+      // Update avatar in the UI
+      const avatarEl = document.getElementById('user-avatar');
+      avatarEl.style.backgroundImage    = `url(${selfieUrl})`;
+      avatarEl.style.backgroundSize     = 'cover';
+      avatarEl.style.backgroundPosition = 'center';
+      avatarEl.textContent = '';
+
+      _kycStatus = 'pending';
+      _hasSubmission = true;
+      applyStatus('pending');
+      msgEl.className = 'upload-msg ok';
+      msgEl.textContent = 'Documents submitted! Our team will review them within 1–2 business days.';
+    } catch(err) {
+      console.error(err);
+      msgEl.className = 'upload-msg err';
+      msgEl.textContent = 'Upload failed. Please check your connection and try again.';
+      btn.classList.remove('loading');
+      btn.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="white" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Submit Documents';
+    }
+  };
+
+  // ── State helpers ─────────────────────────────────────────
+  function applyUploadState() {
+    // Fresh state — no submission yet
+    document.getElementById('upload-section').classList.add('visible');
+    document.getElementById('poll-row').style.display = 'none';
+  }
+
+  function applyStatus(status) {
+    const icon        = document.getElementById('status-icon');
+    const title       = document.getElementById('status-title');
+    const sub         = document.getElementById('status-sub');
+    const badge       = document.getElementById('kyc-badge');
+    const infoBox     = document.getElementById('info-box');
+    const docsDot     = document.getElementById('step-docs-dot');
+    const docsLabel   = document.getElementById('step-docs-label');
+    const docsSub     = document.getElementById('step-docs-sub');
+    const reviewDot   = document.getElementById('step-review-dot');
+    const reviewLabel = document.getElementById('step-review-label');
+    const reviewSub   = document.getElementById('step-review-sub');
+    const uploadSec   = document.getElementById('upload-section');
+    const pollRow     = document.getElementById('poll-row');
+    const uploadTitle = document.getElementById('upload-title');
+    const submitBtn   = document.getElementById('submit-btn');
+
+    if (status === 'rejected') {
+      icon.className = 'status-icon status-icon--rejected';
+      icon.innerHTML = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>';
+      title.textContent = 'Documents Not Accepted';
+      sub.textContent   = 'We could not verify your identity with the documents provided. Please re-submit clearer copies below.';
+      badge.className   = 'kyc-badge kyc-badge--rejected'; badge.textContent = 'Rejected';
+      infoBox.className = 'info-box info-box--red';
+      infoBox.innerHTML = '<strong>Why was my KYC rejected?</strong><br>Common reasons: blurry images, expired documents, or details that are not clearly visible. Ensure photos are well-lit with all text legible.';
+      docsDot.className = 'step-dot step-dot--done';
+      docsDot.innerHTML = '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>';
+      docsLabel.textContent = 'Documents Submitted';
+      docsSub.textContent   = 'Previous submission was rejected';
+      reviewDot.className   = 'step-dot step-dot--waiting';
+      reviewDot.innerHTML   = '<svg viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>';
+      reviewLabel.textContent = 'Documents Rejected';
+      reviewSub.textContent   = 'Please re-submit using the form below';
+      if (uploadTitle) uploadTitle.textContent = 'Re-submit Your Documents';
+      if (submitBtn) submitBtn.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="white" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Re-submit Documents';
+      uploadSec.classList.add('visible');
+      pollRow.style.display = 'none';
+    } else {
+      // pending
+      icon.className = 'status-icon status-icon--pending';
+      icon.innerHTML = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>';
+      title.textContent = 'Verification in Progress';
+      sub.textContent   = 'Your identity documents are being reviewed by our compliance team. This usually takes 1–2 business days.';
+      badge.className   = 'kyc-badge kyc-badge--pending'; badge.textContent = 'Under Review';
+      infoBox.className = 'info-box info-box--orange';
+      infoBox.innerHTML = '<strong>What happens next?</strong><br>Our compliance team reviews documents Monday–Friday, 9am–6pm GMT. You will receive an email once your account is approved. You can safely close this page — your progress is saved.';
+      docsDot.className = 'step-dot step-dot--done';
+      docsDot.innerHTML = '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>';
+      docsLabel.textContent = 'Documents Submitted';
+      docsSub.textContent   = 'Your identity documents have been uploaded';
+      reviewDot.className   = 'step-dot step-dot--active';
+      reviewDot.innerHTML   = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>';
+      reviewLabel.textContent = 'Compliance Review';
+      reviewSub.textContent   = 'Our team is verifying your identity';
+      uploadSec.classList.remove('visible');
+      pollRow.style.display = '';
+    }
+  }
+
+  function showApproved() {
+    document.getElementById('approved-overlay').classList.add('visible');
+    sessionStorage.setItem('atrontifyx_pin_ok', '1');
+    setTimeout(() => { window.location.href = 'dashboard.html'; }, 2500);
+  }
+
+})();
+</script>
+</body>
+</html>

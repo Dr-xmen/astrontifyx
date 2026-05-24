@@ -615,7 +615,10 @@ document.getElementById('signupForm').addEventListener('submit', async (e) => {
 
   const { data, error } = await supabaseClient.auth.signUp({
     email, password,
-    options: { data: { first_name: firstName, last_name: lastName, phone, country } }
+    options: {
+      data: { first_name: firstName, last_name: lastName, phone, country },
+      emailRedirectTo: window.location.origin + '/session.html'
+    }
   });
 
   if (error) { showMessage(error.message); return; }
