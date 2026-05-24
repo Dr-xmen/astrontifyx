@@ -1642,6 +1642,20 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase.js"></script>
 <script>
+// Isolated admin session — uses a separate localStorage key so admin login
+// never overwrites a logged-in user's session on other tabs/pages.
+(function() {
+  var SUPA_URL = 'https://guguugokdhiwobmuopro.supabase.co';
+  var SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd1Z3V1Z29rZGhpd29ibXVvcHJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNTgwNzIsImV4cCI6MjA5MzczNDA3Mn0.uaKxvC9PfevyNcgtRg8Hhzaljn9ae3pp3aqgFUMfSo8';
+  var adminClient = window.supabase.createClient(SUPA_URL, SUPA_KEY, {
+    auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: false, storageKey: 'atrontifyx-admin-auth' }
+  });
+  window.ATRONTIFY_DB      = adminClient;
+  window.supabaseClient    = adminClient;
+  window.atrontifySupabase = adminClient;
+})();
+</script>
+<script>
 // ── Theme (default dark) ──────────────────────────────────────────────
 (function(){
   const t = localStorage.getItem('atx_admin_theme');
@@ -1714,115 +1728,53 @@ function closeModal(id) {
 
 // ===== ROBUST DELETE USER =====
 
-window.robustDeleteUser = function(id, name, email) {
+window.robustDeleteUser = async function(id, name, email) {
   if (!id) { showToast('No user ID found', 'error'); return; }
-
-  // Populate modal
-  const avatar = document.getElementById('del-user-avatar');
-  const uname  = document.getElementById('del-user-name');
-  const uemail = document.getElementById('del-user-email');
-  const hint   = document.getElementById('del-confirm-hint');
-  const inp    = document.getElementById('del-confirm-input');
-  const btn    = document.getElementById('del-confirm-btn');
 
   const displayName  = name  || 'Unknown User';
   const displayEmail = email || '';
-  const ini = displayName.split(/\s+/).map(p => p[0] || '').join('').slice(0,2).toUpperCase() || '?';
 
-  if (avatar) avatar.textContent = ini;
-  if (uname)  uname.textContent  = displayName;
-  if (uemail) uemail.textContent = displayEmail || '—';
-  if (hint)   hint.textContent   = displayEmail || 'DELETE';
-  if (inp)  { inp.value = ''; inp.style.borderColor = ''; }
-  if (btn)  {
-    btn.disabled = true;
-    btn.innerHTML = '<svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg> Delete Permanently';
-    // Store pending delete on the button itself
-    btn.dataset.pendingId    = id;
-    btn.dataset.pendingEmail = displayEmail;
-  }
+  if (!confirm('Delete user "' + displayName + '"?\n\nThis action cannot be undone.')) return;
 
-  // Re-wire confirm input
-  if (inp) {
-    inp.oninput = function() {
-      const typed = this.value.trim().toLowerCase();
-      const match = typed === 'delete' || (displayEmail && typed === displayEmail.toLowerCase());
-      if (btn) btn.disabled = !match;
-      this.style.borderColor = this.value ? (match ? 'var(--green)' : 'var(--red)') : '';
-    };
-  }
+  showToast('Deleting user…', 'info');
 
-  // Re-wire confirm button
-  if (btn) {
-    btn.onclick = async function() {
-      const uid = this.dataset.pendingId;
-      if (!uid) return;
-      this.disabled = true;
-      this.textContent = 'Deleting…';
-
-      try {
-        const db = window.ATRONTIFY_DB;
-        if (db) {
-          // Try RPC first
-          const { error: rpcErr } = await db.rpc('ops_delete_user', { target_user_id: uid });
-          if (rpcErr) {
-            // Fallback: delete from all known tables (using actual table names)
-            const relatedTables = [
-              'deposits','withdrawals','transactions',
-              'trades','kyc_verifications','trading_accounts','accounts'
-            ];
-            for (const t of relatedTables) {
-              try { await db.from(t).delete().eq('user_id', uid); } catch(_) {}
-            }
-            // Delete the profile row
-            try {
-              const { error: profErr } = await db.from('profiles').delete().eq('id', uid);
-              if (profErr) console.warn('Profile delete error:', profErr.message);
-            } catch(e) { console.warn('Profile delete exception:', e); }
-
-            // Delete the auth user via Supabase Admin API (requires service role key)
-            const svcKey = window.ATRONTIFY_SERVICE_KEY;
-            if (svcKey) {
-              try {
-                await fetch(
-                  `${window.atrontifySupabase.supabaseUrl}/auth/v1/admin/users/${uid}`,
-                  { method:'DELETE', headers:{ 'apikey': svcKey, 'Authorization': 'Bearer ' + svcKey } }
-                );
-              } catch(e) { console.warn('Auth user delete failed:', e); }
-            }
-          }
+  try {
+    const db = window.ATRONTIFY_DB;
+    if (db) {
+      const { error: rpcErr } = await db.rpc('ops_delete_user', { target_user_id: id });
+      if (rpcErr) {
+        const relatedTables = ['deposits','withdrawals','transactions','trades','kyc_verifications','trading_accounts','accounts'];
+        for (const t of relatedTables) {
+          try { await db.from(t).delete().eq('user_id', id); } catch(_) {}
         }
+        try { await db.from('profiles').delete().eq('id', id); } catch(e) { console.warn('Profile delete:', e); }
 
-        // Persist deleted ID so it survives page refreshes
-        markUserDeleted(String(uid));
-
-        // Remove from local USERS array
-        if (window.USERS && Array.isArray(window.USERS)) {
-          window.USERS = window.USERS.filter(u => !isUserDeleted(String(u.id)));
+        const svcKey = window.ATRONTIFY_SERVICE_KEY;
+        if (svcKey) {
+          try {
+            await fetch(
+              `https://guguugokdhiwobmuopro.supabase.co/auth/v1/admin/users/${id}`,
+              { method:'DELETE', headers:{ 'apikey': svcKey, 'Authorization': 'Bearer ' + svcKey } }
+            );
+          } catch(e) { console.warn('Auth user delete failed:', e); }
         }
-
-        // Remove row from DOM instantly
-        document.querySelectorAll('[data-delete-user="' + uid + '"]').forEach(el => el.closest('tr') && el.closest('tr').remove());
-
-        // Re-render locally only — do NOT call renderUsersLive (it re-fetches from DB and restores the row)
-        if (typeof renderUsers === 'function') renderUsers();
-        if (typeof renderRecentUsers === 'function') renderRecentUsers();
-
-        logAudit('USER_DELETED', uid, `User ${displayName} (${displayEmail}) permanently deleted`);
-        closeModal('modal-delete-user');
-        showToast('User deleted successfully', 'success');
-
-      } catch(err) {
-        console.error('Delete error:', err);
-        showToast('Delete failed: ' + (err.message || err), 'error');
-        this.disabled = false;
-        this.innerHTML = '<svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg> Delete Permanently';
       }
-    };
-  }
+    }
 
-  openModal('modal-delete-user');
-  setTimeout(() => inp?.focus(), 120);
+    markUserDeleted(String(id));
+    if (window.USERS && Array.isArray(window.USERS)) {
+      window.USERS = window.USERS.filter(u => !isUserDeleted(String(u.id)));
+    }
+    document.querySelectorAll('[data-delete-user="' + id + '"]').forEach(el => el.closest('tr') && el.closest('tr').remove());
+    if (typeof renderUsers === 'function') renderUsers();
+    if (typeof renderRecentUsers === 'function') renderRecentUsers();
+    logAudit('USER_DELETED', id, `User ${displayName} (${displayEmail}) permanently deleted`);
+    showToast('User deleted successfully', 'success');
+
+  } catch(err) {
+    console.error('Delete error:', err);
+    showToast('Delete failed: ' + (err.message || err), 'error');
+  }
 };
 
 }

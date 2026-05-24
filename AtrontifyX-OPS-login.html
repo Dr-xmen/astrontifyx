@@ -110,6 +110,20 @@ h1{font-size:22px;font-weight:700;color:#fff;margin-bottom:5px;letter-spacing:-.
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase.js"></script>
 <script>
+// Isolated admin session — uses a separate localStorage key so admin login
+// never overwrites a logged-in user's session on other tabs/pages.
+(function() {
+  var SUPA_URL = 'https://guguugokdhiwobmuopro.supabase.co';
+  var SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd1Z3V1Z29rZGhpd29ibXVvcHJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNTgwNzIsImV4cCI6MjA5MzczNDA3Mn0.uaKxvC9PfevyNcgtRg8Hhzaljn9ae3pp3aqgFUMfSo8';
+  var adminClient = window.supabase.createClient(SUPA_URL, SUPA_KEY, {
+    auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: false, storageKey: 'atrontifyx-admin-auth' }
+  });
+  window.ATRONTIFY_DB      = adminClient;
+  window.supabaseClient    = adminClient;
+  window.atrontifySupabase = adminClient;
+})();
+</script>
+<script>
 // Particles
 (function(){
   const p = document.getElementById('particles');

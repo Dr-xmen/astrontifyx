@@ -179,9 +179,39 @@ input::placeholder{color:#9ca3af}
 .auth-topbar-back{margin-left:auto;font-size:13px;color:#8b93b0;display:flex;align-items:center;gap:6px;transition:color .2s}
 .auth-topbar-back:hover{color:#e8eaf0}
 .auth-topbar-back svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2}
+
+/* ── Login success modal ── */
+#loginSuccessModal{display:none;position:fixed;inset:0;z-index:9999;background:rgba(6,8,18,.85);backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:20px}
+.ls-card{background:#0f1220;border:1px solid rgba(255,255,255,.08);border-radius:24px;padding:44px 36px;max-width:380px;width:100%;text-align:center;box-shadow:0 32px 80px rgba(0,0,0,.6);animation:lsIn .45s cubic-bezier(.34,1.56,.64,1) both}
+@keyframes lsIn{from{opacity:0;transform:scale(.8) translateY(24px)}to{opacity:1;transform:none}}
+.ls-ring{width:80px;height:80px;border-radius:50%;background:rgba(79,110,247,.12);border:2px solid rgba(79,110,247,.35);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;animation:lsRing .6s .2s both}
+@keyframes lsRing{from{transform:scale(0)}to{transform:scale(1)}}
+.ls-icon{width:36px;height:36px;stroke:#4f6ef7;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.ls-title{font-size:22px;font-weight:800;margin-bottom:10px;background:linear-gradient(135deg,#e8eaf0,#a5b4fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.ls-sub{font-size:13.5px;color:rgba(232,234,240,.55);line-height:1.6;margin-bottom:20px}
+.ls-dots{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:4px}
+.ls-dot{width:7px;height:7px;border-radius:50%;background:#4f6ef7;animation:lsDot 1.2s ease-in-out infinite}
+.ls-dot:nth-child(2){animation-delay:.2s}.ls-dot:nth-child(3){animation-delay:.4s}
+@keyframes lsDot{0%,80%,100%{transform:scale(.6);opacity:.4}40%{transform:scale(1);opacity:1}}
 </style>
 </head>
 <body>
+
+<!-- Login success modal -->
+<div id="loginSuccessModal">
+  <div class="ls-card">
+    <div class="ls-ring">
+      <svg class="ls-icon" viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+    </div>
+    <div class="ls-title">Login Successful!</div>
+    <div class="ls-sub">Welcome back. Taking you to your account…</div>
+    <div class="ls-dots">
+      <div class="ls-dot"></div>
+      <div class="ls-dot"></div>
+      <div class="ls-dot"></div>
+    </div>
+  </div>
+</div>
 
 <nav class="auth-topbar">
   <a class="auth-topbar-logo" href="index.html">
@@ -410,8 +440,8 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
   const password = document.getElementById('password').value;
   const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
   if (error) { showMessage(error.message); return; }
-  showMessage('Login successful!', 'success');
-  setTimeout(() => { window.location.href = 'session.html'; }, 1000);
+  document.getElementById('loginSuccessModal').style.display = 'flex';
+  setTimeout(() => { window.location.href = 'session.html'; }, 2000);
 });
 
 /* subtle ticker animations */
