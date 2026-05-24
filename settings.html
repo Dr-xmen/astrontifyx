@@ -195,41 +195,65 @@ function renderTabContent() {
   }
 
   if (settTab === 'verification') {
+    const kyc = (window._userData?.kycStatus || 'pending').toLowerCase();
+    const isVerified = kyc === 'verified';
+    const isRejected = kyc === 'rejected';
+    const isPending  = !isVerified && !isRejected;
+
+    const headerBadge = isVerified
+      ? `<span class="badge bg">Verified</span>`
+      : isRejected
+      ? `<span class="badge br">Rejected</span>`
+      : `<span class="badge ba">Under Review</span>`;
+
+    const statusBar = isVerified
+      ? `<div class="progress-bar" style="margin-bottom:8px"><div class="progress-fill" style="width:100%;background:var(--green)"></div></div>
+         <div style="font-size:12px;color:var(--green);font-weight:600">✓ Your identity has been verified. Full account access is unlocked.</div>`
+      : isRejected
+      ? `<div class="progress-bar" style="margin-bottom:8px"><div class="progress-fill" style="width:30%;background:var(--red)"></div></div>
+         <div style="font-size:12px;color:var(--red)">Your documents were not accepted. Please re-submit via the verification page.</div>`
+      : `<div class="progress-bar" style="margin-bottom:8px"><div class="progress-fill" style="width:70%;background:var(--amber)"></div></div>
+         <div style="font-size:12px;color:var(--text3)">Your submitted documents are currently under review.</div>`;
+
+    const docBadge = isVerified
+      ? `<span class="badge bg">Verified</span>`
+      : `<span class="badge ba">Submitted</span>`;
+
+    const actions = isVerified
+      ? ``
+      : `<div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
+           <a href="verify.html" class="btn btn-primary" style="text-decoration:none">${isRejected ? 'Re-submit Documents' : 'View Verification'}</a>
+         </div>`;
+
     el.innerHTML = `
       <div class="section-hdr">
         <span class="section-title">Identity Verification (KYC)</span>
-        <span class="badge ba">Pending Review</span>
+        ${headerBadge}
       </div>
       <div class="grid g2">
         <div class="card-sm">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
             <div><div style="font-weight:600">Government ID</div><div style="font-size:12px;color:var(--text3)">Passport or National ID</div></div>
-            <span class="badge bg">Uploaded</span>
+            ${docBadge}
           </div>
-          <input type="file" accept="image/*,.pdf">
+          <div style="font-size:12px;color:var(--text3)">${isVerified ? 'Document verified and on file.' : 'Document submitted for review.'}</div>
         </div>
         <div class="card-sm">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-            <div><div style="font-weight:600">Selfie Verification</div><div style="font-size:12px;color:var(--text3)">Upload your selfie</div></div>
-            <span class="badge ba">Awaiting</span>
+            <div><div style="font-weight:600">Selfie Verification</div><div style="font-size:12px;color:var(--text3)">Identity photo</div></div>
+            ${docBadge}
           </div>
-          <input type="file" accept="image/*">
+          <div style="font-size:12px;color:var(--text3)">${isVerified ? 'Selfie verified and on file.' : 'Selfie submitted for review.'}</div>
         </div>
       </div>
       <div class="card-sm" style="margin-top:14px">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
           <div><div style="font-weight:600">Verification Status</div><div style="font-size:12px;color:var(--text3)">Compliance review progress</div></div>
-          <span class="badge ba">Under Review</span>
+          ${headerBadge}
         </div>
-        <div class="progress-bar" style="margin-bottom:8px">
-          <div class="progress-fill" style="width:70%;background:var(--amber)"></div>
-        </div>
-        <div style="font-size:12px;color:var(--text3)">Your submitted documents are currently under review.</div>
+        ${statusBar}
       </div>
-      <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
-        <button class="btn btn-primary">Submit Verification</button>
-        <button class="btn btn-outline">View Documents</button>
-      </div>`;
+      ${actions}`;
     return;
   }
 
@@ -304,7 +328,7 @@ else {
     const fn = p?.first_name || jwtFn, ln = p?.last_name || jwtLn;
     const fullName = `${fn} ${ln}`.trim() || jwtName;
     const initials = (fn && ln) ? `${fn[0]}${ln[0]}`.toUpperCase() : (fullName[0]||'?').toUpperCase();
-    return { fullName, initials, email: user.email||'', avatarUrl: p?.avatar_url||'', country: p?.country||'—', language: p?.language || localStorage.getItem('atx_language') || 'English' };
+    return { fullName, initials, email: user.email||'', avatarUrl: p?.avatar_url||'', country: p?.country||'—', language: p?.language || localStorage.getItem('atx_language') || 'English', kycStatus: p?.kyc_status || 'pending' };
   }
 
   const topAvatar = document.getElementById('userAvatar');
@@ -330,7 +354,7 @@ else {
 
   // Fetch full profile
   const { data: profile } = await supabase.from('profiles')
-    .select('first_name,last_name,country,avatar_url,language')
+    .select('first_name,last_name,country,avatar_url,language,kyc_status')
     .eq('id', user.id).single();
 
   if (profile) {
