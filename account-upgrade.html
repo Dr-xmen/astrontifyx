@@ -177,16 +177,147 @@
   gap: 16px;
   position: relative;
   overflow: hidden;
-  transition: border-color .2s, transform .2s, box-shadow .2s;
+  transition: border-color .3s, transform .25s, box-shadow .35s;
   cursor: default;
 }
-.tier-card:hover:not(.current):not(.locked) {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 40px rgba(0,0,0,.25);
+/* Top accent gradient line */
+.tier-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  pointer-events: none;
+  transition: opacity .3s;
 }
-.tier-card.current { border-color: var(--accent); background: rgba(79,110,247,.05); }
-.tier-card.current::before { content:'CURRENT'; position:absolute;top:14px;right:14px;font-size:9px;font-weight:800;letter-spacing:.12em;background:var(--accent);color:#fff;padding:2px 8px;border-radius:20px }
-.tier-card.locked { opacity: .55; }
+/* Inner radial bloom (clipped by overflow:hidden — visible as top glow) */
+.tier-card::after {
+  content: '';
+  position: absolute;
+  top: -60px; left: 50%;
+  transform: translateX(-50%);
+  width: 220px; height: 110px;
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .4s;
+}
+.tier-card:hover::after { opacity: 1; }
+
+/* CURRENT badge (inline HTML, not ::before) */
+.tier-current-badge {
+  position: absolute; top: 14px; right: 14px;
+  font-size: 9px; font-weight: 800; letter-spacing: .12em;
+  background: var(--accent); color: #fff;
+  padding: 2px 8px; border-radius: 20px;
+}
+
+.tier-card:hover:not(.current):not(.locked) { transform: translateY(-3px); }
+.tier-card.locked { opacity: .5; }
+
+/* ── BASIC — green ────────────────────────── */
+[data-tier="BASIC"] {
+  border-color: rgba(34,197,94,.18);
+  box-shadow: 0 2px 20px rgba(34,197,94,.07);
+}
+[data-tier="BASIC"]::before {
+  background: linear-gradient(90deg, transparent 8%, rgba(34,197,94,.55) 50%, transparent 92%);
+}
+[data-tier="BASIC"]::after {
+  background: radial-gradient(ellipse, rgba(34,197,94,.18) 0%, transparent 70%);
+}
+[data-tier="BASIC"]:hover:not(.current):not(.locked) {
+  border-color: rgba(34,197,94,.42);
+  box-shadow: 0 8px 32px rgba(34,197,94,.14), 0 0 60px rgba(34,197,94,.07);
+}
+[data-tier="BASIC"].current {
+  border-color: rgba(34,197,94,.48) !important;
+  background: rgba(34,197,94,.04) !important;
+  animation: pulse-basic 3.5s ease-in-out infinite;
+}
+[data-tier="BASIC"].current::after { opacity: .4; }
+@keyframes pulse-basic {
+  0%,100% { box-shadow: 0 0 24px rgba(34,197,94,.1); }
+  50%      { box-shadow: 0 0 44px rgba(34,197,94,.22), 0 0 80px rgba(34,197,94,.08); }
+}
+
+/* ── SILVER — slate ───────────────────────── */
+[data-tier="SILVER"] {
+  border-color: rgba(148,163,184,.17);
+  box-shadow: 0 2px 20px rgba(148,163,184,.07);
+}
+[data-tier="SILVER"]::before {
+  background: linear-gradient(90deg, transparent 8%, rgba(148,163,184,.55) 50%, transparent 92%);
+}
+[data-tier="SILVER"]::after {
+  background: radial-gradient(ellipse, rgba(148,163,184,.18) 0%, transparent 70%);
+}
+[data-tier="SILVER"]:hover:not(.current):not(.locked) {
+  border-color: rgba(148,163,184,.42);
+  box-shadow: 0 8px 32px rgba(148,163,184,.14), 0 0 60px rgba(148,163,184,.07);
+}
+[data-tier="SILVER"].current {
+  border-color: rgba(148,163,184,.48) !important;
+  background: rgba(148,163,184,.04) !important;
+  animation: pulse-silver 3.5s ease-in-out infinite;
+}
+[data-tier="SILVER"].current::after { opacity: .4; }
+@keyframes pulse-silver {
+  0%,100% { box-shadow: 0 0 24px rgba(148,163,184,.1); }
+  50%      { box-shadow: 0 0 44px rgba(148,163,184,.22), 0 0 80px rgba(148,163,184,.08); }
+}
+
+/* ── GOLD — amber ─────────────────────────── */
+[data-tier="GOLD"] {
+  border-color: rgba(245,158,11,.22);
+  box-shadow: 0 2px 24px rgba(245,158,11,.09);
+}
+[data-tier="GOLD"]::before {
+  background: linear-gradient(90deg, transparent 8%, rgba(245,158,11,.65) 50%, transparent 92%);
+}
+[data-tier="GOLD"]::after {
+  background: radial-gradient(ellipse, rgba(245,158,11,.2) 0%, transparent 70%);
+}
+[data-tier="GOLD"]:hover:not(.current):not(.locked) {
+  border-color: rgba(245,158,11,.48);
+  box-shadow: 0 8px 36px rgba(245,158,11,.17), 0 0 68px rgba(245,158,11,.09);
+}
+[data-tier="GOLD"].current {
+  border-color: rgba(245,158,11,.52) !important;
+  background: rgba(245,158,11,.04) !important;
+  animation: pulse-gold 3.5s ease-in-out infinite;
+}
+[data-tier="GOLD"].current::after { opacity: .45; }
+@keyframes pulse-gold {
+  0%,100% { box-shadow: 0 0 28px rgba(245,158,11,.12); }
+  50%      { box-shadow: 0 0 52px rgba(245,158,11,.26), 0 0 96px rgba(245,158,11,.11); }
+}
+
+/* ── PLATINUM — purple ────────────────────── */
+[data-tier="PLATINUM"] {
+  border-color: rgba(139,92,246,.22);
+  box-shadow: 0 2px 28px rgba(139,92,246,.1);
+}
+[data-tier="PLATINUM"]::before {
+  background: linear-gradient(90deg, transparent 8%, rgba(139,92,246,.7) 50%, transparent 92%);
+}
+[data-tier="PLATINUM"]::after {
+  background: radial-gradient(ellipse, rgba(139,92,246,.22) 0%, transparent 70%);
+}
+[data-tier="PLATINUM"]:hover:not(.current):not(.locked) {
+  border-color: rgba(139,92,246,.5);
+  box-shadow: 0 8px 40px rgba(139,92,246,.2), 0 0 80px rgba(139,92,246,.1);
+}
+[data-tier="PLATINUM"].current {
+  border-color: rgba(139,92,246,.55) !important;
+  background: rgba(139,92,246,.05) !important;
+  animation: pulse-platinum 3.5s ease-in-out infinite;
+}
+[data-tier="PLATINUM"].current::after { opacity: .5; }
+@keyframes pulse-platinum {
+  0%,100% { box-shadow: 0 0 32px rgba(139,92,246,.14); }
+  50%      { box-shadow: 0 0 60px rgba(139,92,246,.3), 0 0 112px rgba(139,92,246,.13); }
+}
+
 .tier-icon { width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0 }
 .tier-name { font-size:18px;font-weight:700;letter-spacing:-.2px }
 .tier-subtitle { font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;opacity:.7 }
@@ -361,7 +492,8 @@ function renderTiers() {
         ${f}
       </div>`).join('');
 
-    return `<div class="tier-card ${isCurrent ? 'current' : ''} ${isLower ? 'locked' : ''}">
+    return `<div class="tier-card ${isCurrent ? 'current' : ''} ${isLower ? 'locked' : ''}" data-tier="${tier.key}">
+      ${isCurrent ? '<span class="tier-current-badge">CURRENT</span>' : ''}
       <div style="display:flex;align-items:center;gap:12px">
         <div class="tier-icon" style="background:${tier.bg}">${tier.icon}</div>
         <div>
