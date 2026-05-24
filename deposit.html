@@ -275,7 +275,14 @@
             <div class="divider"></div>
             <div class="section-hdr" style="margin-bottom:10px"><span class="section-title">Confirm Your Deposit</span></div>
             <div class="fg"><label>Amount Sent (USD)</label><input type="number" id="depositAmount" placeholder="0.00"></div>
-            <div class="fg"><label>Transaction Hash (optional)</label><input id="depositTxHash" placeholder="Paste transaction ID / hash"></div>
+            <div class="fg">
+              <label>Upload Payment Receipt <span style="color:#ef4444;font-size:10px;">* required</span></label>
+              <label id="receiptLabel" style="display:flex;align-items:center;gap:10px;border:1.5px dashed var(--border2,rgba(255,255,255,0.15));border-radius:10px;padding:12px 14px;cursor:pointer;transition:border-color .2s;" onmouseenter="this.style.borderColor='var(--blue,#4f6ef7)'" onmouseleave="this.style.borderColor=''">
+                <svg viewBox="0 0 24 24" style="width:20px;height:20px;flex-shrink:0;stroke:currentColor;fill:none;stroke-width:2;color:var(--text3)"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                <span id="receiptName" style="font-size:12.5px;color:var(--text3);">Click to upload screenshot or photo of receipt</span>
+                <input type="file" id="receiptFile" accept="image/*,application/pdf" style="display:none" onchange="onReceiptSelect(this)">
+              </label>
+            </div>
             <button class="btn btn-green" style="width:100%;justify-content:center;margin-top:4px" onclick="window.submitDepositRequest && window.submitDepositRequest()">
               <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2"><polyline points="20 6 9 17 4 12"/></svg>
               I've Sent This Deposit
@@ -302,7 +309,7 @@
           </button>
         </div>
         <div class="table-wrap"><table>
-          <thead><tr><th>ID</th><th>Asset</th><th>Amount</th><th>TxID</th><th>Date</th><th>Status</th></tr></thead>
+          <thead><tr><th>ID</th><th>Asset</th><th>Network</th><th>Amount</th><th>Receipt</th><th>Date</th><th>Status</th></tr></thead>
           <tbody id="depositHistoryBody"><tr><td colspan="6" style="text-align:center;color:var(--text3);padding:20px">No deposits yet</td></tr></tbody>
         </table></div>
       </div>
@@ -317,36 +324,67 @@ let selCoin = 'BTC';
 window.selCoin = selCoin;
 window.walletAddresses = {};
 
-// Native network label per coin
-const NATIVE_NET_LABEL = {
-  BTC:  'Bitcoin Network',
-  ETH:  'Ethereum Network',
-  BNB:  'BNB Chain',
-  SOL:  'Solana Network',
-  XRP:  'XRP Ledger',
-  DOGE: 'Dogecoin Network',
-  TRX:  'TRON Network',
-  LTC:  'Litecoin Network',
-  TON:  'TON Network',
-  USDT: 'Mainnet',
+// Coins with a single locked network (value → display label → address key)
+const COIN_FIXED_NET = {
+  BTC:  { value: 'NATIVE', label: 'Bitcoin Network',     addrKey: 'BTC'  },
+  BNB:  { value: 'BEP20',  label: 'BEP-20 (BNB Chain)', addrKey: 'BNB'  },
+  SOL:  { value: 'NATIVE', label: 'Solana Network',      addrKey: 'SOL'  },
+  XRP:  { value: 'NATIVE', label: 'XRP Ledger (Ripple)', addrKey: 'XRP'  },
+  DOGE: { value: 'NATIVE', label: 'Dogecoin Network',    addrKey: 'DOGE' },
+  TRX:  { value: 'TRC20',  label: 'TRC-20 (TRON)',       addrKey: 'TRX'  },
+  LTC:  { value: 'NATIVE', label: 'Litecoin Network',    addrKey: 'LTC'  },
+  TON:  { value: 'NATIVE', label: 'TON Network',         addrKey: 'TON'  },
 };
 
-const NET_LABEL = {
-  NATIVE: null, // resolved per coin above
-  ERC20:  'ERC-20 Network',
-  TRC20:  'TRC-20 Network',
-  BEP20:  'BEP-20 Network',
+// Full network options for USDT and ETH
+const MULTI_NET_OPTIONS = {
+  USDT: [
+    { value: 'ERC20', label: 'ERC-20 (Ethereum)', addrKey: 'USDT'       },
+    { value: 'TRC20', label: 'TRC-20 (TRON)',     addrKey: 'USDT_TRC20' },
+  ],
+  ETH: [
+    { value: 'NATIVE', label: 'Ethereum Network (ERC20)', addrKey: 'ETH'      },
+    { value: 'TRC20',  label: 'TRC-20 (TRON)',            addrKey: 'ETH_TRC20'},
+  ],
 };
-
-function getNetworkLabel(net, sym) {
-  if (!net || net === 'NATIVE') return NATIVE_NET_LABEL[sym] || 'Native Network';
-  return NET_LABEL[net] || net;
-}
 
 function getAddrKey() {
   const net = document.getElementById('networkSelect')?.value || '';
-  if (selCoin === 'USDT' && net === 'TRC20') return 'USDT_TRC20';
-  return selCoin;
+  const multi = MULTI_NET_OPTIONS[selCoin];
+  if (multi) {
+    const opt = multi.find(o => o.value === net);
+    return opt ? opt.addrKey : selCoin;
+  }
+  return COIN_FIXED_NET[selCoin]?.addrKey || selCoin;
+}
+
+function getNetworkLabel() {
+  const net = document.getElementById('networkSelect')?.value || '';
+  const multi = MULTI_NET_OPTIONS[selCoin];
+  if (multi) {
+    const opt = multi.find(o => o.value === net);
+    return opt ? opt.label : '';
+  }
+  return COIN_FIXED_NET[selCoin]?.label || net;
+}
+
+function buildNetworkSelect(sym) {
+  const select = document.getElementById('networkSelect');
+  const fixed  = COIN_FIXED_NET[sym];
+  const multi  = MULTI_NET_OPTIONS[sym];
+
+  if (fixed) {
+    // Single locked option — auto-select, disable
+    select.innerHTML = `<option value="${fixed.value}">${fixed.label}</option>`;
+    select.disabled = true;
+    select.value = fixed.value;
+  } else if (multi) {
+    // Multiple options — prompt first
+    select.innerHTML = `<option value="">— Select Network —</option>` +
+      multi.map(o => `<option value="${o.value}">${o.label}</option>`).join('');
+    select.disabled = false;
+    select.value = '';
+  }
 }
 
 function applyNetworkBorderColor(coin) {
@@ -383,14 +421,19 @@ function buildCoinGrid() {
 function setSelCoin(sym) {
   selCoin = sym;
   window.selCoin = sym;
-  // Reset network selection
-  const ns = document.getElementById('networkSelect');
-  if (ns) ns.value = '';
+  buildNetworkSelect(sym);
   buildCoinGrid();
   applyNetworkBorderColor(sym);
-  // Hide address panel, show overlay
-  showOverlay(sym);
-  updateDepositHeader(sym);
+
+  const fixed = COIN_FIXED_NET[sym];
+  if (fixed) {
+    // Auto-confirmed — fire network change immediately
+    onNetworkChange();
+  } else {
+    // Multi-network coin — show overlay, wait for user pick
+    showOverlay(sym);
+    updateDepositHeader(sym);
+  }
 }
 
 function showOverlay(sym) {
@@ -419,7 +462,6 @@ function updateDepositHeader(sym) {
 
 function onNetworkChange() {
   const net = document.getElementById('networkSelect')?.value || '';
-  const coin = COINS.find(c => c.sym === selCoin) || COINS[0];
 
   if (!net) {
     showOverlay(selCoin);
@@ -434,11 +476,14 @@ function onNetworkChange() {
   hideOverlay();
   const req = document.getElementById('networkRequired');
   if (req) req.style.opacity = '0';
-  document.getElementById('networkSelect').classList.remove('needs-pick');
-  document.getElementById('networkSelect').style.borderColor = '';
-  document.getElementById('networkSelect').style.boxShadow = '';
+  const ns = document.getElementById('networkSelect');
+  ns.classList.remove('needs-pick');
+  ns.style.borderColor = '';
+  ns.style.boxShadow  = '';
 
-  const netLabel = getNetworkLabel(net, selCoin);
+  const netLabel = getNetworkLabel();
+  document.getElementById('coinIcon').textContent = (COINS.find(c=>c.sym===selCoin)||COINS[0]).icon;
+  document.getElementById('coinTitle').textContent = `Deposit ${selCoin}`;
   document.getElementById('coinSub').textContent = `Send only ${selCoin} on ${netLabel}`;
   document.getElementById('warnText').innerHTML =
     `Send only <strong>${selCoin}</strong> on <strong>${netLabel}</strong> to this address. Other assets sent to this address will be <strong>permanently lost</strong>.`;
@@ -450,10 +495,20 @@ function onNetworkChange() {
   }
 }
 
+function onReceiptSelect(input) {
+  const file = input.files[0];
+  if (!file) return;
+  document.getElementById('receiptName').textContent = file.name;
+  document.getElementById('receiptName').style.color = 'var(--text)';
+}
+
+buildNetworkSelect('BTC');
 buildCoinGrid();
-// Apply initial coin colour to network border (BTC default)
 applyNetworkBorderColor('BTC');
+// BTC has a fixed network — auto-reveal address immediately after walletAddresses loads
 updateDepositHeader('BTC');
+// Fire once walletAddresses are ready (set by loadWalletAddresses)
+window._btcAutoFire = true;
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -467,16 +522,18 @@ window.signOut = signOut;
 async function loadWalletAddresses() {
   try {
     const ALL_KEYS = [
-      'crypto_address_BTC','crypto_address_ETH','crypto_address_USDT',
-      'crypto_address_USDT_TRC20','crypto_address_BNB','crypto_address_SOL',
-      'crypto_address_XRP','crypto_address_DOGE','crypto_address_TRX',
-      'crypto_address_LTC','crypto_address_TON',
+      'crypto_address_BTC','crypto_address_ETH','crypto_address_ETH_TRC20',
+      'crypto_address_USDT','crypto_address_USDT_TRC20',
+      'crypto_address_BNB','crypto_address_SOL','crypto_address_XRP',
+      'crypto_address_DOGE','crypto_address_TRX','crypto_address_LTC','crypto_address_TON',
     ];
     const { data } = await supabase.from('platform_settings').select('key,value').in('key', ALL_KEYS);
     if (!data) return;
     const map = {};
     (data || []).forEach(r => { map[r.key.replace('crypto_address_','')] = r.value || ''; });
     window.walletAddresses = map;
+    // BTC auto-fires once addresses are loaded
+    if (window._btcAutoFire) { window._btcAutoFire = false; onNetworkChange(); }
   } catch(err) { console.error(err); }
 }
 
@@ -484,15 +541,16 @@ async function loadDeposits(userId) {
   const { data } = await supabase.from('deposit_requests').select('*').eq('user_id', userId).order('created_at',{ascending:false});
   const tbody = document.getElementById('depositHistoryBody');
   if (!data || !data.length) {
-    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:20px">No deposits yet</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--text3);padding:20px">No deposits yet</td></tr>';
     return;
   }
   const statusCls = s => s==='approved'?'bg':s==='pending'?'ba':'br';
   tbody.innerHTML = data.map(d => `<tr>
     <td style="font-size:11px;color:var(--text3)">${d.id?.slice(0,8)||'—'}…</td>
     <td>${d.coin||'—'}</td>
+    <td style="font-size:11px;color:var(--text3)">${d.network||'—'}</td>
     <td class="mono">$${Number(d.amount||0).toFixed(2)}</td>
-    <td class="mono" style="font-size:11px;color:var(--text3)">${d.tx_hash?d.tx_hash.slice(0,12)+'…':'—'}</td>
+    <td>${d.proof_url ? '<span style="color:var(--green,#22c55e);font-size:12px;">✓ Uploaded</span>' : '<span style="color:var(--text3);font-size:12px;">—</span>'}</td>
     <td style="font-size:11.5px;color:var(--text3)">${d.created_at?new Date(d.created_at).toLocaleDateString():'—'}</td>
     <td><span class="badge ${statusCls(d.status)}">${d.status||'—'}</span></td>
   </tr>`).join('');
@@ -507,18 +565,45 @@ window.submitDepositRequest = async function() {
     return;
   }
   const amount = parseFloat(document.getElementById('depositAmount')?.value || 0);
-  const txHash = (document.getElementById('depositTxHash')?.value || '').trim();
   if (!amount || amount <= 0) { alert('Enter the amount you sent'); return; }
+  const receiptFile = document.getElementById('receiptFile')?.files[0];
+  if (!receiptFile) { alert('Please upload your payment receipt before submitting.'); return; }
+
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) { alert('Authentication required'); return; }
-  const { error } = await supabase.from('deposit_requests').insert({
-    user_id: user.id, amount, coin: window.selCoin || 'BTC', tx_hash: txHash || null, status: 'pending'
-  });
-  if (error) { alert(error.message); return; }
-  alert('Deposit submitted! It will be reviewed and credited within 24 hours.');
-  document.getElementById('depositAmount').value = '';
-  document.getElementById('depositTxHash').value = '';
-  await loadDeposits(user.id);
+
+  const btn = document.querySelector('.btn.btn-green');
+  if (btn) { btn.disabled = true; btn.textContent = 'Uploading…'; }
+
+  try {
+    // Upload receipt to deposit_proofs bucket
+    const ext = receiptFile.name.split('.').pop().toLowerCase();
+    const proofPath = `${user.id}/${Date.now()}.${ext}`;
+    const { error: uploadErr } = await supabase.storage.from('deposit_proofs').upload(proofPath, receiptFile, { upsert: true });
+    if (uploadErr) throw new Error('Receipt upload failed: ' + uploadErr.message);
+
+    const networkLabel = getNetworkLabel();
+    const { error } = await supabase.from('deposit_requests').insert({
+      user_id:   user.id,
+      amount,
+      coin:      window.selCoin || 'BTC',
+      network:   networkLabel,
+      proof_url: proofPath,
+      status:    'pending',
+    });
+    if (error) throw new Error(error.message);
+
+    alert('Deposit submitted! It will be reviewed and credited within 24 hours.');
+    document.getElementById('depositAmount').value = '';
+    document.getElementById('receiptFile').value = '';
+    document.getElementById('receiptName').textContent = 'Click to upload screenshot or photo of receipt';
+    document.getElementById('receiptName').style.color = '';
+    await loadDeposits(user.id);
+  } catch(err) {
+    alert(err.message);
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = "I've Sent This Deposit"; }
+  }
 };
 
 window.addEventListener('load', async () => {
