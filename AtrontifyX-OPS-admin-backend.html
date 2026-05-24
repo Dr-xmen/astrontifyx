@@ -1031,12 +1031,12 @@
         </div>
         <div style="margin-bottom:18px;" class="card">
           <div class="card__head">
-            <div class="card__title">Crypto Deposit Addresses (ERC20 / Ethereum Network)</div>
+            <div class="card__title">Crypto Deposit Addresses</div>
             <button class="btn btn--green btn--sm" onclick="saveCryptoAddresses()">Save Addresses</button>
           </div>
           <div class="card__body">
             <div class="form-grid form-grid--3" id="crypto-addr-grid" style="gap:12px 16px;"></div>
-            <p style="font-size:12px;color:var(--muted);margin-top:12px;">These addresses are shown to users when they select Cryptocurrency as deposit/withdrawal method. ERC20 network only.</p>
+            <p style="font-size:12px;color:var(--muted);margin-top:12px;">These addresses are shown to users when they select a coin on the deposit page. Each address maps to the corresponding coin in the user deposit flow.</p>
           </div>
         </div>
 
@@ -2945,17 +2945,19 @@ window.saveUser = async function() {
 };
 
 // -- Crypto Deposit Addresses ----------------------------------
+// Must match COINS array in shared.js exactly, plus USDT_TRC20 variant
 const CRYPTO_COINS = [
-  { key:'ETH',  label:'ETH - Ethereum'         },
-  { key:'USDT', label:'USDT - Tether (ERC20)'  },
-  { key:'USDC', label:'USDC - USD Coin (ERC20)'},
-  { key:'WBTC', label:'WBTC - Wrapped Bitcoin' },
-  { key:'BNB',  label:'BNB  - BNB (ERC20)'     },
-  { key:'LINK', label:'LINK - Chainlink'        },
-  { key:'UNI',  label:'UNI  - Uniswap'         },
-  { key:'DAI',  label:'DAI  - Dai Stablecoin'  },
-  { key:'SHIB', label:'SHIB - Shiba Inu'       },
-  { key:'AAVE', label:'AAVE - Aave'            },
+  { key:'BTC',       label:'BTC — Bitcoin'           },
+  { key:'ETH',       label:'ETH — Ethereum (ERC20)'  },
+  { key:'USDT',      label:'USDT — Tether (ERC20)'   },
+  { key:'USDT_TRC20',label:'USDT — Tether (TRC20)'   },
+  { key:'BNB',       label:'BNB — BNB Chain'         },
+  { key:'SOL',       label:'SOL — Solana'            },
+  { key:'XRP',       label:'XRP — Ripple'            },
+  { key:'DOGE',      label:'DOGE — Dogecoin'         },
+  { key:'TRX',       label:'TRX — TRON'              },
+  { key:'LTC',       label:'LTC — Litecoin'          },
+  { key:'TON',       label:'TON — Toncoin'           },
 ];
 
 async function loadCryptoAddresses() {

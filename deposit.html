@@ -102,7 +102,12 @@
           </div>
           <div class="card-sm">
             <label style="margin-bottom:8px">Network</label>
-            <select><option>Native / Mainnet</option><option>ERC-20</option><option>TRC-20</option><option>BEP-20</option></select>
+            <select id="networkSelect" onchange="onNetworkChange()">
+              <option value="">Native / Mainnet</option>
+              <option value="ERC20">ERC-20</option>
+              <option value="TRC20">TRC-20</option>
+              <option value="BEP20">BEP-20</option>
+            </select>
           </div>
         </div>
 
@@ -187,6 +192,14 @@ function setSelCoin(sym) {
   updateDepositUI();
 }
 
+function getAddrKey() {
+  const net = document.getElementById('networkSelect')?.value || '';
+  if (selCoin === 'USDT' && net === 'TRC20') return 'USDT_TRC20';
+  return selCoin;
+}
+
+function onNetworkChange() { updateDepositUI(); }
+
 function updateDepositUI() {
   const coin = COINS.find(c => c.sym === selCoin) || COINS[0];
   document.getElementById('coinIcon').style.background = coin.col + '22';
@@ -195,7 +208,7 @@ function updateDepositUI() {
   document.getElementById('coinTitle').textContent = 'Deposit ' + coin.sym;
   document.getElementById('coinSub').textContent = 'Send only ' + coin.sym + ' to this address';
   document.getElementById('warnCoin').textContent = coin.sym;
-  const addr = window.walletAddresses[coin.sym] || '';
+  const addr = window.walletAddresses[getAddrKey()] || '';
   document.getElementById('walletAddr').value = addr;
   document.getElementById('qrSvg').innerHTML = generateQR();
 }
@@ -214,15 +227,17 @@ window.signOut = signOut;
 
 async function loadWalletAddresses() {
   try {
-    const { data } = await supabase.from('platform_settings').select('key,value')
-      .in('key',['crypto_address_BTC','crypto_address_ETH','crypto_address_USDT','crypto_address_USDT_TRC20']);
+    const ALL_KEYS = [
+      'crypto_address_BTC','crypto_address_ETH','crypto_address_USDT',
+      'crypto_address_USDT_TRC20','crypto_address_BNB','crypto_address_SOL',
+      'crypto_address_XRP','crypto_address_DOGE','crypto_address_TRX',
+      'crypto_address_LTC','crypto_address_TON',
+    ];
+    const { data } = await supabase.from('platform_settings').select('key,value').in('key', ALL_KEYS);
     if (!data) return;
-    window.walletAddresses = {
-      BTC:  data.find(r=>r.key==='crypto_address_BTC')?.value || '',
-      ETH:  data.find(r=>r.key==='crypto_address_ETH')?.value || '',
-      USDT: data.find(r=>r.key==='crypto_address_USDT')?.value || '',
-      USDT_TRC20: data.find(r=>r.key==='crypto_address_USDT_TRC20')?.value || '',
-    };
+    const map = {};
+    (data || []).forEach(r => { map[r.key.replace('crypto_address_','')] = r.value || ''; });
+    window.walletAddresses = map;
     const addr = document.getElementById('walletAddr');
     if (addr) addr.value = window.walletAddresses[window.selCoin] || '';
   } catch(err) { console.error(err); }
