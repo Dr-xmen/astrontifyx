@@ -2968,7 +2968,7 @@ window.renderAll = function() {
 
 // -- Real-time dashboard stats ---------------------------------
 async function loadDashboardStats() {
-  const db = window.ATRONTIFY_DB;
+  const db = _adminDb();
   if (!db) return;
   try {
     const [
