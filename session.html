@@ -433,10 +433,15 @@
   }
 
   // ── Populate header ───────────────────────────────────────
-  const fullName = (firstName + ' ' + lastName).trim() || userEmail;
+  const fullName = (firstName + ' ' + lastName).trim();
   const initials = ((firstName[0] || '') + (lastName[0] || '')).toUpperCase() || '?';
   const avatarEl = document.getElementById('session-avatar');
-  document.getElementById('session-name').textContent  = fullName;
+  const nameEl   = document.getElementById('session-name');
+  if (fullName) {
+    nameEl.textContent = fullName;
+  } else {
+    nameEl.style.display = 'none';
+  }
   document.getElementById('session-email').textContent = userEmail;
   if (avatarEl) {
     if (avatarUrl) {
