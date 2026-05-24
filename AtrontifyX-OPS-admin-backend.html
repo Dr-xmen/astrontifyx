@@ -2174,8 +2174,8 @@ async function renderKYCLive() {
       <td><span class="badge-pill ${k.status==='pending'?'pill-orange':k.status==='verified'?'pill-green':'pill-red'}">${escapeHTML(k.status)}</span></td>
       <td><div class="row-actions">
         <button class="btn btn--sm btn--outline" onclick="viewKYCDocs('${encodeURIComponent(docsJson)}')">View Docs</button>
-        <button class="btn btn--sm btn--green" onclick="opsApproveKYC('${k.id}')">Approve</button>
-        <button class="btn btn--sm btn--red"   onclick="opsRejectKYC('${k.id}')">Reject</button>
+        <button class="btn btn--sm btn--green" onclick="opsApproveKYC('${k.id}')" ${k.status!=='pending'?'disabled style="opacity:.35;cursor:not-allowed;pointer-events:none;"':''}>Approve</button>
+        <button class="btn btn--sm btn--red"   onclick="opsRejectKYC('${k.id}')"  ${k.status!=='pending'?'disabled style="opacity:.35;cursor:not-allowed;pointer-events:none;"':''}>Reject</button>
       </div></td>
     </tr>`;
   }).join('');
@@ -2331,9 +2331,11 @@ window.viewKYCDocs = async function(encoded) {
         </a>
       </div>`).join('');
   }
+  const _actioned = k.status !== 'pending';
+  const _dis = 'disabled style="opacity:.35;cursor:not-allowed;pointer-events:none;"';
   document.getElementById('kyc-action-btns').innerHTML = `
-    <button class="btn btn--green" onclick="opsApproveKYC('${k.id}');closeModal('modal-kyc-docs')">Approve</button>
-    <button class="btn btn--red"   onclick="opsRejectKYC('${k.id}');closeModal('modal-kyc-docs')">Reject</button>`;
+    <button class="btn btn--green" ${_actioned?_dis:`onclick="opsApproveKYC('${k.id}');closeModal('modal-kyc-docs')"`}>Approve</button>
+    <button class="btn btn--red"   ${_actioned?_dis:`onclick="opsRejectKYC('${k.id}');closeModal('modal-kyc-docs')"`}>Reject</button>`;
 };
 
 function _adminDb() {
