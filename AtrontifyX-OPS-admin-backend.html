@@ -1642,6 +1642,24 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase.js"></script>
 <script>
+// Admin uses its own storage key so it never touches the user session store.
+// Also wipes any admin session that leaked into the user key from a prior bug.
+(function() {
+  var SUPA_URL = 'https://guguugokdhiwobmuopro.supabase.co';
+  var SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd1Z3V1Z29rZGhpd29ibXVvcHJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNTgwNzIsImV4cCI6MjA5MzczNDA3Mn0.uaKxvC9PfevyNcgtRg8Hhzaljn9ae3pp3aqgFUMfSo8';
+  try {
+    localStorage.removeItem('sb-guguugokdhiwobmuopro-auth-token');
+    localStorage.removeItem('atrontifyx-user-auth');
+  } catch(_) {}
+  var adminClient = window.supabase.createClient(SUPA_URL, SUPA_KEY, {
+    auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: false, storageKey: 'atrontifyx-admin-auth' }
+  });
+  window.ATRONTIFY_DB      = adminClient;
+  window.supabaseClient    = adminClient;
+  window.atrontifySupabase = adminClient;
+})();
+</script>
+<script>
 // ── Theme (default dark) ──────────────────────────────────────────────
 (function(){
   const t = localStorage.getItem('atx_admin_theme');
