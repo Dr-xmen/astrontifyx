@@ -588,7 +588,7 @@ function showMessage(msg, type = 'error') {
 async function signupWithGoogle() {
   const { error } = await supabaseClient.auth.signInWithOAuth({
     provider: 'google',
-    options: { redirectTo: window.location.origin + '/dashboard.html' }
+    options: { redirectTo: window.location.origin + '/session.html' }
   });
   if (error) showMessage(error.message);
 }

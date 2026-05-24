@@ -399,7 +399,7 @@ function showMessage(msg, type = 'error') {
 async function signInWithGoogle() {
   const { error } = await supabaseClient.auth.signInWithOAuth({
     provider: 'google',
-    options: { redirectTo: window.location.origin + '/dashboard.html' }
+    options: { redirectTo: window.location.origin + '/session.html' }
   });
   if (error) showMessage(error.message);
 }
@@ -411,7 +411,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
   const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
   if (error) { showMessage(error.message); return; }
   showMessage('Login successful!', 'success');
-  setTimeout(() => { window.location.href = 'dashboard.html'; }, 1000);
+  setTimeout(() => { window.location.href = 'session.html'; }, 1000);
 });
 
 /* subtle ticker animations */
