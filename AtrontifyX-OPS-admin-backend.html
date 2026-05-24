@@ -2140,26 +2140,38 @@ async function renderKYCLive() {
     ? window.supabase.createClient('https://guguugokdhiwobmuopro.supabase.co', svcKey, { auth: { persistSession: false } })
     : window.ATRONTIFY_DB;
   if (!db) return;
-  const { data, error } = await db
-    .from('kyc_submissions')
-    .select('id, user_id, document_type, submitted_at, status, front_url, back_url, selfie_url, proof_address_url, profiles(*)')
-    .order('submitted_at', { ascending: false });
   const tbody = document.getElementById('kyc-tbody');
-  if (!data?.length) {
+
+  // Fetch submissions (no embedded join — FK points to auth.users, not profiles)
+  const { data: submissions, error } = await db
+    .from('kyc_submissions')
+    .select('id, user_id, document_type, submitted_at, status, front_url, back_url, selfie_url, proof_address_url')
+    .order('submitted_at', { ascending: false });
+
+  if (error || !submissions?.length) {
     tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:24px;">No KYC submissions found</td></tr>';
     return;
   }
-  tbody.innerHTML = data.map(k => {
-    const p    = k.profiles || {};
-    const name = p.full_name || p.name || `${p.first_name||''} ${p.last_name||''}`.trim() || p.username || p.id || '-';
+
+  // Fetch profiles for all user_ids in one query
+  const userIds = [...new Set(submissions.map(s => s.user_id))];
+  const { data: profiles } = await db
+    .from('profiles')
+    .select('id, first_name, last_name, email, phone, country')
+    .in('id', userIds);
+  const profileMap = Object.fromEntries((profiles || []).map(p => [p.id, p]));
+
+  tbody.innerHTML = submissions.map(k => {
+    const p    = profileMap[k.user_id] || {};
+    const name = `${p.first_name||''} ${p.last_name||''}`.trim() || p.email || k.user_id.slice(0,8);
     const docsJson = JSON.stringify({ front:k.front_url, back:k.back_url, selfie:k.selfie_url, addr:k.proof_address_url, name, docType:k.document_type, status:k.status, id:k.id }).replace(/'/g,"&#39;");
     return `<tr>
-      <td><div class="user-name">${name}</div></td>
-      <td><div class="user-email">${p.email || p.username || '-'}</div>${(p.phone||p.phone_number)?`<div class="user-email">${p.phone||p.phone_number}</div>`:''}</td>
-      <td>${p.country||'-'}</td>
-      <td>${k.document_type||'-'}</td>
+      <td><div class="user-name">${escapeHTML(name)}</div></td>
+      <td><div class="user-email">${escapeHTML(p.email||'-')}</div>${p.phone?`<div class="user-email">${escapeHTML(p.phone)}</div>`:''}</td>
+      <td>${escapeHTML(p.country||'-')}</td>
+      <td>${escapeHTML(k.document_type||'-')}</td>
       <td>${fmtDate(k.submitted_at)}</td>
-      <td><span class="badge-pill ${k.status==='pending'?'pill-orange':k.status==='verified'?'pill-green':'pill-red'}">${k.status}</span></td>
+      <td><span class="badge-pill ${k.status==='pending'?'pill-orange':k.status==='verified'?'pill-green':'pill-red'}">${escapeHTML(k.status)}</span></td>
       <td><div class="row-actions">
         <button class="btn btn--sm btn--outline" onclick="viewKYCDocs('${encodeURIComponent(docsJson)}')">View Docs</button>
         <button class="btn btn--sm btn--green" onclick="opsApproveKYC('${k.id}')">Approve</button>
