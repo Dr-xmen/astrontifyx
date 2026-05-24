@@ -3,6 +3,15 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<script>
+  // Forward Supabase auth callbacks that land on the homepage to session.html
+  (function() {
+    var h = window.location.hash;
+    if (h && (h.indexOf('access_token=') !== -1 || h.indexOf('token_hash=') !== -1 || h.indexOf('code=') !== -1)) {
+      window.location.replace('session.html' + h);
+    }
+  })();
+</script>
 <title>AtrontifyX — Institutional-Grade Trading Platform</title>
 <meta name="description" content="Trade forex, indices, crypto, commodities and shares on AtrontifyX — a fast, secure multi-asset trading platform built for serious traders.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
