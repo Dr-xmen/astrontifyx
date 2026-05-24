@@ -253,6 +253,34 @@
     .approved-title { font-size: 22px; font-weight: 800; letter-spacing: -.02em; }
     .approved-sub   { font-size: 14px; color: var(--muted); }
 
+    /* ── Profile completion (Google OAuth) ─────────────────── */
+    #profile-section{padding:28px;border-bottom:1px solid var(--border)}
+    .profile-intro{font-size:13px;color:var(--muted);margin-bottom:22px;line-height:1.6;padding:12px 14px;background:rgba(79,110,247,.07);border:1px solid rgba(79,110,247,.18);border-radius:10px}
+    .v-field{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+    .v-field label{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+    .v-csel-wrap{position:relative}
+    .v-csel-display{display:flex;align-items:center;justify-content:space-between;padding:12px 13px;border:1.5px solid var(--border);border-radius:10px;cursor:pointer;font-size:14px;color:var(--muted);background:rgba(255,255,255,.04);transition:border-color .2s,box-shadow .2s;user-select:none}
+    .v-csel-display.open,.v-csel-display:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(79,110,247,.12);outline:none}
+    .v-csel-display.selected{color:var(--text)}
+    .v-csel-display svg{flex-shrink:0;stroke:var(--muted);fill:none;transition:transform .2s}
+    .v-csel-display.open svg{transform:rotate(180deg)}
+    .v-csel-drop{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#131726;border:1.5px solid var(--border);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.5);z-index:200;display:none}
+    .v-csel-drop.open{display:block}
+    .v-csel-search{display:flex;align-items:center;gap:8px;padding:9px 12px;border-bottom:1px solid var(--border)}
+    .v-csel-search svg{flex-shrink:0;stroke:var(--muted);fill:none}
+    .v-csel-search input{border:none;outline:none;font-size:13px;width:100%;font-family:'Space Grotesk',sans-serif;color:var(--text);background:transparent}
+    .v-csel-search input::placeholder{color:var(--muted)}
+    .v-csel-list{max-height:192px;overflow-y:auto}
+    .v-csel-opt{padding:10px 13px;font-size:13.5px;cursor:pointer;color:var(--text);transition:background .1s}
+    .v-csel-opt:hover,.v-csel-opt.hi{background:rgba(79,110,247,.1);color:var(--blue)}
+    .v-csel-empty{padding:12px 13px;font-size:13px;color:var(--muted);text-align:center}
+    .v-phone-row{display:flex;align-items:center;border:1.5px solid var(--border);border-radius:10px;overflow:hidden;background:rgba(255,255,255,.04);transition:border-color .2s,box-shadow .2s}
+    .v-phone-row:focus-within{border-color:var(--blue);box-shadow:0 0 0 3px rgba(79,110,247,.12)}
+    .v-phone-code{padding:12px 10px;background:rgba(255,255,255,.06);border-right:1.5px solid var(--border);font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;min-width:56px;text-align:center;flex-shrink:0}
+    .v-phone-row input{border:none;outline:none;flex:1;padding:12px 13px;font-size:14px;color:var(--text);font-family:'Space Grotesk',sans-serif;background:transparent}
+    .v-phone-row input::placeholder{color:var(--muted)}
+    .v-phone-row input:disabled{opacity:.45;cursor:not-allowed}
+
     /* ── Mobile ── */
     @media (max-width: 560px) {
       body { padding: 20px 12px 48px; }
@@ -302,8 +330,45 @@
       <span class="kyc-badge kyc-badge--upload" id="kyc-badge">Action Required</span>
     </div>
 
+    <!-- Profile completion (shown for Google OAuth users missing country/phone) -->
+    <div id="profile-section" style="display:none">
+      <p class="profile-intro">Before uploading your documents, please provide your country and phone number.</p>
+
+      <div class="v-field">
+        <label>Country</label>
+        <div class="v-csel-wrap" id="vCselWrap">
+          <div class="v-csel-display" id="vCselDisplay" tabindex="0">
+            <span id="vCselText">Select country…</span>
+            <svg viewBox="0 0 24 24" width="14" height="14" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="v-csel-drop" id="vCselDrop">
+            <div class="v-csel-search">
+              <svg viewBox="0 0 24 24" width="14" height="14" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" id="vCselSearch" placeholder="Search country…" autocomplete="off">
+            </div>
+            <div class="v-csel-list" id="vCselList"></div>
+          </div>
+          <input type="hidden" id="vCountry">
+        </div>
+      </div>
+
+      <div class="v-field">
+        <label>Phone Number</label>
+        <div class="v-phone-row">
+          <span class="v-phone-code" id="vPhoneCode">—</span>
+          <input type="tel" id="vPhone" placeholder="Select country first" disabled>
+        </div>
+      </div>
+
+      <button class="btn-primary" id="profile-save-btn" onclick="saveProfileInfo()">
+        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+        Continue to Verification
+      </button>
+      <div class="upload-msg" id="profile-msg" style="margin-top:12px"></div>
+    </div>
+
     <!-- Body -->
-    <div class="card-body">
+    <div class="card-body" id="kyc-body">
 
       <!-- Steps -->
       <div class="step-list" id="step-list">
@@ -424,6 +489,148 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase.js"></script>
 <script>
+var _vDb, _vUserId;
+
+const V_COUNTRIES = [
+  {name:'Afghanistan',dial:'+93'},{name:'Albania',dial:'+355'},{name:'Algeria',dial:'+213'},
+  {name:'Andorra',dial:'+376'},{name:'Angola',dial:'+244'},{name:'Antigua and Barbuda',dial:'+1-268'},
+  {name:'Argentina',dial:'+54'},{name:'Armenia',dial:'+374'},{name:'Australia',dial:'+61'},
+  {name:'Austria',dial:'+43'},{name:'Azerbaijan',dial:'+994'},{name:'Bahamas',dial:'+1-242'},
+  {name:'Bahrain',dial:'+973'},{name:'Bangladesh',dial:'+880'},{name:'Barbados',dial:'+1-246'},
+  {name:'Belarus',dial:'+375'},{name:'Belgium',dial:'+32'},{name:'Belize',dial:'+501'},
+  {name:'Benin',dial:'+229'},{name:'Bhutan',dial:'+975'},{name:'Bolivia',dial:'+591'},
+  {name:'Bosnia and Herzegovina',dial:'+387'},{name:'Botswana',dial:'+267'},{name:'Brazil',dial:'+55'},
+  {name:'Brunei',dial:'+673'},{name:'Bulgaria',dial:'+359'},{name:'Burkina Faso',dial:'+226'},
+  {name:'Burundi',dial:'+257'},{name:'Cambodia',dial:'+855'},{name:'Cameroon',dial:'+237'},
+  {name:'Canada',dial:'+1'},{name:'Cape Verde',dial:'+238'},{name:'Central African Republic',dial:'+236'},
+  {name:'Chad',dial:'+235'},{name:'Chile',dial:'+56'},{name:'China',dial:'+86'},
+  {name:'Colombia',dial:'+57'},{name:'Comoros',dial:'+269'},{name:'Congo',dial:'+242'},
+  {name:'Congo (DRC)',dial:'+243'},{name:'Costa Rica',dial:'+506'},{name:'Croatia',dial:'+385'},
+  {name:'Cuba',dial:'+53'},{name:'Cyprus',dial:'+357'},{name:'Czech Republic',dial:'+420'},
+  {name:'Denmark',dial:'+45'},{name:'Djibouti',dial:'+253'},{name:'Dominica',dial:'+1-767'},
+  {name:'Dominican Republic',dial:'+1-809'},{name:'Ecuador',dial:'+593'},{name:'Egypt',dial:'+20'},
+  {name:'El Salvador',dial:'+503'},{name:'Equatorial Guinea',dial:'+240'},{name:'Eritrea',dial:'+291'},
+  {name:'Estonia',dial:'+372'},{name:'Eswatini',dial:'+268'},{name:'Ethiopia',dial:'+251'},
+  {name:'Fiji',dial:'+679'},{name:'Finland',dial:'+358'},{name:'France',dial:'+33'},
+  {name:'Gabon',dial:'+241'},{name:'Gambia',dial:'+220'},{name:'Georgia',dial:'+995'},
+  {name:'Germany',dial:'+49'},{name:'Ghana',dial:'+233'},{name:'Greece',dial:'+30'},
+  {name:'Grenada',dial:'+1-473'},{name:'Guatemala',dial:'+502'},{name:'Guinea',dial:'+224'},
+  {name:'Guinea-Bissau',dial:'+245'},{name:'Guyana',dial:'+592'},{name:'Haiti',dial:'+509'},
+  {name:'Honduras',dial:'+504'},{name:'Hong Kong',dial:'+852'},{name:'Hungary',dial:'+36'},
+  {name:'Iceland',dial:'+354'},{name:'India',dial:'+91'},{name:'Indonesia',dial:'+62'},
+  {name:'Iran',dial:'+98'},{name:'Iraq',dial:'+964'},{name:'Ireland',dial:'+353'},
+  {name:'Israel',dial:'+972'},{name:'Italy',dial:'+39'},{name:'Jamaica',dial:'+1-876'},
+  {name:'Japan',dial:'+81'},{name:'Jordan',dial:'+962'},{name:'Kazakhstan',dial:'+7'},
+  {name:'Kenya',dial:'+254'},{name:'Kiribati',dial:'+686'},{name:'Kuwait',dial:'+965'},
+  {name:'Kyrgyzstan',dial:'+996'},{name:'Laos',dial:'+856'},{name:'Latvia',dial:'+371'},
+  {name:'Lebanon',dial:'+961'},{name:'Lesotho',dial:'+266'},{name:'Liberia',dial:'+231'},
+  {name:'Libya',dial:'+218'},{name:'Liechtenstein',dial:'+423'},{name:'Lithuania',dial:'+370'},
+  {name:'Luxembourg',dial:'+352'},{name:'Madagascar',dial:'+261'},{name:'Malawi',dial:'+265'},
+  {name:'Malaysia',dial:'+60'},{name:'Maldives',dial:'+960'},{name:'Mali',dial:'+223'},
+  {name:'Malta',dial:'+356'},{name:'Marshall Islands',dial:'+692'},{name:'Mauritania',dial:'+222'},
+  {name:'Mauritius',dial:'+230'},{name:'Mexico',dial:'+52'},{name:'Micronesia',dial:'+691'},
+  {name:'Moldova',dial:'+373'},{name:'Monaco',dial:'+377'},{name:'Mongolia',dial:'+976'},
+  {name:'Montenegro',dial:'+382'},{name:'Morocco',dial:'+212'},{name:'Mozambique',dial:'+258'},
+  {name:'Myanmar',dial:'+95'},{name:'Namibia',dial:'+264'},{name:'Nauru',dial:'+674'},
+  {name:'Nepal',dial:'+977'},{name:'Netherlands',dial:'+31'},{name:'New Zealand',dial:'+64'},
+  {name:'Nicaragua',dial:'+505'},{name:'Niger',dial:'+227'},{name:'Nigeria',dial:'+234'},
+  {name:'North Korea',dial:'+850'},{name:'North Macedonia',dial:'+389'},{name:'Norway',dial:'+47'},
+  {name:'Oman',dial:'+968'},{name:'Pakistan',dial:'+92'},{name:'Palau',dial:'+680'},
+  {name:'Panama',dial:'+507'},{name:'Papua New Guinea',dial:'+675'},{name:'Paraguay',dial:'+595'},
+  {name:'Peru',dial:'+51'},{name:'Philippines',dial:'+63'},{name:'Poland',dial:'+48'},
+  {name:'Portugal',dial:'+351'},{name:'Qatar',dial:'+974'},{name:'Romania',dial:'+40'},
+  {name:'Russia',dial:'+7'},{name:'Rwanda',dial:'+250'},{name:'Saint Kitts and Nevis',dial:'+1-869'},
+  {name:'Saint Lucia',dial:'+1-758'},{name:'Saint Vincent and the Grenadines',dial:'+1-784'},
+  {name:'Samoa',dial:'+685'},{name:'San Marino',dial:'+378'},{name:'São Tomé and Príncipe',dial:'+239'},
+  {name:'Saudi Arabia',dial:'+966'},{name:'Senegal',dial:'+221'},{name:'Serbia',dial:'+381'},
+  {name:'Seychelles',dial:'+248'},{name:'Sierra Leone',dial:'+232'},{name:'Singapore',dial:'+65'},
+  {name:'Slovakia',dial:'+421'},{name:'Slovenia',dial:'+386'},{name:'Solomon Islands',dial:'+677'},
+  {name:'Somalia',dial:'+252'},{name:'South Africa',dial:'+27'},{name:'South Korea',dial:'+82'},
+  {name:'South Sudan',dial:'+211'},{name:'Spain',dial:'+34'},{name:'Sri Lanka',dial:'+94'},
+  {name:'Sudan',dial:'+249'},{name:'Suriname',dial:'+597'},{name:'Sweden',dial:'+46'},
+  {name:'Switzerland',dial:'+41'},{name:'Syria',dial:'+963'},{name:'Taiwan',dial:'+886'},
+  {name:'Tajikistan',dial:'+992'},{name:'Tanzania',dial:'+255'},{name:'Thailand',dial:'+66'},
+  {name:'Timor-Leste',dial:'+670'},{name:'Togo',dial:'+228'},{name:'Tonga',dial:'+676'},
+  {name:'Trinidad and Tobago',dial:'+1-868'},{name:'Tunisia',dial:'+216'},{name:'Turkey',dial:'+90'},
+  {name:'Turkmenistan',dial:'+993'},{name:'Tuvalu',dial:'+688'},{name:'Uganda',dial:'+256'},
+  {name:'Ukraine',dial:'+380'},{name:'United Arab Emirates',dial:'+971'},
+  {name:'United Kingdom',dial:'+44'},{name:'United States',dial:'+1'},
+  {name:'Uruguay',dial:'+598'},{name:'Uzbekistan',dial:'+998'},{name:'Vanuatu',dial:'+678'},
+  {name:'Vatican City',dial:'+39'},{name:'Venezuela',dial:'+58'},{name:'Vietnam',dial:'+84'},
+  {name:'Yemen',dial:'+967'},{name:'Zambia',dial:'+260'},{name:'Zimbabwe',dial:'+263'},
+];
+
+function initVCsel() {
+  const wrap    = document.getElementById('vCselWrap');
+  const display = document.getElementById('vCselDisplay');
+  const text    = document.getElementById('vCselText');
+  const drop    = document.getElementById('vCselDrop');
+  const search  = document.getElementById('vCselSearch');
+  const list    = document.getElementById('vCselList');
+  const hidden  = document.getElementById('vCountry');
+  let hiIdx = -1;
+
+  function renderList(filter) {
+    const q = (filter || '').toLowerCase();
+    const filtered = q ? V_COUNTRIES.filter(c => c.name.toLowerCase().includes(q)) : V_COUNTRIES;
+    if (!filtered.length) { list.innerHTML = '<div class="v-csel-empty">No countries found</div>'; hiIdx = -1; return; }
+    list.innerHTML = filtered.map(c =>
+      `<div class="v-csel-opt" data-name="${c.name}" data-dial="${c.dial}">${c.name}<span style="color:var(--muted);font-size:12px;margin-left:6px">${c.dial}</span></div>`
+    ).join('');
+    hiIdx = -1;
+  }
+
+  function openDrop()  { drop.classList.add('open'); display.classList.add('open'); search.value = ''; renderList(''); search.focus(); }
+  function closeDrop() { drop.classList.remove('open'); display.classList.remove('open'); }
+
+  function selectCountry(name, dial) {
+    hidden.value = name; text.textContent = name;
+    display.classList.add('selected'); closeDrop();
+    document.getElementById('vPhoneCode').textContent = dial;
+    const ph = document.getElementById('vPhone');
+    ph.placeholder = '000 000 0000'; ph.disabled = false; ph.focus();
+  }
+
+  display.addEventListener('click', () => drop.classList.contains('open') ? closeDrop() : openDrop());
+  display.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openDrop(); } });
+  search.addEventListener('input', () => { renderList(search.value); hiIdx = -1; });
+  search.addEventListener('keydown', e => {
+    const opts = list.querySelectorAll('.v-csel-opt');
+    if (!opts.length) return;
+    if (e.key === 'ArrowDown') { e.preventDefault(); hiIdx = Math.min(hiIdx+1, opts.length-1); opts.forEach((o,i) => o.classList.toggle('hi', i===hiIdx)); opts[hiIdx].scrollIntoView({block:'nearest'}); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); hiIdx = Math.max(hiIdx-1, 0); opts.forEach((o,i) => o.classList.toggle('hi', i===hiIdx)); opts[hiIdx].scrollIntoView({block:'nearest'}); }
+    else if (e.key === 'Enter' && hiIdx >= 0) { e.preventDefault(); const opt = opts[hiIdx]; selectCountry(opt.dataset.name, opt.dataset.dial); }
+    else if (e.key === 'Escape') { closeDrop(); display.focus(); }
+  });
+  list.addEventListener('click', e => { const opt = e.target.closest('.v-csel-opt'); if (opt) selectCountry(opt.dataset.name, opt.dataset.dial); });
+  document.addEventListener('click', e => { if (!wrap.contains(e.target)) closeDrop(); });
+}
+
+async function saveProfileInfo() {
+  const country = document.getElementById('vCountry').value;
+  const dialCode = document.getElementById('vPhoneCode').textContent;
+  const phoneNum = document.getElementById('vPhone').value.trim();
+  const msgEl = document.getElementById('profile-msg');
+  const btn = document.getElementById('profile-save-btn');
+
+  if (!country) { msgEl.className = 'upload-msg err'; msgEl.textContent = 'Please select your country.'; return; }
+  if (!phoneNum) { msgEl.className = 'upload-msg err'; msgEl.textContent = 'Please enter your phone number.'; return; }
+
+  const phone = (dialCode !== '—' ? dialCode : '') + phoneNum;
+
+  btn.classList.add('loading'); btn.textContent = 'Saving…';
+  msgEl.textContent = '';
+
+  try {
+    await _vDb.from('profiles').update({ country, phone }).eq('id', _vUserId);
+    document.getElementById('profile-section').style.display = 'none';
+    document.getElementById('kyc-body').style.display = 'block';
+  } catch(e) {
+    msgEl.className = 'upload-msg err'; msgEl.textContent = 'Could not save. Please try again.';
+    btn.classList.remove('loading'); btn.innerHTML = '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Continue to Verification';
+  }
+}
+
 (async () => {
   const db = window.ATRONTIFY_DB;
   if (!db) { window.location.href = 'login.html'; return; }
@@ -445,10 +652,10 @@
   const userId = session.user.id;
 
   // ── Load profile ──────────────────────────────────────────
-  let _kycStatus = 'pending', _firstName = '', _lastName = '', _email = session.user.email || '';
+  let _kycStatus = 'pending', _firstName = '', _lastName = '', _email = session.user.email || '', _country = '', _phone = '';
   try {
     const { data: prof } = await db.from('profiles')
-      .select('first_name,last_name,email,kyc_status,status,avatar_url')
+      .select('first_name,last_name,email,kyc_status,status,avatar_url,country,phone')
       .eq('id', userId).maybeSingle();
 
     if (prof?.status === 'suspended') {
@@ -461,6 +668,8 @@
     _firstName = prof?.first_name || '';
     _lastName  = prof?.last_name  || '';
     _email     = prof?.email || _email;
+    _country   = prof?.country || '';
+    _phone     = prof?.phone   || '';
 
     const fullName = [_firstName, _lastName].filter(Boolean).join(' ') || _email;
     const initials = ((_firstName[0]||'') + (_lastName[0]||'')).toUpperCase() || (_email[0]||'?').toUpperCase();
@@ -498,6 +707,14 @@
     applyStatus(_kycStatus);
   } else {
     applyUploadState();
+  }
+
+  // ── Google users: collect country + phone before KYC ─────────
+  _vDb = db; _vUserId = userId;
+  if (!_country || !_phone) {
+    document.getElementById('profile-section').style.display = 'block';
+    document.getElementById('kyc-body').style.display = 'none';
+    initVCsel();
   }
 
   // ── Poll every 30 s ────────────────────────────────────────
