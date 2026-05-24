@@ -2283,22 +2283,43 @@ window.execDeleteUser = async function() { return; // disabled - handled by clic
 
 window.renderKYCLive = renderKYCLive;
 
-window.viewKYCDocs = function(encoded) {
+window.viewKYCDocs = async function(encoded) {
   const k = JSON.parse(decodeURIComponent(encoded));
   document.getElementById('kyc-modal-name').textContent = k.name + ' - ' + (k.docType || 'KYC Document');
   document.getElementById('kyc-modal-meta').textContent = 'Status: ' + k.status;
-  const docs = [
-    { label: 'Front of Document', url: k.front },
-    { label: 'Back of Document',  url: k.back  },
-    { label: 'Selfie with Document', url: k.selfie },
-    { label: 'Proof of Address', url: k.addr  },
-  ].filter(d => d.url);
   const body = document.getElementById('kyc-docs-body');
-  if (!docs.length) {
+  body.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--muted);padding:32px;">Loading documents…</div>';
+  openModal('modal-kyc-docs');
+
+  // Build signed URLs for private kyc bucket paths; leave full https:// URLs as-is
+  const svcKey = window.ATRONTIFY_SERVICE_KEY;
+  const adminDb = svcKey
+    ? window.supabase.createClient('https://guguugokdhiwobmuopro.supabase.co', svcKey, { auth: { persistSession: false } })
+    : window.ATRONTIFY_DB;
+
+  async function resolveUrl(raw) {
+    if (!raw) return null;
+    if (raw.startsWith('https://')) return raw;
+    // raw is a storage path in the private kyc bucket — generate signed URL (1 hour)
+    const { data, error } = await adminDb.storage.from('kyc').createSignedUrl(raw, 3600);
+    return data?.signedUrl || null;
+  }
+
+  const rawDocs = [
+    { label: 'Front of Document',    raw: k.front  },
+    { label: 'Back of Document',     raw: k.back   },
+    { label: 'Selfie / Avatar',      raw: k.selfie },
+    { label: 'Proof of Address',     raw: k.addr   },
+  ].filter(d => d.raw);
+
+  const docs = await Promise.all(rawDocs.map(async d => ({ label: d.label, url: await resolveUrl(d.raw) })));
+  const validDocs = docs.filter(d => d.url);
+
+  if (!validDocs.length) {
     body.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--muted);padding:32px;">No documents uploaded yet.</div>';
   } else {
-    body.style.gridTemplateColumns = docs.length === 1 ? '1fr' : '1fr 1fr';
-    body.innerHTML = docs.map(d => `
+    body.style.gridTemplateColumns = validDocs.length === 1 ? '1fr' : '1fr 1fr';
+    body.innerHTML = validDocs.map(d => `
       <div style="border:1px solid var(--border);border-radius:8px;overflow:hidden;">
         <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);padding:8px 12px;border-bottom:1px solid var(--border);">${d.label}</div>
         <a href="${d.url}" target="_blank" title="Open full size">
@@ -2313,7 +2334,6 @@ window.viewKYCDocs = function(encoded) {
   document.getElementById('kyc-action-btns').innerHTML = `
     <button class="btn btn--green" onclick="opsApproveKYC('${k.id}');closeModal('modal-kyc-docs')">Approve</button>
     <button class="btn btn--red"   onclick="opsRejectKYC('${k.id}');closeModal('modal-kyc-docs')">Reject</button>`;
-  openModal('modal-kyc-docs');
 };
 
 function _adminDb() {
