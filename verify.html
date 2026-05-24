@@ -586,8 +586,8 @@
       };
 
       // Upload ID documents
-      const frontPath = await upload('kyc-docs', front,  `${userId}/id-front`);
-      const backPath  = back ? await upload('kyc-docs', back, `${userId}/id-back`) : null;
+      const frontPath = await upload('kyc', front,  `${userId}/id-front`);
+      const backPath  = back ? await upload('kyc', back, `${userId}/id-back`) : null;
 
       // Upload selfie to avatars bucket and get public URL
       const selfieExt = selfie.name.split('.').pop().toLowerCase();
