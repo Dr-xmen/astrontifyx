@@ -7,6 +7,128 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="shared.css">
+<style>
+  /* ── Spinning coin-colour border on network card ─────────────── */
+  .network-outer {
+    position: relative;
+    border-radius: 14px;
+    padding: 2px;
+    overflow: hidden;
+    transition: padding .25s;
+  }
+  .network-outer.coin-active {
+    background: transparent;
+  }
+  .network-outer.coin-active::before {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 260%; height: 260%;
+    transform: translate(-50%, -50%) rotate(0deg);
+    background: conic-gradient(from 0deg,
+      transparent 0%,
+      var(--cc, #f7931a) 12%,
+      transparent 24%,
+      transparent 76%,
+      var(--cc, #f7931a) 88%,
+      transparent 100%
+    );
+    animation: netSpin 1.8s linear infinite;
+    z-index: 0;
+  }
+  .network-outer.coin-active::after {
+    content: '';
+    position: absolute;
+    inset: 2px;
+    border-radius: 12px;
+    background: var(--bg2, #141726);
+    z-index: 1;
+  }
+  .network-outer > .card-sm {
+    position: relative;
+    z-index: 2;
+    border: none !important;
+  }
+  @keyframes netSpin {
+    to { transform: translate(-50%, -50%) rotate(360deg); }
+  }
+
+  /* ── Address panel states ────────────────────────────────────── */
+  #addrSection {
+    transition: opacity .3s, filter .3s;
+  }
+  #addrSection.locked {
+    pointer-events: none;
+  }
+  #noNetworkOverlay {
+    display: none;
+    position: absolute;
+    inset: 0;
+    border-radius: 16px;
+    background: rgba(10,12,24,0.82);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 10;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    text-align: center;
+    padding: 24px;
+  }
+  #noNetworkOverlay.show { display: flex; }
+  .no-net-icon {
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    margin-bottom: 4px;
+  }
+  .no-net-title {
+    font-size: 15px; font-weight: 700; color: var(--text, #e8eaf0);
+  }
+  .no-net-sub {
+    font-size: 12.5px; color: var(--text3, rgba(232,234,240,0.5));
+    max-width: 200px; line-height: 1.5;
+  }
+  /* arrow pointing left toward network card */
+  .no-net-arrow {
+    font-size: 22px;
+    color: var(--cc-static, #f7931a);
+    animation: arrowBounce .8s ease-in-out infinite alternate;
+  }
+  @keyframes arrowBounce {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-6px); }
+  }
+
+  /* ── Network select highlight ────────────────────────────────── */
+  #networkSelect {
+    transition: border-color .3s, box-shadow .3s;
+  }
+  #networkSelect.needs-pick {
+    border-color: var(--cc-static, #f7931a) !important;
+    box-shadow: 0 0 0 3px var(--cc-alpha, rgba(247,147,26,0.2));
+  }
+
+  /* ── Warning box ─────────────────────────────────────────────── */
+  #warnBox {
+    background: rgba(245,158,11,0.07);
+    border: 1px solid rgba(245,158,11,0.2);
+    border-radius: 10px;
+    padding: 11px;
+    font-size: 12px;
+    color: var(--amber, #f59e0b);
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+  }
+
+  /* right-panel relative wrapper */
+  .addr-panel-wrap {
+    position: relative;
+  }
+</style>
 </head>
 <body>
 <div class="app">
@@ -94,61 +216,81 @@
     <div class="content fade-in">
 
       <div class="grid g12" style="margin-bottom:14px">
+
         <!-- Left: coin selector + network -->
         <div>
           <div class="card" style="margin-bottom:12px">
             <div class="section-hdr"><span class="section-title">Select Currency</span></div>
             <div class="grid g2" style="gap:8px" id="coinGrid"></div>
           </div>
-          <div class="card-sm">
-            <label style="margin-bottom:8px">Network</label>
-            <select id="networkSelect" onchange="onNetworkChange()">
-              <option value="">Native / Mainnet</option>
-              <option value="ERC20">ERC-20</option>
-              <option value="TRC20">TRC-20</option>
-              <option value="BEP20">BEP-20</option>
-            </select>
+
+          <!-- Network card with animated border wrapper -->
+          <div class="network-outer coin-active" id="networkOuter" style="--cc:#f7931a;--cc-static:#f7931a;--cc-alpha:rgba(247,147,26,0.2)">
+            <div class="card-sm">
+              <label style="margin-bottom:8px;font-size:12px;font-weight:600;display:block;">
+                Network
+                <span id="networkRequired" style="color:#ef4444;margin-left:4px;font-size:10px;font-weight:500;opacity:0;transition:opacity .2s">* required</span>
+              </label>
+              <select id="networkSelect" onchange="onNetworkChange()" class="needs-pick">
+                <option value="">— Select Network —</option>
+                <option value="NATIVE">Native / Mainnet</option>
+                <option value="ERC20">ERC-20 (Ethereum)</option>
+                <option value="TRC20">TRC-20 (TRON)</option>
+                <option value="BEP20">BEP-20 (BNB Chain)</option>
+              </select>
+            </div>
           </div>
         </div>
 
-        <!-- Right: deposit address -->
-        <div class="card">
-          <div style="text-align:center;margin-bottom:18px">
-            <div id="coinIcon" class="a-icon" style="width:50px;height:50px;font-size:22px;background:rgba(247,147,26,0.15);color:#f7931a;margin:0 auto 8px">₿</div>
-            <div id="coinTitle" style="font-size:17px;font-weight:700">Deposit BTC</div>
-            <div id="coinSub" style="color:var(--text3);font-size:12.5px;margin-top:3px">Send only BTC to this address</div>
-          </div>
-          <div class="qr-box">
-            <svg viewBox="0 0 100 100" width="130" height="130" id="qrSvg"></svg>
-          </div>
-          <div class="fg">
-            <label>Wallet Address</label>
-            <div class="copy-row">
-              <input id="walletAddr" readonly value="" placeholder="Address not set — configure in admin panel" style="font-size:11.5px">
-              <button class="btn btn-outline btn-sm" onclick="copyAddr()">
-                <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-              </button>
+        <!-- Right: deposit address panel -->
+        <div class="addr-panel-wrap">
+          <div class="card" id="addrSection">
+            <div style="text-align:center;margin-bottom:18px">
+              <div id="coinIcon" class="a-icon" style="width:50px;height:50px;font-size:22px;background:rgba(247,147,26,0.15);color:#f7931a;margin:0 auto 8px">₿</div>
+              <div id="coinTitle" style="font-size:17px;font-weight:700">Deposit BTC</div>
+              <div id="coinSub" style="color:var(--text3);font-size:12.5px;margin-top:3px">Select a network to continue</div>
             </div>
+            <div class="qr-box">
+              <svg viewBox="0 0 100 100" width="130" height="130" id="qrSvg"></svg>
+            </div>
+            <div class="fg">
+              <label>Wallet Address</label>
+              <div class="copy-row">
+                <input id="walletAddr" readonly value="" placeholder="Select a network to reveal address" style="font-size:11.5px">
+                <button class="btn btn-outline btn-sm" onclick="copyAddr()">
+                  <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                </button>
+              </div>
+            </div>
+            <div class="divider"></div>
+            <div id="warnBox">
+              <svg viewBox="0 0 24 24" style="width:16px;height:16px;flex-shrink:0;margin-top:1px;stroke:currentColor;fill:none;stroke-width:2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              <span id="warnText">Select a network above to see deposit instructions.</span>
+            </div>
+            <div class="grid g3" style="gap:8px;margin-top:14px;text-align:center">
+              <div class="stat-card" style="padding:10px"><div class="stat-label">Min Deposit</div><div style="font-size:13.5px;font-weight:600">$50</div></div>
+              <div class="stat-card" style="padding:10px"><div class="stat-label">Confirmations</div><div style="font-size:13.5px;font-weight:600">3</div></div>
+              <div class="stat-card" style="padding:10px"><div class="stat-label">Arrival</div><div style="font-size:13.5px;font-weight:600">~15 min</div></div>
+            </div>
+            <div class="divider"></div>
+            <div class="section-hdr" style="margin-bottom:10px"><span class="section-title">Confirm Your Deposit</span></div>
+            <div class="fg"><label>Amount Sent (USD)</label><input type="number" id="depositAmount" placeholder="0.00"></div>
+            <div class="fg"><label>Transaction Hash (optional)</label><input id="depositTxHash" placeholder="Paste transaction ID / hash"></div>
+            <button class="btn btn-green" style="width:100%;justify-content:center;margin-top:4px" onclick="window.submitDepositRequest && window.submitDepositRequest()">
+              <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2"><polyline points="20 6 9 17 4 12"/></svg>
+              I've Sent This Deposit
+            </button>
           </div>
-          <div class="divider"></div>
-          <div style="background:rgba(245,158,11,0.07);border:1px solid rgba(245,158,11,0.2);border-radius:10px;padding:11px;font-size:12px;color:var(--amber);display:flex;gap:8px;align-items:flex-start">
-            <svg viewBox="0 0 24 24" style="width:16px;height:16px;flex-shrink:0;margin-top:1px;stroke:currentColor;fill:none;stroke-width:2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-            <span>Send only <strong id="warnCoin">BTC</strong> to this address. Other assets will be permanently lost.</span>
+
+          <!-- Overlay shown until network is selected -->
+          <div id="noNetworkOverlay" class="show">
+            <div class="no-net-icon" id="overlayIcon" style="background:rgba(247,147,26,0.15);color:#f7931a;">₿</div>
+            <div class="no-net-title" id="overlayTitle">Select a Network</div>
+            <div class="no-net-sub" id="overlaySub">Choose the network you're sending <strong id="overlayCoin">BTC</strong> on to reveal the deposit address.</div>
+            <div class="no-net-arrow">←</div>
           </div>
-          <div class="grid g3" style="gap:8px;margin-top:14px;text-align:center">
-            <div class="stat-card" style="padding:10px"><div class="stat-label">Min Deposit</div><div style="font-size:13.5px;font-weight:600">$50</div></div>
-            <div class="stat-card" style="padding:10px"><div class="stat-label">Confirmations</div><div style="font-size:13.5px;font-weight:600">3</div></div>
-            <div class="stat-card" style="padding:10px"><div class="stat-label">Arrival</div><div style="font-size:13.5px;font-weight:600">~15 min</div></div>
-          </div>
-          <div class="divider"></div>
-          <div class="section-hdr" style="margin-bottom:10px"><span class="section-title">Confirm Your Deposit</span></div>
-          <div class="fg"><label>Amount Sent (USD)</label><input type="number" id="depositAmount" placeholder="0.00"></div>
-          <div class="fg"><label>Transaction Hash (optional)</label><input id="depositTxHash" placeholder="Paste transaction ID / hash"></div>
-          <button class="btn btn-green" style="width:100%;justify-content:center;margin-top:4px" onclick="window.submitDepositRequest && window.submitDepositRequest()">
-            <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2"><polyline points="20 6 9 17 4 12"/></svg>
-            I've Sent This Deposit
-          </button>
         </div>
+
       </div>
 
       <!-- Deposit History -->
@@ -175,6 +317,59 @@ let selCoin = 'BTC';
 window.selCoin = selCoin;
 window.walletAddresses = {};
 
+// Native network label per coin
+const NATIVE_NET_LABEL = {
+  BTC:  'Bitcoin Network',
+  ETH:  'Ethereum Network',
+  BNB:  'BNB Chain',
+  SOL:  'Solana Network',
+  XRP:  'XRP Ledger',
+  DOGE: 'Dogecoin Network',
+  TRX:  'TRON Network',
+  LTC:  'Litecoin Network',
+  TON:  'TON Network',
+  USDT: 'Mainnet',
+};
+
+const NET_LABEL = {
+  NATIVE: null, // resolved per coin above
+  ERC20:  'ERC-20 Network',
+  TRC20:  'TRC-20 Network',
+  BEP20:  'BEP-20 Network',
+};
+
+function getNetworkLabel(net, sym) {
+  if (!net || net === 'NATIVE') return NATIVE_NET_LABEL[sym] || 'Native Network';
+  return NET_LABEL[net] || net;
+}
+
+function getAddrKey() {
+  const net = document.getElementById('networkSelect')?.value || '';
+  if (selCoin === 'USDT' && net === 'TRC20') return 'USDT_TRC20';
+  return selCoin;
+}
+
+function applyNetworkBorderColor(coin) {
+  const c = COINS.find(c => c.sym === coin) || COINS[0];
+  const outer = document.getElementById('networkOuter');
+  if (!outer) return;
+  // Parse hex to rgba for alpha version
+  const hex = c.col.replace('#','');
+  const r = parseInt(hex.substring(0,2),16);
+  const g = parseInt(hex.substring(2,4),16);
+  const b = parseInt(hex.substring(4,6),16);
+  outer.style.setProperty('--cc', c.col);
+  outer.style.setProperty('--cc-static', c.col);
+  outer.style.setProperty('--cc-alpha', `rgba(${r},${g},${b},0.25)`);
+  outer.classList.add('coin-active');
+  document.getElementById('networkSelect').classList.add('needs-pick');
+  document.getElementById('networkSelect').style.borderColor = c.col;
+  document.getElementById('networkSelect').style.boxShadow = `0 0 0 3px rgba(${r},${g},${b},0.18)`;
+  // Show "required" label
+  const req = document.getElementById('networkRequired');
+  if (req) { req.style.opacity = '1'; }
+}
+
 function buildCoinGrid() {
   document.getElementById('coinGrid').innerHTML = COINS.map(c => `
     <div class="cc ${c.sym===selCoin?'sel':''}" onclick="setSelCoin('${c.sym}')">
@@ -188,33 +383,77 @@ function buildCoinGrid() {
 function setSelCoin(sym) {
   selCoin = sym;
   window.selCoin = sym;
+  // Reset network selection
+  const ns = document.getElementById('networkSelect');
+  if (ns) ns.value = '';
   buildCoinGrid();
-  updateDepositUI();
+  applyNetworkBorderColor(sym);
+  // Hide address panel, show overlay
+  showOverlay(sym);
+  updateDepositHeader(sym);
 }
 
-function getAddrKey() {
-  const net = document.getElementById('networkSelect')?.value || '';
-  if (selCoin === 'USDT' && net === 'TRC20') return 'USDT_TRC20';
-  return selCoin;
+function showOverlay(sym) {
+  const overlay = document.getElementById('noNetworkOverlay');
+  const coin = COINS.find(c => c.sym === sym) || COINS[0];
+  overlay.classList.add('show');
+  document.getElementById('overlayIcon').textContent = coin.icon;
+  document.getElementById('overlayIcon').style.background = coin.col + '22';
+  document.getElementById('overlayIcon').style.color = coin.col;
+  document.getElementById('overlayTitle').textContent = 'Select a Network';
+  document.getElementById('overlaySub').innerHTML = `Choose the network you're sending <strong>${sym}</strong> on to reveal the deposit address.`;
 }
 
-function onNetworkChange() { updateDepositUI(); }
+function hideOverlay() {
+  document.getElementById('noNetworkOverlay').classList.remove('show');
+}
 
-function updateDepositUI() {
-  const coin = COINS.find(c => c.sym === selCoin) || COINS[0];
+function updateDepositHeader(sym) {
+  const coin = COINS.find(c => c.sym === sym) || COINS[0];
   document.getElementById('coinIcon').style.background = coin.col + '22';
   document.getElementById('coinIcon').style.color = coin.col;
   document.getElementById('coinIcon').textContent = coin.icon;
-  document.getElementById('coinTitle').textContent = 'Deposit ' + coin.sym;
-  document.getElementById('coinSub').textContent = 'Send only ' + coin.sym + ' to this address';
-  document.getElementById('warnCoin').textContent = coin.sym;
+  document.getElementById('coinTitle').textContent = 'Deposit ' + sym;
+  document.getElementById('coinSub').textContent = 'Select a network to continue';
+}
+
+function onNetworkChange() {
+  const net = document.getElementById('networkSelect')?.value || '';
+  const coin = COINS.find(c => c.sym === selCoin) || COINS[0];
+
+  if (!net) {
+    showOverlay(selCoin);
+    document.getElementById('warnText').textContent = 'Select a network above to see deposit instructions.';
+    document.getElementById('walletAddr').value = '';
+    document.getElementById('qrSvg').innerHTML = '';
+    document.getElementById('coinSub').textContent = 'Select a network to continue';
+    return;
+  }
+
+  // Network chosen — hide overlay, reveal address
+  hideOverlay();
+  const req = document.getElementById('networkRequired');
+  if (req) req.style.opacity = '0';
+  document.getElementById('networkSelect').classList.remove('needs-pick');
+  document.getElementById('networkSelect').style.borderColor = '';
+  document.getElementById('networkSelect').style.boxShadow = '';
+
+  const netLabel = getNetworkLabel(net, selCoin);
+  document.getElementById('coinSub').textContent = `Send only ${selCoin} on ${netLabel}`;
+  document.getElementById('warnText').innerHTML =
+    `Send only <strong>${selCoin}</strong> on <strong>${netLabel}</strong> to this address. Other assets sent to this address will be <strong>permanently lost</strong>.`;
+
   const addr = window.walletAddresses[getAddrKey()] || '';
   document.getElementById('walletAddr').value = addr;
-  document.getElementById('qrSvg').innerHTML = generateQR();
+  if (typeof generateQR === 'function') {
+    document.getElementById('qrSvg').innerHTML = generateQR();
+  }
 }
 
 buildCoinGrid();
-updateDepositUI();
+// Apply initial coin colour to network border (BTC default)
+applyNetworkBorderColor('BTC');
+updateDepositHeader('BTC');
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -238,15 +477,16 @@ async function loadWalletAddresses() {
     const map = {};
     (data || []).forEach(r => { map[r.key.replace('crypto_address_','')] = r.value || ''; });
     window.walletAddresses = map;
-    const addr = document.getElementById('walletAddr');
-    if (addr) addr.value = window.walletAddresses[window.selCoin] || '';
   } catch(err) { console.error(err); }
 }
 
 async function loadDeposits(userId) {
   const { data } = await supabase.from('deposit_requests').select('*').eq('user_id', userId).order('created_at',{ascending:false});
   const tbody = document.getElementById('depositHistoryBody');
-  if (!data || !data.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:20px">No deposits yet</td></tr>'; return; }
+  if (!data || !data.length) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:20px">No deposits yet</td></tr>';
+    return;
+  }
   const statusCls = s => s==='approved'?'bg':s==='pending'?'ba':'br';
   tbody.innerHTML = data.map(d => `<tr>
     <td style="font-size:11px;color:var(--text3)">${d.id?.slice(0,8)||'—'}…</td>
@@ -259,6 +499,13 @@ async function loadDeposits(userId) {
 }
 
 window.submitDepositRequest = async function() {
+  const net = document.getElementById('networkSelect')?.value || '';
+  if (!net) {
+    document.getElementById('networkRequired').style.opacity = '1';
+    document.getElementById('networkSelect').classList.add('needs-pick');
+    alert('Please select a network before confirming your deposit.');
+    return;
+  }
   const amount = parseFloat(document.getElementById('depositAmount')?.value || 0);
   const txHash = (document.getElementById('depositTxHash')?.value || '').trim();
   if (!amount || amount <= 0) { alert('Enter the amount you sent'); return; }
