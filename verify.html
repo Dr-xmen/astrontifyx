@@ -671,8 +671,14 @@ async function saveProfileInfo() {
     _country   = prof?.country || '';
     _phone     = prof?.phone   || '';
 
-    const fullName = [_firstName, _lastName].filter(Boolean).join(' ') || _email;
-    const initials = ((_firstName[0]||'') + (_lastName[0]||'')).toUpperCase() || (_email[0]||'?').toUpperCase();
+    // Fall back to OAuth metadata if profile has no name stored yet
+    const meta = session.user.user_metadata || {};
+    const metaFirst = meta.first_name || meta.given_name || (meta.full_name || meta.name || '').split(' ')[0] || '';
+    const metaLast  = meta.last_name  || meta.family_name || (meta.full_name || meta.name || '').split(' ').slice(1).join(' ') || '';
+    const fn = _firstName || metaFirst;
+    const ln = _lastName  || metaLast;
+    const fullName = [fn, ln].filter(Boolean).join(' ') || _email;
+    const initials = ((fn[0]||'') + (ln[0]||'')).toUpperCase() || (_email[0]||'?').toUpperCase();
     const avatarEl = document.getElementById('user-avatar');
 
     document.getElementById('user-name').textContent  = fullName;
