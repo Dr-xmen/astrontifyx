@@ -43,7 +43,13 @@
       "Bash(findstr /n \"fetch\\\\|Content-Type\\\\|scanner\\\\|HERO\\\\|buildTicker\\\\|fetchHero\")",
       "Bash(python -m json.tool)",
       "Bash(node -e ' *)",
-      "WebFetch(domain:astrontifyx-sepia.vercel.app)"
+      "WebFetch(domain:astrontifyx-sepia.vercel.app)",
+      "Bash(git *)",
+      "Bash(py --version)",
+      "Bash(node *)",
+      "Bash(gh api *)",
+      "WebFetch(domain:vercel.com)",
+      "WebFetch(domain:astrontifyx.vercel.app)"
     ]
   }
 }

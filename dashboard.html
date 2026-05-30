@@ -1,11 +1,11 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AtrontifyX — Dashboard</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="shared.css">
 <style>
 /* ── Plan Themes ──────────────────────────────────────────────── */
@@ -445,7 +445,7 @@ async function loadTradeProgress(userId) {
             id="tpRingArc" style="transition:stroke-dashoffset 1.6s cubic-bezier(.4,0,.2,1)"/>
         </svg>
         <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0">
-          <span style="font-size:22px;font-weight:800;color:${col};font-family:'JetBrains Mono',monospace;line-height:1" id="tpPctText">${pct.toFixed(0)}%</span>
+          <span style="font-size:22px;font-weight:800;color:${col};font-family:'Inter',sans-serif;line-height:1" id="tpPctText">${pct.toFixed(0)}%</span>
           <span style="font-size:9.5px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-top:2px">complete</span>
         </div>
       </div>
@@ -456,7 +456,7 @@ async function loadTradeProgress(userId) {
         <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px;flex-wrap:wrap">
           <div>
             <div style="font-size:15px;font-weight:700;margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:320px">${target.label||'Profit Target'}</div>
-            <div style="font-size:12.5px;color:var(--text3)">Target: <span style="color:var(--text1);font-weight:700;font-family:'JetBrains Mono',monospace">$${Number(target.target_amount).toLocaleString()}</span>
+            <div style="font-size:12.5px;color:var(--text3)">Target: <span style="color:var(--text1);font-weight:700;font-family:'Inter',sans-serif">$${Number(target.target_amount).toLocaleString()}</span>
               <span style="margin-left:10px;color:var(--text3)">${trades.length} entr${trades.length===1?'y':'ies'}</span>
             </div>
           </div>
@@ -489,7 +489,7 @@ async function loadTradeProgress(userId) {
           ${trades.slice(0,8).map((t,i)=>`
             <div class="tp-entry" style="display:flex;justify-content:space-between;align-items:center;padding:7px 11px;background:var(--bg2);border-radius:8px;font-size:12px;animation-delay:${i*50}ms">
               <span style="color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:80px" title="${t.note||'Trade entry'}">${t.note||'Trade entry'}</span>
-              <span style="font-weight:700;font-family:'JetBrains Mono',monospace;color:${Number(t.percentage_delta)>=0?'var(--green)':'var(--red)'};flex-shrink:0;margin-left:6px">${Number(t.percentage_delta)>=0?'+':''}${Number(t.percentage_delta).toFixed(2)}%</span>
+              <span style="font-weight:700;font-family:'Inter',sans-serif;color:${Number(t.percentage_delta)>=0?'var(--green)':'var(--red)'};flex-shrink:0;margin-left:6px">${Number(t.percentage_delta)>=0?'+':''}${Number(t.percentage_delta).toFixed(2)}%</span>
             </div>`).join('')}
         </div>` : `<div style="font-size:12.5px;color:var(--text3);padding:4px 0">No trade entries yet. Progress will appear here once entries are added.</div>`}
       </div>
@@ -560,3 +560,4 @@ else {
 </script>
 </body>
 </html>
+
